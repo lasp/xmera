@@ -21,20 +21,11 @@ class ProcessBaseClass(object):
 
         return TaskBaseClass(self.simulation, name, taskData)
 
-    def addInterfaceRef(self, newInt):
-        self.processData.addInterfaceRef(newInt)
-
-    def discoverAllMessages(self):
-        self.processData.discoverAllMessages()
-
     def disableTasks(self):
         self.processData.disableTasks()
 
     def enableTasks(self):
         self.processData.enableTasks()
-
-    def selectProcess(self):
-        pass
 
     def updateTaskPeriod(self, TaskName, newPeriod):
         self.processData.changeTaskPeriod(TaskName, newPeriod)
@@ -61,6 +52,3 @@ class TaskBaseClass(object):
 
     def enable(self):
         self.TaskData.enable()
-
-    def reset(self, callTime):
-        self.TaskData.reset(callTime)

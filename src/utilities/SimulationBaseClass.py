@@ -2,15 +2,8 @@
 # Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
 # Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
-
-import array
 import inspect
 
-# Import some architectural stuff that we will probably always use
-import os
-import sys
-import warnings
-import xml.etree.ElementTree as ET
 from collections import OrderedDict
 
 import matplotlib.pyplot as plt
@@ -90,71 +83,6 @@ class EventHandlerClass:
                     parentSim.terminate = True
         return(nextTime)
 
-
-class StructDocData:
-    """Structure data documentation class"""
-    class StructElementDef:
-        def __init__(self, type, name, argstring, desc=''):
-            self.type = type
-            self.name = name
-            self.argstring = argstring
-            self.desc = desc
-
-    def __init__(self, strName):
-        self.strName = strName
-        self.structPopulated = False
-        self.structElements = {}
-
-    def clearItem(self):
-        self.structPopulated = False
-        self.structElements = {}
-
-    def populateElem(self, xmlSearchPath):
-        if self.structPopulated == True:
-            return
-        xmlFileUse = xmlSearchPath + '/' + self.strName + '.xml'
-        try:
-            xmlData = ET.parse(xmlFileUse)
-        except:
-            print("Failed to parse the XML structure for: " + self.strName)
-            print("This file does not exist most likely: " + xmlFileUse)
-            return
-        root = xmlData.getroot()
-        validElement = root.find("./compounddef[@id='" + self.strName + "']")
-        for newVariable in validElement.findall(".//memberdef[@kind='variable']"):
-            typeUse = newVariable.find('type').text if newVariable.find('type') is not None else \
-                None
-            nameUse = newVariable.find('name').text if newVariable.find('type') is not None else \
-                None
-            argstringUse = newVariable.find('argsstring').text if newVariable.find('argsstring') is not None else \
-                None
-            descUse = newVariable.find('./detaileddescription/para').text if newVariable.find(
-                './detaileddescription/para') is not None else \
-                None
-            if descUse == None:
-                descUse = newVariable.find('./briefdescription/para').text if newVariable.find(
-                    './briefdescription/para') is not None else \
-                    None
-            newElement = StructDocData.StructElementDef(typeUse, nameUse, argstringUse, descUse)
-            self.structElements.update({nameUse: newElement})
-            self.structPopulated = True
-
-    def printElem(self):
-        print("    " + self.strName + " Structure Elements:")
-        for key, value in self.structElements.items():
-            outputString = ''
-            outputString += value.type + " " + value.name
-            outputString += value.argstring if value.argstring is not None else ''
-            outputString += ': ' + value.desc if value.desc is not None else ''
-        print("      " + outputString)
-
-class DataPairClass:
-    def __init__(self):
-        self.outputMessages = set([])
-        self.inputMessages = set([])
-        self.name = ""
-        self.outputDict = {}
-
 class SimBaseClass:
     """Simulation Base Class"""
     def __init__(self):
@@ -168,13 +96,9 @@ class SimBaseClass:
         self.multiProcessVariableLoggers = {}
         self.allModels = []
         self.eventMap = {}
-        self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
-        self.dataStructIndex = self.simBasePath + '/xml/index.xml'
-        self.indexParsed = False
         self.simulationInitialized = False
         self.simulationFinished = False
         self.showProgressBar = False
-        self.allModules = set()
 
     def SetProgressBar(self, value):
         """
@@ -198,7 +122,6 @@ class SimBaseClass:
                     print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.modelTag +
                           ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
             print("")
-
 
     def ShowExecutionFigure(self, show_plots=False):
         """
@@ -402,11 +325,6 @@ class SimBaseClass:
 
         self.multiProcessVariableLoggers[VarName] = logger
 
-    def reset(self, taskName):
-        for Task in self.TaskList:
-            if Task.Name == taskName:
-                Task.reset(self.TotalSim.getCurrentNanos())
-
     def InitializeSimulation(self):
         """
         Initialize the BSK simulation.  This runs the reset() method on each module.
@@ -423,12 +341,6 @@ class SimBaseClass:
 
     def getCurrentNanos(self):
         return self.TotalSim.getCurrentNanos()
-
-    @deprecated.deprecated("2024/09/06",
-        "Calling 'RecordLogVars' is deprecated and unnecessary."
-    )
-    def RecordLogVars(self):
-        pass
 
     def ExecuteSimulation(self):
         """
@@ -501,20 +413,6 @@ class SimBaseClass:
             if Task.Name == TaskName:
                 Task.enable()
 
-    def parseDataIndex(self):
-        self.dataStructureDictionary = {}
-        try:
-            xmlData = ET.parse(self.dataStructIndex)
-        except:
-            print("Failed to parse the XML index.  Likely that it isn't present")
-            return
-        root = xmlData.getroot()
-        for child in root:
-            newStruct = StructDocData(child.attrib['refid'])
-            self.dataStructureDictionary.update({child.find('name').text:
-                                                     newStruct})
-        self.indexParsed = True
-
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
                        conditionList=[], actionList=[], terminal=False):
         """
@@ -564,60 +462,3 @@ class SimBaseClass:
                         self.eventMap[eventName].eventActive = activityCommand
                 else:
                     self.eventMap[eventName].eventActive = activityCommand
-
-
-def SetCArray(InputList, VarType, ArrayPointer):
-    setitem = getattr(sim_model, VarType + "Array_setitem")
-
-    for (CurrIndex, CurrElem) in enumerate(InputList):
-        setitem(ArrayPointer, CurrIndex, CurrElem)
-
-
-def getCArray(varType, arrayPointer, arraySize):
-    getitem = getattr(sim_model, varType + "Array_getitem")
-
-    return [
-        getitem(arrayPointer, currIndex)
-        for currIndex in range(arraySize)
-    ]
-
-def synchronizeTimeHistories(arrayList):
-    timeCounter = 0
-    for i in range(len(arrayList)):
-        while arrayList[i][0,0] > arrayList[0][timeCounter,0]:
-            timeCounter += 1
-    for i in range(len(arrayList)):
-        while(arrayList[i][1,0] < arrayList[0][timeCounter,0]):
-            arrayList[i] = np.delete(arrayList[i], 0, 0)
-
-    timeCounter = -1
-    for i in range(len(arrayList)):
-        while arrayList[i][-1,0] < arrayList[0][timeCounter,0]:
-                timeCounter -= 1
-    for i in range(len(arrayList)):
-        while(arrayList[i][-2,0] > arrayList[0][timeCounter,0]):
-            arrayList[i] = np.delete(arrayList[i], -1, 0)
-
-    timeNow = arrayList[0][0,0] #Desirement is to have synched arrays match primary time
-    indexPrev = [0]*len(arrayList)
-
-    outputArrayList = [[]]*len(arrayList)
-    outputArrayList[0] = arrayList[0][0:-2, :]
-
-    for i in range(1, arrayList[0].shape[0]-1):
-        for j in range(1, len(arrayList)):
-            while(arrayList[j][indexPrev[j]+1,0] < arrayList[0][i,0]):
-                indexPrev[j] += 1
-
-            dataProp = arrayList[j][indexPrev[j]+1,1:] - arrayList[j][indexPrev[j],1:]
-            dataProp *= (timeNow - arrayList[j][indexPrev[j],0])/(arrayList[j][indexPrev[j]+1,0] - arrayList[j][indexPrev[j],0])
-            dataProp += arrayList[j][indexPrev[j],1:]
-            dataRow = [timeNow]
-            dataRow.extend(dataProp.tolist())
-            outputArrayList[j].append(dataRow)
-        timeNow = arrayList[0][i,0]
-
-    for j in range(1, len(arrayList)):
-        outputArrayList[j] = np.array(outputArrayList[j])
-
-    return outputArrayList
