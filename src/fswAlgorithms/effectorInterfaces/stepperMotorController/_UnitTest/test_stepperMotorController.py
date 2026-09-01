@@ -254,7 +254,7 @@ def test_stepper_motor_controller_interrupt(show_plots, motor_theta_ref1, motor_
     # Create a new motor angle reference message (This message interrupts and overwrites the first reference message)
     hinged_rigid_body_message_data = messaging.HingedRigidBodyMsgPayload()
     hinged_rigid_body_message_data.theta = motor_theta_ref2  # [rad]
-    hinged_rigid_body_message = messaging.HingedRigidBodyMsg().write(hinged_rigid_body_message_data, unit_test_sim.TotalSim.getCurrentNanos())
+    hinged_rigid_body_message = messaging.HingedRigidBodyMsg().write(hinged_rigid_body_message_data, unit_test_sim.getCurrentNanos())
     motor_controller.motorRefAngleInMsg.subscribeTo(hinged_rigid_body_message)
 
     # Calculate number of steps to actuate from interrupted motor position to the second reference motor angle

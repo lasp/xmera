@@ -58,7 +58,7 @@ def _make_tiff(arr, path):
 
 def _run_once(sim):
     sim.InitializeSimulation()
-    sim.TotalSim.singleStepProcesses()
+    sim.singleStepProcesses()
 
 
 def _make_module(width, height, kernel=5, threshold=0, roi_size=64):

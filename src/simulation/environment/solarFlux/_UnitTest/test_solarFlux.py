@@ -56,13 +56,13 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     sim.AddModelToTask("task", dataLog)
 
     sim.InitializeSimulation()
-    sim.TotalSim.singleStepProcesses()
+    sim.singleStepProcesses()
 
     fluxOutEarth = dataLog.flux
     scPositionMessage.r_BN_N = [0., 0., positionFactor * om.AU*1000]
     scMsg.write(scPositionMessage)
 
-    sim.TotalSim.singleStepProcesses()
+    sim.singleStepProcesses()
     fluxOutFurther = dataLog.flux
 
     assert fluxOutFurther[1] == pytest.approx(fluxOutEarth[0] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)

@@ -58,7 +58,7 @@ def _make_sim(*modules):
 
 def _run_once(sim):
     sim.InitializeSimulation()
-    sim.TotalSim.singleStepProcesses()
+    sim.singleStepProcesses()
 
 
 def _regions_from_log(roi_log, timestep=-1):

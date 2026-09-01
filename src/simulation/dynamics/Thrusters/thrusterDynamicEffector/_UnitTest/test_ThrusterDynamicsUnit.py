@@ -61,24 +61,24 @@ def thrusterEffectorAllTests(show_plots):
 
 # Create function to run the simulation who's results will be compared to expected values
 def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
-    newStopTime = simContainer.TotalSim.getCurrentNanos() + totalTime
-    while(simContainer.TotalSim.getCurrentNanos() < newStopTime):
-        simContainer.ConfigureStopTime(simContainer.TotalSim.getCurrentNanos() + simRate)
+    newStopTime = simContainer.getCurrentNanos() + totalTime
+    while(simContainer.getCurrentNanos() < newStopTime):
+        simContainer.ConfigureStopTime(simContainer.getCurrentNanos() + simRate)
         simContainer.ExecuteSimulation()
 
         timeStep = 1.0  # not explicity used in this test
-        thrusterSet.computeForceTorque(simContainer.TotalSim.getCurrentNanos()*macros.NANO2SEC, timeStep)
-        thrusterSet.computeForceTorque(simContainer.TotalSim.getCurrentNanos()*macros.NANO2SEC + simRate*macros.NANO2SEC/2.0, timeStep)
-        thrusterSet.computeForceTorque(simContainer.TotalSim.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0, timeStep)
-        thrusterSet.computeForceTorque(simContainer.TotalSim.getCurrentNanos()*macros.NANO2SEC + simRate*macros.NANO2SEC, timeStep)
+        thrusterSet.computeForceTorque(simContainer.getCurrentNanos()*macros.NANO2SEC, timeStep)
+        thrusterSet.computeForceTorque(simContainer.getCurrentNanos()*macros.NANO2SEC + simRate*macros.NANO2SEC/2.0, timeStep)
+        thrusterSet.computeForceTorque(simContainer.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0, timeStep)
+        thrusterSet.computeForceTorque(simContainer.getCurrentNanos()*macros.NANO2SEC + simRate*macros.NANO2SEC, timeStep)
 
-        thrusterSet.computeStateContribution(simContainer.TotalSim.getCurrentNanos() * macros.NANO2SEC)
+        thrusterSet.computeStateContribution(simContainer.getCurrentNanos() * macros.NANO2SEC)
         thrusterSet.computeStateContribution(
-            simContainer.TotalSim.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0)
+            simContainer.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0)
         thrusterSet.computeStateContribution(
-            simContainer.TotalSim.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0)
+            simContainer.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0)
         thrusterSet.computeStateContribution(
-            simContainer.TotalSim.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC)
+            simContainer.getCurrentNanos() * macros.NANO2SEC + simRate * macros.NANO2SEC)
 
 
 def fixMDotData(mDotData):
@@ -227,7 +227,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
             ThrustMessage.OnTimeRequest = [thrDurationTime*macros.NANO2SEC]
         if thrustNumber==2:
             ThrustMessage.OnTimeRequest = [thrDurationTime * macros.NANO2SEC, thrDurationTime * macros.NANO2SEC]
-        thrCmdMsg.write(ThrustMessage, TotalSim.TotalSim.getCurrentNanos()+testRate)
+        thrCmdMsg.write(ThrustMessage, TotalSim.getCurrentNanos()+testRate)
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
         # Gather the Force and Torque results
@@ -403,7 +403,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                 # Execute a new firing that will use the thruster ramps
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
                 ThrustMessage.OnTimeRequest =  [thrDurationTime*macros.NANO2SEC]
-                thrCmdMsg.write(ThrustMessage, TotalSim.TotalSim.getCurrentNanos()+testRate)
+                thrCmdMsg.write(ThrustMessage, TotalSim.getCurrentNanos()+testRate)
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
                 # Extract log variables and plot the results
@@ -523,10 +523,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
 
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
                 ThrustMessage.OnTimeRequest = [COtime * 10.]
-                thrCmdMsg.write(ThrustMessage, TotalSim.TotalSim.getCurrentNanos()+testRate)
+                thrCmdMsg.write(ThrustMessage, TotalSim.getCurrentNanos()+testRate)
                 executeSimRun(TotalSim, thrusterSet, testRate, int(COtime * 1.0 / macros.NANO2SEC))
                 ThrustMessage.OnTimeRequest = [COrestart]
-                thrCmdMsg.write(ThrustMessage, TotalSim.TotalSim.getCurrentNanos()+testRate)
+                thrCmdMsg.write(ThrustMessage, TotalSim.getCurrentNanos()+testRate)
                 executeSimRun(TotalSim, thrusterSet, testRate, int(COrestart * 1.0 / macros.NANO2SEC + sparetime))
 
                 # Extract log variables and plot the results
@@ -635,10 +635,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
 
             executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
             ThrustMessage.OnTimeRequest = [RDstart]
-            thrCmdMsg.write(ThrustMessage, TotalSim.TotalSim.getCurrentNanos()+testRate)
+            thrCmdMsg.write(ThrustMessage, TotalSim.getCurrentNanos()+testRate)
             executeSimRun(TotalSim, thrusterSet, testRate, int((RDstart+ RDrestart) * 1.0 / macros.NANO2SEC))
             ThrustMessage.OnTimeRequest = [RDlength]
-            thrCmdMsg.write(ThrustMessage, TotalSim.TotalSim.getCurrentNanos()+testRate)
+            thrCmdMsg.write(ThrustMessage, TotalSim.getCurrentNanos()+testRate)
             executeSimRun(TotalSim, thrusterSet, testRate, int(RDlength * 1.0 / macros.NANO2SEC + sparetime))
 
             # Extract log variables and plot the results

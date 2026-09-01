@@ -78,10 +78,10 @@ class EventHandlerClass:
         if self.eventActive == False:
             return(nextTime)
         nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
-        if self.prevTime < 0 or (parentSim.TotalSim.getCurrentNanos()%self.eventRate == 0):
-            nextTime = parentSim.TotalSim.getCurrentNanos() + self.eventRate
+        if self.prevTime < 0 or (parentSim.getCurrentNanos()%self.eventRate == 0):
+            nextTime = parentSim.getCurrentNanos() + self.eventRate
             eventCount = self.checkCall(parentSim)
-            self.prevTime = parentSim.TotalSim.getCurrentNanos()
+            self.prevTime = parentSim.getCurrentNanos()
             if eventCount > 0:
                 self.eventActive = False
                 self.operateCall(parentSim)
@@ -421,6 +421,9 @@ class SimBaseClass:
         """
         self.StopTime = TimeStop
 
+    def getCurrentNanos(self):
+        return self.TotalSim.getCurrentNanos()
+
     @deprecated.deprecated("2024/09/06",
         "Calling 'RecordLogVars' is deprecated and unnecessary."
     )
@@ -450,6 +453,9 @@ class SimBaseClass:
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
+
+    def singleStepProcesses(self):
+        self.TotalSim.singleStepProcesses()
 
     # @deprecated.deprecated("2024/09/06",
     #     "Deprecated way to access logged variables."

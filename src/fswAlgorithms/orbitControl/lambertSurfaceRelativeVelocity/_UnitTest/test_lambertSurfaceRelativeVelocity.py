@@ -112,7 +112,7 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
     unitTestSim.AddModelToTask(unitTaskName, desiredVelocityOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # pull module data
     vDesired = desiredVelocityOutMsgRec.vDesired_N[0]

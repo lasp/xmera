@@ -109,7 +109,7 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, dvBurnCmdOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # pull module data
     dv = dvBurnCmdOutMsgRec.dvInrtlCmd[0]  # commanded Delta-V

@@ -128,12 +128,12 @@ def formationBarycenterTestFunction(show_plots, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, barycenterOutMsg)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     barycenterModule.useOrbitalElements = True
     barycenterModule.mu = mu
 
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # Pull module data
     barycenter = barycenterOutMsg.r_BN_N

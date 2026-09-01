@@ -188,25 +188,25 @@ def pointCloudTriangulationTestFunction(show_plots, p1_n, p2_cam, p3_scRot, accu
         if i < p1_n:
             ephemerisInMsgData.v_BdyZero_N = v_C1N_N  # use v_C1_N instead of v_BN_N for accurate unit test
             ephemerisInMsgData.timeTag = time1 * macros.NANO2SEC
-            ephemerisInMsg.write(ephemerisInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+            ephemerisInMsg.write(ephemerisInMsgData, unitTestSim.getCurrentNanos())
 
             navTransInMsgData.v_BN_N = np.array([0., 0., 0.])
             navTransInMsgData.timeTag = 0.
-            navTransInMsg.write(navTransInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+            navTransInMsg.write(navTransInMsgData, unitTestSim.getCurrentNanos())
         else:
             ephemerisInMsgData.v_BdyZero_N = np.array([0., 0., 0.])
             ephemerisInMsgData.timeTag = 0.
-            ephemerisInMsg.write(ephemerisInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+            ephemerisInMsg.write(ephemerisInMsgData, unitTestSim.getCurrentNanos())
 
             navTransInMsgData.v_BN_N = v_C1N_N  # use v_C1_N instead of v_BN_N for accurate unit test
             navTransInMsgData.timeTag = time1 * macros.NANO2SEC
-            navTransInMsg.write(navTransInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+            navTransInMsg.write(navTransInMsgData, unitTestSim.getCurrentNanos())
 
         directionOfMotionInMsgData.valid = True
         directionOfMotionInMsgData.cameraID = ID
         directionOfMotionInMsgData.timeOfDirectionEstimate = time2
         directionOfMotionInMsgData.v_C_hat = v_C_hat
-        directionOfMotionInMsg.write(directionOfMotionInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+        directionOfMotionInMsg.write(directionOfMotionInMsgData, unitTestSim.getCurrentNanos())
 
         keyPointsInMsgData.valid = True
         keyPointsInMsgData.cameraID = ID
@@ -217,14 +217,14 @@ def pointCloudTriangulationTestFunction(show_plots, p1_n, p2_cam, p3_scRot, accu
         keyPointsInMsgData.keyPoints_secondImage = keyPoints2Stacked
         keyPointsInMsgData.sigma_BN_secondImage = sigma_B2N
         keyPointsInMsgData.keyPointsFound = numberOfPoints
-        keyPointsInMsg.write(keyPointsInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+        keyPointsInMsg.write(keyPointsInMsgData, unitTestSim.getCurrentNanos())
 
         cameraConfigInMsgData.cameraID = ID
         cameraConfigInMsgData.fieldOfView = fov
         cameraConfigInMsgData.resolution = res
         cameraConfigInMsgData.cameraPos_B = r_CB_B
         cameraConfigInMsgData.sigma_CB = sigma_CB
-        cameraConfigInMsg.write(cameraConfigInMsgData, unitTestSim.TotalSim.getCurrentNanos())
+        cameraConfigInMsg.write(cameraConfigInMsgData, unitTestSim.getCurrentNanos())
 
         unitTestSim.ConfigureStopTime(i * testProcessRate)
         unitTestSim.ExecuteSimulation()

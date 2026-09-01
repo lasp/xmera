@@ -118,7 +118,7 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
 
     # run simulation
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # pull module data
     energyData = fluxOutMsgRec.energies[0]

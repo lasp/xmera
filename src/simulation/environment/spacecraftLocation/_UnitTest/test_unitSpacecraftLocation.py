@@ -101,7 +101,7 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
         testFailCount += 1
         testMessages.append("FAILED: " + module.modelTag + " Module failed default polar radius check.")
 
-    scSim.TotalSim.singleStepProcesses()
+    scSim.singleStepProcesses()
 
     accessMsg = module.accessOutMsgs[0].read()
 

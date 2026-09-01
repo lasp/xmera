@@ -210,7 +210,7 @@ def StateUpdateRelOD(show_plots):
             inputData.covar_N = [5.*1E-2, 0., 0.,
                                  0., 5.*1E-2, 0.,
                                  0., 0., 5.*1E-2]
-            opnavInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
+            opnavInMsg.write(inputData, unitTestSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
@@ -229,7 +229,7 @@ def StateUpdateRelOD(show_plots):
             inputData.covar_N = [5.*1E-2, 0.,0.,
                                  0., 5.*1E-2, 0.,
                                  0., 0., 5.*1E-2]
-            opnavInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
+            opnavInMsg.write(inputData, unitTestSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
