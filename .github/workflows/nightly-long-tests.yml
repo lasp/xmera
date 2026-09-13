@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       fuzz_duration:
-        description: 'Duration per fuzz target (e.g. 120s, 10m)'
-        default: '120s'
+        description: 'Duration per fuzz test (e.g. 300s, 10m). Total wall clock is this times the number of fuzz tests.'
+        default: '300s'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,9 +38,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .fuzztest_corpus
-          key: fuzz-corpus-${{ runner.os }}-${{ github.run_id }}
+          key: fuzz-corpus-v2-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
-            fuzz-corpus-${{ runner.os }}-
+            fuzz-corpus-v2-${{ runner.os }}-
 
       - name: Ensure fuzz corpus directory exists
         run: mkdir -p .fuzztest_corpus
@@ -119,19 +119,19 @@ jobs:
 
       - name: Run C/C++ tests (includes fuzz smoke)
         working-directory: build
-        env:
-          XMERA_FUZZTEST_REPLAY_CORPUS: __ALL__
-          XMERA_FUZZTEST_REPLAY_FOR: inf
         run: ctest --output-on-failure
 
+      # The duration applies to each fuzz test, not to each binary. The script does each
+      # FUZZ_TEST separately, thus each test can have its own corpus directory. There are
+      # seven fuzz tests, thus 300s gives approximately 35 minutes.
       - name: Run long fuzzers
         working-directory: build
         env:
           ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1:check_initialization_order=1
-          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1:suppressions=/dev/null
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
         run: |
           "${GITHUB_WORKSPACE}/.github/scripts/run_long_fuzzers.sh" "$(pwd)" "${GITHUB_WORKSPACE}/fuzz-logs" \
-            --fuzz-for 600s \
+            --fuzz-for "${{ inputs.fuzz_duration || '300s' }}" \
             --corpus "${XMERA_FUZZTEST_CORPUS_DIR}"
 
       - name: Archive fuzz logs
@@ -155,4 +155,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .fuzztest_corpus
-          key: fuzz-corpus-${{ runner.os }}-${{ github.run_id }}
+          key: fuzz-corpus-v2-${{ runner.os }}-${{ github.run_id }}

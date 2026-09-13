@@ -30,3 +30,31 @@ endif()
 
 find_package(GTest REQUIRED)
 enable_testing()
+
+# Give each test found by gtest_discover_tests more than one CTest label.
+#
+# The PROPERTIES option of gtest_discover_tests cannot do this. It sends the properties
+# through a command line and expands them again without quotation marks, thus a
+# "fuzz;fuzz-smoke" pair becomes the two arguments "LABELS fuzz fuzz-smoke". That leaves an
+# odd number of tokens, and the second label never becomes a label.
+#
+# gtest_discover_tests finds the test names only after the binary is built, thus the labels
+# must be applied when ctest runs. CTest includes the files in the TEST_INCLUDE_FILES
+# directory property in order, and gtest_discover_tests appends its generated file to that
+# property. Thus the file written here is included after it, and the list of names is
+# available.
+#
+# Give the gtest_discover_tests call a TEST_LIST, and call this function after it and in the
+# same directory. The names of the labels come after the two first arguments.
+function(xmera_label_discovered_tests TARGET LIST_VAR)
+  set(_script "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_labels.cmake")
+  # ${LIST_VAR} expands now, to the name of the variable. \${${LIST_VAR}} writes that name
+  # into the file, thus ctest expands it later. set_tests_properties replaces the labels, it
+  # does not add to them, thus this call must give all of them.
+  file(WRITE "${_script}"
+    "if(${LIST_VAR})\n"
+    "  set_tests_properties(\${${LIST_VAR}} PROPERTIES LABELS \"${ARGN}\")\n"
+    "endif()\n"
+  )
+  set_property(DIRECTORY APPEND PROPERTY TEST_INCLUDE_FILES "${_script}")
+endfunction()
