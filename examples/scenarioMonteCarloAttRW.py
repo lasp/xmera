@@ -273,19 +273,19 @@ def run(saveFigures, case, show_plots):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
-    retentionPolicy.addMessageLog(rwMotorTorqueMsgName, ["motorTorque"])
-    retentionPolicy.addMessageLog(guidMsgName, ["sigma_BR", "omega_BR_B"])
-    retentionPolicy.addMessageLog(transMsgName, ["r_BN_N"])
-    retentionPolicy.addMessageLog(rwSpeedMsgName, ["wheelSpeeds"])
-    retentionPolicy.addMessageLog(voltMsgName, ["voltage"])
+    retentionPolicy.add_message_log(rwMotorTorqueMsgName, ["motorTorque"])
+    retentionPolicy.add_message_log(guidMsgName, ["sigma_BR", "omega_BR_B"])
+    retentionPolicy.add_message_log(transMsgName, ["r_BN_N"])
+    retentionPolicy.add_message_log(rwSpeedMsgName, ["wheelSpeeds"])
+    retentionPolicy.add_message_log(voltMsgName, ["voltage"])
     for msgName in rwOutName:
-        retentionPolicy.addMessageLog(msgName, ["u_current"])
+        retentionPolicy.add_message_log(msgName, ["u_current"])
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
-        retentionPolicy.setDataCallback(plotSim)
+        retentionPolicy.set_data_callback(plotSim)
     if saveFigures:
         # plot data only if show_plots is true, otherwise just retain
-        retentionPolicy.setDataCallback(plotSimAndSave)
+        retentionPolicy.set_data_callback(plotSimAndSave)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case == 1:

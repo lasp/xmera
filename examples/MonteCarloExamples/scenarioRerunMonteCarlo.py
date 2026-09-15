@@ -76,7 +76,7 @@ def run(time=None):
     # Step 4: Add any additional retention policies desired
     retentionPolicy = RetentionPolicy()
     retentionPolicy.logRate = int(2E9)
-    retentionPolicy.addMessageLog("attGuidMsg", ["sigma_BR"])
+    retentionPolicy.add_message_log("attGuidMsg", ["sigma_BR"])
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
 

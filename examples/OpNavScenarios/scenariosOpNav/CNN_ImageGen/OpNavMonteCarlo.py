@@ -100,8 +100,8 @@ def run(show_plots):
 
         # Add retention policy
         retentionPolicy = RetentionPolicy()
-        retentionPolicy.addMessageLog(retainedMessageName1, [var1, var2])
-        retentionPolicy.addMessageLog(retainedMessageName2, [var3])
+        retentionPolicy.add_message_log(retainedMessageName1, [var1, var2])
+        retentionPolicy.add_message_log(retainedMessageName2, [var3])
         monteCarlo.addRetentionPolicy(retentionPolicy)
 
         failures = monteCarlo.executeSimulations()

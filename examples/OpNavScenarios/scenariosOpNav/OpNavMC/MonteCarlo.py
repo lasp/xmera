@@ -160,10 +160,10 @@ def run(show_plots):
 
         # Add retention policy
         retentionPolicy = RetentionPolicy()
-        retentionPolicy.addMessageLog(retainedMessageNameSc, ["r_BN_N", "v_BN_N", "sigma_BN"])
-        retentionPolicy.addMessageLog(retainedMessageNameOpNav, ["r_BN_N", "covar_N", "r_BN_C", "covar_C", "valid"])
-        retentionPolicy.addMessageLog(retainedMessageNameFilt, ["state", "covar"])
-        retentionPolicy.setDataCallback(displayPlots)
+        retentionPolicy.add_message_log(retainedMessageNameSc, ["r_BN_N", "v_BN_N", "sigma_BN"])
+        retentionPolicy.add_message_log(retainedMessageNameOpNav, ["r_BN_N", "covar_N", "r_BN_C", "covar_C", "valid"])
+        retentionPolicy.add_message_log(retainedMessageNameFilt, ["state", "covar"])
+        retentionPolicy.set_data_callback(displayPlots)
         monteCarlo.addRetentionPolicy(retentionPolicy)
 
         failures = monteCarlo.executeSimulations()

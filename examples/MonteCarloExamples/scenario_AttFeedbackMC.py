@@ -78,9 +78,9 @@ def run(show_plots):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     samplingTime = int(2E9)
-    retentionPolicy.addMessageLog(sNavTransName, ["r_BN_N"])
-    retentionPolicy.addMessageLog(attGuidName, ["sigma_BR", "omega_BR_B"])
-    retentionPolicy.setDataCallback(displayPlots)
+    retentionPolicy.add_message_log(sNavTransName, ["r_BN_N"])
+    retentionPolicy.add_message_log(attGuidName, ["sigma_BR", "omega_BR_B"])
+    retentionPolicy.set_data_callback(displayPlots)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     failures = monteCarlo.executeSimulations()

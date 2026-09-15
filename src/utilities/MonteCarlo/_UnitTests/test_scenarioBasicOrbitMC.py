@@ -164,10 +164,10 @@ def test_MonteCarloSimulation(show_plots):
 
         # Add retention policy
         retentionPolicy = RetentionPolicy()
-        retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
-        retentionPolicy.addVariableLog("helloworldModule.GetTicker()")
-        retentionPolicy.addVariableLog("bskSat.totOrbEnergy")
-        retentionPolicy.setDataCallback(myDataCallback)
+        retentionPolicy.add_message_log(retainedMessageName, [var1, var2])
+        retentionPolicy.add_variable_log("helloworldModule.GetTicker()")
+        retentionPolicy.add_variable_log("bskSat.totOrbEnergy")
+        retentionPolicy.set_data_callback(myDataCallback)
         monteCarlo.addRetentionPolicy(retentionPolicy)
 
         failures = monteCarlo.executeSimulations()

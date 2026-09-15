@@ -552,7 +552,7 @@ class Controller:
         for simIndex in rng:
             data = self.getRetainedData(simIndex)
             for retentionPolicy in retentionPolicies:
-                retentionPolicy.executeCallback(data)
+                retentionPolicy.execute_callback(data)
 
     def executeSimulations(self):
         """
@@ -827,7 +827,7 @@ class SimulationExecutor:
             if len(simParams.retentionPolicies) > 0:
                 if simParams.verbose:
                     print("Adding retained data")
-                RetentionPolicy.addRetentionPoliciesToSim(simInstance, simParams.retentionPolicies)
+                RetentionPolicy.add_retention_policies_to_sim(simInstance, simParams.retentionPolicies)
 
             if simParams.verbose:
                 print("Executing simulation")
@@ -846,7 +846,7 @@ class SimulationExecutor:
                 if simParams.verbose:
                     print("Retaining data for run in", retentionFile)
 
-                retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
+                retainedData = RetentionPolicy.get_data_for_retention(simInstance, simParams.retentionPolicies)
                 dataOutQueue.put((retainedData, simParams.index, None))
                 time.sleep(1)
 
