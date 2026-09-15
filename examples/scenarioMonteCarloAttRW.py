@@ -26,16 +26,16 @@ on the :ref:`scenarioAttitudeFeedbackRW` file.
 Enable Terminal Bar to Show Simulation Progress
 -----------------------------------------------
 
-To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationParameters to true.
+To enable the progress bar, set the ``show_progress_bar`` data member of the SimulationParameters class to true.
 
 .. code-block:: python
 
      monteCarlo = Controller()
-     monteCarlo.setShowProgressBar(True)
+     monteCarlo.set_show_progress_bar(True)
 
-Method ``setShowProgressBar`` should be used to set variable ``showProgressBar`` as True with the above statement. After
-enabling the progress bar, all the simulation run by ``monteCarlo.ExecuteSimulation()`` and
-montoCarlo.runInitialConditions will show the progress bar in the terminal.
+The statement above uses the ``set_show_progress_bar`` method to set the ``show_progress_bar`` variable to True.
+When the progress bar is enabled, ``monteCarlo.execute_simulations()`` and
+``monteCarlo.run_initial_conditions`` show the progress bar in the terminal for all simulation runs.
 
 Setup Changes for Monte-Carlo Runs
 ----------------------------------
@@ -213,27 +213,27 @@ def run(saveFigures, case, show_plots):
 
     # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to
     # execute and returns it. Within this function, the simulation is created and configured
-    monteCarlo.setSimulationFunction(createScenarioAttitudeFeedbackRW)
+    monteCarlo.set_simulation_function(createScenarioAttitudeFeedbackRW)
 
     # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
-    monteCarlo.setExecutionFunction(executeScenario)
+    monteCarlo.set_execution_function(executeScenario)
 
     # A Monte Carlo simulation must define how many simulation runs to execute
-    monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+    monteCarlo.set_execution_count(NUMBER_OF_RUNS)
 
     # The simulations can have random seeds of each simulation dispersed randomly
-    monteCarlo.setShouldDisperseSeeds(True)
+    monteCarlo.set_should_disperse_seeds(True)
 
-    monteCarlo.setShowProgressBar(True)
+    monteCarlo.set_show_progress_bar(True)
     # Optionally set the number of cores to use
-    # monteCarlo.setThreadCount(PROCESSES)
+    # monteCarlo.set_num_worker_processes(PROCESSES)
 
     # Whether to print more verbose information during the run
-    monteCarlo.setVerbose(VERBOSE)
+    monteCarlo.set_verbose(VERBOSE)
 
     # We set up where to retain the data to.
     dirName = "montecarlo_test" + str(os.getpid())
-    monteCarlo.setArchiveDir(dirName)
+    monteCarlo.set_archive_dir(dirName)
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
@@ -253,20 +253,20 @@ def run(saveFigures, case, show_plots):
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
 
     # Add dispersions with their dispersion type
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
-    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, std_angle=0.1))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
-    monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
-    monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
-    monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.add_dispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.add_dispersion(UniformDispersion(dispMass, ([750.0 - 0.05 * 750, 750.0 + 0.05 * 750])))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.add_dispersion(InertiaTensorDispersion(dispInertia, std_angle=0.1))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
+    monteCarlo.add_dispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05 * 100, 100.0 + 0.05 * 100])))
+    monteCarlo.add_dispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05 * 200, 200.0 + 0.05 * 200])))
+    monteCarlo.add_dispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05 * 300, 300.0 + 0.05 * 300])))
+    monteCarlo.add_dispersion(UniformDispersion(dispVoltageIO_0, ([0.2 / 10. - 0.05 * 0.2 / 10., 0.2 / 10. + 0.05 * 0.2 / 10.])))
+    monteCarlo.add_dispersion(UniformDispersion(dispVoltageIO_1, ([0.2 / 10. - 0.05 * 0.2 / 10., 0.2 / 10. + 0.05 * 0.2 / 10.])))
+    monteCarlo.add_dispersion(UniformDispersion(dispVoltageIO_2, ([0.2 / 10. - 0.05 * 0.2 / 10., 0.2 / 10. + 0.05 * 0.2 / 10.])))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also has a callback,
@@ -286,12 +286,12 @@ def run(saveFigures, case, show_plots):
     if saveFigures:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.set_data_callback(plotSimAndSave)
-    monteCarlo.addRetentionPolicy(retentionPolicy)
+    monteCarlo.add_retention_policy(retentionPolicy)
 
     if case == 1:
         # After the monteCarlo run is configured, it is executed.
         # This method returns the list of jobs that failed.
-        failures = monteCarlo.executeSimulations()
+        failures = monteCarlo.execute_simulations()
 
         assert len(failures) == 0, "No runs should fail"
 
@@ -301,7 +301,7 @@ def run(saveFigures, case, show_plots):
 
         # Then retained data from any run can then be accessed in the form of a dictionary
         # with two sub-dictionaries for messages and variables:
-        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        retainedData = monteCarloLoaded.get_retained_data(NUMBER_OF_RUNS - 1)
         assert retainedData is not None, "Retained data should be available after execution"
         assert "messages" in retainedData, "Retained data should retain messages"
         assert guidMsgName + ".sigma_BR" in retainedData["messages"], "Retained messages should exist"
@@ -312,11 +312,11 @@ def run(saveFigures, case, show_plots):
         oldOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
 
         # Rerunning the case shouldn't fail
-        failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+        failed = monteCarloLoaded.re_run_cases([NUMBER_OF_RUNS - 1])
         assert len(failed) == 0, "Should rerun case successfully"
 
         # Now access the newly retained data to see if it changed
-        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        retainedData = monteCarloLoaded.get_retained_data(NUMBER_OF_RUNS - 1)
         newOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
         for k1, v1 in enumerate(oldOutput):
             for k2, v2 in enumerate(v1):
@@ -325,8 +325,8 @@ def run(saveFigures, case, show_plots):
 
         # We can also access the initial parameters
         # The random seeds should differ between runs, so we will test that
-        params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-        params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+        params1 = monteCarloLoaded.get_parameters(NUMBER_OF_RUNS - 1)
+        params2 = monteCarloLoaded.get_parameters(NUMBER_OF_RUNS - 2)
         assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
         for dispName in dispList:
             assert dispName in params1, "dispersion should be applied"
@@ -338,25 +338,25 @@ def run(saveFigures, case, show_plots):
         # We can plot only runs 4,6,7 overlapped
         # monteCarloLoaded.executeCallbacks([4,6,7])
         # or execute the plot on all runs
-        monteCarloLoaded.executeCallbacks()
+        monteCarloLoaded.execute_callbacks()
 
     #########################################################
     if case == 2:
         # Now run initial conditions
         icName = path + "/Support/run_MC_IC"
-        monteCarlo.setICDir(icName)
-        monteCarlo.setICRunFlag(True)
+        monteCarlo.set_ic_dir(icName)
+        monteCarlo.set_should_run_using_ic(True)
         numberICs = 3
-        monteCarlo.setExecutionCount(numberICs)
+        monteCarlo.set_execution_count(numberICs)
 
         # Rerunning the case shouldn't fail
         runsList = list(range(numberICs))
-        failed = monteCarlo.runInitialConditions(runsList)
+        failed = monteCarlo.run_initial_conditions(runsList)
         assert len(failed) == 0, "Should run ICs successfully"
 
         # monteCarlo.executeCallbacks([4,6,7])
         runsList = list(range(numberICs))
-        monteCarlo.executeCallbacks(runsList)
+        monteCarlo.execute_callbacks(runsList)
 
         # And possibly show the plots
         if show_plots:

@@ -122,15 +122,15 @@ def run():
 
     # First, the `Controller` class is used in order to define the simulation
     monteCarlo = MyController()
-    monteCarlo.setSimulationFunction(MySimulation)
-    monteCarlo.setExecutionFunction(executeScenario)
-    monteCarlo.setExecutionCount(12)
-    monteCarlo.setShouldDisperseSeeds(True)
-    monteCarlo.setThreadCount(6)
-    monteCarlo.setVerbose(False)
+    monteCarlo.set_simulation_function(MySimulation)
+    monteCarlo.set_execution_function(executeScenario)
+    monteCarlo.set_execution_count(12)
+    monteCarlo.set_should_disperse_seeds(True)
+    monteCarlo.set_num_worker_processes(6)
+    monteCarlo.set_verbose(False)
 
     dirName = "montecarlo_test" + str(os.getpid())
-    monteCarlo.setArchiveDir(dirName)
+    monteCarlo.set_archive_dir(dirName)
 
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
     #
@@ -145,7 +145,7 @@ def run():
     # sim_model.delete_doubleArray(startTimeArray)
 
     # After the monteCarlo run is configured, it is executed.
-    failures = monteCarlo.executeSimulations()
+    failures = monteCarlo.execute_simulations()
 
     # Now we clean up data from this test
     shutil.rmtree(dirName)

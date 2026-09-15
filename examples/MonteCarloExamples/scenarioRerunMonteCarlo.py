@@ -48,7 +48,7 @@ def run(time=None):
     scenarioName = "scenario_AttFeedback"
 
     monteCarlo = Controller()
-    monteCarlo.numProcess = 3 # Specify number of processes to spawn
+    monteCarlo.num_processes = 3 # Specify number of processes to spawn
     runsList = [1]  # Specify the run numbers to be rerun
 
     #
@@ -63,24 +63,24 @@ def run(time=None):
         getattr(module, scenarioName).simBaseTime = time
     executionModule = getattr(module, "runScenario")
 
-    monteCarlo.setSimulationFunction(simulationModule)
-    monteCarlo.setExecutionFunction(executionModule)
-    monteCarlo.setICDir(icName)
-    monteCarlo.setICRunFlag(True)
-    monteCarlo.setArchiveDir(newDataDir)
-    monteCarlo.setExecutionCount(len(runsList))
-    monteCarlo.setShouldDisperseSeeds(False)
-    monteCarlo.shouldArchiveParameters = False
+    monteCarlo.set_simulation_function(simulationModule)
+    monteCarlo.set_execution_function(executionModule)
+    monteCarlo.set_ic_dir(icName)
+    monteCarlo.set_should_run_using_ic(True)
+    monteCarlo.set_archive_dir(newDataDir)
+    monteCarlo.set_execution_count(len(runsList))
+    monteCarlo.set_should_disperse_seeds(False)
+    monteCarlo.should_archive_parameters = False
 
 
     # Step 4: Add any additional retention policies desired
     retentionPolicy = RetentionPolicy()
-    retentionPolicy.logRate = int(2E9)
+    retentionPolicy.log_rate = int(2E9)
     retentionPolicy.add_message_log("attGuidMsg", ["sigma_BR"])
-    monteCarlo.addRetentionPolicy(retentionPolicy)
+    monteCarlo.add_retention_policy(retentionPolicy)
 
 
-    failed = monteCarlo.runInitialConditions(runsList)
+    failed = monteCarlo.run_initial_conditions(runsList)
     assert len(failed) == 0, "Should run ICs successfully"
 
 

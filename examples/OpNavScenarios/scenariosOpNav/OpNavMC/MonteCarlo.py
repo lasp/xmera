@@ -132,13 +132,13 @@ def run(show_plots):
         myCreationFunction = scenario.scenario_OpNav
 
         monteCarlo = Controller()
-        monteCarlo.setShouldDisperseSeeds(True)
-        monteCarlo.setExecutionFunction(myExecutionFunction)
-        monteCarlo.setSimulationFunction(myCreationFunction)
-        monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
-        monteCarlo.setThreadCount(PROCESSES)
-        monteCarlo.setVerbose(True)
-        monteCarlo.setArchiveDir(dirName)
+        monteCarlo.set_should_disperse_seeds(True)
+        monteCarlo.set_execution_function(myExecutionFunction)
+        monteCarlo.set_simulation_function(myCreationFunction)
+        monteCarlo.set_execution_count(NUMBER_OF_RUNS)
+        monteCarlo.set_num_worker_processes(PROCESSES)
+        monteCarlo.set_verbose(True)
+        monteCarlo.set_archive_dir(dirName)
 
         # Add some dispersions
         dispDict = {}
@@ -154,9 +154,9 @@ def run(show_plots):
         disp2Name = 'get_DynModel().scObject.hub.v_CN_NInit'
         dispFOV = 'get_DynModel().cameraMod.fieldOfView'
         dispNoise = 'get_FswModel().relativeOD.noiseSF'
-        monteCarlo.addDispersion(UniformDispersion(dispNoise, [1, 10]))
-        monteCarlo.addDispersion(UniformDispersion(dispFOV, [np.deg2rad(40) - np.deg2rad(0.001), np.deg2rad(40) + np.deg2rad(0.001)]))
-        monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))
+        monteCarlo.add_dispersion(UniformDispersion(dispNoise, [1, 10]))
+        monteCarlo.add_dispersion(UniformDispersion(dispFOV, [np.deg2rad(40) - np.deg2rad(0.001), np.deg2rad(40) + np.deg2rad(0.001)]))
+        monteCarlo.add_dispersion(OrbitalElementDispersion(disp1Name, disp2Name, dispDict))
 
         # Add retention policy
         retentionPolicy = RetentionPolicy()
@@ -164,13 +164,13 @@ def run(show_plots):
         retentionPolicy.add_message_log(retainedMessageNameOpNav, ["r_BN_N", "covar_N", "r_BN_C", "covar_C", "valid"])
         retentionPolicy.add_message_log(retainedMessageNameFilt, ["state", "covar"])
         retentionPolicy.set_data_callback(displayPlots)
-        monteCarlo.addRetentionPolicy(retentionPolicy)
+        monteCarlo.add_retention_policy(retentionPolicy)
 
-        failures = monteCarlo.executeSimulations()
+        failures = monteCarlo.execute_simulations()
         assert len(failures) == 0, "No runs should fail"
 
         if show_plots:
-            monteCarlo.executeCallbacks()
+            monteCarlo.execute_callbacks()
             plt.show()
 
     return
