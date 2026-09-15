@@ -383,7 +383,7 @@ class Controller:
                 if os.path.exists(self.archiveDir):
                     shutil.rmtree(self.archiveDir)
                 os.mkdir(self.archiveDir)
-                self.dataWriter.setLogDir(self.archiveDir)
+                self.dataWriter.set_log_dir(self.archiveDir)
                 self.dataWriter.start()
             else:
                 print("ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
@@ -585,8 +585,8 @@ class Controller:
         numSims = self.executionCount
 
         # start data writer process
-        self.dataWriter.setLogDir(self.archiveDir)
-        self.dataWriter.setVarCast(self.varCast)
+        self.dataWriter.set_log_dir(self.archiveDir)
+        self.dataWriter.set_var_cast(self.varCast)
         self.dataWriter.start()
 
         # Avoid building a full list of all simulations to run in memory,

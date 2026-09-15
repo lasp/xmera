@@ -16,10 +16,10 @@ class DataWriter(mp.Process):
     def __init__(self, q):
         super(DataWriter, self).__init__()
         self._queue = q
-        self._endToken = None
-        self._varCast = None
-        self._logDir = ""
-        self._dataFiles = set()
+        self._end_token = None
+        self._var_cast = None
+        self._log_dir = ""
+        self._data_files = set()
 
     def run(self):
         """ The process run loop. Gets data from a queue and writes it out to per message csv files
@@ -28,92 +28,92 @@ class DataWriter(mp.Process):
             Returns:
                 Nil
         """
-        while self._endToken is None:
-            data, mcSimIndex, self._endToken = self._queue.get()
-            print("Starting to log: " + str(mcSimIndex))
-            if self._endToken:
+        while self._end_token is None:
+            data, mc_sim_index, self._end_token = self._queue.get()
+            print("Starting to log: " + str(mc_sim_index))
+            if self._end_token:
                 continue
-            print("Logging Dataframes from run " + str(mcSimIndex))
-            for dictName, dictData in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
-                for itemName, itemData in dictData.items(): # Loop through all items and their data
+            print("Logging Dataframes from run " + str(mc_sim_index))
+            for dict_name, dict_data in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
+                for item_name, item_data in dict_data.items(): # Loop through all items and their data
 
-                    if itemName == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
-                        itemName = "OrbitalElements.Omega_Capital"
+                    if item_name == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
+                        item_name = "OrbitalElements.Omega_Capital"
 
-                    filePath = self._logDir + itemName + ".data"
-                    self._dataFiles.add(filePath)
+                    file_path = self._log_dir + item_name + ".data"
+                    self._data_files.add(file_path)
 
                     # Is the data a vector, scalar, or non-existant?
                     try:
-                        variLen = itemData[:,1:].shape[1]
+                        vari_len = item_data[:,1:].shape[1]
                     except:
-                        variLen = 0
+                        vari_len = 0
 
                     # Generate the MultiLabel
-                    outerLabel = [mcSimIndex]
-                    innerLabel = []
+                    outer_label = [mc_sim_index]
+                    inner_label = []
 
-                    for i in range(variLen):
-                        innerLabel.append(i)
-                    if variLen == 0:
-                        innerLabel.append(0) # May not be necessary, might be able to leave blank and get a None
-                    labels = pd.MultiIndex.from_product([outerLabel, innerLabel], names=["runNum", "varIdx"])
+                    for i in range(vari_len):
+                        inner_label.append(i)
+                    if vari_len == 0:
+                        inner_label.append(0) # May not be necessary, might be able to leave blank and get a None
+                    labels = pd.MultiIndex.from_product([outer_label, inner_label], names=["runNum", "varIdx"])
 
                     # Generate the individual run's dataframe
-                    if variLen >= 2:
-                        df = pd.DataFrame(itemData[:, 1:].tolist(), index=itemData[:,0], columns=labels)
-                    elif variLen == 1:
-                        df = pd.DataFrame(itemData[:, 1].tolist(), index=itemData[:,0], columns=labels)
+                    if vari_len >= 2:
+                        df = pd.DataFrame(item_data[:, 1:].tolist(), index=item_data[:,0], columns=labels)
+                    elif vari_len == 1:
+                        df = pd.DataFrame(item_data[:, 1].tolist(), index=item_data[:,0], columns=labels)
                     else:
                         df = pd.DataFrame([np.nan], columns=labels)
 
-                    for i in range(0, variLen):
+                    for i in range(0, vari_len):
                         try: # if the data is numeric reduce it to float32 rather than float64 to reduce storage footprint
                             # Note: You might think you can simplify these three lines into a single:
                             # df.iloc[:,i] = df.iloc[:,i].apply(pandas.to_numeric, downcast="float")
                             # but you'd be wrong.
-                            varComp = df.iloc[:,i]
-                            if self._varCast != None:
-                                varComp = pd.to_numeric(varComp, downcast='float')
-                            df.iloc[:,i] = varComp
+                            var_comp = df.iloc[:,i]
+                            if self._var_cast != None:
+                                var_comp = pd.to_numeric(var_comp, downcast='float')
+                            df.iloc[:,i] = var_comp
                         except:
                             pass
 
                     # If the .data file doesn't exist save the dataframe to create the file
                     # and skip the remainder of the loop
-                    if not os.path.exists(filePath):
-                        pickle.dump([df], open(filePath, "wb"))
+                    if not os.path.exists(file_path):
+                        pickle.dump([df], open(file_path, "wb"))
                         continue
 
                     # If the .data file does exists, append the message's pickle.
-                    with open(filePath, "a+b") as pkl:
+                    with open(file_path, "a+b") as pkl:
                         pickle.dump([df], pkl)
 
-            print("Finished logging dataframes from run" + str(mcSimIndex))
+            print("Finished logging dataframes from run" + str(mc_sim_index))
 
         # Sort by the MultiIndex (first by run number then by variable component)
         print("Starting to concatenate dataframes")
-        for filePath in self._dataFiles:
+        for file_path in self._data_files:
             # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
-            allData = []
-            with open(filePath, 'rb') as pkl:
+            all_data = []
+            with open(file_path, 'rb') as pkl:
                 try:
                     while True:
-                        allData.extend(pickle.load(pkl))
+                        all_data.extend(pickle.load(pkl))
                 except EOFError:
                     pass
-            allData = pd.concat(allData, axis=1)
-            newMultInd = pd.MultiIndex.from_product([list(range(allData.columns.min()[0], allData.columns.max()[0]+1)),
-                                                         list(range(allData.columns.min()[1], allData.columns.max()[1]+1))],
+            all_data = pd.concat(all_data, axis=1)
+            new_mult_ind = pd.MultiIndex.from_product([list(range(all_data.columns.min()[0], all_data.columns.max()[0]+1)),
+                                                         list(range(all_data.columns.min()[1], all_data.columns.max()[1]+1))],
                                                          names=["runNum", "varIdx"])
-            #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
-            allData = allData.reindex(columns=newMultInd)
-            allData.index.name = 'time[ns]'
-            allData.to_pickle(filePath)
+            #all_data = all_data.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
+            all_data = all_data.reindex(columns=new_mult_ind)
+            all_data.index.name = 'time[ns]'
+            all_data.to_pickle(file_path)
         print("Finished concatenating dataframes")
 
-    def setLogDir(self, logDir):
-        self._logDir = logDir
+    def set_log_dir(self, log_dir):
+        self._log_dir = log_dir
 
-    def setVarCast(self, varCast):
-        self._varCast = varCast
+    def set_var_cast(self, var_cast):
+        self._var_cast = var_cast
