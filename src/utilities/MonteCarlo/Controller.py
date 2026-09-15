@@ -776,20 +776,20 @@ class SimulationExecutor:
             # we may want to disperse parameters
             for disp in simParams.dispersions:
                 try:
-                    name = disp.getName()
+                    name = disp.get_name()
                     if name not in modifications:  # could be using a saved parameter.
-                        modifications[name] = disp.generateString(simInstance)
+                        modifications[name] = disp.generate_string(simInstance)
                         if simParams.saveDispMag:
-                            magnitudes[name] = disp.generateMagString()
+                            magnitudes[name] = disp.generate_mag_string()
                 except TypeError:
                     # This accomodates dispersion variables that are co-dependent
                     disp.generate(simInstance)
-                    for i in range(1, disp.numberOfSubDisps+1):
-                        name = disp.getName(i)
+                    for i in range(1, disp.number_of_sub_disps+1):
+                        name = disp.get_name(i)
                         if name not in modifications:  # could be using a saved parameter.
-                            modifications[name] = disp.generateString(i, simInstance)
+                            modifications[name] = disp.generate_string(i, simInstance)
                             if simParams.saveDispMag:
-                                magnitudes[name] = disp.generateMagString()
+                                magnitudes[name] = disp.generate_mag_string()
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchiveParameters:
