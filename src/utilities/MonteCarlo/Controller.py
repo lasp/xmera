@@ -367,9 +367,7 @@ class Controller:
         :return: failed The list of failed runs.
         :rtype: list[int]
         """
-        # the list of failures
-        failed = []
-
+        failed_simulations = []
         for run_index in run_indexes:
             if self.verbose:
                 print("Rerunning", run_index)
@@ -396,13 +394,13 @@ class Controller:
 
             if not success:
                 print("Error re-executing run", run_index)
-                failed.append(run_index)
+                failed_simulations.append(run_index)
 
-        if len(failed) > 0:
-            failed.sort()
-            print("Failed rerunning run_indexes:", failed)
+        if len(failed_simulations) > 0:
+            failed_simulations.sort()
+            print("Failed rerunning run_indexes:", failed_simulations)
 
-        return failed
+        return failed_simulations
 
     def run_initial_conditions(self, run_indexes, ic_directory):
         """
@@ -413,12 +411,9 @@ class Controller:
         :param ic_directory: The directory that contains the initial conditions data files.
         :type ic_directory: str
 
-        :return: failed: The list of failed runs.
+        :return: failed_indexes: The list of failed runs.
         :rtype: list
         """
-        # the list of failures
-        failed = []
-
         assert ic_directory != "", "No initial condition directory was given"
 
         if self.verbose:
@@ -426,7 +421,7 @@ class Controller:
                                                                                self.num_processes))
         self._setup_archive_directory()
 
-        # Copy IC files into new MC directory
+        # Copy the initial conditions files of the run_indexes into the new Monte Carlo directory
         file_paths = [os.path.join(ic_directory, "run" + str(case) + ".json") for case in run_indexes]
         destination_file_paths = [self._make_initial_conditions_directory_file_name(case) for case in run_indexes]
         [shutil.copyfile(src, dst) for src, dst in zip(file_paths, destination_file_paths)]
@@ -443,6 +438,7 @@ class Controller:
         self.data_writer.start()
 
         jobs_finished = 0  # keep track of what simulations have finished
+        failed_indexes = []
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
         # It is called within worker processes with each worker's simulation parameters
@@ -459,7 +455,7 @@ class Controller:
                     try:
                         simulation_executor((sim, self.data_out_queue))
                     except:
-                        failed.append(i)
+                        failed_indexes.append(i)
                 i += 1
                 progress_bar.update(i)
         else:
@@ -480,7 +476,7 @@ class Controller:
                     # yields results *as* the workers finish jobs
                     for result in pool.imap_unordered(simulation_executor, [(x, self.data_out_queue) for x in sim_generator]):
                         if result[0] is not True:  # workers return True on success
-                            failed.append(result[1])  # add failed jobs to the list of failures
+                            failed_indexes.append(result[1])  # add failed jobs to the list of failures
                             print("Job", result[1], "failed...")
 
                         jobs_finished += 1
@@ -506,9 +502,9 @@ class Controller:
         self.data_out_queue.put((None, None, True))
         time.sleep(5)
 
-        self._save_failed_indexes(failed)
+        self._save_failed_indexes(failed_indexes)
 
-        return failed
+        return failed_indexes
 
     def generate_ic_sims(self, run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
         """
@@ -604,21 +600,21 @@ class Controller:
             for retention_policy in retention_policies:
                 retention_policy.execute_callback(data)
 
-    def _save_failed_indexes(self, failed):
+    def _save_failed_indexes(self, failed_indexes: list[int]) -> None:
         """
         Save a list of failed simulation run indexes.
 
-        :param failed: The list of failed simulation runs.
-        :type failed: list[int]
+        :param failed_indexes: The list of failed simulation run indexes.
+        :type failed_indexes: list[int]
         """
-        if len(failed) == 0: return
+        if len(failed_indexes) == 0: return
 
         if self.verbose:
-            print("Failed", failed, "saving to 'failures.txt'")
-        failed.sort()
+            print("Failed", failed_indexes, "saving to 'failures.txt'")
+        failed_indexes.sort()
         # write a file that contains log of failed runs
         with open(os.path.join(self._mc_run_dir, "failures.txt"), "w") as fail_file:
-            fail_file.write(str(failed))
+            fail_file.write(str(failed_indexes))
 
     def _save_monte_carlo_controller(self):
         """
@@ -636,10 +632,9 @@ class Controller:
         """
         Execute the simulation runs.
 
-        :return: failed: A list of the indices of all failed simulation runs.
+        :return: failed_indexes: A list of the indices of all failed simulation runs.
         :rtype: list[int]
         """
-
         if self.verbose:
             print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
@@ -664,7 +659,7 @@ class Controller:
         # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
         # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
         # sim_generator = self.generateSims(range(num_sims))
-        failed = []  # keep track of the indices of failed simulations
+        failed_indexes = []  # keep track of the indices of failed simulations
         jobs_finished = 0  # keep track of what simulations have finished
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
@@ -675,7 +670,7 @@ class Controller:
 
         # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
         # is a temporary fix to a memory leak which is assumed to be a result of the sim_generator not collecting
-        # garbage properly. # TODO: Find a more permenant solution to the leak.
+        # garbage properly. # TODO: Find a more permanent solution to the leak.
 
         if self.num_processes == 1:
             if self.verbose:
@@ -687,10 +682,10 @@ class Controller:
                     try:
                         run_ok = simulation_executor((sim, self.data_out_queue))[0]
                     except:
-                        failed.append(i)
+                        failed_indexes.append(i)
                     else:
                         if not run_ok:
-                            failed.append(i)
+                            failed_indexes.append(i)
                     i += 1
                     progress_bar.update(i)
         else:
@@ -709,7 +704,7 @@ class Controller:
                     # yields results *as* the workers finish jobs
                     for result in pool.imap_unordered(simulation_executor, [(x, self.data_out_queue) for x in sim_generator]):
                         if result[0] is not True:  # workers return True on success
-                            failed.append(result[1])  # add failed jobs to the list of failures
+                            failed_indexes.append(result[1])  # add failed jobs to the list of failures
                             print("Job", result[1], "failed...")
 
                         jobs_finished += 1
@@ -717,12 +712,12 @@ class Controller:
                     pool.close()
                 except KeyboardInterrupt as e:
                     print("Ctrl-C was hit, closing pool")
-                    failed.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
+                    failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
                     pool.terminate()
                     raise e
                 except Exception as e:
                     print("Unknown exception while running simulations:", e)
-                    failed.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
+                    failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
                     traceback.print_exc()
                     pool.terminate()
                 finally:
@@ -737,9 +732,9 @@ class Controller:
         self.data_out_queue.put((None, None, True))
         time.sleep(5)
 
-        self._save_failed_indexes(failed)
+        self._save_failed_indexes(failed_indexes)
 
-        return failed
+        return failed_indexes
 
 
 class SimulationExecutor:
