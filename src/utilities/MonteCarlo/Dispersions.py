@@ -232,7 +232,6 @@ class NormalVectorDispersion(VectorVariableDispersion):
 class UniformVectorAngleDispersion(VectorVariableDispersion):
     def __init__(self, var_name, phi_bounds_off_nom=None, theta_bounds_off_nom=None):
         super(UniformVectorAngleDispersion, self).__init__(var_name, None)
-        # @TODO these bounds are not currently being applied to the generated values
 
         self.phi_bounds_off_nom = phi_bounds_off_nom
         self.theta_bounds_off_nom = theta_bounds_off_nom
@@ -256,11 +255,8 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
         self.phi_bounds = [mean_phi + self.phi_bounds_off_nom[0], mean_phi + self.phi_bounds_off_nom[1]]
         self.theta_bounds = [mean_theta + self.theta_bounds_off_nom[0], mean_theta + self.theta_bounds_off_nom[1]]
 
-        phi_rnd = np.random.uniform(mean_phi + self.phi_bounds[0], mean_phi + self.phi_bounds[1])
-        theta_rnd = np.random.uniform(mean_theta + self.theta_bounds[0], mean_theta + self.theta_bounds[1])
-
-        phi_rnd = self.check_bounds(phi_rnd, self.phi_bounds)
-        theta_rnd = self.check_bounds(theta_rnd, self.theta_bounds)
+        phi_rnd = np.random.uniform(self.phi_bounds[0], self.phi_bounds[1])
+        theta_rnd = np.random.uniform(self.theta_bounds[0], self.theta_bounds[1])
 
         new_vec = self.spherical2_cart([1.0, phi_rnd, theta_rnd])
         disp_vec = new_vec/np.linalg.norm(new_vec) # Shouldn't technically need the normalization but doing it for completeness
@@ -276,9 +272,11 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
 
 
 class NormalVectorAngleDispersion(VectorVariableDispersion):
+
+    _MAX_RESAMPLE_ATTEMPTS = 100
+
     def __init__(self, var_name, theta_std =np.pi / 3.0, phi_std=np.pi / 3.0, theta_bounds_off_nom=None, phi_bounds_off_nom=None):
         super(NormalVectorAngleDispersion, self).__init__(var_name, None)
-        # @TODO these bounds are not currently being applied to the generated values
 
         self.theta_std = theta_std
         self.phi_std = phi_std
@@ -293,6 +291,18 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
 
         self.magnitude = []
 
+    @staticmethod
+    def _sample_truncated_normal(mean, std, bounds, var_name):
+        for _ in range(NormalVectorAngleDispersion._MAX_RESAMPLE_ATTEMPTS):
+            sample = np.random.normal(mean, std)
+            if bounds[0] <= sample <= bounds[1]:
+                return sample
+        raise ValueError(
+            f"NormalVectorAngleDispersion for {var_name!r} could not sample within bounds "
+            f"{bounds} (mean={mean}, std={std}) in "
+            f"{NormalVectorAngleDispersion._MAX_RESAMPLE_ATTEMPTS} attempts; widen the bounds or reduce std"
+        )
+
     def generate(self, sim=None):
         vector_cart = eval('sim.' + self.var_name)
         vector_cart = vector_cart/np.linalg.norm(vector_cart)
@@ -301,14 +311,11 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         mean_phi = vector_sphere[1] # Nominal phi
         mean_theta = vector_sphere[2] # Nominal theta
 
-        phi_rnd = np.random.normal(mean_phi, self.phi_std)
-        theta_rnd = np.random.normal(mean_theta, self.theta_std)
+        self.phi_bounds = [mean_phi + self.phi_bounds_off_nom[0], mean_phi + self.phi_bounds_off_nom[1]]
+        self.theta_bounds = [mean_theta + self.theta_bounds_off_nom[0], mean_theta + self.theta_bounds_off_nom[1]]
 
-        self.phiBounds = [mean_phi + self.phi_bounds_off_nom[0], mean_phi + self.phi_bounds_off_nom[1]]
-        self.thetaBounds = [mean_theta + self.theta_bounds_off_nom[0], mean_theta + self.theta_bounds_off_nom[1]]
-
-        phi_rnd = self.check_bounds(phi_rnd, self.phiBounds)
-        theta_rnd = self.check_bounds(theta_rnd, self.thetaBounds)
+        phi_rnd = self._sample_truncated_normal(mean_phi, self.phi_std, self.phi_bounds, self.var_name)
+        theta_rnd = self._sample_truncated_normal(mean_theta, self.theta_std, self.theta_bounds, self.var_name)
 
         new_vec = self.spherical2_cart([1.0, phi_rnd, theta_rnd])
         disp_vec = new_vec/np.linalg.norm(new_vec) # Shouldn't technically need the normalization but doing it for completeness
