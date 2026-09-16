@@ -17,6 +17,17 @@ class DataWriter(mp.Process):
         Returns:
             Nil
     """
+
+    # Two names that are different only in case collide on a case-insensitive filesystem (HFS+ and
+    # APFS in their default macOS configuration). Without a rename, the second file replaces the first
+    # file on disk and no error occurs. Each key is the original name of the retained data. Each value
+    # is the new file name. Add an entry to this map when you find a new collision.
+    _CASE_INSENSITIVE_RENAMES = {
+        # OrbitalElements has the two names "omega" (argument of periapsis) and "Omega" (longitude
+        # of ascending node). These names collide on macOS.
+        "OrbitalElements.Omega": "OrbitalElements.Omega_Capital",
+    }
+
     def __init__(self, q):
         super(DataWriter, self).__init__()
         self._queue = q
@@ -41,9 +52,7 @@ class DataWriter(mp.Process):
             for dict_name, dict_data in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
                 for item_name, item_data in dict_data.items(): # Loop through all items and their data
 
-                    if item_name == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
-                        item_name = "OrbitalElements.Omega_Capital"
-
+                    item_name = self._CASE_INSENSITIVE_RENAMES.get(item_name, item_name)
                     file_path = os.path.join(self._log_dir, item_name + ".data")
                     self._data_files.add(file_path)
 
