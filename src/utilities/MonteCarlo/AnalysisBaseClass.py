@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 import time
 
 import holoviews as hv
@@ -9,6 +10,22 @@ import pandas as pd
 from xmera.utilities import macros
 from xmera.utilities.dataframe_utilities import curve_per_df_component
 from xmera.utilities.DS_Plot import DS_Plot
+
+
+# The Controller writes one archive of retained data for each run. The DataWriter writes one
+# frame for each variable. The pattern applies to the file name only. The results directory has
+# the name "mc_run_<timestamp>", thus a substring test on the full path matches all files.
+_RUN_ARCHIVE_PATTERN = re.compile(r"^run\d+\.data$")
+
+
+def is_variable_data_file(file_path):
+    """Return whether a ``.data`` path holds a frame for one variable, not an archive.
+
+    :param file_path: path to a file found in the results directory
+    :return: True for per-variable frames, False for ``MonteCarlo.data`` and ``run<N>.data``
+    """
+    name = os.path.basename(file_path)
+    return name != "MonteCarlo.data" and _RUN_ARCHIVE_PATTERN.match(name) is None
 
 
 class McAnalysisBaseClass:
@@ -172,9 +189,7 @@ class McAnalysisBaseClass:
         else:
             file_paths = glob.glob(base_dir + "/subset" + "/*.data")
             for file_path in file_paths:
-                if "MonteCarlo.data" in file_path:
-                    continue
-                if "run" in file_path and "overrun" not in file_path:
+                if not is_variable_data_file(file_path):
                     continue
                 df = pd.read_pickle(file_path)
                 singleton = list(dict.fromkeys(np.array(df.columns.codes[0]).tolist()))
@@ -191,14 +206,11 @@ class McAnalysisBaseClass:
         # shutil.rmtree(data_dir + "/subset/")
         file_paths = glob.glob(base_dir + "/*.data")
         for file_path in file_paths:
-            if "MonteCarlo.data" in file_path:
-                continue
-            if "run" in file_path and "overrun" not in file_path:
+            if not is_variable_data_file(file_path):
                 continue
             df = pd.read_pickle(file_path)
             df_sub_set = df.loc[idx[:], idx[run_idx, :]]
-            var_name = file_path.rsplit("/")
-            pd.to_pickle(df_sub_set, base_dir + "/subset/" + var_name[-1])
+            pd.to_pickle(df_sub_set, os.path.join(base_dir, "subset", os.path.basename(file_path)))
         print("Finished Populating Subset Directory")
 
     def render_plots(self, plot_list):
