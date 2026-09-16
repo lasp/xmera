@@ -40,7 +40,7 @@ class DataWriter(mp.Process):
                     if item_name == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
                         item_name = "OrbitalElements.Omega_Capital"
 
-                    file_path = self._log_dir + item_name + ".data"
+                    file_path = os.path.join(self._log_dir, item_name + ".data")
                     self._data_files.add(file_path)
 
                     # Is the data a vector, scalar, or non-existant?

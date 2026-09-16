@@ -138,7 +138,7 @@ def test_MonteCarloSimulation(show_plots):
         monteCarlo.set_execution_count(NUMBER_OF_RUNS)
         monteCarlo.set_num_worker_processes(PROCESSES)
         monteCarlo.set_verbose(True)
-        monteCarlo.set_archive_dir(tempDirectory)
+        monteCarlo.archive_dir = tempDirectory
 
         # Add some dispersions
         disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
@@ -175,7 +175,7 @@ def test_MonteCarloSimulation(show_plots):
         assert len(failures) == 0, "No runs should fail"
 
         # Test loading data from runs from disk
-        monteCarloLoaded = Controller.load(tempDirectory)
+        monteCarloLoaded = Controller.load(monteCarlo.mc_run_dir)
 
         retainedData = monteCarloLoaded.get_retained_data(NUMBER_OF_RUNS-1)
         assert retainedData is not None, "Retained data should be available after execution"

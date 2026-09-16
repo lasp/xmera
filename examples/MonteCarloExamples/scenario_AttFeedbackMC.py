@@ -52,7 +52,7 @@ def run(show_plots):
     monteCarlo.set_execution_function(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
     monteCarlo.set_execution_count(4)  # Required: Number of MCs to run
 
-    monteCarlo.set_archive_dir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
+    monteCarlo.archive_dir = path + "/scenario_AttFeedbackMC"  # Optional: If/where to save retained data.
     monteCarlo.set_should_disperse_seeds(True)  # Optional: Randomize the seed for each module
     monteCarlo.set_num_worker_processes(2)  # Optional: Number of processes to spawn MCs on
     monteCarlo.set_verbose(True)  # Optional: Produce supplemental text output in console describing status

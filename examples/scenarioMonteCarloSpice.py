@@ -130,8 +130,7 @@ def run():
     monteCarlo.set_verbose(False)
 
     dirName = "montecarlo_test" + str(os.getpid())
-    monteCarlo.set_archive_dir(dirName)
-
+    monteCarlo.archive_dir = dirName
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
     #
     # dataPath = bskPath + "/supportData/EphemerisData/"

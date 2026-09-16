@@ -103,7 +103,7 @@ def monte_carlo_simulation(mc_data_directory):
     monte_carlo.set_execution_count(NUMBER_OF_RUNS)
     monte_carlo.set_num_worker_processes(PROCESSES)
     monte_carlo.set_verbose(False)
-    monte_carlo.set_archive_dir(mc_data_directory)
+    monte_carlo.archive_dir = mc_data_directory
 
     # Add some dispersions
     disp_dict = {"mu": 0.3986004415E+15,
@@ -139,9 +139,17 @@ def test_monte_carlo_simulation(mc_data_directory, monte_carlo_simulation, show_
 
 
 @pytest.mark.slowtest
+def test_run_initial_conditions(mc_data_directory, monte_carlo_simulation):
+    _ = monte_carlo_simulation.execute_simulations()
+    monte_carlo_controller = Controller.load(monte_carlo_simulation.mc_run_dir)
+    monte_carlo_controller.archive_dir = mc_data_directory
+    monte_carlo_controller.run_initial_conditions([0, 2], monte_carlo_simulation.ic_directory)
+
+
+@pytest.mark.slowtest
 def test_initial_parameters_dispersed(mc_data_directory, monte_carlo_simulation):
     _ = monte_carlo_simulation.execute_simulations()
-    monte_carlo_loaded = Controller.load(mc_data_directory)
+    monte_carlo_loaded = Controller.load(monte_carlo_simulation.mc_run_dir)
 
     # Make sure that the runs saved the initial parameters and that the parameters are different between runs
     params1 = monte_carlo_loaded.get_parameters(NUMBER_OF_RUNS-1)
@@ -160,7 +168,7 @@ def test_rerun_repeatability(mc_data_directory, monte_carlo_simulation):
         random seeds from the same primary seed in the two MC batches.
     """
     _ = monte_carlo_simulation.execute_simulations()
-    monte_carlo_loaded = Controller.load(mc_data_directory)
+    monte_carlo_loaded = Controller.load(monte_carlo_simulation.mc_run_dir)
 
     retained_data = monte_carlo_loaded.get_retained_data(NUMBER_OF_RUNS-1)
 
@@ -186,7 +194,7 @@ def monte_carlo_simulation_no_dispersions(mc_data_directory):
     monte_carlo.set_execution_count(NUMBER_OF_RUNS)
     monte_carlo.set_num_worker_processes(PROCESSES)
     monte_carlo.set_verbose(False)
-    monte_carlo.set_archive_dir(mc_data_directory)
+    monte_carlo.archive_dir = mc_data_directory
 
     retention_policy = RetentionPolicy()
     retention_policy.add_message_log(retained_message_name, [var1, var2])
@@ -200,7 +208,7 @@ def monte_carlo_simulation_no_dispersions(mc_data_directory):
 @pytest.mark.slowtest
 def test_data_is_retained(mc_data_directory, monte_carlo_simulation_no_dispersions):
     _ = monte_carlo_simulation_no_dispersions.execute_simulations()
-    monte_carlo_loaded = Controller.load(mc_data_directory)
+    monte_carlo_loaded = Controller.load(monte_carlo_simulation_no_dispersions.mc_run_dir)
 
     retained_data = monte_carlo_loaded.get_retained_data(NUMBER_OF_RUNS-1)
     assert retained_data is not None, "Retained data should be available after execution"

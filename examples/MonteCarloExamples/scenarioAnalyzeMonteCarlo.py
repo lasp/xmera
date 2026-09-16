@@ -94,6 +94,7 @@ from bokeh.palettes import RdYlBu9
 import xmera.utilities.macros as macros
 from xmera.utilities.DS_Plot import DS_Plot
 from xmera.utilities.MonteCarlo.AnalysisBaseClass import McAnalysisBaseClass
+from xmera.utilities.MonteCarlo.Controller import Controller
 from xmera.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
 
 
@@ -156,7 +157,10 @@ def run(show_plots, show_all_data=True, show_extreme_data=True, optional_plots=F
 
     plotList = []
     analysis = McAnalysisBaseClass()
-    analysis.data_dir = os.path.join(path, "scenario_AttFeedbackMC")
+    # Each execution writes to a new run directory that has a timestamp in its name. The data
+    # file for each variable is in the results directory of that execution.
+    analysis.data_dir = os.path.join(
+        Controller.latest_run_dir(os.path.join(path, "scenario_AttFeedbackMC")), "results")
 
     # save_as_static: save off static .html files of the plots generated into the static_dir directory.
     # The static_dir will be created inside the data_dir folder.

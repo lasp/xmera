@@ -233,8 +233,7 @@ def run(saveFigures, case, show_plots):
 
     # We set up where to retain the data to.
     dirName = "montecarlo_test" + str(os.getpid())
-    monteCarlo.set_archive_dir(dirName)
-
+    monteCarlo.archive_dir = dirName
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
@@ -296,8 +295,9 @@ def run(saveFigures, case, show_plots):
         assert len(failures) == 0, "No runs should fail"
 
         # Now in another script (or the current one), the data from this simulation can be easily loaded.
-        # This demonstrates loading it from disk
-        monteCarloLoaded = Controller.load(dirName)
+        # This code shows how to load the data from disk. Each execution writes to a new run directory
+        # with a timestamp in the archive directory. Load that run directory, not the archive directory.
+        monteCarloLoaded = Controller.load(monteCarlo.mc_run_dir)
 
         # Then retained data from any run can then be accessed in the form of a dictionary
         # with two sub-dictionaries for messages and variables:
@@ -344,14 +344,12 @@ def run(saveFigures, case, show_plots):
     if case == 2:
         # Now run initial conditions
         icName = path + "/Support/run_MC_IC"
-        monteCarlo.set_ic_dir(icName)
-        monteCarlo.set_should_run_using_ic(True)
         numberICs = 3
         monteCarlo.set_execution_count(numberICs)
 
         # Rerunning the case shouldn't fail
         runsList = list(range(numberICs))
-        failed = monteCarlo.run_initial_conditions(runsList)
+        failed = monteCarlo.run_initial_conditions(runsList, icName)
         assert len(failed) == 0, "Should run ICs successfully"
 
         # monteCarlo.executeCallbacks([4,6,7])
@@ -363,12 +361,6 @@ def run(saveFigures, case, show_plots):
             plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
             plt.close("all")
-
-        # Now we clean up data from this test
-        os.remove(icName + '/' + 'MonteCarlo.data')
-        for i in range(numberICs):
-            os.remove(icName + '/' + 'run' + str(i) + '.data')
-        assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
 
     # Now we clean up data from this test
     shutil.rmtree(dirName)

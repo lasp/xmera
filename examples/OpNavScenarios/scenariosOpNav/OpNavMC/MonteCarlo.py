@@ -138,8 +138,7 @@ def run(show_plots):
         monteCarlo.set_execution_count(NUMBER_OF_RUNS)
         monteCarlo.set_num_worker_processes(PROCESSES)
         monteCarlo.set_verbose(True)
-        monteCarlo.set_archive_dir(dirName)
-
+        monteCarlo.archive_dir = dirName
         # Add some dispersions
         dispDict = {}
         dispDict["mu"] = 4.2828371901284001E+13

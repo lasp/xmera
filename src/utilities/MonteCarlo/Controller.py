@@ -6,13 +6,12 @@
 import os
 import random
 import shutil
-import sys
 import traceback
 import warnings
-
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
-import copy
+
+import glob
 import gzip
 import json
 import signal
@@ -35,15 +34,10 @@ class Controller:
     def __init__(self):
         self.should_save_disp_mag = None
         self.should_disperse_seeds = False
-        self.ic_filename = None
         self.num_simulation_runs = 0
-        self.should_run_using_ic = False
-        self.ic_directory = ""
-        self.archive_dir = None
         self.var_cast = None
         self.num_processes = mp.cpu_count()
         self.verbose = False
-        self.should_archive_parameters = False
         self.show_progress_bar = False
         self.creation_function=None
         self.execution_function=None
@@ -53,7 +47,10 @@ class Controller:
         self.multi_proc_manager = None
         self.data_out_queue = None
         self.data_writer = None
-
+        self._ic_directory = ""
+        self._archive_dir = ""
+        self._mc_run_dir = None
+        self._results_dir = None
 
     def set_show_progress_bar(self, value):
         """
@@ -62,6 +59,27 @@ class Controller:
             value: boolean value, decide to show/hide progress bar
         """
         self.show_progress_bar = value
+
+    @staticmethod
+    def latest_run_dir(archive_dir: str) -> str:
+        """
+        Find the most recent run directory inside an archive directory.
+
+        Each execution writes into its own ``mc_run_<timestamp>`` directory in the archive
+        directory. A caller that knows only the archive directory uses this method to find the
+        data of the most recent execution.
+
+        :param archive_dir: The archive directory that the controller used for the execution.
+        :type archive_dir: str
+
+        :return: The path of the most recently created run directory.
+        :rtype: str
+        """
+        candidates = glob.glob(os.path.join(archive_dir, "mc_run_*"))
+        candidates = [c for c in candidates if os.path.isdir(c)]
+        if not candidates:
+            raise FileNotFoundError(f"No mc_run_* directory found in {archive_dir}")
+        return max(candidates, key=lambda c: (os.path.getmtime(c), c))
 
     @staticmethod
     def load(run_directory):
@@ -189,21 +207,6 @@ class Controller:
         """
         self.should_save_disp_mag = magnitudes
 
-    def set_should_archive_parameters(self, should_archive_parameters):
-        self.should_archive_parameters = should_archive_parameters
-
-    def set_archive_dir(self, dir_name):
-        """
-        Set-up archives for this MonteCarlo run
-
-        Args:
-            dir_name: string
-                The name of the directory to archive runs in.
-                None, if no archive desired.
-        """
-        self.archive_dir = os.path.abspath(dir_name) + "/"
-        self.should_archive_parameters = dir_name is not None
-
     def set_var_cast(self, var_cast):
         """
         Set the variable type to downcast the data to
@@ -213,27 +216,74 @@ class Controller:
         """
         self.var_cast = var_cast
 
-    def set_ic_dir(self, dir_name):
-        """
-        Set-up archives containing IC data
+    @property
+    def mc_run_dir(self):
+        return self._mc_run_dir
 
-        Args:
-            dir_name: string
-                The name of the directory to archive runs in.
-                None, if no archive desired.
-        """
-        self.ic_directory = os.path.abspath(dir_name) + "/"
-        self.should_archive_parameters = True
+    @property
+    def results_dir(self):
+        return self._results_dir
 
-    def set_should_run_using_ic(self, value):
-        """
-        Set the number of threads to use for the monte carlo simulation
+    @property
+    def ic_directory(self):
+        return self._ic_directory
 
-        Args:
-            value: bool
-                Number of threads to execute the montecarlo run on.
+    @property
+    def archive_dir(self):
+        return self._archive_dir
+
+    @archive_dir.setter
+    def archive_dir(self, directory):
         """
-        self.should_run_using_ic = value
+        Set the archive directory for this Monte Carlo batch.
+            Args:
+            directory: string
+                The path of the directory in which the mc data root directory will be created.
+         """
+        self._archive_dir = os.path.abspath(directory)
+
+    def _setup_archive_directory(self):
+        """
+        Make the directory structure for the data of this Monte Carlo batch.
+        The directory structure is:
+            - root directory (_archive_dir)
+            -- mc run directory with timestamp (_mc_run_dir)
+            --- initial_conditions
+            --- results
+        """
+        if not self._archive_dir:
+            return
+
+        os.makedirs(self._archive_dir, exist_ok=True)
+
+        # The timestamp has a resolution of one second. Thus two batches that start in the same
+        # second get the same name. Keep the readable name and add a counter if the name is in use.
+        directory_id = time.strftime("%Y%m%d-%H%M%S")
+        attempt = 0
+        while True:
+            suffix = "" if attempt == 0 else f"_{attempt}"
+            candidate = os.path.join(self._archive_dir, f"mc_run_{directory_id}{suffix}")
+            try:
+                os.mkdir(candidate)
+                break
+            except FileExistsError:
+                attempt += 1
+        self._mc_run_dir = candidate
+
+        self._ic_directory = os.path.join(self._mc_run_dir, "initial_conditions")
+        os.mkdir(self._ic_directory)
+
+        self._results_dir = os.path.join(self._mc_run_dir, "results")
+        os.mkdir(self._results_dir)
+
+    def _make_results_directory_file_name(self, index):
+        return os.path.join(self._results_dir, "run" + str(index) + ".data")
+
+    def _make_dispersion_magnitudes_file_name(self, index):
+        return os.path.join(self._results_dir, "run" + str(index) + "mag.txt")
+
+    def _make_initial_conditions_directory_file_name(self, index):
+        return os.path.join(self._ic_directory, "run" + str(index) + ".json")
 
     def get_retained_data(self, case):
         """
@@ -244,12 +294,9 @@ class Controller:
         Returns:
             The retained data for that run is returned.
         """
-        if self.should_run_using_ic:
-            old_run_data_file = self.ic_directory + "run" + str(case) + ".data"
-        else:
-            old_run_data_file = self.archive_dir + "run" + str(case) + ".data"
+        results_data_file = self._make_results_directory_file_name(case)
 
-        with gzip.open(old_run_data_file) as pickled_data:
+        with gzip.open(results_data_file) as pickled_data:
             data = pickle.load(pickled_data)
             return data
 
@@ -277,10 +324,8 @@ class Controller:
                  For example:
                  {"keyForSim": parameterValue, 'TaskList[0].TaskModels[0].RNGSeed': 1674764759}
         """
-        if self.should_run_using_ic:
-            filename = self.ic_directory + "run" + str(run_index) + ".json"
-        else:
-            filename = self.archive_dir + "run" + str(run_index) + ".json"
+        filename = self._make_initial_conditions_directory_file_name(run_index)
+
         with open(filename, "r") as dispersion_file:
             dispersions = json.load(dispersion_file)
             return dispersions
@@ -303,9 +348,9 @@ class Controller:
             if self.verbose:
                 print("Rerunning", run_index)
 
-            old_run_file = self.archive_dir + "run" + str(run_index) + ".json"
+            old_run_file = self._make_initial_conditions_directory_file_name(run_index)
             if not os.path.exists(old_run_file):
-                print("ERROR re-running case: " + old_run_file)
+                print(f"File {old_run_file} not found. Therefore, cannot re-run case: {run_index}")
                 continue
 
             # use old simulation parameters, modified slightly.
@@ -333,7 +378,7 @@ class Controller:
 
         return failed
 
-    def run_initial_conditions(self, run_indexes):
+    def run_initial_conditions(self, run_indexes, ic_directory):
         """
         Run initial conditions given in a file
 
@@ -347,24 +392,19 @@ class Controller:
         # the list of failures
         failed = []
 
-        assert self.ic_directory != "", "No initial condition directory was given"
-        assert self.should_run_using_ic is not False, "IC run flag was not set"
+        assert ic_directory != "", "No initial condition directory was given"
 
         if self.verbose:
             print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
+        self._setup_archive_directory()
 
-        if self.should_archive_parameters:
-            if not os.path.exists(self.ic_directory):
-                print("Cannot run initial conditions: the directory given does not exist")
+        # Copy IC files into new MC directory
+        file_paths = [os.path.join(ic_directory, "run" + str(case) + ".json") for case in run_indexes]
+        destination_file_paths = [self._make_initial_conditions_directory_file_name(case) for case in run_indexes]
+        [shutil.copyfile(src, dst) for src, dst in zip(file_paths, destination_file_paths)]
 
-            if self.verbose:
-                print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
-            try:
-                with gzip.open(self.ic_directory + "MonteCarlo.data", "w") as pickle_file:
-                    pickle.dump(self, pickle_file)  # dump this controller object into a file.
-            except Exception as e:
-                print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
+        self._save_monte_carlo_controller()
 
         # Create Queue, but don't ever start it.
         self.multi_proc_manager = mp.Manager()
@@ -372,27 +412,15 @@ class Controller:
         self.data_writer = DataWriter(self.data_out_queue)
         self.data_writer.daemon = False
 
-        # If archiving the rerun data -- make sure not to delete the original data!
-        if self.archive_dir is not None:
-            if self.archive_dir != self.ic_directory:
-                if os.path.exists(self.archive_dir):
-                    shutil.rmtree(self.archive_dir)
-                os.mkdir(self.archive_dir)
-                self.data_writer.set_log_dir(self.archive_dir)
-                self.data_writer.start()
-            else:
-                print("ERROR: The archive directory is set as the ic_directory. Proceeding would have overwriten all data " \
-                      "within: " + self.archive_dir + " with the select rerun run_indexes! Exiting.\n")
-                sys.exit("Change the archive directory to a new location when rerunning run_indexes.")
-        else:
-            print("No archive data specified; no data will be logged to dataframes")
+        self.data_writer.set_log_dir(self.results_dir)
+        self.data_writer.start()
 
         jobs_finished = 0  # keep track of what simulations have finished
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
         # It is called within worker processes with each worker's simulation parameters
         simulation_executor = SimulationExecutor()
-        #
+
         progress_bar = SimulationProgressBar(len(run_indexes), self.show_progress_bar)
         if self.num_processes == 1:
             if self.verbose:
@@ -446,24 +474,12 @@ class Controller:
 
         progress_bar.markComplete()
         progress_bar.close()
-        # If the data was archiving, close the queue.
-        if self.archive_dir is not None and self.archive_dir != self.ic_directory:
-            while not self.data_out_queue.empty():
-               time.sleep(1)
-            self.data_out_queue.put((None, None, True))
-            time.sleep(5)
+        while not self.data_out_queue.empty():
+           time.sleep(1)
+        self.data_out_queue.put((None, None, True))
+        time.sleep(5)
 
-        # if there are failures
-        if len(failed) > 0:
-            failed.sort()
-
-            if self.verbose:
-                print("Failed", failed, "saving to 'failures.txt'")
-
-            if self.should_archive_parameters:
-                # write a file that contains log of failed runs
-                with open(self.ic_directory + "failures.txt", "w") as fail_file:
-                    fail_file.write(str(failed))
+        self._save_failed_indexes(failed)
 
         return failed
 
@@ -482,23 +498,15 @@ class Controller:
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
         # simulations to execute
+        # use old simulation parameters, modified slightly.
         for run_index in run_indexes:
-            if self.verbose:
-                print("Running IC ", run_index)
-
-            old_run_file = self.ic_directory + "run" + str(run_index) + ".json"
-            if not os.path.exists(old_run_file):
-                print("ERROR running IC case: " + old_run_file)
-                continue
-
-            # use old simulation parameters, modified slightly.
             sim_params = self.create_sim_parameters(run_index)
             sim_params.index = run_index
             # don't redisperse seeds, we want to use the ones saved in the old_run_file
             sim_params.should_disperse_seeds = False
 
-            sim_params.ic_filename = self.ic_directory + "run" + str(run_index)
-            with open(old_run_file, "r") as run_parameters:
+            sim_params.initial_conditions_filename = self._make_initial_conditions_directory_file_name(run_index)
+            with open(sim_params.initial_conditions_filename, "r") as run_parameters:
                 sim_params.modifications = json.load(run_parameters)
 
             yield sim_params
@@ -510,10 +518,9 @@ class Controller:
                                           self.retention_policies,
                                           self.dispersions,
                                           self.should_disperse_seeds,
-                                          self.should_archive_parameters,
-                                          os.path.join(self.archive_dir, "run" + str(index)),
-                                          os.path.join(self.archive_dir, "run" + str(index)),
-                                          os.path.join(self.archive_dir, "run" + str(index) + "mag.txt"),
+                                          self._make_results_directory_file_name(index),
+                                          self._make_initial_conditions_directory_file_name(index),
+                                          self._make_dispersion_magnitudes_file_name(index),
                                           index)
         sim_params.verbose = self.verbose
         sim_params.show_progress_bar = self.show_progress_bar
@@ -538,7 +545,6 @@ class Controller:
         for run_index in sim_run_indexes:
             sim_params = self.create_sim_parameters(run_index)
             sim_params.index = run_index
-            sim_params.filename += "run" + str(run_index)
 
             yield sim_params
 
@@ -562,6 +568,25 @@ class Controller:
             for retention_policy in retention_policies:
                 retention_policy.execute_callback(data)
 
+    def _save_failed_indexes(self, failed):
+        if len(failed) == 0: return
+
+        if self.verbose:
+            print("Failed", failed, "saving to 'failures.txt'")
+        failed.sort()
+        # write a file that contains log of failed runs
+        with open(os.path.join(self._mc_run_dir, "failures.txt"), "w") as fail_file:
+            fail_file.write(str(failed))
+
+    def _save_monte_carlo_controller(self):
+        if self.verbose:
+            print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
+        try:
+            with gzip.open(os.path.join(self._mc_run_dir, "MonteCarlo.data"), "wb") as pickleFile:
+                pickle.dump(self, pickleFile)  # dump this controller object into a file.
+        except Exception as e:
+            print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
+
     def execute_simulations(self):
         """
         Execute simulations in parallel
@@ -573,18 +598,8 @@ class Controller:
         if self.verbose:
             print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
-
-        if self.should_archive_parameters:
-            if os.path.exists(self.archive_dir):
-                shutil.rmtree(self.archive_dir, ignore_errors=True)
-            os.mkdir(self.archive_dir)
-            if self.verbose:
-                print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
-            try:
-                with gzip.open(self.archive_dir + "MonteCarlo.data", "wb") as pickle_file:
-                    pickle.dump(self, pickle_file)  # dump this controller object into a file.
-            except Exception as e:
-                print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
+        self._setup_archive_directory()
+        self._save_monte_carlo_controller()
 
         self.multi_proc_manager = mp.Manager()
         self.data_out_queue = self.multi_proc_manager.Queue()
@@ -594,7 +609,7 @@ class Controller:
         num_sims = self.num_simulation_runs
 
         # start data writer process
-        self.data_writer.set_log_dir(self.archive_dir)
+        self.data_writer.set_log_dir(self.results_dir)
         self.data_writer.set_var_cast(self.var_cast)
         self.data_writer.start()
 
@@ -677,20 +692,9 @@ class Controller:
         self.data_out_queue.put((None, None, True))
         time.sleep(5)
 
-        # if there are failures
-        if len(failed) > 0:
-            failed.sort()
-
-            if self.verbose:
-                print("Failed", failed, "saving to 'failures.txt'")
-
-            if self.should_archive_parameters:
-                # write a file that contains log of failed runs
-                with open(self.archive_dir + "failures.txt", "w") as fail_file:
-                    fail_file.write(str(failed))
+        self._save_failed_indexes(failed)
 
         return failed
-
 
 class SimulationParameters:
     """
@@ -711,14 +715,10 @@ class SimulationParameters:
                  retention_policies,
                  dispersions,
                  should_disperse_seeds,
-                 should_archive_parameters,
-                 filename,
-                 ic_filename,
+                 results_filename,
+                 initial_conditions_filename,
                  magnitudes_filename,
-                 index=None,
-                 verbose=False,
-                 modifications={}):
-        self.magnitudes_filename = magnitudes_filename
+                 index=None):
         self.index = index
         self.creation_function = creation_function
         self.execution_function = execution_function
@@ -726,15 +726,14 @@ class SimulationParameters:
         self.retention_policies = retention_policies
         self.dispersions = dispersions
         self.should_disperse_seeds = should_disperse_seeds
-        self.should_archive_parameters = should_archive_parameters
-        self.filename = filename
-        self.ic_filename = ic_filename
-        self.verbose = verbose
-        self.modifications = modifications
+        self.results_filename = results_filename
+        self.initial_conditions_filename = initial_conditions_filename
+        self.magnitudes_filename = magnitudes_filename
+        self.verbose = False
+        self.modifications = {}
         self.dispersion_mag = {}
         self.should_save_disp_mag = False
         self.show_progress_bar = False
-
 
 
 class SimulationExecutor:
@@ -812,18 +811,13 @@ class SimulationExecutor:
                                 magnitudes[name] = disp.generate_mag_string()
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
-            if sim_params.should_archive_parameters:
-                # save the dispersions and random seeds for this run
-                if sim_params.ic_filename != "":
-                    with open(sim_params.ic_filename + ".json", 'w') as outfile:
-                        json.dump(modifications, outfile)
-                else:
-                    with open(sim_params.filename + ".json", 'w') as outfile:
-                        json.dump(modifications, outfile)
-                    if sim_params.should_save_disp_mag:
-                        with open(sim_params.magnitudes_filename, 'w') as outfileMag:
-                            for k in sorted(magnitudes.keys()):
-                                outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
+            # save the dispersions and random seeds for this run
+            with open(sim_params.initial_conditions_filename, 'w') as outfile:
+                json.dump(modifications, outfile)
+            if sim_params.should_save_disp_mag:
+                with open(sim_params.magnitudes_filename, 'w') as outfileMag:
+                    for k in sorted(magnitudes.keys()):
+                        outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
 
             if sim_params.configure_function is not None:
                 if sim_params.verbose:
@@ -855,13 +849,10 @@ class SimulationExecutor:
             try:
                 sim_params.execution_function(sim_instance)
             except TypeError:
-                sim_params.execution_function(sim_instance, sim_params.filename)
+                sim_params.execution_function(sim_instance, sim_params.results_filename)
 
             if len(sim_params.retention_policies) > 0:
-                if sim_params.ic_filename != "":
-                    retention_file = sim_params.ic_filename + ".data"
-                else:
-                    retention_file = sim_params.filename + ".data"
+                retention_file = sim_params.results_filename
 
                 if sim_params.verbose:
                     print("Retaining data for run in", retention_file)

@@ -53,7 +53,9 @@ def run(time=None):
 
     #
     # # Generic initialization
-    icName = path + "/" + scenarioName + "MC/"
+    # Reruns read the initial conditions that the last execution of the scenario saved.
+    icName = os.path.join(
+        Controller.latest_run_dir(os.path.join(path, scenarioName + "MC")), "initial_conditions")
     newDataDir = path + "/" + scenarioName + "MC/rerun"
 
 
@@ -65,12 +67,9 @@ def run(time=None):
 
     monteCarlo.set_simulation_function(simulationModule)
     monteCarlo.set_execution_function(executionModule)
-    monteCarlo.set_ic_dir(icName)
-    monteCarlo.set_should_run_using_ic(True)
-    monteCarlo.set_archive_dir(newDataDir)
+    monteCarlo.archive_dir = newDataDir
     monteCarlo.set_execution_count(len(runsList))
     monteCarlo.set_should_disperse_seeds(False)
-    monteCarlo.should_archive_parameters = False
 
 
     # Step 4: Add any additional retention policies desired
@@ -80,7 +79,7 @@ def run(time=None):
     monteCarlo.add_retention_policy(retentionPolicy)
 
 
-    failed = monteCarlo.run_initial_conditions(runsList)
+    failed = monteCarlo.run_initial_conditions(runsList, icName)
     assert len(failed) == 0, "Should run ICs successfully"
 
 
