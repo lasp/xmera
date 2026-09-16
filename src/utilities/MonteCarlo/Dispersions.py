@@ -135,13 +135,14 @@ class VectorVariableDispersion(object):
 
     def cart2_spherical(self, cart_vec):
         # Spherical Coordinate Set: [rho, theta, phi]
-        x = cart_vec[0]
-        y = cart_vec[1]
-        z = cart_vec[2]
+        # A simulation attribute comes here as a flat 3-vector or as a 3x1 column. The method
+        # flattens the value first, thus the two shapes give the same scalars.
+        flat_vec = np.asarray(cart_vec, dtype=float).reshape(-1)
+        x, y, z = flat_vec[0], flat_vec[1], flat_vec[2]
 
-        rho = np.linalg.norm(cart_vec)
-        phi = np.arctan2(y, x)[0]
-        theta = np.arccos(z)[0]
+        rho = np.linalg.norm(flat_vec)
+        phi = np.arctan2(y, x)
+        theta = np.arccos(z)
 
         return [rho, phi, theta]
 
