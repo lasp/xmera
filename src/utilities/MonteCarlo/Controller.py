@@ -448,52 +448,44 @@ class Controller:
         if self.num_processes == 1:
             if self.verbose:
                 print("Executing sequentially...")
-            i = 0
-            for i in range(len(run_indexes)):
-                sim_generator = self.generate_ic_sims(run_indexes[i:i + 1])
-                for sim in sim_generator:
-                    try:
-                        simulation_executor((sim, self._data_out_queue))
-                    except:
-                        failed_indexes.append(i)
-                i += 1
-                progress_bar.update(i)
+            sim_generator = self.generate_ic_sims(run_indexes)
+            for sim in sim_generator:
+                try:
+                    simulation_executor((sim, self._data_out_queue))
+                except:
+                    failed_indexes.append(sim.index)
+            jobs_finished += 1
+            progress_bar.update(jobs_finished)
         else:
             num_sims = len(run_indexes)
             if self.num_processes > num_sims:
                 print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
                 self.num_processes = num_sims
-            for i in range(num_sims//self.num_processes):
-                # If number of sims doesn't factor evenly into the number of processes:
-                if num_sims % self.num_processes != 0 and i == len(list(range(num_sims // self.num_processes)))-1:
-                    offset = num_sims % self.num_processes
-                else:
-                    offset = 0
 
-                sim_generator = self.generate_ic_sims(run_indexes[self.num_processes * i:self.num_processes * (i + 1) + offset])
-                pool = mp.Pool(self.num_processes)
-                try:
-                    # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
-                        if result[0] is not True:  # workers return True on success
-                            failed_indexes.append(result[1])  # add failed jobs to the list of failures
-                            print("Job", result[1], "failed...")
+            sim_generator = self.generate_ic_sims(run_indexes)
+            pool = mp.Pool(self.num_processes)
+            try:
+                # yields results as the workers finish jobs
+                for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
+                    if result[0] is not True:  # workers return True on success
+                        failed_indexes.append(result[1])  # add failed jobs to the list of failures
+                        print("Job", result[1], "failed...")
 
-                        jobs_finished += 1
-                        progress_bar.update(jobs_finished)
-                    pool.close()
-                except KeyboardInterrupt as e:
-                    print("Ctrl-C was hit, closing pool")
-                    # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
-                    pool.terminate()
-                    raise e
-                except Exception as e:
-                    print("Unknown exception while running simulations:", e)
-                    # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
-                    traceback.print_exc()
-                    pool.terminate()
-                finally:
-                    pool.join()
+                    jobs_finished += 1
+                    progress_bar.update(jobs_finished)
+                pool.close()
+            except KeyboardInterrupt as e:
+                print("Ctrl-C was hit, closing pool")
+                # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
+                pool.terminate()
+                raise e
+            except Exception as e:
+                print("Unknown exception while running simulations:", e)
+                # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
+                traceback.print_exc()
+                pool.terminate()
+            finally:
+                pool.join()
 
         progress_bar.markComplete()
         progress_bar.close()
@@ -521,11 +513,10 @@ class Controller:
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
         # simulations to execute
-        # use old simulation parameters, modified slightly.
         for run_index in run_indexes:
             sim_params = self.create_sim_parameters(run_index)
             sim_params.index = run_index
-            # don't redisperse seeds, we want to use the ones saved in the old_run_file
+            # do not disperse the seeds again, use the seeds that the old_run_file saved
             sim_params.should_disperse_seeds = False
 
             sim_params.initial_conditions_filename = self._make_initial_conditions_directory_file_name(run_index)
@@ -658,7 +649,6 @@ class Controller:
         # This is accomplished using a generator and pool.imap, -- simulations are only built
         # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
         # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
-        # sim_generator = self.generateSims(range(num_sims))
         failed_indexes = []  # keep track of the indices of failed simulations
         jobs_finished = 0  # keep track of what simulations have finished
 
@@ -675,54 +665,49 @@ class Controller:
         if self.num_processes == 1:
             if self.verbose:
                 print("Executing sequentially...")
-            i = 0
-            for i in range(num_sims):
-                sim_generator = self.generate_sims(list(range(i, i + 1)))
-                for sim in sim_generator:
-                    try:
-                        run_ok = simulation_executor((sim, self._data_out_queue))[0]
-                    except:
-                        failed_indexes.append(i)
-                    else:
-                        if not run_ok:
-                            failed_indexes.append(i)
-                    i += 1
-                    progress_bar.update(i)
+
+            # for index in range(num_sims):
+            sim_generator = self.generate_sims(list(range(num_sims)))
+            for sim in sim_generator:
+                try:
+                    run_ok = simulation_executor((sim, self._data_out_queue))[0]
+                except:
+                    failed_indexes.append(sim.index)
+                else:
+                    if not run_ok:
+                        failed_indexes.append(sim.index)
+                jobs_finished += 1
+                progress_bar.update(jobs_finished)
         else:
             if self.num_processes > num_sims:
                 print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
                 self.num_processes = num_sims
-            for i in range(num_sims//self.num_processes):
-                # If number of sims doesn't factor evenly into the number of processes:
-                if num_sims % self.num_processes != 0 and i == len(list(range(num_sims // self.num_processes)))-1:
-                    offset = num_sims % self.num_processes
-                else:
-                    offset = 0
-                sim_generator = self.generate_sims(list(range(self.num_processes * i, self.num_processes * (i + 1) + offset)))
-                pool = mp.Pool(self.num_processes)
-                try:
-                    # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
-                        if result[0] is not True:  # workers return True on success
-                            failed_indexes.append(result[1])  # add failed jobs to the list of failures
-                            print("Job", result[1], "failed...")
 
-                        jobs_finished += 1
-                        progress_bar.update(jobs_finished)
-                    pool.close()
-                except KeyboardInterrupt as e:
-                    print("Ctrl-C was hit, closing pool")
-                    failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
-                    pool.terminate()
-                    raise e
-                except Exception as e:
-                    print("Unknown exception while running simulations:", e)
-                    failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
-                    traceback.print_exc()
-                    pool.terminate()
-                finally:
-                    # Wait until all data is logged from the spawned runs before proceeding with the next set.
-                    pool.join()
+            sim_generator = self.generate_sims(list(range(num_sims)))
+            pool = mp.Pool(self.num_processes)
+            try:
+                # yields results as the workers finish jobs
+                for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
+                    if result[0] is not True:  # workers return True on success
+                        failed_indexes.append(result[1])  # add failed jobs to the list of failures
+                        print("Job", result[1], "failed...")
+
+                    jobs_finished += 1
+                    progress_bar.update(jobs_finished)
+                pool.close()
+            except KeyboardInterrupt as e:
+                print("Ctrl-C was hit, closing pool")
+                failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
+                pool.terminate()
+                raise e
+            except Exception as e:
+                print("Unknown exception while running simulations:", e)
+                failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
+                traceback.print_exc()
+                pool.terminate()
+            finally:
+                # Wait until all data is logged from the spawned runs before proceeding with the next set.
+                pool.join()
 
         progress_bar.markComplete()
         progress_bar.close()
