@@ -25,11 +25,13 @@ import numpy as np
 import multiprocessing as mp
 import pickle as pickle
 from xmera.utilities.MonteCarlo.DataWriter import DataWriter
+from xmera.utilities.MonteCarlo.PathWalk import _apply_modification
 from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
 
 logger = logging.getLogger("montecarlo_controller")
+
 
 class SimulationParameters:
     """
@@ -816,15 +818,8 @@ class SimulationExecutor:
 
             # apply the _dispersions and the random seeds
             for variable, value in list(modifications.items()):
-                expression = "sim_instance." + variable
-                dispersion_expression = None
-                if eval("callable(" + expression + ")"):
-                    dispersion_expression = expression + "(" + value + ")"
-                else:
-                    dispersion_expression = expression + "=" + value
-
-                log.debug(f"Executing parameter modification -> {dispersion_expression}")
-                exec(dispersion_expression)
+                log.debug(f"Applying parameter modification -> {variable} = {value}")
+                _apply_modification(sim_instance, variable, value)
 
             # setup data logging
             if len(sim_params.retention_policies) > 0:
@@ -880,13 +875,13 @@ class SimulationExecutor:
         random_seeds = {}
         for i, task in enumerate(sim_instance.TaskList):
             for j, model in enumerate(task.TaskModels):
-                task_var = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
-                rand = str(random.randint(0, 1 << 32 - 1))
+                task_var = f'TaskList[{i}].TaskModels[{j}].RNGSeed'
+                rand = random.randint(0, (1 << 32) - 1)
                 try:
-                    exec_statement = "sim_instance." + task_var + "=" + str(rand)
-                    exec(exec_statement)
-                    random_seeds[task_var] = rand
-                except:
+                    model.RNGSeed = rand
+                    random_seeds[task_var] = str(rand)
+                except AttributeError:
+                    # This task model has no random seed, thus there is no seed to set.
                     pass
         return random_seeds
 
@@ -902,5 +897,4 @@ class SimulationExecutor:
         """
         for variable, value in modifications.items():
             if ".RNGSeed" in variable:
-                rng_statement = "sim_instance." + variable + "=" + value
-                exec(rng_statement)
+                _apply_modification(sim_instance, variable, value)
