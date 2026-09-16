@@ -3,13 +3,16 @@
 # Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 
+import dataclasses
 import multiprocessing.queues
 import os
 import random
 import shutil
+import traceback
 import warnings
 import logging
 
+from dataclasses import dataclass
 from typing import Generator, Optional
 
 with warnings.catch_warnings():
@@ -30,6 +33,19 @@ from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
 
 logger = logging.getLogger("montecarlo_controller")
+
+
+@dataclass(frozen=True)
+class FailureRecord:
+    """Information captured when a Monte Carlo run fails.
+
+    ``execute_simulations`` and ``run_initial_conditions`` return a list of these records, not only
+    the run indices. Thus the caller can find the cause of a failure without the worker logs.
+    """
+
+    run_index: int
+    exception_type: str = ""
+    traceback: str = ""
 
 
 class JobRunner:
@@ -416,7 +432,7 @@ class Controller:
             dispersions = json.load(dispersion_file)
             return dispersions
 
-    def re_run_cases(self, run_indexes: list[int]) -> list[int]:
+    def re_run_cases(self, run_indexes: list[int]) -> list[FailureRecord]:
         """
         Rerun selected run indexes from a Monte Carlo batch. The reruns do not occur in parallel.
 
@@ -426,8 +442,8 @@ class Controller:
         :param run_indexes: The list of runs to do again, a list of numbers.
         :type run_indexes: list[int]
 
-        :return: failed: The list of failed run indexes.
-        :rtype: list[int]
+        :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
+        :rtype: list[FailureRecord]
         """
         runnable_indexes = []
         for run_index in run_indexes:
@@ -444,7 +460,7 @@ class Controller:
         )
 
         if failures:
-            logger.info(f"Failed rerunning run_indexes: {sorted(failures)}")
+            logger.info(f"Failed rerunning run_indexes: {sorted(f.run_index for f in failures)}")
 
         return failures
 
@@ -477,7 +493,7 @@ class Controller:
 
             yield sim_params
 
-    def run_initial_conditions(self, run_indexes, ic_directory):
+    def run_initial_conditions(self, run_indexes, ic_directory) -> list[FailureRecord]:
         """
         Run the initial conditions of selected run indexes.
 
@@ -486,8 +502,8 @@ class Controller:
         :param ic_directory: The directory that contains the initial conditions data files.
         :type ic_directory: str
 
-        :return: failed_indexes: The list of failed runs.
-        :rtype: list
+        :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
+        :rtype: list[FailureRecord]
         """
         assert ic_directory != "", "No initial condition directory was given"
 
@@ -502,12 +518,12 @@ class Controller:
         self._save_monte_carlo_controller()
 
         with JobRunner(self.results_dir) as runner:
-            failed_indexes = self._drive_jobs(
+            failures = self._drive_jobs(
                 self.generate_ic_sims(run_indexes), len(run_indexes), runner.queue,
             )
 
-        self._save_failed_indexes(failed_indexes)
-        return failed_indexes
+        self._save_failed_indexes(failures)
+        return failures
 
     def generate_ic_sims(self, run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
         """
@@ -603,22 +619,22 @@ class Controller:
                 retention_policy.execute_callback(data)
 
     def _drive_jobs(self, sim_generator: Generator[SimulationParameters, None, None],
-                    total: int, queue, num_processes: Optional[int] = None) -> list[int]:
+                    total: int, queue, num_processes: Optional[int] = None) -> list[FailureRecord]:
         """Send a Monte Carlo job stream to the sequential executor or to a worker pool.
 
-        Forwards retained data to ``queue`` and returns the list of run indices that failed
-        (either by raising in the sequential executor or by returning ``False`` from the worker).
-        On KeyboardInterrupt or any other unexpected exception during pool dispatch, the pool is
-        terminated, every job that had not yet reported success is recorded as failed, and
-        KeyboardInterrupt is re-raised.
+        The job driver sends the retained data to ``queue``. It returns a list of :class:`FailureRecord`
+        instances, one for each run that failed. A run fails when it raises an exception in the
+        sequential executor, or when the worker returns ``False``. Pool dispatch can get a
+        KeyboardInterrupt or a different unexpected exception. If this occurs, the job driver stops the
+        pool and records as failed each job that did not report success. Then it raises KeyboardInterrupt again.
 
         :param sim_generator: A generator that yields SimulationParameters for each run.
         :param total: The expected number of runs. The progress bar and the failed-tail logic use this number.
         :param queue: The multiprocessing queue that the DataWriter uses for the retained results.
         :param num_processes: The number of workers for this stream. The default is the setting of the controller.
         """
-        failed_indexes: list[int] = []
-        jobs_finished = 0
+        failures: list[FailureRecord] = []
+        finished_indexes: set[int] = set()
 
         if num_processes is None:
             num_processes = self.num_processes
@@ -630,16 +646,21 @@ class Controller:
             logger.debug("Executing sequentially...")
             for sim in sim_generator:
                 try:
-                    result = simulation_executor((sim, queue))
-                    run_ok = result[0] if result is not None else False
-                except Exception:
+                    success, index, exc_type, tb = simulation_executor((sim, queue))
+                except Exception as e:
                     logger.exception(f"Simulation run {sim.index} raised in sequential executor")
-                    failed_indexes.append(sim.index)
+                    failures.append(FailureRecord(
+                        run_index=sim.index,
+                        exception_type=type(e).__name__,
+                        traceback=traceback.format_exc(),
+                    ))
                 else:
-                    if not run_ok:
-                        failed_indexes.append(sim.index)
-                jobs_finished += 1
-                progress_bar.update(jobs_finished)
+                    if not success:
+                        failures.append(FailureRecord(
+                            run_index=index, exception_type=exc_type, traceback=tb,
+                        ))
+                finished_indexes.add(sim.index)
+                progress_bar.update(len(finished_indexes))
         else:
             if num_processes > total:
                 logger.info(
@@ -650,22 +671,25 @@ class Controller:
 
             pool = mp.Pool(num_processes)
             try:
-                for result in pool.imap_unordered(simulation_executor,
-                                                  [(x, queue) for x in sim_generator]):
-                    if result[0] is not True:
-                        failed_indexes.append(result[1])
-                        logger.info(f"Job {result[1]} failed...")
-                    jobs_finished += 1
-                    progress_bar.update(jobs_finished)
+                for success, index, exc_type, tb in pool.imap_unordered(
+                    simulation_executor, [(x, queue) for x in sim_generator],
+                ):
+                    if not success:
+                        failures.append(FailureRecord(
+                            run_index=index, exception_type=exc_type, traceback=tb,
+                        ))
+                        logger.info(f"Job {index} failed ({exc_type})")
+                    finished_indexes.add(index)
+                    progress_bar.update(len(finished_indexes))
                 pool.close()
             except KeyboardInterrupt:
                 logger.info("Ctrl-C was hit, closing pool")
-                failed_indexes.extend(range(jobs_finished, total))
+                self._record_unfinished(failures, finished_indexes, total, "KeyboardInterrupt")
                 pool.terminate()
                 raise
-            except Exception:
+            except Exception as e:
                 logger.exception("Unknown exception while running simulations")
-                failed_indexes.extend(range(jobs_finished, total))
+                self._record_unfinished(failures, finished_indexes, total, type(e).__name__)
                 pool.terminate()
             finally:
                 pool.join()
@@ -673,22 +697,34 @@ class Controller:
         progress_bar.markComplete()
         progress_bar.close()
 
-        return failed_indexes
+        return failures
 
-    def _save_failed_indexes(self, failed_indexes: list[int]) -> None:
+    @staticmethod
+    def _record_unfinished(failures: list[FailureRecord], finished_indexes: set[int],
+                            total: int, exception_type: str) -> None:
+        for i in range(total):
+            if i not in finished_indexes:
+                failures.append(FailureRecord(run_index=i, exception_type=exception_type))
+
+    def _save_failed_indexes(self, failures: list[FailureRecord]) -> None:
         """
-        Save a list of failed simulation run indexes.
+        Save the failures from this Monte Carlo batch to disk.
 
-        :param failed_indexes: The list of failed simulation run indexes.
-        :type failed_indexes: list[int]
+        ``failures.txt`` keeps its old format, a sorted list of run indexes, for the users of that
+        format, for example ``re_run_cases``. ``failures.json`` is a structured record with more data.
+        It gives the exception type and traceback of each failed run.
         """
-        if len(failed_indexes) == 0: return
+        if not failures:
+            return
 
-        logger.debug(f"Failed {failed_indexes}, saving to 'failures.txt'")
-        failed_indexes.sort()
-        # write a file that contains log of failed runs
+        sorted_failures = sorted(failures, key=lambda f: f.run_index)
+        indexes = [f.run_index for f in sorted_failures]
+
+        logger.debug(f"Failed {indexes}, saving to 'failures.txt' and 'failures.json'")
         with open(os.path.join(self._mc_run_dir, "failures.txt"), "w") as fail_file:
-            fail_file.write(str(failed_indexes))
+            fail_file.write(str(indexes))
+        with open(os.path.join(self._mc_run_dir, "failures.json"), "w") as fail_json:
+            json.dump([dataclasses.asdict(f) for f in sorted_failures], fail_json, indent=2)
 
     def _save_monte_carlo_controller(self):
         """
@@ -701,12 +737,12 @@ class Controller:
         except Exception as e:
             logger.info(f"Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n{e}")
 
-    def execute_simulations(self) -> list[int]:
+    def execute_simulations(self) -> list[FailureRecord]:
         """
         Execute the simulation runs.
 
-        :return: failed_indexes: A list of the indices of all failed simulation runs.
-        :rtype: list[int]
+        :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
+        :rtype: list[FailureRecord]
         """
         logger.debug(f"Beginning simulation with {self.num_simulation_runs} runs on {self.num_processes} processes")
         self._setup_archive_directory()
@@ -714,12 +750,12 @@ class Controller:
 
         num_sims = self.num_simulation_runs
         with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
-            failed_indexes = self._drive_jobs(
+            failures = self._drive_jobs(
                 self.generate_sims(list(range(num_sims))), num_sims, runner.queue,
             )
 
-        self._save_failed_indexes(failed_indexes)
-        return failed_indexes
+        self._save_failed_indexes(failures)
+        return failures
 
 
 class SimulationExecutor:
@@ -735,16 +771,17 @@ class SimulationExecutor:
     """
 
     @classmethod
-    def __call__(cls, params: tuple[SimulationParameters, multiprocessing.Queue]) -> tuple[bool, int]:
+    def __call__(cls, params: tuple[SimulationParameters, multiprocessing.Queue]) -> tuple[bool, int, str, str]:
         """
-        In each worker process, we execute this function (by calling this object)
+        Execute one simulation. Each worker process calls this object, which executes this function.
 
         :param params: The SimulationParameters object of the simulation to execute, and the output data queue of
         the data writer.
         :type params: tuple[SimulationParameters, multiprocessing.Queue]
 
-        :return success: A pair of the simulation run's success and run index
-        :rtype: tuple[bool, int]
+        :return: A 4-tuple ``(success, run_index, exception_type, traceback)``. The exception type
+            and traceback strings are empty if ``success`` is True.
+        :rtype: tuple[bool, int, str, str]
         """
         sim_params = params[0]
         data_out_queue = params[1]
@@ -847,11 +884,11 @@ class SimulationExecutor:
 
             log.debug(f"Job {sim_params.index} finished successfully")
 
-            return True, sim_params.index  # this function returns true only if the simulation was successful
+            return True, sim_params.index, "", ""
 
-        except Exception:
+        except Exception as e:
             log.exception(f"Error in worker process for run {sim_params.index}")
-            return False, sim_params.index  # there was an error
+            return False, sim_params.index, type(e).__name__, traceback.format_exc()
 
     @staticmethod
     def disperse_seeds(sim_instance):
