@@ -144,9 +144,6 @@ class Controller:
         self.configure_function=None
         self._retention_policies=[]
         self._dispersions=[]
-        self._multi_proc_manager = None
-        self._data_out_queue = None
-        self._data_writer = None
         self._ic_directory = ""
         self._archive_dir = ""
         self._mc_run_dir = None
@@ -192,12 +189,7 @@ class Controller:
 
         with gzip.open(filename) as pickled_data:
             data = pickle.load(pickled_data)
-            if data.log_level:
-                print("Loading montecarlo at", filename)
-            data._multi_proc_manager = mp.Manager()
-            data._data_out_queue = data._multi_proc_manager.Queue()
-            data._data_writer = DataWriter(data._data_out_queue)
-            data._data_writer.daemon = False
+            logger.debug(f"Loading monte carlo at {filename}")
             return data
 
     def set_execution_function(self, execution_function):
@@ -424,49 +416,66 @@ class Controller:
             dispersions = json.load(dispersion_file)
             return dispersions
 
-    def re_run_cases(self, run_indexes: list[int]):
+    def re_run_cases(self, run_indexes: list[int]) -> list[int]:
         """
         Rerun selected run indexes from a Monte Carlo batch. The reruns do not occur in parallel.
+
+        If the initial conditions file of a run index is missing, the controller skips that run
+        index. It does not report a failure, because there is no data to rerun.
 
         :param run_indexes: The list of runs to do again, a list of numbers.
         :type run_indexes: list[int]
 
-        :return: failed The list of failed runs.
+        :return: failed: The list of failed run indexes.
         :rtype: list[int]
         """
-        failed_simulations = []
+        runnable_indexes = []
         for run_index in run_indexes:
-            logger.debug(f"Rerunning {run_index}")
-
             old_run_file = self._make_initial_conditions_directory_file_name(run_index)
             if not os.path.exists(old_run_file):
                 logger.info(f"File {old_run_file} not found. Therefore, cannot re-run case: {run_index}")
                 continue
+            runnable_indexes.append(run_index)
+
+        # Reruns keep no data. Thus the reruns do not use a data writer, and nothing reads the queue.
+        failures = self._drive_jobs(
+            self.generate_rerun_sims(runnable_indexes), len(runnable_indexes), None,
+            num_processes=1,
+        )
+
+        if failures:
+            logger.info(f"Failed rerunning run_indexes: {sorted(failures)}")
+
+        return failures
+
+    def generate_rerun_sims(self, run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
+        """
+        Generator function that clones a baseSimulation for a rerun of an existing case.
+
+        A rerun uses the seeds and dispersions that the original run saved. A rerun keeps
+        none of its own data.
+
+        :param run_indexes: The run indexes to rerun. Each run index has an initial conditions file.
+        :type run_indexes: list[int]
+
+        :return sim_params: A generator that yields that number of cloned simulations
+        :rtype: sim_params: Generator[SimulationParameters]
+        """
+        for run_index in run_indexes:
+            logger.debug(f"Rerunning {run_index}")
 
             # use old simulation parameters, modified slightly.
             sim_params = self.create_sim_parameters(run_index)
             sim_params.index = run_index
-            # don't redisperse seeds, we want to use the ones saved in the old_run_file
+            # don't redisperse seeds, we want to use the ones saved in the old run file
             sim_params.should_disperse_seeds = False
             # don't retain any data so remove all retention policies
             sim_params.retention_policies = []
 
-            with open(old_run_file, "r") as run_parameters:
+            with open(self._make_initial_conditions_directory_file_name(run_index), "r") as run_parameters:
                 sim_params.modifications = json.load(run_parameters)
 
-            # execute simulation with dispersion
-            executor = SimulationExecutor()
-            success = executor((sim_params, self._data_out_queue))
-
-            if not success:
-                logger.info(f"Error re-executing run {run_index}")
-                failed_simulations.append(run_index)
-
-        if len(failed_simulations) > 0:
-            failed_simulations.sort()
-            logger.info(f"Failed rerunning run_indexes: {failed_simulations}")
-
-        return failed_simulations
+            yield sim_params
 
     def run_initial_conditions(self, run_indexes, ic_directory):
         """
