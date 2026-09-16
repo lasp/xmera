@@ -11,7 +11,7 @@ import traceback
 import warnings
 import logging
 
-from typing import Generator
+from typing import Generator, Optional
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
@@ -31,6 +31,66 @@ from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
 
 logger = logging.getLogger("montecarlo_controller")
+
+
+class JobRunner:
+    """Context manager for the mp.Manager, Queue, and DataWriter of one Monte Carlo batch.
+
+    The job runner drains the data writer and stops the manager when the ``with`` block ends. It
+    also does this when the ``with`` block raises an exception:
+
+        with JobRunner(results_dir, var_cast=None) as runner:
+            failed = drive_jobs(runner.queue)
+    """
+
+    _DRAIN_POLL_SECONDS = 1
+    _SHUTDOWN_GRACE_SECONDS = 5
+
+    def __init__(self, results_dir: str, var_cast: Optional[str] = None):
+        self._results_dir = results_dir
+        self._var_cast = var_cast
+        self._manager = None
+        self._queue = None
+        self._writer = None
+
+    @property
+    def queue(self):
+        return self._queue
+
+    @property
+    def writer(self):
+        return self._writer
+
+    @property
+    def manager(self):
+        return self._manager
+
+    def __enter__(self):
+        self._manager = mp.Manager()
+        self._queue = self._manager.Queue()
+        self._writer = DataWriter(self._queue)
+        self._writer.daemon = False
+        self._writer.set_log_dir(self._results_dir)
+        self._writer.set_var_cast(self._var_cast)
+        self._writer.start()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        try:
+            if self._queue is not None:
+                # Wait until the data writer pickles the remaining items, then send the shutdown sentinel.
+                while not self._queue.empty():
+                    time.sleep(self._DRAIN_POLL_SECONDS)
+                self._queue.put((None, None, True))
+            if self._writer is not None:
+                self._writer.join(timeout=self._SHUTDOWN_GRACE_SECONDS)
+        finally:
+            if self._manager is not None:
+                self._manager.shutdown()
+            self._manager = None
+            self._queue = None
+            self._writer = None
+        return False  # do not suppress exceptions
 
 
 class SimulationParameters:
