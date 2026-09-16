@@ -7,7 +7,6 @@ import multiprocessing.queues
 import os
 import random
 import shutil
-import traceback
 import warnings
 import logging
 
@@ -483,8 +482,7 @@ class Controller:
         """
         assert ic_directory != "", "No initial condition directory was given"
 
-        logger.debug("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
-                                                                               self.num_processes))
+        logger.debug(f"Beginning simulation with {self.num_simulation_runs} runs on {self.num_processes} processes")
         self._setup_archive_directory()
 
         # Copy the initial conditions files of the run_indexes into the new Monte Carlo directory
@@ -494,74 +492,12 @@ class Controller:
 
         self._save_monte_carlo_controller()
 
-        # Create Queue, but don't ever start it.
-        self._multi_proc_manager = mp.Manager()
-        self._data_out_queue = self._multi_proc_manager.Queue()
-        self._data_writer = DataWriter(self._data_out_queue)
-        self._data_writer.daemon = False
-
-        self._data_writer.set_log_dir(self.results_dir)
-        self._data_writer.start()
-
-        jobs_finished = 0  # keep track of what simulations have finished
-        failed_indexes = []
-
-        # The simulation executor is responsible for executing simulation given a simulation's parameters
-        # It is called within worker processes with each worker's simulation parameters
-        simulation_executor = SimulationExecutor()
-
-        progress_bar = SimulationProgressBar(len(run_indexes), self.show_progress_bar)
-        if self.num_processes == 1:
-            logger.debug("Executing sequentially...")
-            sim_generator = self.generate_ic_sims(run_indexes)
-            for sim in sim_generator:
-                try:
-                    simulation_executor((sim, self._data_out_queue))
-                except Exception:
-                    logger.exception(f"Simulation run {sim.index} raised in sequential executor")
-                    failed_indexes.append(sim.index)
-            jobs_finished += 1
-            progress_bar.update(jobs_finished)
-        else:
-            num_sims = len(run_indexes)
-            if self.num_processes > num_sims:
-                logger.info("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
-                self.num_processes = num_sims
-
-            sim_generator = self.generate_ic_sims(run_indexes)
-            pool = mp.Pool(self.num_processes)
-            try:
-                # yields results as the workers finish jobs
-                for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
-                    if result[0] is not True:  # workers return True on success
-                        failed_indexes.append(result[1])  # add failed jobs to the list of failures
-                        logger.info(f"Job {result[1]} failed...")
-
-                    jobs_finished += 1
-                    progress_bar.update(jobs_finished)
-                pool.close()
-            except KeyboardInterrupt as e:
-                logger.info("Ctrl-C was hit, closing pool")
-                # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
-                pool.terminate()
-                raise e
-            except Exception as e:
-                logger.info(f"Unknown exception while running simulations: {e}")
-                # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
-                traceback.print_exc()
-                pool.terminate()
-            finally:
-                pool.join()
-
-        progress_bar.markComplete()
-        progress_bar.close()
-        while not self._data_out_queue.empty():
-           time.sleep(1)
-        self._data_out_queue.put((None, None, True))
-        time.sleep(5)
+        with JobRunner(self.results_dir) as runner:
+            failed_indexes = self._drive_jobs(
+                self.generate_ic_sims(run_indexes), len(run_indexes), runner.queue,
+            )
 
         self._save_failed_indexes(failed_indexes)
-
         return failed_indexes
 
     def generate_ic_sims(self, run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
