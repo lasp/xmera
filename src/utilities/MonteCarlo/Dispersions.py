@@ -41,6 +41,7 @@ class SingleVariableDispersion(object):
         return self.var_name
 
     def generate_string(self, sim):
+        self.magnitude = []
         return str(self.generate(sim))
 
     def generate_mag_string(self):
@@ -182,6 +183,7 @@ class VectorVariableDispersion(object):
 
     def generate_string(self, sim):
         # TODO does this actually behave differently then str(next_value)?
+        self.magnitude = []
         next_value = self.generate(sim)
         val = '['
         for i in range(3):
@@ -414,6 +416,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
 
     def generate_string(self, sim):
         # TODO does this actually behave differently then str(next_value)?
+        self.magnitude = []
         next_value = self.generate(sim)
 
         val = '['
@@ -562,6 +565,7 @@ class InertiaTensorDispersion:
         return value
 
     def generate_string(self, sim):
+        self.magnitude = []
         next_value = self.generate(sim)
         # TODO does this actually behave differently then str(next_value)?
         val = '['
@@ -606,6 +610,7 @@ class OrbitalElementDispersion:
 
 
     def generate(self, sim=None):
+        self.magnitude = []
         elems = orbitalMotion.ClassicElements
         for key in self.oe_dict.keys():
             if self.oe_dict[key] is not None and key != "mu":
@@ -675,6 +680,7 @@ class SymmetricSolarArrayDispersion():
         self.number_of_sub_disps = 6
 
     def generate(self, sim=None):
+        self.magnitude = []
         disp_value = random.uniform(self.bounds[0], self.bounds[1])
         self.angle1_dyn_val = disp_value
         self.angle2_dyn_val = -disp_value
@@ -732,6 +738,7 @@ class SymmetricSolarArrayWithReferenceDispersion():
         self.number_of_sub_disps = 8
 
     def generate(self, sim=None):
+        self.magnitude = []
         disp_value = random.uniform(self.bounds[0], self.bounds[1])
 
         self.angle1_dyn_val = disp_value
