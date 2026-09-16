@@ -78,11 +78,11 @@ class Controller:
         self.creation_function=None
         self.execution_function=None
         self.configure_function=None
-        self.retention_policies=[]
-        self.dispersions=[]
-        self.multi_proc_manager = None
-        self.data_out_queue = None
-        self.data_writer = None
+        self._retention_policies=[]
+        self._dispersions=[]
+        self._multi_proc_manager = None
+        self._data_out_queue = None
+        self._data_writer = None
         self._ic_directory = ""
         self._archive_dir = ""
         self._mc_run_dir = None
@@ -130,10 +130,10 @@ class Controller:
             data = pickle.load(pickled_data)
             if data.verbose:
                 print("Loading montecarlo at", filename)
-            data.multi_proc_manager = mp.Manager()
-            data.data_out_queue = data.multi_proc_manager.Queue()
-            data.data_writer = DataWriter(data.data_out_queue)
-            data.data_writer.daemon = False
+            data._multi_proc_manager = mp.Manager()
+            data._data_out_queue = data._multi_proc_manager.Queue()
+            data._data_writer = DataWriter(data._data_out_queue)
+            data._data_writer.daemon = False
             return data
 
     def set_execution_function(self, execution_function):
@@ -193,7 +193,7 @@ class Controller:
         :type disp: Dispersion
 
         """
-        self.dispersions.append(disp)
+        self._dispersions.append(disp)
 
     def add_retention_policy(self, policy):
         """
@@ -203,7 +203,7 @@ class Controller:
             and saves.
         :type policy: RetentionPolicy
         """
-        self.retention_policies.append(policy)
+        self._retention_policies.append(policy)
 
     def set_num_worker_processes(self, num_processes: int):
         """
@@ -390,7 +390,7 @@ class Controller:
 
             # execute simulation with dispersion
             executor = SimulationExecutor()
-            success = executor((sim_params, self.data_out_queue))
+            success = executor((sim_params, self._data_out_queue))
 
             if not success:
                 print("Error re-executing run", run_index)
@@ -429,13 +429,13 @@ class Controller:
         self._save_monte_carlo_controller()
 
         # Create Queue, but don't ever start it.
-        self.multi_proc_manager = mp.Manager()
-        self.data_out_queue = self.multi_proc_manager.Queue()
-        self.data_writer = DataWriter(self.data_out_queue)
-        self.data_writer.daemon = False
+        self._multi_proc_manager = mp.Manager()
+        self._data_out_queue = self._multi_proc_manager.Queue()
+        self._data_writer = DataWriter(self._data_out_queue)
+        self._data_writer.daemon = False
 
-        self.data_writer.set_log_dir(self.results_dir)
-        self.data_writer.start()
+        self._data_writer.set_log_dir(self.results_dir)
+        self._data_writer.start()
 
         jobs_finished = 0  # keep track of what simulations have finished
         failed_indexes = []
@@ -453,7 +453,7 @@ class Controller:
                 sim_generator = self.generate_ic_sims(run_indexes[i:i + 1])
                 for sim in sim_generator:
                     try:
-                        simulation_executor((sim, self.data_out_queue))
+                        simulation_executor((sim, self._data_out_queue))
                     except:
                         failed_indexes.append(i)
                 i += 1
@@ -474,7 +474,7 @@ class Controller:
                 pool = mp.Pool(self.num_processes)
                 try:
                     # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulation_executor, [(x, self.data_out_queue) for x in sim_generator]):
+                    for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
                         if result[0] is not True:  # workers return True on success
                             failed_indexes.append(result[1])  # add failed jobs to the list of failures
                             print("Job", result[1], "failed...")
@@ -497,9 +497,9 @@ class Controller:
 
         progress_bar.markComplete()
         progress_bar.close()
-        while not self.data_out_queue.empty():
+        while not self._data_out_queue.empty():
            time.sleep(1)
-        self.data_out_queue.put((None, None, True))
+        self._data_out_queue.put((None, None, True))
         time.sleep(5)
 
         self._save_failed_indexes(failed_indexes)
@@ -547,8 +547,8 @@ class Controller:
         sim_params = SimulationParameters(self.creation_function,
                                           self.execution_function,
                                           self.configure_function,
-                                          self.retention_policies,
-                                          self.dispersions,
+                                          self._retention_policies,
+                                          self._dispersions,
                                           self.should_disperse_seeds,
                                           self._make_results_directory_file_name(index),
                                           self._make_initial_conditions_directory_file_name(index),
@@ -593,7 +593,7 @@ class Controller:
             run_indexes = list(range(self.num_simulation_runs))
 
         if not retention_policies:
-            retention_policies = self.retention_policies
+            retention_policies = self._retention_policies
 
         for index in run_indexes:
             data = self.get_retained_data(index)
@@ -641,17 +641,17 @@ class Controller:
         self._setup_archive_directory()
         self._save_monte_carlo_controller()
 
-        self.multi_proc_manager = mp.Manager()
-        self.data_out_queue = self.multi_proc_manager.Queue()
-        self.data_writer = DataWriter(self.data_out_queue)
-        self.data_writer.daemon = False
+        self._multi_proc_manager = mp.Manager()
+        self._data_out_queue = self._multi_proc_manager.Queue()
+        self._data_writer = DataWriter(self._data_out_queue)
+        self._data_writer.daemon = False
 
         num_sims = self.num_simulation_runs
 
         # start data writer process
-        self.data_writer.set_log_dir(self.results_dir)
-        self.data_writer.set_var_cast(self.var_cast)
-        self.data_writer.start()
+        self._data_writer.set_log_dir(self.results_dir)
+        self._data_writer.set_var_cast(self.var_cast)
+        self._data_writer.start()
 
         # Avoid building a full list of all simulations to run in memory,
         # instead only generating simulations right before they are needed by a waiting worker
@@ -680,7 +680,7 @@ class Controller:
                 sim_generator = self.generate_sims(list(range(i, i + 1)))
                 for sim in sim_generator:
                     try:
-                        run_ok = simulation_executor((sim, self.data_out_queue))[0]
+                        run_ok = simulation_executor((sim, self._data_out_queue))[0]
                     except:
                         failed_indexes.append(i)
                     else:
@@ -702,7 +702,7 @@ class Controller:
                 pool = mp.Pool(self.num_processes)
                 try:
                     # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulation_executor, [(x, self.data_out_queue) for x in sim_generator]):
+                    for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
                         if result[0] is not True:  # workers return True on success
                             failed_indexes.append(result[1])  # add failed jobs to the list of failures
                             print("Job", result[1], "failed...")
@@ -727,9 +727,9 @@ class Controller:
         progress_bar.markComplete()
         progress_bar.close()
         # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
-        while not self.data_out_queue.empty():
+        while not self._data_out_queue.empty():
            time.sleep(1)
-        self.data_out_queue.put((None, None, True))
+        self._data_out_queue.put((None, None, True))
         time.sleep(5)
 
         self._save_failed_indexes(failed_indexes)
@@ -809,7 +809,7 @@ class SimulationExecutor:
                                 magnitudes[name] = disp.generate_mag_string()
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
-            # save the dispersions and random seeds for this run
+            # save the _dispersions and random seeds for this run
             with open(sim_params.initial_conditions_filename, 'w') as outfile:
                 json.dump(modifications, outfile)
             if sim_params.should_save_disp_mag:
@@ -822,7 +822,7 @@ class SimulationExecutor:
                     print("Configuring sim")
                 sim_params.configure_function(sim_instance)
 
-            # apply the dispersions and the random seeds
+            # apply the _dispersions and the random seeds
             for variable, value in list(modifications.items()):
                 expression = "sim_instance." + variable
                 dispersion_expression = None
