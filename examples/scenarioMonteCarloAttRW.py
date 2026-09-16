@@ -133,6 +133,7 @@ import inspect
 import math
 import os
 import shutil
+import tempfile
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -232,7 +233,7 @@ def run(saveFigures, case, show_plots):
     monteCarlo.log_level = "DEBUG"
 
     # We set up where to retain the data to.
-    dirName = os.path.join("montecarlo_test", str(os.getpid()))
+    dirName = tempfile.mkdtemp()
     monteCarlo.archive_dir = dirName
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module

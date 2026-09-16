@@ -41,6 +41,7 @@ The user should be careful to load the Spice or use within the Python code withi
 import inspect
 import os
 import shutil
+import tempfile
 import spiceypy
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -129,7 +130,7 @@ def run():
     monteCarlo.set_num_worker_processes(6)
     monteCarlo.log_level = "WARNING"
 
-    dirName = "montecarlo_test" + str(os.getpid())
+    dirName = tempfile.mkdtemp()
     monteCarlo.archive_dir = dirName
 
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
