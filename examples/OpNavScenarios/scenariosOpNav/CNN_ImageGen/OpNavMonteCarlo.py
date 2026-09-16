@@ -69,8 +69,9 @@ def run(show_plots):
         monteCarlo.set_simulation_function(myCreationFunction)
         monteCarlo.set_execution_count(NUMBER_OF_RUNS)
         monteCarlo.set_num_worker_processes(PROCESSES)
-        monteCarlo.set_verbose(True)
+        monteCarlo.log_level = "DEBUG"
         monteCarlo.archive_dir = dirName
+
         # Add some dispersions
         dispDict = {}
         dispDict["mu"] = 4.2828371901284001E+13

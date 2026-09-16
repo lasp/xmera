@@ -228,12 +228,13 @@ def run(saveFigures, case, show_plots):
     # Optionally set the number of cores to use
     # monteCarlo.set_num_worker_processes(PROCESSES)
 
-    # Whether to print more verbose information during the run
-    monteCarlo.set_verbose(VERBOSE)
+    # The log level controls how much information the Monte Carlo batch prints. DEBUG prints the most.
+    monteCarlo.log_level = "DEBUG"
 
     # We set up where to retain the data to.
-    dirName = "montecarlo_test" + str(os.getpid())
+    dirName = os.path.join("montecarlo_test", str(os.getpid()))
     monteCarlo.archive_dir = dirName
+
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'

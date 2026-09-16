@@ -52,12 +52,12 @@ def run(show_plots):
     monteCarlo.set_execution_function(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
     monteCarlo.set_execution_count(4)  # Required: Number of MCs to run
 
-    monteCarlo.archive_dir = path + "/scenario_AttFeedbackMC"  # Optional: If/where to save retained data.
+    monteCarlo.archive_dir = os.path.join(path, "scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
     monteCarlo.set_should_disperse_seeds(True)  # Optional: Randomize the seed for each module
     monteCarlo.set_num_worker_processes(2)  # Optional: Number of processes to spawn MCs on
-    monteCarlo.set_verbose(True)  # Optional: Produce supplemental text output in console describing status
+    monteCarlo.log_level = "DEBUG"  # Optional: Produce supplemental text output in console describing status
     monteCarlo.set_var_cast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
-    monteCarlo.set_disp_magnitude_file(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
+    monteCarlo.set_should_save_disp_mag(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'

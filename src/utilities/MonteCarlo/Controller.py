@@ -9,6 +9,7 @@ import random
 import shutil
 import traceback
 import warnings
+import logging
 
 from typing import Generator
 
@@ -27,6 +28,8 @@ from xmera.utilities.MonteCarlo.DataWriter import DataWriter
 from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
+
+logger = logging.getLogger("montecarlo_controller")
 
 class SimulationParameters:
     """
@@ -54,7 +57,7 @@ class SimulationParameters:
         self.results_filename = results_filename
         self.initial_conditions_filename = initial_conditions_filename
         self.magnitudes_filename = magnitudes_filename
-        self.verbose = False
+        self.log_level = "INFO"
         self.modifications = {}
         self.dispersion_mag = {}
         self.should_save_disp_mag = False
@@ -73,7 +76,7 @@ class Controller:
         self.num_simulation_runs = 0
         self.var_cast = None
         self.num_processes = mp.cpu_count()
-        self.verbose = False
+        self._log_level = "WARNING"
         self.show_progress_bar = False
         self.creation_function=None
         self.execution_function=None
@@ -128,7 +131,7 @@ class Controller:
 
         with gzip.open(filename) as pickled_data:
             data = pickle.load(pickled_data)
-            if data.verbose:
+            if data.log_level:
                 print("Loading montecarlo at", filename)
             data._multi_proc_manager = mp.Manager()
             data._data_out_queue = data._multi_proc_manager.Queue()
@@ -214,16 +217,7 @@ class Controller:
         """
         self.num_processes = num_processes
 
-    def set_verbose(self, verbose):
-        """
-        Use verbose output for this MonteCarlo run
-
-        :param verbose: Whether to print verbose information during this MonteCarlo sim.
-        :type verbose: bool
-        """
-        self.verbose = verbose
-
-    def set_disp_magnitude_file(self, magnitudes):
+    def set_should_save_disp_mag(self, magnitudes):
         """
         Set whether each run saves a .txt file with the magnitude of each dispersion.
 
@@ -242,6 +236,18 @@ class Controller:
         :type var_cast: str
         """
         self.var_cast = var_cast
+
+    @property
+    def log_level(self) -> str:
+        return self._log_level
+
+    @log_level.setter
+    def log_level(self, value: str):
+        # getLevelName gives the number of a known level name, and a string for other names. It is
+        # in Python 3.9. logging.getLevelNamesMapping is not available before Python 3.11.
+        if not isinstance(logging.getLevelName(value), int):
+            raise ValueError("log_level must be a logging level name, for example DEBUG, INFO or WARNING")
+        self._log_level = value
 
     @property
     def mc_run_dir(self):
@@ -369,12 +375,11 @@ class Controller:
         """
         failed_simulations = []
         for run_index in run_indexes:
-            if self.verbose:
-                print("Rerunning", run_index)
+            logger.debug(f"Rerunning {run_index}")
 
             old_run_file = self._make_initial_conditions_directory_file_name(run_index)
             if not os.path.exists(old_run_file):
-                print(f"File {old_run_file} not found. Therefore, cannot re-run case: {run_index}")
+                logger.info(f"File {old_run_file} not found. Therefore, cannot re-run case: {run_index}")
                 continue
 
             # use old simulation parameters, modified slightly.
@@ -393,12 +398,12 @@ class Controller:
             success = executor((sim_params, self._data_out_queue))
 
             if not success:
-                print("Error re-executing run", run_index)
+                logger.info(f"Error re-executing run {run_index}")
                 failed_simulations.append(run_index)
 
         if len(failed_simulations) > 0:
             failed_simulations.sort()
-            print("Failed rerunning run_indexes:", failed_simulations)
+            logger.info(f"Failed rerunning run_indexes: {failed_simulations}")
 
         return failed_simulations
 
@@ -416,8 +421,7 @@ class Controller:
         """
         assert ic_directory != "", "No initial condition directory was given"
 
-        if self.verbose:
-            print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
+        logger.debug("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
         self._setup_archive_directory()
 
@@ -446,8 +450,7 @@ class Controller:
 
         progress_bar = SimulationProgressBar(len(run_indexes), self.show_progress_bar)
         if self.num_processes == 1:
-            if self.verbose:
-                print("Executing sequentially...")
+            logger.debug("Executing sequentially...")
             sim_generator = self.generate_ic_sims(run_indexes)
             for sim in sim_generator:
                 try:
@@ -459,7 +462,7 @@ class Controller:
         else:
             num_sims = len(run_indexes)
             if self.num_processes > num_sims:
-                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
+                logger.info("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
                 self.num_processes = num_sims
 
             sim_generator = self.generate_ic_sims(run_indexes)
@@ -469,18 +472,18 @@ class Controller:
                 for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
                     if result[0] is not True:  # workers return True on success
                         failed_indexes.append(result[1])  # add failed jobs to the list of failures
-                        print("Job", result[1], "failed...")
+                        logger.info(f"Job {result[1]} failed...")
 
                     jobs_finished += 1
                     progress_bar.update(jobs_finished)
                 pool.close()
             except KeyboardInterrupt as e:
-                print("Ctrl-C was hit, closing pool")
+                logger.info("Ctrl-C was hit, closing pool")
                 # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
                 pool.terminate()
                 raise e
             except Exception as e:
-                print("Unknown exception while running simulations:", e)
+                logger.info(f"Unknown exception while running simulations: {e}")
                 # failed.extend(range(jobs_finished, num_sims))  # fail all potentially running jobs...
                 traceback.print_exc()
                 pool.terminate()
@@ -545,7 +548,7 @@ class Controller:
                                           self._make_initial_conditions_directory_file_name(index),
                                           self._make_dispersion_magnitudes_file_name(index),
                                           index)
-        sim_params.verbose = self.verbose
+        sim_params.log_level = self._log_level
         sim_params.show_progress_bar = self.show_progress_bar
         sim_params.should_save_disp_mag = self.should_save_disp_mag
         return sim_params
@@ -570,7 +573,7 @@ class Controller:
 
             yield sim_params
 
-    def execute_callbacks(self, run_indexes=None, retention_policies=[]):
+    def execute_callbacks(self, run_indexes=None, retention_policies=None):
         """
         Execute the retention policy callbacks after a Monte Carlo batch.
 
@@ -600,8 +603,7 @@ class Controller:
         """
         if len(failed_indexes) == 0: return
 
-        if self.verbose:
-            print("Failed", failed_indexes, "saving to 'failures.txt'")
+        logger.debug(f"Failed {failed_indexes}, saving to 'failures.txt'")
         failed_indexes.sort()
         # write a file that contains log of failed runs
         with open(os.path.join(self._mc_run_dir, "failures.txt"), "w") as fail_file:
@@ -611,13 +613,12 @@ class Controller:
         """
         Save a serialized copy of the Monte Carlo controller.
         """
-        if self.verbose:
-            print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
+        logger.debug("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
         try:
             with gzip.open(os.path.join(self._mc_run_dir, "MonteCarlo.data"), "wb") as pickleFile:
                 pickle.dump(self, pickleFile)  # dump this controller object into a file.
         except Exception as e:
-            print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
+            logger.info(f"Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n{e}")
 
     def execute_simulations(self) -> list[int]:
         """
@@ -626,8 +627,7 @@ class Controller:
         :return: failed_indexes: A list of the indices of all failed simulation runs.
         :rtype: list[int]
         """
-        if self.verbose:
-            print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
+        logger.debug("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
         self._setup_archive_directory()
         self._save_monte_carlo_controller()
@@ -663,8 +663,7 @@ class Controller:
         # garbage properly. # TODO: Find a more permanent solution to the leak.
 
         if self.num_processes == 1:
-            if self.verbose:
-                print("Executing sequentially...")
+            logger.debug("Executing sequentially...")
 
             # for index in range(num_sims):
             sim_generator = self.generate_sims(list(range(num_sims)))
@@ -680,7 +679,7 @@ class Controller:
                 progress_bar.update(jobs_finished)
         else:
             if self.num_processes > num_sims:
-                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
+                logger.info("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
                 self.num_processes = num_sims
 
             sim_generator = self.generate_sims(list(range(num_sims)))
@@ -690,18 +689,18 @@ class Controller:
                 for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
                     if result[0] is not True:  # workers return True on success
                         failed_indexes.append(result[1])  # add failed jobs to the list of failures
-                        print("Job", result[1], "failed...")
+                        logger.info(f"Job {result[1]} failed...")
 
                     jobs_finished += 1
                     progress_bar.update(jobs_finished)
                 pool.close()
             except KeyboardInterrupt as e:
-                print("Ctrl-C was hit, closing pool")
+                logger.info("Ctrl-C was hit, closing pool")
                 failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
                 pool.terminate()
                 raise e
             except Exception as e:
-                print("Unknown exception while running simulations:", e)
+                logger.info(f"Unknown exception while running simulations: {e}")
                 failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
                 traceback.print_exc()
                 pool.terminate()
@@ -748,6 +747,15 @@ class SimulationExecutor:
         """
         sim_params = params[0]
         data_out_queue = params[1]
+
+        log = logging.getLogger(str(sim_params.index))
+        log.setLevel(sim_params.log_level)
+        # Sequential dispatch and reruns execute the same index in one process. Thus attach
+        # the handler one time only, not one time for each call.
+        if not log.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter('Worker pid:%(process)d - %(message)s'))
+            log.addHandler(handler)
 
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN)  # On ctrl-c ignore the signal... let the parent deal with it.
@@ -803,8 +811,7 @@ class SimulationExecutor:
                         outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
 
             if sim_params.configure_function is not None:
-                if sim_params.verbose:
-                    print("Configuring sim")
+                log.debug("Configuring sim")
                 sim_params.configure_function(sim_instance)
 
             # apply the _dispersions and the random seeds
@@ -816,18 +823,15 @@ class SimulationExecutor:
                 else:
                     dispersion_expression = expression + "=" + value
 
-                if sim_params.verbose:
-                    print("Executing parameter modification -> ", dispersion_expression)
+                log.debug(f"Executing parameter modification -> {dispersion_expression}")
                 exec(dispersion_expression)
 
             # setup data logging
             if len(sim_params.retention_policies) > 0:
-                if sim_params.verbose:
-                    print("Adding retained data")
+                log.debug("Adding retained data")
                 RetentionPolicy.add_retention_policies_to_sim(sim_instance, sim_params.retention_policies)
 
-            if sim_params.verbose:
-                print("Executing simulation")
+            log.debug(f"Executing simulation {sim_params.index}")
             # execute the simulation, with the user-supplied execution_function
             try:
                 sim_params.execution_function(sim_instance)
@@ -837,8 +841,7 @@ class SimulationExecutor:
             if len(sim_params.retention_policies) > 0:
                 retention_file = sim_params.results_filename
 
-                if sim_params.verbose:
-                    print("Retaining data for run in", retention_file)
+                log.debug(f"Retaining data for run {sim_params.index} in {retention_file}")
 
                 retained_data = RetentionPolicy.get_data_for_retention(sim_instance, sim_params.retention_policies)
                 data_out_queue.put((retained_data, sim_params.index, None))
@@ -848,11 +851,7 @@ class SimulationExecutor:
                     retained_data["index"] = sim_params.index # add run index
                     pickle.dump(retained_data, archive)
 
-            if sim_params.verbose:
-                print("Terminating simulation")
-
-            if sim_params.verbose:
-                print("Process", os.getpid(), "Job", sim_params.index, "finished successfully")
+            log.debug(f"Job {sim_params.index} finished successfully")
 
             return True, sim_params.index  # this function returns true only if the simulation was successful
 

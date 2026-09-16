@@ -1,9 +1,13 @@
+import logging
 import multiprocessing as mp
 import os
 import pickle
 
 import numpy as np
 import pandas as pd
+
+
+logger = logging.getLogger("montecarlo_datawriter")
 
 
 class DataWriter(mp.Process):
@@ -30,10 +34,10 @@ class DataWriter(mp.Process):
         """
         while self._end_token is None:
             data, mc_sim_index, self._end_token = self._queue.get()
-            print("Starting to log: " + str(mc_sim_index))
+            logger.info(f"Starting to log: {str(mc_sim_index)}")
             if self._end_token:
                 continue
-            print("Logging Dataframes from run " + str(mc_sim_index))
+            logger.info(f"Logging Dataframes from run {str(mc_sim_index)}")
             for dict_name, dict_data in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
                 for item_name, item_data in dict_data.items(): # Loop through all items and their data
 
@@ -43,7 +47,7 @@ class DataWriter(mp.Process):
                     file_path = os.path.join(self._log_dir, item_name + ".data")
                     self._data_files.add(file_path)
 
-                    # Is the data a vector, scalar, or non-existant?
+                    # The data can be a vector, a scalar, or missing.
                     try:
                         vari_len = item_data[:,1:].shape[1]
                     except:
@@ -90,10 +94,10 @@ class DataWriter(mp.Process):
                     with open(file_path, "a+b") as pkl:
                         pickle.dump([df], pkl)
 
-            print("Finished logging dataframes from run" + str(mc_sim_index))
+            logger.info(f"Finished logging dataframes from run {str(mc_sim_index)}")
 
         # Sort by the MultiIndex (first by run number then by variable component)
-        print("Starting to concatenate dataframes")
+        logger.info("Starting to concatenate dataframes")
         for file_path in self._data_files:
             # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
             all_data = []
@@ -111,7 +115,7 @@ class DataWriter(mp.Process):
             all_data = all_data.reindex(columns=new_mult_ind)
             all_data.index.name = 'time[ns]'
             all_data.to_pickle(file_path)
-        print("Finished concatenating dataframes")
+        logger.info("Finished concatenating dataframes")
 
     def set_log_dir(self, log_dir):
         self._log_dir = log_dir

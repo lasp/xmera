@@ -102,7 +102,7 @@ def monte_carlo_simulation(mc_data_directory):
     monte_carlo.set_simulation_function(my_creation_function)
     monte_carlo.set_execution_count(NUMBER_OF_RUNS)
     monte_carlo.set_num_worker_processes(PROCESSES)
-    monte_carlo.set_verbose(False)
+    monte_carlo.log_level = "INFO"
     monte_carlo.archive_dir = mc_data_directory
 
     # Add some dispersions
@@ -133,7 +133,7 @@ def monte_carlo_simulation(mc_data_directory):
 
 @pytest.mark.slowtest
 def test_monte_carlo_simulation(mc_data_directory, monte_carlo_simulation, show_plots):
-    monte_carlo_simulation.set_verbose(False)
+    monte_carlo_simulation.log_level = "INFO"
     failures = monte_carlo_simulation.execute_simulations()
     assert len(failures) == 0, "No runs should fail"
 
@@ -193,14 +193,13 @@ def monte_carlo_simulation_no_dispersions(mc_data_directory):
     monte_carlo.set_simulation_function(my_creation_function)
     monte_carlo.set_execution_count(NUMBER_OF_RUNS)
     monte_carlo.set_num_worker_processes(PROCESSES)
-    monte_carlo.set_verbose(False)
+    monte_carlo.log_level = "INFO"
     monte_carlo.archive_dir = mc_data_directory
 
     retention_policy = RetentionPolicy()
     retention_policy.add_message_log(retained_message_name, [var1, var2])
     retention_policy.add_variable_log("helloworldModule.GetTicker()")
     retention_policy.add_variable_log("bskSat.totOrbEnergy")
-    retention_policy.set_data_callback(my_data_callback)
     monte_carlo.add_retention_policy(retention_policy)
 
     return monte_carlo

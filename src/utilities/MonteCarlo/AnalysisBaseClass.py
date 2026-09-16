@@ -1,4 +1,5 @@
 import glob
+import logging
 import os
 import re
 import time
@@ -11,6 +12,8 @@ from xmera.utilities import macros
 from xmera.utilities.dataframe_utilities import curve_per_df_component
 from xmera.utilities.DS_Plot import DS_Plot
 
+
+logger = logging.getLogger("montecarlo_analysis")
 
 # The Controller writes one archive of retained data for each run. The DataWriter writes one
 # frame for each variable. The pattern applies to the file name only. The results directory has
@@ -43,7 +46,7 @@ class McAnalysisBaseClass:
     def pull_and_format_df(self, path, var_idx_len):
         df = pd.read_pickle(path)
         if len(np.unique(df.columns.codes[1])) != var_idx_len:
-            print("Warning: " + path + " not formatted correctly!")
+            logger.warning(f"{path} not formatted correctly!")
             new_mult_index = pd.MultiIndex.from_product([df.columns.codes[0], range(var_idx_len)],
                                                         names=['runNum', 'varIdx'])
             indices = pd.Index([0, 1])  # Need multiple rows for curves
@@ -70,7 +73,7 @@ class McAnalysisBaseClass:
             cols_to_delete = data_bar.columns[data_bar.isnull().sum() / len(data_bar) > 1. / np.sqrt(i)]
             data_bar.drop(cols_to_delete, axis=1, inplace=True)
 
-        print("Nominal runs are ", list(dict.fromkeys(data_bar.columns.codes[0].tolist())))
+        logger.info(f"Nominal runs are {list(dict.fromkeys(data_bar.columns.codes[0].tolist()))}")
         return data_bar.columns.codes[0]
 
     def get_extrema_run_indices(self, num_extrema, window):
@@ -95,7 +98,7 @@ class McAnalysisBaseClass:
         mean = self.data.mean(axis=1)
         diff = self.data.abs().sub(mean, axis=0)
         self.extrema_runs = diff.transpose().nlargest(num_extrema, self.time_window).index
-        print("Extrema runs are: ", list(dict.fromkeys(self.extrema_runs.tolist())))
+        logger.info(f"Extrema runs are: {list(dict.fromkeys(self.extrema_runs.tolist()))}")
         return self.extrema_runs
 
     def generate_stat_curves(self):
@@ -196,13 +199,13 @@ class McAnalysisBaseClass:
                 singleton_runs = list(dict.fromkeys(np.sort(np.array(run_idx)).tolist()))
                 if len(singleton) == len(singleton_runs):
                     if singleton_runs == singleton:
-                        print("Subset directory already contains run_idx values. Skipping extraction")
+                        logger.info("Subset directory already contains run_idx values. Skipping extraction")
                         return
                     else:
                         break
 
         # If no data in subset (or the wrong data), extract and save the right data.
-        print("Populating Subset Directory with Dataframes for runs: " + str(run_idx))
+        logger.info(f"Populating Subset Directory with Dataframes for runs: {run_idx}")
         # shutil.rmtree(data_dir + "/subset/")
         file_paths = glob.glob(base_dir + "/*.data")
         for file_path in file_paths:
@@ -211,7 +214,7 @@ class McAnalysisBaseClass:
             df = pd.read_pickle(file_path)
             df_sub_set = df.loc[idx[:], idx[run_idx, :]]
             pd.to_pickle(df_sub_set, os.path.join(base_dir, "subset", os.path.basename(file_path)))
-        print("Finished Populating Subset Directory")
+        logger.info("Finished Populating Subset Directory")
 
     def render_plots(self, plot_list):
         """
@@ -224,8 +227,8 @@ class McAnalysisBaseClass:
         renderer = hv.renderer('bokeh').instance(mode='server')
 
         if self.save_as_static:
-            print("Note: You requested to save static plots. This means no interactive python session will be generated.")
-        print("Beginning the plotting")
+            logger.info("You requested to save static plots. No interactive python session will be generated.")
+        logger.info("Beginning the plotting")
 
         if not os.path.exists(self.data_dir + self.static_dir):
             os.mkdir(self.data_dir + self.static_dir)
@@ -240,9 +243,8 @@ class McAnalysisBaseClass:
                 else:
                     renderer.server_doc(image)
                 # Print information about the rendering process
-                print("LOADED: " + title +"\t\t\t" +
-                      "Percent Complete: " + str(round((i + 1) / len(plot_list) * 100, 2)) + "% \t\t\t"
-                      "Time Elapsed: " + str( round(time.time() - start_time)) + " [s]")
+                percent_complete = round((i + 1) / len(plot_list) * 100, 2)
+                elapsed = round(time.time() - start_time)
+                logger.info(f"LOADED: {title}\t\t\tPercent Complete: {percent_complete}% \t\t\tTime Elapsed: {elapsed} [s]")
             except Exception as e:
-                print("Couldn't Plot " + title)
-                print(e)
+                logger.warning(f"Couldn't Plot {title}: {e}")

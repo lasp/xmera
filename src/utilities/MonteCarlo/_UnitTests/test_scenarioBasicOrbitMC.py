@@ -137,7 +137,7 @@ def test_MonteCarloSimulation(show_plots):
         monteCarlo.set_simulation_function(myCreationFunction)
         monteCarlo.set_execution_count(NUMBER_OF_RUNS)
         monteCarlo.set_num_worker_processes(PROCESSES)
-        monteCarlo.set_verbose(True)
+        monteCarlo.log_level = "DEBUG"
         monteCarlo.archive_dir = tempDirectory
 
         # Add some dispersions

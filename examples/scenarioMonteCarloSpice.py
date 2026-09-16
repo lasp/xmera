@@ -127,10 +127,11 @@ def run():
     monteCarlo.set_execution_count(12)
     monteCarlo.set_should_disperse_seeds(True)
     monteCarlo.set_num_worker_processes(6)
-    monteCarlo.set_verbose(False)
+    monteCarlo.log_level = "WARNING"
 
     dirName = "montecarlo_test" + str(os.getpid())
     monteCarlo.archive_dir = dirName
+
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
     #
     # dataPath = bskPath + "/supportData/EphemerisData/"
