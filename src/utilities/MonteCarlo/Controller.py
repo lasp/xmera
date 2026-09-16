@@ -457,7 +457,8 @@ class Controller:
             for sim in sim_generator:
                 try:
                     simulation_executor((sim, self._data_out_queue))
-                except:
+                except Exception:
+                    logger.exception(f"Simulation run {sim.index} raised in sequential executor")
                     failed_indexes.append(sim.index)
             jobs_finished += 1
             progress_bar.update(jobs_finished)
@@ -672,7 +673,8 @@ class Controller:
             for sim in sim_generator:
                 try:
                     run_ok = simulation_executor((sim, self._data_out_queue))[0]
-                except:
+                except Exception:
+                    logger.exception(f"Simulation run {sim.index} raised in sequential executor")
                     failed_indexes.append(sim.index)
                 else:
                     if not run_ok:
@@ -850,9 +852,8 @@ class SimulationExecutor:
 
             return True, sim_params.index  # this function returns true only if the simulation was successful
 
-        except Exception as e:
-            print("Error in worker process", e)
-            traceback.print_exc()
+        except Exception:
+            log.exception(f"Error in worker process for run {sim_params.index}")
             return False, sim_params.index  # there was an error
 
     @staticmethod

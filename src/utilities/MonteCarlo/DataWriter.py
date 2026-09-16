@@ -50,7 +50,7 @@ class DataWriter(mp.Process):
                     # The data can be a vector, a scalar, or missing.
                     try:
                         vari_len = item_data[:,1:].shape[1]
-                    except:
+                    except (AttributeError, IndexError, TypeError):
                         vari_len = 0
 
                     # Generate the MultiLabel
@@ -80,7 +80,8 @@ class DataWriter(mp.Process):
                             if self._var_cast != None:
                                 var_comp = pd.to_numeric(var_comp, downcast='float')
                             df.iloc[:,i] = var_comp
-                        except:
+                        except (ValueError, TypeError):
+                            # Keep a column that is not numeric as it is.
                             pass
 
                     # If the .data file doesn't exist save the dataframe to create the file
