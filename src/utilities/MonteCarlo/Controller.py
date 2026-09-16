@@ -657,6 +657,79 @@ class Controller:
             for retention_policy in retention_policies:
                 retention_policy.execute_callback(data)
 
+    def _drive_jobs(self, sim_generator: Generator[SimulationParameters, None, None],
+                    total: int, queue, num_processes: Optional[int] = None) -> list[int]:
+        """Send a Monte Carlo job stream to the sequential executor or to a worker pool.
+
+        Forwards retained data to ``queue`` and returns the list of run indices that failed
+        (either by raising in the sequential executor or by returning ``False`` from the worker).
+        On KeyboardInterrupt or any other unexpected exception during pool dispatch, the pool is
+        terminated, every job that had not yet reported success is recorded as failed, and
+        KeyboardInterrupt is re-raised.
+
+        :param sim_generator: A generator that yields SimulationParameters for each run.
+        :param total: The expected number of runs. The progress bar and the failed-tail logic use this number.
+        :param queue: The multiprocessing queue that the DataWriter uses for the retained results.
+        :param num_processes: The number of workers for this stream. The default is the setting of the controller.
+        """
+        failed_indexes: list[int] = []
+        jobs_finished = 0
+
+        if num_processes is None:
+            num_processes = self.num_processes
+
+        simulation_executor = SimulationExecutor()
+        progress_bar = SimulationProgressBar(total, self.show_progress_bar)
+
+        if num_processes <= 1:
+            logger.debug("Executing sequentially...")
+            for sim in sim_generator:
+                try:
+                    result = simulation_executor((sim, queue))
+                    run_ok = result[0] if result is not None else False
+                except Exception:
+                    logger.exception(f"Simulation run {sim.index} raised in sequential executor")
+                    failed_indexes.append(sim.index)
+                else:
+                    if not run_ok:
+                        failed_indexes.append(sim.index)
+                jobs_finished += 1
+                progress_bar.update(jobs_finished)
+        else:
+            if num_processes > total:
+                logger.info(
+                    f"Fewer MCs spawned than processes assigned ({total} < {num_processes}). "
+                    f"Changing processes count to {total}."
+                )
+                num_processes = total
+
+            pool = mp.Pool(num_processes)
+            try:
+                for result in pool.imap_unordered(simulation_executor,
+                                                  [(x, queue) for x in sim_generator]):
+                    if result[0] is not True:
+                        failed_indexes.append(result[1])
+                        logger.info(f"Job {result[1]} failed...")
+                    jobs_finished += 1
+                    progress_bar.update(jobs_finished)
+                pool.close()
+            except KeyboardInterrupt:
+                logger.info("Ctrl-C was hit, closing pool")
+                failed_indexes.extend(range(jobs_finished, total))
+                pool.terminate()
+                raise
+            except Exception:
+                logger.exception("Unknown exception while running simulations")
+                failed_indexes.extend(range(jobs_finished, total))
+                pool.terminate()
+            finally:
+                pool.join()
+
+        progress_bar.markComplete()
+        progress_bar.close()
+
+        return failed_indexes
+
     def _save_failed_indexes(self, failed_indexes: list[int]) -> None:
         """
         Save a list of failed simulation run indexes.
