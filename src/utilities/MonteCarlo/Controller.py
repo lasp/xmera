@@ -33,24 +33,27 @@ class Controller:
     """
 
     def __init__(self):
+        self.should_save_disp_mag = None
+        self.should_disperse_seeds = False
+        self.ic_filename = None
         self.num_simulation_runs = 0
         self.should_run_using_ic = False
         self.ic_directory = ""
         self.archive_dir = None
         self.var_cast = None
         self.num_processes = mp.cpu_count()
+        self.verbose = False
+        self.should_archive_parameters = False
+        self.show_progress_bar = False
+        self.creation_function=None
+        self.execution_function=None
+        self.configure_function=None
+        self.retention_policies=[]
+        self.dispersions=[]
+        self.multi_proc_manager = None
+        self.data_out_queue = None
+        self.data_writer = None
 
-        self.sim_params = SimulationParameters(
-            creation_function=None,
-            execution_function=None,
-            configure_function=None,
-            retention_policies=[],
-            should_archive_parameters=False,
-            should_disperse_seeds=False,
-            dispersions=[],
-            filename="",
-            icfilename=""
-        )
 
     def set_show_progress_bar(self, value):
         """
@@ -58,7 +61,7 @@ class Controller:
         Args:
             value: boolean value, decide to show/hide progress bar
         """
-        self.sim_params.show_progress_bar = value
+        self.show_progress_bar = value
 
     @staticmethod
     def load(run_directory):
@@ -71,7 +74,7 @@ class Controller:
 
         with gzip.open(filename) as pickled_data:
             data = pickle.load(pickled_data)
-            if data.sim_params.verbose:
+            if data.verbose:
                 print("Loading montecarlo at", filename)
             data.multi_proc_manager = mp.Manager()
             data.data_out_queue = data.multi_proc_manager.Queue()
@@ -90,7 +93,7 @@ class Controller:
                 It must execute the simulation.
                 Its return value is not used.
         """
-        self.sim_params.execution_function = execution_function
+        self.execution_function = execution_function
 
     def set_configure_function(self, configure_function):
         """
@@ -103,7 +106,7 @@ class Controller:
                 It must execute the simulation.
                 Its return value is not used.
         """
-        self.sim_params.configure_function = configure_function
+        self.configure_function = configure_function
 
     def set_simulation_function(self, simulation_function):
         """
@@ -113,7 +116,7 @@ class Controller:
             simulation_function: () => SimulationBaseClass
                 A function with no parameters, that returns a simulation instance.
         """
-        self.sim_params.creation_function = simulation_function
+        self.creation_function = simulation_function
 
     def set_should_disperse_seeds(self, seed_disp):
         """
@@ -123,7 +126,7 @@ class Controller:
             seed_disp: bool
                 Whether to disperse the RNG seeds in each run of the simulation
         """
-        self.sim_params.should_disperse_seeds = seed_disp
+        self.should_disperse_seeds = seed_disp
 
     def set_execution_count(self, num_runs):
         """
@@ -143,7 +146,7 @@ class Controller:
             disp: Dispersion
                 The dispersion to add to the simulation.
         """
-        self.sim_params.dispersions.append(disp)
+        self.dispersions.append(disp)
 
     def add_retention_policy(self, policy):
         """
@@ -154,7 +157,7 @@ class Controller:
                 The retention policy to add to the simulation.
                 This defines variables to be logged and saved
         """
-        self.sim_params.retention_policies.append(policy)
+        self.retention_policies.append(policy)
 
     def set_num_worker_processes(self, num_processes):
         """
@@ -174,7 +177,7 @@ class Controller:
             verbose: bool
                 Whether to print verbose information during this MonteCarlo sim.
         """
-        self.sim_params.verbose = verbose
+        self.verbose = verbose
 
     def set_disp_magnitude_file(self, magnitudes):
         """
@@ -184,10 +187,10 @@ class Controller:
             magnitudes: bool
                 Whether to save extra files for analysis.
         """
-        self.sim_params.should_save_disp_mag = magnitudes
+        self.should_save_disp_mag = magnitudes
 
     def set_should_archive_parameters(self, should_archive_parameters):
-        self.sim_params.should_archive_parameters = should_archive_parameters
+        self.should_archive_parameters = should_archive_parameters
 
     def set_archive_dir(self, dir_name):
         """
@@ -199,8 +202,7 @@ class Controller:
                 None, if no archive desired.
         """
         self.archive_dir = os.path.abspath(dir_name) + "/"
-        self.sim_params.should_archive_parameters = dir_name is not None
-        self.sim_params.filename = self.archive_dir
+        self.should_archive_parameters = dir_name is not None
 
     def set_var_cast(self, var_cast):
         """
@@ -221,8 +223,7 @@ class Controller:
                 None, if no archive desired.
         """
         self.ic_directory = os.path.abspath(dir_name) + "/"
-        self.sim_params.should_archive_parameters = True
-        self.sim_params.ic_filename = self.ic_directory
+        self.should_archive_parameters = True
 
     def set_should_run_using_ic(self, value):
         """
@@ -299,7 +300,7 @@ class Controller:
         failed = []
 
         for run_index in run_indexes:
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Rerunning", run_index)
 
             old_run_file = self.archive_dir + "run" + str(run_index) + ".json"
@@ -308,7 +309,7 @@ class Controller:
                 continue
 
             # use old simulation parameters, modified slightly.
-            sim_params = copy.deepcopy(self.sim_params)
+            sim_params = self.create_sim_parameters(run_index)
             sim_params.index = run_index
             # don't redisperse seeds, we want to use the ones saved in the old_run_file
             sim_params.should_disperse_seeds = False
@@ -349,15 +350,15 @@ class Controller:
         assert self.ic_directory != "", "No initial condition directory was given"
         assert self.should_run_using_ic is not False, "IC run flag was not set"
 
-        if self.sim_params.verbose:
+        if self.verbose:
             print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
 
-        if self.sim_params.should_archive_parameters:
+        if self.should_archive_parameters:
             if not os.path.exists(self.ic_directory):
                 print("Cannot run initial conditions: the directory given does not exist")
 
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
             try:
                 with gzip.open(self.ic_directory + "MonteCarlo.data", "w") as pickle_file:
@@ -392,9 +393,9 @@ class Controller:
         # It is called within worker processes with each worker's simulation parameters
         simulation_executor = SimulationExecutor()
         #
-        progress_bar = SimulationProgressBar(len(run_indexes), self.sim_params.show_progress_bar)
+        progress_bar = SimulationProgressBar(len(run_indexes), self.show_progress_bar)
         if self.num_processes == 1:
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Executing sequentially...")
             i = 0
             for i in range(len(run_indexes)):
@@ -456,10 +457,10 @@ class Controller:
         if len(failed) > 0:
             failed.sort()
 
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Failed", failed, "saving to 'failures.txt'")
 
-            if self.sim_params.should_archive_parameters:
+            if self.should_archive_parameters:
                 # write a file that contains log of failed runs
                 with open(self.ic_directory + "failures.txt", "w") as fail_file:
                     fail_file.write(str(failed))
@@ -482,7 +483,7 @@ class Controller:
         # changing each clone's index and filename to make a list of
         # simulations to execute
         for run_index in run_indexes:
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Running IC ", run_index)
 
             old_run_file = self.ic_directory + "run" + str(run_index) + ".json"
@@ -491,7 +492,7 @@ class Controller:
                 continue
 
             # use old simulation parameters, modified slightly.
-            sim_params = copy.deepcopy(self.sim_params)
+            sim_params = self.create_sim_parameters(run_index)
             sim_params.index = run_index
             # don't redisperse seeds, we want to use the ones saved in the old_run_file
             sim_params.should_disperse_seeds = False
@@ -501,6 +502,23 @@ class Controller:
                 sim_params.modifications = json.load(run_parameters)
 
             yield sim_params
+
+    def create_sim_parameters(self, index):
+        sim_params = SimulationParameters(self.creation_function,
+                                          self.execution_function,
+                                          self.configure_function,
+                                          self.retention_policies,
+                                          self.dispersions,
+                                          self.should_disperse_seeds,
+                                          self.should_archive_parameters,
+                                          os.path.join(self.archive_dir, "run" + str(index)),
+                                          os.path.join(self.archive_dir, "run" + str(index)),
+                                          os.path.join(self.archive_dir, "run" + str(index) + "mag.txt"),
+                                          index)
+        sim_params.verbose = self.verbose
+        sim_params.show_progress_bar = self.show_progress_bar
+        sim_params.should_save_disp_mag = self.should_save_disp_mag
+        return sim_params
 
     def generate_sims(self, sim_run_indexes):
         """
@@ -517,12 +535,12 @@ class Controller:
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
         # simulations to execute
-        for i in sim_run_indexes:
-            sim_clone = copy.deepcopy(self.sim_params)
-            sim_clone.index = i
-            sim_clone.filename += "run" + str(i)
+        for run_index in sim_run_indexes:
+            sim_params = self.create_sim_parameters(run_index)
+            sim_params.index = run_index
+            sim_params.filename += "run" + str(run_index)
 
-            yield sim_clone
+            yield sim_params
 
     def execute_callbacks(self, rng=None, retention_policies=[]):
         """
@@ -536,11 +554,11 @@ class Controller:
         if rng is None:
             rng = list(range(self.num_simulation_runs))
 
-        if retention_policies == []:
-            retention_policies = self.sim_params.retention_policies
+        if not retention_policies:
+            retention_policies = self.retention_policies
 
-        for simIndex in rng:
-            data = self.get_retained_data(simIndex)
+        for sim_index in rng:
+            data = self.get_retained_data(sim_index)
             for retention_policy in retention_policies:
                 retention_policy.execute_callback(data)
 
@@ -552,15 +570,15 @@ class Controller:
                  A list of the indices of all failed simulation runs.
         """
 
-        if self.sim_params.verbose:
+        if self.verbose:
             print("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
                                                                                self.num_processes))
 
-        if self.sim_params.should_archive_parameters:
+        if self.should_archive_parameters:
             if os.path.exists(self.archive_dir):
                 shutil.rmtree(self.archive_dir, ignore_errors=True)
             os.mkdir(self.archive_dir)
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
             try:
                 with gzip.open(self.archive_dir + "MonteCarlo.data", "wb") as pickle_file:
@@ -593,14 +611,14 @@ class Controller:
         # It is called within worker processes with each worker's simulation parameters
         simulation_executor = SimulationExecutor()
 
-        progress_bar = SimulationProgressBar(num_sims, self.sim_params.show_progress_bar)
+        progress_bar = SimulationProgressBar(num_sims, self.show_progress_bar)
 
         # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
         # is a temporary fix to a memory leak which is assumed to be a result of the sim_generator not collecting
         # garbage properly. # TODO: Find a more permenant solution to the leak.
 
         if self.num_processes == 1:
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Executing sequentially...")
             i = 0
             for i in range(num_sims):
@@ -663,10 +681,10 @@ class Controller:
         if len(failed) > 0:
             failed.sort()
 
-            if self.sim_params.verbose:
+            if self.verbose:
                 print("Failed", failed, "saving to 'failures.txt'")
 
-            if self.sim_params.should_archive_parameters:
+            if self.should_archive_parameters:
                 # write a file that contains log of failed runs
                 with open(self.archive_dir + "failures.txt", "w") as fail_file:
                     fail_file.write(str(failed))
@@ -695,11 +713,12 @@ class SimulationParameters:
                  should_disperse_seeds,
                  should_archive_parameters,
                  filename,
-                 icfilename,
+                 ic_filename,
+                 magnitudes_filename,
                  index=None,
                  verbose=False,
-                 modifications={},
-                 show_progress_bar=False):
+                 modifications={}):
+        self.magnitudes_filename = magnitudes_filename
         self.index = index
         self.creation_function = creation_function
         self.execution_function = execution_function
@@ -709,12 +728,12 @@ class SimulationParameters:
         self.should_disperse_seeds = should_disperse_seeds
         self.should_archive_parameters = should_archive_parameters
         self.filename = filename
-        self.ic_filename = icfilename
+        self.ic_filename = ic_filename
         self.verbose = verbose
         self.modifications = modifications
-        self.dispersionMag = {}
+        self.dispersion_mag = {}
         self.should_save_disp_mag = False
-        self.show_progress_bar = show_progress_bar
+        self.show_progress_bar = False
 
 
 
@@ -760,7 +779,7 @@ class SimulationExecutor:
 
             # build a list of the parameter and random seed modifications to make
             modifications = sim_params.modifications
-            magnitudes = sim_params.dispersionMag
+            magnitudes = sim_params.dispersion_mag
 
             # we may want to disperse random seeds
             if sim_params.should_disperse_seeds:
@@ -802,7 +821,7 @@ class SimulationExecutor:
                     with open(sim_params.filename + ".json", 'w') as outfile:
                         json.dump(modifications, outfile)
                     if sim_params.should_save_disp_mag:
-                        with open(sim_params.filename + "mag.txt", 'w') as outfileMag:
+                        with open(sim_params.magnitudes_filename, 'w') as outfileMag:
                             for k in sorted(magnitudes.keys()):
                                 outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
 
