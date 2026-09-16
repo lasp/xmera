@@ -763,98 +763,17 @@ class Controller:
         :return: failed_indexes: A list of the indices of all failed simulation runs.
         :rtype: list[int]
         """
-        logger.debug("Beginning simulation with {0} runs on {1} processes".format(self.num_simulation_runs,
-                                                                               self.num_processes))
+        logger.debug(f"Beginning simulation with {self.num_simulation_runs} runs on {self.num_processes} processes")
         self._setup_archive_directory()
         self._save_monte_carlo_controller()
 
-        self._multi_proc_manager = mp.Manager()
-        self._data_out_queue = self._multi_proc_manager.Queue()
-        self._data_writer = DataWriter(self._data_out_queue)
-        self._data_writer.daemon = False
-
         num_sims = self.num_simulation_runs
-
-        # start data writer process
-        self._data_writer.set_log_dir(self.results_dir)
-        self._data_writer.set_var_cast(self.var_cast)
-        self._data_writer.start()
-
-        # Avoid building a full list of all simulations to run in memory,
-        # instead only generating simulations right before they are needed by a waiting worker
-        # This is accomplished using a generator and pool.imap, -- simulations are only built
-        # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
-        # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
-        failed_indexes = []  # keep track of the indices of failed simulations
-        jobs_finished = 0  # keep track of what simulations have finished
-
-        # The simulation executor is responsible for executing simulation given a simulation's parameters
-        # It is called within worker processes with each worker's simulation parameters
-        simulation_executor = SimulationExecutor()
-
-        progress_bar = SimulationProgressBar(num_sims, self.show_progress_bar)
-
-        # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
-        # is a temporary fix to a memory leak which is assumed to be a result of the sim_generator not collecting
-        # garbage properly. # TODO: Find a more permanent solution to the leak.
-
-        if self.num_processes == 1:
-            logger.debug("Executing sequentially...")
-
-            # for index in range(num_sims):
-            sim_generator = self.generate_sims(list(range(num_sims)))
-            for sim in sim_generator:
-                try:
-                    run_ok = simulation_executor((sim, self._data_out_queue))[0]
-                except Exception:
-                    logger.exception(f"Simulation run {sim.index} raised in sequential executor")
-                    failed_indexes.append(sim.index)
-                else:
-                    if not run_ok:
-                        failed_indexes.append(sim.index)
-                jobs_finished += 1
-                progress_bar.update(jobs_finished)
-        else:
-            if self.num_processes > num_sims:
-                logger.info("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (num_sims, self.num_processes, num_sims))
-                self.num_processes = num_sims
-
-            sim_generator = self.generate_sims(list(range(num_sims)))
-            pool = mp.Pool(self.num_processes)
-            try:
-                # yields results as the workers finish jobs
-                for result in pool.imap_unordered(simulation_executor, [(x, self._data_out_queue) for x in sim_generator]):
-                    if result[0] is not True:  # workers return True on success
-                        failed_indexes.append(result[1])  # add failed jobs to the list of failures
-                        logger.info(f"Job {result[1]} failed...")
-
-                    jobs_finished += 1
-                    progress_bar.update(jobs_finished)
-                pool.close()
-            except KeyboardInterrupt as e:
-                logger.info("Ctrl-C was hit, closing pool")
-                failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
-                pool.terminate()
-                raise e
-            except Exception as e:
-                logger.info(f"Unknown exception while running simulations: {e}")
-                failed_indexes.extend(list(range(jobs_finished, num_sims)))  # fail all potentially running jobs...
-                traceback.print_exc()
-                pool.terminate()
-            finally:
-                # Wait until all data is logged from the spawned runs before proceeding with the next set.
-                pool.join()
-
-        progress_bar.markComplete()
-        progress_bar.close()
-        # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
-        while not self._data_out_queue.empty():
-           time.sleep(1)
-        self._data_out_queue.put((None, None, True))
-        time.sleep(5)
+        with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
+            failed_indexes = self._drive_jobs(
+                self.generate_sims(list(range(num_sims))), num_sims, runner.queue,
+            )
 
         self._save_failed_indexes(failed_indexes)
-
         return failed_indexes
 
 
