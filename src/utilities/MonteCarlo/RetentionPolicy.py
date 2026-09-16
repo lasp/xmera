@@ -1,5 +1,8 @@
+import logging
 from dataclasses import dataclass
 from xmera.utilities import unitTestSupport
+
+logger = logging.getLogger("montecarlo_retention")
 
 @dataclass
 class VariableRetentionParameters:
@@ -78,16 +81,33 @@ class RetentionPolicy:
 
     @staticmethod
     def add_retention_policies_to_sim(sim_instance, retention_policies):
-        """ Adds logs for variables and messages to a sim_instance
+        """ Add logs for variables and messages to a sim_instance.
+
+        The method keeps only the first entry of each variable name, in all policies and in each
+        policy. It logs each duplicate after the first entry at WARNING. The warning tells the user that
+        a retention policy occurs two times, for example because of an error in a combination of policies.
+
         Args:
             sim_instance: The simulation instance to add logs to.
             retention_policies: RetentionPolicy[] list that defines the data to log.
         """
-
+        seen_var_names: set[str] = set()
         for retention_policy in retention_policies:
-            retention_policy.add_logs_to_sim(sim_instance)
-
-        # TODO handle duplicates somehow?
+            for variable in retention_policy.var_log_list:
+                if variable.var_name in seen_var_names:
+                    logger.warning(
+                        f"Duplicate retention entry for variable {variable.var_name!r}; ignoring "
+                        "subsequent occurrence (first wins)"
+                    )
+                    continue
+                seen_var_names.add(variable.var_name)
+                sim_instance.AddVariableForMultiProcessLogging(
+                    variable.var_name,
+                    variable.var_rate,
+                    variable.start_index,
+                    variable.stop_index,
+                    variable.var_type,
+                )
 
     @staticmethod
     def get_data_for_retention(sim_instance, retention_policies):
