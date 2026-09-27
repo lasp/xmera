@@ -22,7 +22,7 @@ from xmera.utilities.MonteCarlo.Dispersions import (
     NormalVectorCartDispersion,
     OrbitalElementDispersion
 )
-from xmera.utilities.MonteCarlo._UnitTests.SimpleTestModule import SimpleTestModule
+from xmera.utilities.MonteCarlo._tests.SimpleTestModule import SimpleTestModule
 from xmera.utilities import (
     macros,
     SimulationBaseClass

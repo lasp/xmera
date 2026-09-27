@@ -26,7 +26,7 @@ from xmera.utilities import orbitalMotion
 from xmera.utilities import simIncludeGravBody
 from xmera.utilities import macros
 from xmera.utilities import SimulationBaseClass
-from xmera.utilities.MonteCarlo._UnitTests.SimpleTestModule import SimpleTestModule
+from xmera.utilities.MonteCarlo._tests.SimpleTestModule import SimpleTestModule
 import shutil
 import matplotlib.pyplot as plt
 import numpy as np
