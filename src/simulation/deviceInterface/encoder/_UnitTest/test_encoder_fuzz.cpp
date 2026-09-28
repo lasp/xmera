@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <numbers>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -70,5 +71,47 @@ namespace {
             fuzztest::InRange<std::size_t>(1, maxFuzzWheels),
             fuzztest::InRange<std::uint32_t>(1, 4'096),
             speedSteps()
+        );
+
+    //! One step of fuzz input for the signal state property: the speed of all wheels, the time step in nanoseconds,
+    //! and the signal state of each wheel as an integer.
+    using SignalStep = std::tuple<double, uint64_t, std::vector<int>>;
+
+    //! An off encoder sends zero speed. A stuck encoder sends the speed of the previous step. All output speeds are
+    //! finite for all sequences of signal states.
+    void signalStatesHaveTheirEffect(std::vector<SignalStep> const &steps) {
+        std::size_t const numRW = maxFuzzWheels;
+        EncoderHarness harness(numRW, 64);
+        harness.encoder.reset(0);
+        RWSpeedMsgPayload previous = harness.step(std::vector<double>(numRW, 0.0), 0);
+
+        uint64_t t = 0;
+        for (auto const &[speed, timeStepNanos, states] : steps) {
+            t += timeStepNanos;
+            for (std::size_t i = 0; i < numRW; ++i) {
+                harness.encoder.setSignalState(i, static_cast<EncoderSignal>(states[i]));
+            }
+            RWSpeedMsgPayload const out = harness.step(std::vector<double>(numRW, speed), t);
+            for (std::size_t i = 0; i < numRW; ++i) {
+                ASSERT_TRUE(std::isfinite(out.wheelSpeeds[i]));
+                if (states[i] == static_cast<int>(EncoderSignal::Off)) { EXPECT_EQ(out.wheelSpeeds[i], 0.0); }
+                if (states[i] == static_cast<int>(EncoderSignal::Stuck)) {
+                    EXPECT_EQ(out.wheelSpeeds[i], previous.wheelSpeeds[i]);
+                }
+            }
+            previous = out;
+        }
+    }
+
+    FUZZ_TEST(EncoderFuzz, signalStatesHaveTheirEffect)
+        .WithDomains(
+            fuzztest::VectorOf(
+                fuzztest::TupleOf(
+                    fuzztest::InRange(-maxWheelSpeed, maxWheelSpeed),
+                    fuzztest::InRange(minTimeStep, maxTimeStep),
+                    fuzztest::VectorOf(fuzztest::InRange(0, 2)).WithSize(maxFuzzWheels)
+                )
+            )
+                .WithMaxSize(maxFuzzSteps)
         );
 }  // namespace
