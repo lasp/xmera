@@ -70,16 +70,11 @@ void Encoder::writeOutputMessages(uint64_t CurrentClock) {
 /*! This method applies an encoder to the reaction wheel speeds.
  */
 void Encoder::encode(uint64_t currentSimNanos) {
-    double timeStep;
-    double numberClicks;
-    double clicksPerRadian;
-    double angle;
-
     // convert clicks per rotation to clicks per radian
-    clicksPerRadian = this->clicksPerRotation / (2 * std::numbers::pi);
+    double const clicksPerRadian = this->clicksPerRotation / (2 * std::numbers::pi);
 
     // set the time step
-    timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
+    double const timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
 
     // at the beginning of the simulation, the encoder simply outputs the true RW speeds
     if (timeStep == 0.0) {
@@ -90,13 +85,14 @@ void Encoder::encode(uint64_t currentSimNanos) {
             // check if encoder is operational
             if (this->rwSignalState[i] == SIGNAL_NOMINAL) {
                 // calculate the angle sweeped by the reaction wheel during the time step
-                angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
+                double const angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
 
                 // calculate the number of clicks
-                numberClicks = std::trunc(angle * clicksPerRadian + this->remainingClicks[i]);
+                double const totalClicks = angle * clicksPerRadian + this->remainingClicks[i];
+                double const numberClicks = std::trunc(totalClicks);
 
                 // update the remaining clicks
-                this->remainingClicks[i] = angle * clicksPerRadian + this->remainingClicks[i] - numberClicks;
+                this->remainingClicks[i] = totalClicks - numberClicks;
 
                 // calculate the discretized angular velocity
                 this->rwSpeedConverted.wheelSpeeds[i] = numberClicks / (clicksPerRadian * timeStep);
