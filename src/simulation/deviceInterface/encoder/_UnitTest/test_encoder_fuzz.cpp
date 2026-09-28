@@ -114,4 +114,28 @@ namespace {
             )
                 .WithMaxSize(maxFuzzSteps)
         );
+
+    //! The encoder writes only the speeds of the first numRW wheels. The speeds of the other wheels in the output
+    //! message stay zero, also on the first step.
+    void
+    unusedWheelsStayZero(std::size_t numRW, std::vector<double> const &speeds, std::vector<uint64_t> const &timeSteps) {
+        EncoderHarness harness(numRW, 64);
+        harness.encoder.reset(0);
+
+        uint64_t t = 0;
+        RWSpeedMsgPayload out = harness.step(speeds, t);
+        for (std::size_t i = numRW; i < RW_EFF_CNT; ++i) { EXPECT_EQ(out.wheelSpeeds[i], 0.0); }
+        for (uint64_t const timeStepNanos : timeSteps) {
+            t += timeStepNanos;
+            out = harness.step(speeds, t);
+            for (std::size_t i = numRW; i < RW_EFF_CNT; ++i) { EXPECT_EQ(out.wheelSpeeds[i], 0.0); }
+        }
+    }
+
+    FUZZ_TEST(EncoderFuzz, unusedWheelsStayZero)
+        .WithDomains(
+            fuzztest::InRange<std::size_t>(1, RW_EFF_CNT - 1),
+            fuzztest::VectorOf(fuzztest::InRange(-maxWheelSpeed, maxWheelSpeed)).WithSize(RW_EFF_CNT),
+            fuzztest::VectorOf(fuzztest::InRange(minTimeStep, maxTimeStep)).WithMaxSize(maxFuzzSteps)
+        );
 }  // namespace
