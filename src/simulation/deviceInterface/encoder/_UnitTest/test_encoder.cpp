@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 #include <numbers>
+#include <stdexcept>
 
 using encodertest::EncoderHarness;
 using encodertest::oneSecond;
@@ -94,4 +95,13 @@ TEST(Encoder, stuckSignalHoldsPreviousSpeed) {
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], before.wheelSpeeds[0]);
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[1], before.wheelSpeeds[1]);
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], before.wheelSpeeds[2]);
+}
+
+//! The encoder cannot operate without an input message. Reset rejects an encoder with no connected input message.
+TEST(Encoder, resetRejectsUnlinkedInputMessage) {
+    Encoder encoder;
+    encoder.numRW = 3;
+    encoder.clicksPerRotation = 2;
+
+    EXPECT_THROW(encoder.reset(0), std::invalid_argument);
 }

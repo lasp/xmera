@@ -8,13 +8,14 @@
 
 #include <cmath>
 #include <numbers>
+#include <stdexcept>
 
 /*! This method is used to reset the module.
  @return void
  */
 void Encoder::reset(uint64_t currentSimNanos) {
     // check if input message is linked
-    if (!this->rwSpeedInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "encoder.rwSpeedInMsg is not linked."); }
+    if (!this->rwSpeedInMsg.isLinked()) { throw std::invalid_argument("encoder: rwSpeedInMsg is not linked."); }
 
     // if the number of clicks is not greater than 0, throw a warning message
     if (this->clicksPerRotation <= 0) {
