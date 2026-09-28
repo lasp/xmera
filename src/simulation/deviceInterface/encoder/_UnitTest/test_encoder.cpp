@@ -144,3 +144,15 @@ TEST(Encoder, setSignalStatesRejectsWrongSize) {
         (std::vector<EncoderSignal>{EncoderSignal::Off, EncoderSignal::Stuck, EncoderSignal::Nominal})
     );
 }
+
+//! Reset keeps the signal states that the user sets before the simulation starts.
+TEST(Encoder, resetKeepsConfiguredSignalStates) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.setSignalStates({EncoderSignal::Off, EncoderSignal::Stuck, EncoderSignal::Nominal});
+
+    harness.encoder.reset(0);
+
+    EXPECT_EQ(harness.encoder.getSignalState(0), EncoderSignal::Off);
+    EXPECT_EQ(harness.encoder.getSignalState(1), EncoderSignal::Stuck);
+    EXPECT_EQ(harness.encoder.getSignalState(2), EncoderSignal::Nominal);
+}
