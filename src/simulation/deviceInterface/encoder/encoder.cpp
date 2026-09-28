@@ -48,7 +48,7 @@ void Encoder::reset(uint64_t currentSimNanos) {
 /*! This method reads the speed input message
  */
 void Encoder::readInputMessages() {
-    // read the incoming power message
+    // read the incoming wheel speed message
     this->rwSpeedBuffer = this->rwSpeedInMsg();
 }
 
