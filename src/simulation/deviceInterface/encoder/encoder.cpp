@@ -5,7 +5,6 @@
 #include "encoder.h"
 
 #include <architecture/utilities/macroDefinitions.h>
-#include <architecture/utilities/simDefinitions.h>
 
 #include <cmath>
 #include <numbers>
