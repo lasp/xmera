@@ -81,3 +81,18 @@ TEST(Encoder, nominalSignalAfterOffStartsFromZeroClicks) {
     EXPECT_NEAR(out.wheelSpeeds[1], 127.0 * pi, tolerance);
     EXPECT_NEAR(out.wheelSpeeds[2], 95.0 * pi, tolerance);
 }
+
+//! When the signal is stuck, the encoder sends the speeds of the previous step and ignores the new input.
+TEST(Encoder, stuckSignalHoldsPreviousSpeed) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.reset(0);
+    harness.step({500.0, 400.0, 300.0}, 0);
+    RWSpeedMsgPayload const before = harness.step({500.0, 400.0, 300.0}, oneSecond);
+
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_STUCK; }
+    RWSpeedMsgPayload const out = harness.step({100.0, 200.0, 300.0}, 2 * oneSecond);
+
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], before.wheelSpeeds[0]);
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[1], before.wheelSpeeds[1]);
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], before.wheelSpeeds[2]);
+}
