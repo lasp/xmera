@@ -6,7 +6,9 @@
 
 #include <architecture/utilities/macroDefinitions.h>
 
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <numbers>
 #include <stdexcept>
 
@@ -153,4 +155,20 @@ void Encoder::setSignalState(std::size_t const wheel, EncoderSignal const state)
 EncoderSignal Encoder::getSignalState(std::size_t const wheel) const {
     if (wheel >= this->numRW) { throw std::invalid_argument("encoder: wheel index must be less than numRW."); }
     return this->signalStates[wheel];
+}
+
+void Encoder::setSignalStates(std::vector<EncoderSignal> const &states) {
+    if (states.size() != this->numRW) {
+        throw std::invalid_argument("encoder: number of signal states must be equal to numRW.");
+    }
+    for (EncoderSignal const state : states) {
+        if (!isKnownSignal(state)) {
+            throw std::invalid_argument("encoder: signal state is not a known EncoderSignal.");
+        }
+    }
+    std::copy(states.begin(), states.end(), this->signalStates.begin());
+}
+
+std::vector<EncoderSignal> Encoder::getSignalStates() const {
+    return {this->signalStates.begin(), this->signalStates.begin() + static_cast<std::ptrdiff_t>(this->numRW)};
 }

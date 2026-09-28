@@ -130,3 +130,17 @@ TEST(Encoder, setSignalStateRejectsInvalidInput) {
     EXPECT_THROW(encoder.setSignalState(0, static_cast<EncoderSignal>(7)), std::invalid_argument);
     EXPECT_EQ(encoder.getSignalState(0), EncoderSignal::Nominal);
 }
+
+//! The signal states setter rejects a list with a size that is not equal to the wheel count. The encoder keeps its
+//! states.
+TEST(Encoder, setSignalStatesRejectsWrongSize) {
+    Encoder encoder(3, 2);
+    encoder.setSignalStates({EncoderSignal::Off, EncoderSignal::Stuck, EncoderSignal::Nominal});
+
+    EXPECT_THROW(encoder.setSignalStates(std::vector<EncoderSignal>(4, EncoderSignal::Off)), std::invalid_argument);
+    EXPECT_THROW(encoder.setSignalStates({EncoderSignal::Off}), std::invalid_argument);
+    EXPECT_EQ(
+        encoder.getSignalStates(),
+        (std::vector<EncoderSignal>{EncoderSignal::Off, EncoderSignal::Stuck, EncoderSignal::Nominal})
+    );
+}

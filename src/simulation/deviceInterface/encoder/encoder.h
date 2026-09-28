@@ -15,6 +15,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
 /*! @brief Signal state of one wheel encoder. */
 enum class EncoderSignal {
@@ -59,6 +60,12 @@ public:
         @param wheel index of the reaction wheel, less than the wheel count.
         @throws std::invalid_argument if the wheel index is not valid. */
     EncoderSignal getSignalState(std::size_t wheel) const;
+    /*! @brief Set the signal states of all wheel encoders.
+        @param states one signal state for each reaction wheel. The size must be equal to the wheel count.
+        @throws std::invalid_argument if the size or a state is not valid. The encoder keeps its states. */
+    void setSignalStates(std::vector<EncoderSignal> const &states);
+    /*! @brief Get the signal states of all wheel encoders, one for each reaction wheel. */
+    std::vector<EncoderSignal> getSignalStates() const;
 
 public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
