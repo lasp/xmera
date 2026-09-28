@@ -12,6 +12,9 @@
 
 #include <mission/parameters.h>
 
+#include <cstddef>
+#include <cstdint>
+
 /*! @brief Signal state of one wheel encoder. */
 enum class EncoderSignal {
     Nominal,  //!< The encoder operates correctly.
@@ -30,15 +33,28 @@ public:
     void writeOutputMessages(uint64_t CurrentClock);
     void encode(uint64_t currentSimNanos);
 
+    /*! @brief Set the number of reaction wheels that the encoder reads.
+        @param numRW number of reaction wheels. Zero is not permitted.
+        @throws std::invalid_argument if numRW is zero. */
+    void setNumRW(std::size_t numRW);
+    /*! @brief Get the number of reaction wheels that the encoder reads. */
+    std::size_t getNumRW() const;
+    /*! @brief Set the number of encoder clicks in one full wheel rotation.
+        @param clicksPerRotation number of clicks in one rotation. Zero is not permitted.
+        @throws std::invalid_argument if clicksPerRotation is zero. */
+    void setClicksPerRotation(std::uint32_t clicksPerRotation);
+    /*! @brief Get the number of encoder clicks in one full wheel rotation. */
+    std::uint32_t getClicksPerRotation() const;
+
 public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] reaction wheel speed input message
     EncoderSignal rwSignalState[RW_EFF_CNT]{};    //!< vector of reaction wheel signal states
-    int clicksPerRotation = -1;                   //!< number of clicks per full rotation
-    int numRW = -1;                               //!< number of reaction wheels
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
+    std::size_t numRW = 0;                 //!< number of reaction wheels, zero until set
+    std::uint32_t clicksPerRotation = 0;   //!< number of clicks per full rotation, zero until set
     RWSpeedMsgPayload rwSpeedBuffer{};     //!< reaction wheel speed buffer for internal calculations
     RWSpeedMsgPayload rwSpeedConverted{};  //!< reaction wheel speed buffer for converted values
     double remainingClicks[RW_EFF_CNT]{};  //!< remaining clicks from the previous iteration

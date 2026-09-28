@@ -17,13 +17,13 @@ void Encoder::reset(uint64_t currentSimNanos) {
     // check if input message is linked
     if (!this->rwSpeedInMsg.isLinked()) { throw std::invalid_argument("encoder: rwSpeedInMsg is not linked."); }
 
-    // if the number of clicks is not greater than 0, throw a warning message
-    if (this->clicksPerRotation <= 0) {
+    // if the number of clicks is not set, log an error
+    if (this->clicksPerRotation == 0) {
         bskLogger.bskLog(BSK_ERROR, "encoder: number of clicks must be a positive integer.");
     }
 
-    // if the number of reaction wheels is not greater than 0, throw a warning message
-    if (this->numRW <= 0) {
+    // if the number of reaction wheels is not set, log an error
+    if (this->numRW == 0) {
         bskLogger.bskLog(
             BSK_ERROR,
             "encoder: number of reaction wheels must be a positive integer. It may not have been set."
@@ -64,7 +64,7 @@ void Encoder::writeOutputMessages(uint64_t CurrentClock) {
  */
 void Encoder::encode(uint64_t currentSimNanos) {
     // convert clicks per rotation to clicks per radian
-    double const clicksPerRadian = this->clicksPerRotation / (2 * std::numbers::pi);
+    double const clicksPerRadian = static_cast<double>(this->clicksPerRotation) / (2 * std::numbers::pi);
 
     // set the time step
     double const timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
@@ -74,7 +74,7 @@ void Encoder::encode(uint64_t currentSimNanos) {
         this->rwSpeedConverted = this->rwSpeedBuffer;
     } else {
         // loop through the RW
-        for (int i = 0; i < this->numRW; i++) {
+        for (std::size_t i = 0; i < this->numRW; i++) {
             // check if encoder is operational
             if (this->rwSignalState[i] == EncoderSignal::Nominal) {
                 // calculate the angle sweeped by the reaction wheel during the time step
@@ -118,4 +118,22 @@ void Encoder::updateState(uint64_t currentSimNanos) {
     this->writeOutputMessages(currentSimNanos);
 
     this->prevTime = currentSimNanos;
+}
+
+void Encoder::setNumRW(std::size_t const numRW) {
+    if (numRW == 0) { throw std::invalid_argument("encoder: number of reaction wheels must be more than zero."); }
+    this->numRW = numRW;
+}
+
+std::size_t Encoder::getNumRW() const {
+    return this->numRW;
+}
+
+void Encoder::setClicksPerRotation(std::uint32_t const clicksPerRotation) {
+    if (clicksPerRotation == 0) { throw std::invalid_argument("encoder: clicks per rotation must be more than zero."); }
+    this->clicksPerRotation = clicksPerRotation;
+}
+
+std::uint32_t Encoder::getClicksPerRotation() const {
+    return this->clicksPerRotation;
 }

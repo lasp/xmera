@@ -23,6 +23,11 @@
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include <architecture/_GeneralModuleFiles/sys_model.i>
+
+%include <stdint.i>
+%include <attribute.i>
+%attribute(Encoder, std::size_t, numRW, getNumRW, setNumRW)
+%attribute(Encoder, std::uint32_t, clicksPerRotation, getClicksPerRotation, setClicksPerRotation)
 %include <architecture/utilities/macroDefinitions.h>
 %include "encoder.h"
 

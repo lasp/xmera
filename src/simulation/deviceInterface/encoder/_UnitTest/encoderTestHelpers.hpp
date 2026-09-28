@@ -9,6 +9,7 @@
 
 #include <simulation/deviceInterface/encoder/encoder.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
@@ -20,9 +21,9 @@ namespace encodertest {
     class EncoderHarness {
     public:
         //! Make an encoder with the given wheel count and clicks per rotation, then connect its messages.
-        EncoderHarness(int numRW, int clicksPerRotation) {
-            this->encoder.numRW = numRW;
-            this->encoder.clicksPerRotation = clicksPerRotation;
+        EncoderHarness(std::size_t numRW, std::uint32_t clicksPerRotation) {
+            this->encoder.setNumRW(numRW);
+            this->encoder.setClicksPerRotation(clicksPerRotation);
             this->encoder.rwSpeedInMsg.subscribeTo(&this->speedInMsg);
             this->speedOut = this->encoder.rwSpeedOutMsg.addSubscriber();
         }
