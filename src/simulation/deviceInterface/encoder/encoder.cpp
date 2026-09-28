@@ -80,8 +80,8 @@ void Encoder::encode(uint64_t currentSimNanos) {
     } else {
         // loop through the RW
         for (std::size_t i = 0; i < this->numRW; i++) {
-            // check if encoder is operational
-            if (this->signalStates[i] == EncoderSignal::Nominal) {
+            switch (this->signalStates[i]) {
+            case EncoderSignal::Nominal: {
                 // calculate the angle sweeped by the reaction wheel during the time step
                 double const angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
 
@@ -94,22 +94,16 @@ void Encoder::encode(uint64_t currentSimNanos) {
 
                 // calculate the discretized angular velocity
                 this->rwSpeedConverted.wheelSpeeds[i] = numberClicks / (clicksPerRadian * timeStep);
+                break;
             }
-            // check if encoder is off
-            else if (this->signalStates[i] == EncoderSignal::Off) {
-                // set the outgoing reaction wheel speed to 0
+            case EncoderSignal::Off:
+                // set the outgoing reaction wheel speed to 0 and reset the remaining clicks
                 this->rwSpeedConverted.wheelSpeeds[i] = 0.0;
-
-                // reset the remaining clicks
-                this->remainingClicks[i] = 0;
-            } else if (this->signalStates[i] == EncoderSignal::Stuck) {
+                this->remainingClicks[i] = 0.0;
+                break;
+            case EncoderSignal::Stuck:
                 // if the encoder is stuck, it will output the previous results
-            } else {
-                bskLogger.bskLog(
-                    BSK_ERROR,
-                    "encoder: un-modeled encoder signal mode %d selected.",
-                    static_cast<int>(this->signalStates[i])
-                );
+                break;
             }
         }
     }
