@@ -2,6 +2,7 @@
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "encoderTestHelpers.hpp"
+#include <architecture/utilities/simDefinitions.h>
 
 #include <gtest/gtest.h>
 
@@ -44,4 +45,20 @@ TEST(Encoder, quantizesSpeedOverConsecutiveSteps) {
     EXPECT_NEAR(second.wheelSpeeds[0], 32.0 * pi, tolerance);
     EXPECT_NEAR(second.wheelSpeeds[1], 64.0 * pi, tolerance);
     EXPECT_NEAR(second.wheelSpeeds[2], 95.0 * pi, tolerance);
+}
+
+//! When the signal is off, the encoder sends zero speed.
+TEST(Encoder, offSignalSendsZeroSpeed) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.reset(0);
+    std::vector<double> const speeds{100.0, 200.0, 300.0};
+    harness.step(speeds, 0);
+    harness.step(speeds, oneSecond);
+
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_OFF; }
+    RWSpeedMsgPayload const out = harness.step(speeds, 2 * oneSecond);
+
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], 0.0);
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[1], 0.0);
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], 0.0);
 }
