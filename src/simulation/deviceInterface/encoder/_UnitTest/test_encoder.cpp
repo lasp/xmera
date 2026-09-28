@@ -176,3 +176,16 @@ TEST(Encoder, sendsWheelThetasOnEachStep) {
     EXPECT_DOUBLE_EQ(out.wheelThetas[1], -1.5);
     EXPECT_DOUBLE_EQ(out.wheelThetas[2], 3.0);
 }
+
+//! The signal state also applies on a step with a zero time step. An off encoder sends zero speed on the first step.
+TEST(Encoder, offSignalAppliesOnFirstStep) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.setSignalState(1, EncoderSignal::Off);
+    harness.encoder.reset(0);
+
+    RWSpeedMsgPayload const out = harness.step({100.0, 200.0, 300.0}, 0);
+
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], 100.0);
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[1], 0.0);
+    EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], 300.0);
+}

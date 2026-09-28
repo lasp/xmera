@@ -77,37 +77,38 @@ void Encoder::encode(uint64_t currentSimNanos) {
         std::begin(this->rwSpeedConverted.wheelThetas)
     );
 
-    // at the beginning of the simulation, the encoder simply outputs the true RW speeds
-    if (timeStep == 0.0) {
-        this->rwSpeedConverted = this->rwSpeedBuffer;
-    } else {
-        // loop through the RW
-        for (std::size_t i = 0; i < this->numRW; i++) {
-            switch (this->signalStates[i]) {
-            case EncoderSignal::Nominal: {
-                // calculate the angle sweeped by the reaction wheel during the time step
-                double const angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
-
-                // calculate the number of clicks
-                double const totalClicks = angle * clicksPerRadian + this->remainingClicks[i];
-                double const numberClicks = std::trunc(totalClicks);
-
-                // update the remaining clicks
-                this->remainingClicks[i] = totalClicks - numberClicks;
-
-                // calculate the discretized angular velocity
-                this->rwSpeedConverted.wheelSpeeds[i] = numberClicks / (clicksPerRadian * timeStep);
+    // loop through the RW
+    for (std::size_t i = 0; i < this->numRW; i++) {
+        switch (this->signalStates[i]) {
+        case EncoderSignal::Nominal: {
+            // with a zero time step there are no clicks to count, so the encoder outputs the true RW speed
+            if (timeStep == 0.0) {
+                this->rwSpeedConverted.wheelSpeeds[i] = this->rwSpeedBuffer.wheelSpeeds[i];
                 break;
             }
-            case EncoderSignal::Off:
-                // set the outgoing reaction wheel speed to 0 and reset the remaining clicks
-                this->rwSpeedConverted.wheelSpeeds[i] = 0.0;
-                this->remainingClicks[i] = 0.0;
-                break;
-            case EncoderSignal::Stuck:
-                // if the encoder is stuck, it will output the previous results
-                break;
-            }
+
+            // calculate the angle sweeped by the reaction wheel during the time step
+            double const angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
+
+            // calculate the number of clicks
+            double const totalClicks = angle * clicksPerRadian + this->remainingClicks[i];
+            double const numberClicks = std::trunc(totalClicks);
+
+            // update the remaining clicks
+            this->remainingClicks[i] = totalClicks - numberClicks;
+
+            // calculate the discretized angular velocity
+            this->rwSpeedConverted.wheelSpeeds[i] = numberClicks / (clicksPerRadian * timeStep);
+            break;
+        }
+        case EncoderSignal::Off:
+            // set the outgoing reaction wheel speed to 0 and reset the remaining clicks
+            this->rwSpeedConverted.wheelSpeeds[i] = 0.0;
+            this->remainingClicks[i] = 0.0;
+            break;
+        case EncoderSignal::Stuck:
+            // if the encoder is stuck, it will output the previous results
+            break;
         }
     }
 }
