@@ -36,8 +36,8 @@ namespace {
             .WithMaxSize(maxFuzzSteps);
     }
 
-    //! For nominal encoders, the angle that the encoder output shows and the true wheel angle differ by less than one
-    //! click. The encoder keeps the remaining part of a click for the next step, so the error does not increase.
+    //! For nominal encoders, the difference between the encoder output angle and the input wheel angle is less than one
+    //! click. The encoder keeps the remaining part of a click for the next step. Thus the error does not increase.
     void angleErrorStaysBelowOneClick(
         std::size_t numRW,
         std::uint32_t clicksPerRotation,

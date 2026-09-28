@@ -16,7 +16,7 @@ namespace {
     constexpr double tolerance = 1e-9;
 }  // namespace
 
-//! On the first step the time step is zero, so the encoder sends the true wheel speeds.
+//! On the first step, the time step is zero. Thus the encoder sends the input wheel speeds.
 TEST(Encoder, firstStepSendsTrueSpeeds) {
     EncoderHarness harness(3, 2);
     harness.encoder.reset(0);
@@ -28,8 +28,8 @@ TEST(Encoder, firstStepSendsTrueSpeeds) {
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], 300.0);
 }
 
-//! With two clicks per rotation, each output speed is a whole number of clicks times pi rad/s.
-//! The encoder keeps the fraction of a click that remains and adds it to the next step.
+//! With two clicks per rotation, each output speed is pi rad/s multiplied by an integer number of clicks.
+//! The encoder keeps the remaining part of a click and adds it to the next step.
 TEST(Encoder, quantizesSpeedOverConsecutiveSteps) {
     EncoderHarness harness(3, 2);
     harness.encoder.reset(0);
@@ -177,7 +177,8 @@ TEST(Encoder, sendsWheelThetasOnEachStep) {
     EXPECT_DOUBLE_EQ(out.wheelThetas[2], 3.0);
 }
 
-//! The signal state also applies on a step with a zero time step. An off encoder sends zero speed on the first step.
+//! The encoder also uses the signal state on a step with a zero time step. An off encoder sends zero speed on the
+//! first step.
 TEST(Encoder, offSignalAppliesOnFirstStep) {
     EncoderHarness harness(3, 2);
     harness.encoder.setSignalState(1, EncoderSignal::Off);

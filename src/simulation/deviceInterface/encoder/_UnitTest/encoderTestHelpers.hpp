@@ -20,7 +20,7 @@ namespace encodertest {
     //! This harness connects an encoder to an input speed message and an output reader.
     class EncoderHarness {
     public:
-        //! Make an encoder with the given wheel count and clicks per rotation, then connect its messages.
+        //! Makes an encoder with the given wheel count and clicks per rotation, and connects its messages.
         EncoderHarness(std::size_t numRW, std::uint32_t clicksPerRotation) : encoder(numRW, clicksPerRotation) {
             this->encoder.rwSpeedInMsg.subscribeTo(&this->speedInMsg);
             this->speedOut = this->encoder.rwSpeedOutMsg.addSubscriber();
@@ -29,7 +29,7 @@ namespace encodertest {
         EncoderHarness(EncoderHarness const &) = delete;
         EncoderHarness &operator=(EncoderHarness const &) = delete;
 
-        //! Write the wheel speeds to the input message, update the encoder at time t, and read the output.
+        //! Writes the wheel speeds to the input message, updates the encoder at time t, and reads the output.
         RWSpeedMsgPayload step(std::vector<double> const &wheelSpeeds, uint64_t t) {
             RWSpeedMsgPayload payload{};
             for (std::size_t i = 0; i < wheelSpeeds.size(); ++i) { payload.wheelSpeeds[i] = wheelSpeeds[i]; }
@@ -38,7 +38,7 @@ namespace encodertest {
             return this->speedOut();
         }
 
-        Encoder encoder;                          //!< encoder under test
+        Encoder encoder;                          //!< encoder that the tests examine
         Message<RWSpeedMsgPayload> speedInMsg;    //!< input wheel speed message
         ReadFunctor<RWSpeedMsgPayload> speedOut;  //!< reader of the encoder output message
     };

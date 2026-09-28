@@ -1,5 +1,5 @@
-# The encoder .cpp is compiled only into the SWIG Python module (not a linkable
-# C++ library), so pull the source in directly here.
+# The SWIG Python module is the only target that compiles encoder.cpp. The tests
+# cannot link to it as a C++ library. Thus the tests compile encoder.cpp directly.
 add_executable(test_encoder
   ../encoder.cpp
   test_encoder.cpp

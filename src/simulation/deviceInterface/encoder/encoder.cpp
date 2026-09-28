@@ -30,21 +30,21 @@ Encoder::Encoder(std::size_t const numRW, std::uint32_t const clicksPerRotation)
 }
 
 void Encoder::reset(uint64_t currentSimNanos) {
-    // check if input message is linked
+    // The input message must be linked.
     if (!this->rwSpeedInMsg.isLinked()) { throw std::invalid_argument("encoder: rwSpeedInMsg is not linked."); }
 
-    // reset the previous time
+    // The previous time starts at the reset time.
     this->prevTime = currentSimNanos;
 
-    // zero the RW wheel output message buffer //
+    // The output speeds start at zero.
     this->rwSpeedConverted = RWSpeedMsgPayload{};
 
-    // set the remaining clicks to zero, and keep the configured signal states
+    // The remaining clicks start at zero. The signal states do not change.
     for (double &clicks : this->remainingClicks) { clicks = 0.0; }
 }
 
 void Encoder::readInputMessages() {
-    // read the incoming wheel speed message
+    // The input message gives the wheel speeds and wheel angles of this step.
     this->rwSpeedBuffer = this->rwSpeedInMsg();
 }
 
@@ -53,50 +53,50 @@ void Encoder::writeOutputMessages(uint64_t currentClock) {
 }
 
 void Encoder::encode(uint64_t currentSimNanos) {
-    // convert clicks per rotation to clicks per radian
+    // This value is the number of clicks in one radian.
     double const clicksPerRadian = static_cast<double>(this->clicksPerRotation) / (2 * std::numbers::pi);
 
-    // set the time step
+    // The time step is the time since the previous step.
     double const timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
 
-    // the encoder does not measure the wheel angles, so send them unchanged
+    // The encoder does not measure the wheel angles. The module sends them unchanged.
     std::copy(
         std::begin(this->rwSpeedBuffer.wheelThetas),
         std::end(this->rwSpeedBuffer.wheelThetas),
         std::begin(this->rwSpeedConverted.wheelThetas)
     );
 
-    // loop through the RW
+    // The module calculates the output speed of each wheel that the encoder reads.
     for (std::size_t i = 0; i < this->numRW; i++) {
         switch (this->signalStates[i]) {
         case EncoderSignal::Nominal: {
-            // with a zero time step there are no clicks to count, so the encoder outputs the true RW speed
+            // With a zero time step, the encoder cannot count clicks. Thus it sends the input wheel speed.
             if (timeStep == 0.0) {
                 this->rwSpeedConverted.wheelSpeeds[i] = this->rwSpeedBuffer.wheelSpeeds[i];
                 break;
             }
 
-            // calculate the angle sweeped by the reaction wheel during the time step
+            // The wheel turns through this angle during the time step.
             double const angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
 
-            // calculate the number of clicks
+            // The encoder counts only an integer number of clicks.
             double const totalClicks = angle * clicksPerRadian + this->remainingClicks[i];
             double const numberClicks = std::trunc(totalClicks);
 
-            // update the remaining clicks
+            // The module keeps the remaining part of a click for the next step.
             this->remainingClicks[i] = totalClicks - numberClicks;
 
-            // calculate the discretized angular velocity
+            // The output speed agrees with the number of clicks that the encoder counts.
             this->rwSpeedConverted.wheelSpeeds[i] = numberClicks / (clicksPerRadian * timeStep);
             break;
         }
         case EncoderSignal::Off:
-            // set the outgoing reaction wheel speed to 0 and reset the remaining clicks
+            // An off encoder sends zero speed and erases the remaining part of a click.
             this->rwSpeedConverted.wheelSpeeds[i] = 0.0;
             this->remainingClicks[i] = 0.0;
             break;
         case EncoderSignal::Stuck:
-            // if the encoder is stuck, it will output the previous results
+            // A stuck encoder sends the output speed of the previous step.
             break;
         }
     }
