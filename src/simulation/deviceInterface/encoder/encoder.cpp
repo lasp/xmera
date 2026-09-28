@@ -71,7 +71,7 @@ void Encoder::encode(uint64_t currentSimNanos) {
 
     // at the beginning of the simulation, the encoder simply outputs the true RW speeds
     if (timeStep == 0.0) {
-        this->rwSpeedConverted = this->rwSpeedInMsg();
+        this->rwSpeedConverted = this->rwSpeedBuffer;
     } else {
         // loop through the RW
         for (int i = 0; i < this->numRW; i++) {
