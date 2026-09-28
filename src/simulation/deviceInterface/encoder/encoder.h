@@ -12,6 +12,13 @@
 
 #include <mission/parameters.h>
 
+/*! @brief Signal state of one wheel encoder. */
+enum class EncoderSignal {
+    Nominal,  //!< The encoder operates correctly.
+    Off,      //!< The encoder sends zero speed.
+    Stuck     //!< The encoder sends the speed of the previous step.
+};
+
 /*! @brief wheel speed encoder module class */
 class Encoder : public SysModel {
 public:
@@ -26,7 +33,7 @@ public:
 public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] reaction wheel speed input message
-    int rwSignalState[RW_EFF_CNT]{};              //!< vector of reaction wheel signal states
+    EncoderSignal rwSignalState[RW_EFF_CNT]{};    //!< vector of reaction wheel signal states
     int clicksPerRotation = -1;                   //!< number of clicks per full rotation
     int numRW = -1;                               //!< number of reaction wheels
     BSKLogger bskLogger;                          //!< -- BSK Logging

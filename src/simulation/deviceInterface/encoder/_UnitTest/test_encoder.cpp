@@ -2,7 +2,6 @@
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "encoderTestHelpers.hpp"
-#include <architecture/utilities/simDefinitions.h>
 
 #include <gtest/gtest.h>
 
@@ -55,7 +54,7 @@ TEST(Encoder, offSignalSendsZeroSpeed) {
     harness.step(speeds, 0);
     harness.step(speeds, oneSecond);
 
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_OFF; }
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Off; }
     RWSpeedMsgPayload const out = harness.step(speeds, 2 * oneSecond);
 
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], 0.0);
@@ -72,9 +71,9 @@ TEST(Encoder, nominalSignalAfterOffStartsFromZeroClicks) {
     harness.step(speeds, oneSecond);
     harness.step(speeds, 2 * oneSecond);
 
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_OFF; }
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Off; }
     harness.step(speeds, 3 * oneSecond);
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_NOMINAL; }
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Nominal; }
     RWSpeedMsgPayload const out = harness.step({500.0, 400.0, 300.0}, 4 * oneSecond);
 
     EXPECT_NEAR(out.wheelSpeeds[0], 159.0 * pi, tolerance);
@@ -89,7 +88,7 @@ TEST(Encoder, stuckSignalHoldsPreviousSpeed) {
     harness.step({500.0, 400.0, 300.0}, 0);
     RWSpeedMsgPayload const before = harness.step({500.0, 400.0, 300.0}, oneSecond);
 
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_STUCK; }
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Stuck; }
     RWSpeedMsgPayload const out = harness.step({100.0, 200.0, 300.0}, 2 * oneSecond);
 
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], before.wheelSpeeds[0]);
