@@ -17,8 +17,8 @@ class Encoder : public SysModel {
 public:
     Encoder();
 
-    void reset(uint64_t currentSimNanos);
-    void updateState(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
     void encode(uint64_t currentSimNanos);
