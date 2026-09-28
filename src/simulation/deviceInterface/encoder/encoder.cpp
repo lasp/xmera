@@ -7,7 +7,8 @@
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/simDefinitions.h>
 
-#include <math.h>
+#include <cmath>
+#include <numbers>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -75,7 +76,7 @@ void Encoder::encode(uint64_t currentSimNanos) {
     double angle;
 
     // convert clicks per rotation to clicks per radian
-    clicksPerRadian = this->clicksPerRotation / (2 * M_PI);
+    clicksPerRadian = this->clicksPerRotation / (2 * std::numbers::pi);
 
     // set the time step
     timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
@@ -92,7 +93,7 @@ void Encoder::encode(uint64_t currentSimNanos) {
                 angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
 
                 // calculate the number of clicks
-                numberClicks = trunc(angle * clicksPerRadian + this->remainingClicks[i]);
+                numberClicks = std::trunc(angle * clicksPerRadian + this->remainingClicks[i]);
 
                 // update the remaining clicks
                 this->remainingClicks[i] = angle * clicksPerRadian + this->remainingClicks[i] - numberClicks;
