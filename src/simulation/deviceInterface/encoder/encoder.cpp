@@ -122,6 +122,9 @@ void Encoder::updateState(uint64_t currentSimNanos) {
 
 void Encoder::setNumRW(std::size_t const numRW) {
     if (numRW == 0) { throw std::invalid_argument("encoder: number of reaction wheels must be more than zero."); }
+    if (numRW > RW_EFF_CNT) {
+        throw std::invalid_argument("encoder: number of reaction wheels must not be more than RW_EFF_CNT.");
+    }
     this->numRW = numRW;
 }
 

@@ -34,8 +34,8 @@ public:
     void encode(uint64_t currentSimNanos);
 
     /*! @brief Set the number of reaction wheels that the encoder reads.
-        @param numRW number of reaction wheels. Zero is not permitted.
-        @throws std::invalid_argument if numRW is zero. */
+        @param numRW number of reaction wheels, from one to RW_EFF_CNT.
+        @throws std::invalid_argument if numRW is zero or more than RW_EFF_CNT. */
     void setNumRW(std::size_t numRW);
     /*! @brief Get the number of reaction wheels that the encoder reads. */
     std::size_t getNumRW() const;

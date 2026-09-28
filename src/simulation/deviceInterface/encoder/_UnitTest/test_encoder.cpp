@@ -113,3 +113,12 @@ TEST(Encoder, settersRejectZero) {
     EXPECT_THROW(encoder.setNumRW(0), std::invalid_argument);
     EXPECT_THROW(encoder.setClicksPerRotation(0), std::invalid_argument);
 }
+
+//! The output message has RW_EFF_CNT wheel slots. The wheel count setter rejects a count that is more than RW_EFF_CNT.
+TEST(Encoder, setNumRWRejectsCountAboveRwEffCnt) {
+    Encoder encoder;
+
+    EXPECT_NO_THROW(encoder.setNumRW(RW_EFF_CNT));
+    EXPECT_THROW(encoder.setNumRW(RW_EFF_CNT + 1), std::invalid_argument);
+    EXPECT_EQ(encoder.getNumRW(), static_cast<std::size_t>(RW_EFF_CNT));
+}
