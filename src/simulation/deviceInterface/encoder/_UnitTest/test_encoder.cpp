@@ -55,7 +55,7 @@ TEST(Encoder, offSignalSendsZeroSpeed) {
     harness.step(speeds, 0);
     harness.step(speeds, oneSecond);
 
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Off; }
+    for (std::size_t i = 0; i < 3; ++i) { harness.encoder.setSignalState(i, EncoderSignal::Off); }
     RWSpeedMsgPayload const out = harness.step(speeds, 2 * oneSecond);
 
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], 0.0);
@@ -72,9 +72,9 @@ TEST(Encoder, nominalSignalAfterOffStartsFromZeroClicks) {
     harness.step(speeds, oneSecond);
     harness.step(speeds, 2 * oneSecond);
 
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Off; }
+    for (std::size_t i = 0; i < 3; ++i) { harness.encoder.setSignalState(i, EncoderSignal::Off); }
     harness.step(speeds, 3 * oneSecond);
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Nominal; }
+    for (std::size_t i = 0; i < 3; ++i) { harness.encoder.setSignalState(i, EncoderSignal::Nominal); }
     RWSpeedMsgPayload const out = harness.step({500.0, 400.0, 300.0}, 4 * oneSecond);
 
     EXPECT_NEAR(out.wheelSpeeds[0], 159.0 * pi, tolerance);
@@ -89,7 +89,7 @@ TEST(Encoder, stuckSignalHoldsPreviousSpeed) {
     harness.step({500.0, 400.0, 300.0}, 0);
     RWSpeedMsgPayload const before = harness.step({500.0, 400.0, 300.0}, oneSecond);
 
-    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = EncoderSignal::Stuck; }
+    for (std::size_t i = 0; i < 3; ++i) { harness.encoder.setSignalState(i, EncoderSignal::Stuck); }
     RWSpeedMsgPayload const out = harness.step({100.0, 200.0, 300.0}, 2 * oneSecond);
 
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[0], before.wheelSpeeds[0]);
@@ -119,4 +119,14 @@ TEST(Encoder, setNumRWRejectsCountAboveRwEffCnt) {
     EXPECT_NO_THROW(encoder.setNumRW(RW_EFF_CNT));
     EXPECT_THROW(encoder.setNumRW(RW_EFF_CNT + 1), std::invalid_argument);
     EXPECT_EQ(encoder.getNumRW(), static_cast<std::size_t>(RW_EFF_CNT));
+}
+
+//! The signal state setter rejects a wheel index that is not less than the wheel count, and a state that is not an
+//! EncoderSignal value.
+TEST(Encoder, setSignalStateRejectsInvalidInput) {
+    Encoder encoder(3, 2);
+
+    EXPECT_THROW(encoder.setSignalState(3, EncoderSignal::Off), std::invalid_argument);
+    EXPECT_THROW(encoder.setSignalState(0, static_cast<EncoderSignal>(7)), std::invalid_argument);
+    EXPECT_EQ(encoder.getSignalState(0), EncoderSignal::Nominal);
 }

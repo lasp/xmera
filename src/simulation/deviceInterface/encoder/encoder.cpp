@@ -10,6 +10,17 @@
 #include <numbers>
 #include <stdexcept>
 
+namespace {
+    bool isKnownSignal(EncoderSignal const state) {
+        switch (state) {
+        case EncoderSignal::Nominal:
+        case EncoderSignal::Off:
+        case EncoderSignal::Stuck: return true;
+        }
+        return false;
+    }
+}  // namespace
+
 Encoder::Encoder(std::size_t const numRW, std::uint32_t const clicksPerRotation) {
     this->setNumRW(numRW);
     this->setClicksPerRotation(clicksPerRotation);
@@ -31,7 +42,7 @@ void Encoder::reset(uint64_t currentSimNanos) {
     // Loop through the RW to set some internal parameters to default
     for (int i = 0; i < RW_EFF_CNT; i++) {
         // set all reaction wheels signal to nominal
-        this->rwSignalState[i] = EncoderSignal::Nominal;
+        this->signalStates[i] = EncoderSignal::Nominal;
         // set the remaining clicks to zero
         this->remainingClicks[i] = 0.0;
     }
@@ -68,7 +79,7 @@ void Encoder::encode(uint64_t currentSimNanos) {
         // loop through the RW
         for (std::size_t i = 0; i < this->numRW; i++) {
             // check if encoder is operational
-            if (this->rwSignalState[i] == EncoderSignal::Nominal) {
+            if (this->signalStates[i] == EncoderSignal::Nominal) {
                 // calculate the angle sweeped by the reaction wheel during the time step
                 double const angle = this->rwSpeedBuffer.wheelSpeeds[i] * timeStep;
 
@@ -83,19 +94,19 @@ void Encoder::encode(uint64_t currentSimNanos) {
                 this->rwSpeedConverted.wheelSpeeds[i] = numberClicks / (clicksPerRadian * timeStep);
             }
             // check if encoder is off
-            else if (this->rwSignalState[i] == EncoderSignal::Off) {
+            else if (this->signalStates[i] == EncoderSignal::Off) {
                 // set the outgoing reaction wheel speed to 0
                 this->rwSpeedConverted.wheelSpeeds[i] = 0.0;
 
                 // reset the remaining clicks
                 this->remainingClicks[i] = 0;
-            } else if (this->rwSignalState[i] == EncoderSignal::Stuck) {
+            } else if (this->signalStates[i] == EncoderSignal::Stuck) {
                 // if the encoder is stuck, it will output the previous results
             } else {
                 bskLogger.bskLog(
                     BSK_ERROR,
                     "encoder: un-modeled encoder signal mode %d selected.",
-                    static_cast<int>(this->rwSignalState[i])
+                    static_cast<int>(this->signalStates[i])
                 );
             }
         }
@@ -131,4 +142,15 @@ void Encoder::setClicksPerRotation(std::uint32_t const clicksPerRotation) {
 
 std::uint32_t Encoder::getClicksPerRotation() const {
     return this->clicksPerRotation;
+}
+
+void Encoder::setSignalState(std::size_t const wheel, EncoderSignal const state) {
+    if (wheel >= this->numRW) { throw std::invalid_argument("encoder: wheel index must be less than numRW."); }
+    if (!isKnownSignal(state)) { throw std::invalid_argument("encoder: signal state is not a known EncoderSignal."); }
+    this->signalStates[wheel] = state;
+}
+
+EncoderSignal Encoder::getSignalState(std::size_t const wheel) const {
+    if (wheel >= this->numRW) { throw std::invalid_argument("encoder: wheel index must be less than numRW."); }
+    return this->signalStates[wheel];
 }

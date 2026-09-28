@@ -12,6 +12,7 @@
 
 #include <mission/parameters.h>
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 
@@ -49,19 +50,28 @@ public:
     void setClicksPerRotation(std::uint32_t clicksPerRotation);
     /*! @brief Get the number of encoder clicks in one full wheel rotation. */
     std::uint32_t getClicksPerRotation() const;
+    /*! @brief Set the signal state of one wheel encoder.
+        @param wheel index of the reaction wheel, less than the wheel count.
+        @param state signal state of the encoder.
+        @throws std::invalid_argument if the wheel index or the state is not valid. */
+    void setSignalState(std::size_t wheel, EncoderSignal state);
+    /*! @brief Get the signal state of one wheel encoder.
+        @param wheel index of the reaction wheel, less than the wheel count.
+        @throws std::invalid_argument if the wheel index is not valid. */
+    EncoderSignal getSignalState(std::size_t wheel) const;
 
 public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] reaction wheel speed input message
-    EncoderSignal rwSignalState[RW_EFF_CNT]{};    //!< vector of reaction wheel signal states
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
-    std::size_t numRW = 0;                 //!< number of reaction wheels
-    std::uint32_t clicksPerRotation = 0;   //!< number of clicks per full rotation
-    RWSpeedMsgPayload rwSpeedBuffer{};     //!< reaction wheel speed buffer for internal calculations
-    RWSpeedMsgPayload rwSpeedConverted{};  //!< reaction wheel speed buffer for converted values
-    double remainingClicks[RW_EFF_CNT]{};  //!< remaining clicks from the previous iteration
+    std::size_t numRW = 0;                                 //!< number of reaction wheels
+    std::uint32_t clicksPerRotation = 0;                   //!< number of clicks per full rotation
+    std::array<EncoderSignal, RW_EFF_CNT> signalStates{};  //!< signal state of each wheel encoder
+    RWSpeedMsgPayload rwSpeedBuffer{};                     //!< reaction wheel speed buffer for internal calculations
+    RWSpeedMsgPayload rwSpeedConverted{};                  //!< reaction wheel speed buffer for converted values
+    double remainingClicks[RW_EFF_CNT]{};                  //!< remaining clicks from the previous iteration
 
     uint64_t prevTime = 0;  //!< -- Previous simulation time observed
 };
