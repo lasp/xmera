@@ -42,7 +42,7 @@ clicks per rotation that the sensor can handle. Let :math:`N` be the number of c
     N = \texttt{trunc}(\Omega_{\text{in}}\Delta t \frac{n}{2\pi} + \Delta N)
 
 where :math:`\Omega_{\text{in}}` is the input wheel speed, :math:`\Delta t` is the time step, :math:`n` is the number of clicks per rotation and :math:`\Delta N` is the remaining clicks that were not accounted for
-in the previous iteration. The ``trunc()`` function truncates the result, effectively rounding down to the nearest integer. The output wheel speed :math:`\Omega_{\text{out}}` is computed using the
+in the previous iteration. The ``trunc()`` function removes the part of the result after the decimal point. Thus it moves the result toward zero, also for a negative wheel speed. The output wheel speed :math:`\Omega_{\text{out}}` is computed using the
 following equation:
 
 .. math::
