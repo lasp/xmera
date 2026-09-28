@@ -156,3 +156,23 @@ TEST(Encoder, resetKeepsConfiguredSignalStates) {
     EXPECT_EQ(harness.encoder.getSignalState(1), EncoderSignal::Stuck);
     EXPECT_EQ(harness.encoder.getSignalState(2), EncoderSignal::Nominal);
 }
+
+//! The encoder does not measure the wheel angles. It sends the input wheel angles unchanged on each step.
+TEST(Encoder, sendsWheelThetasOnEachStep) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.reset(0);
+    harness.step({100.0, 200.0, 300.0}, 0);
+
+    RWSpeedMsgPayload payload{};
+    payload.wheelSpeeds[0] = 100.0;
+    payload.wheelThetas[0] = 0.25;
+    payload.wheelThetas[1] = -1.5;
+    payload.wheelThetas[2] = 3.0;
+    harness.speedInMsg.write(payload, 0, oneSecond);
+    harness.encoder.updateState(oneSecond);
+    RWSpeedMsgPayload const out = harness.speedOut();
+
+    EXPECT_DOUBLE_EQ(out.wheelThetas[0], 0.25);
+    EXPECT_DOUBLE_EQ(out.wheelThetas[1], -1.5);
+    EXPECT_DOUBLE_EQ(out.wheelThetas[2], 3.0);
+}

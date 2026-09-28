@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <iterator>
 #include <numbers>
 #include <stdexcept>
 
@@ -68,6 +69,13 @@ void Encoder::encode(uint64_t currentSimNanos) {
 
     // set the time step
     double const timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
+
+    // the encoder does not measure the wheel angles, so send them unchanged
+    std::copy(
+        std::begin(this->rwSpeedBuffer.wheelThetas),
+        std::end(this->rwSpeedBuffer.wheelThetas),
+        std::begin(this->rwSpeedConverted.wheelThetas)
+    );
 
     // at the beginning of the simulation, the encoder simply outputs the true RW speeds
     if (timeStep == 0.0) {
