@@ -129,6 +129,12 @@ void Encoder::setNumRW(std::size_t const numRW) {
         throw std::invalid_argument("encoder: number of reaction wheels must not be more than RW_EFF_CNT.");
     }
     this->numRW = numRW;
+
+    // The wheels that the encoder does not read send zero speed and have no remaining part of a click.
+    for (std::size_t i = numRW; i < RW_EFF_CNT; ++i) {
+        this->rwSpeedConverted.wheelSpeeds[i] = 0.0;
+        this->remainingClicks[i] = 0.0;
+    }
 }
 
 std::size_t Encoder::getNumRW() const {

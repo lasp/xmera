@@ -189,3 +189,23 @@ TEST(Encoder, offSignalAppliesOnFirstStep) {
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[1], 0.0);
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], 300.0);
 }
+
+//! When the wheel count decreases, the wheels that the encoder does not read send zero speed. When the wheel count
+//! increases again, the count of these wheels starts from zero clicks.
+TEST(Encoder, setNumRWSetsUnusedWheelsToZero) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.reset(0);
+    std::vector<double> const speeds{100.0, 200.0, 300.0};
+    harness.step(speeds, 0);
+    harness.step(speeds, oneSecond);
+
+    harness.encoder.setNumRW(1);
+    RWSpeedMsgPayload const reduced = harness.step(speeds, 2 * oneSecond);
+    harness.encoder.setNumRW(3);
+    RWSpeedMsgPayload const restored = harness.step(speeds, 3 * oneSecond);
+
+    EXPECT_DOUBLE_EQ(reduced.wheelSpeeds[1], 0.0);
+    EXPECT_DOUBLE_EQ(reduced.wheelSpeeds[2], 0.0);
+    EXPECT_NEAR(restored.wheelSpeeds[1], 63.0 * pi, tolerance);
+    EXPECT_NEAR(restored.wheelSpeeds[2], 95.0 * pi, tolerance);
+}
