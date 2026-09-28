@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <mission/parameters.h>
 
@@ -70,7 +69,6 @@ public:
 public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] reaction wheel speed input message
-    BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
     std::size_t numRW = 0;                                 //!< number of reaction wheels
