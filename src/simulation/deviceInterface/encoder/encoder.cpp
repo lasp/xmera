@@ -14,13 +14,6 @@
 Encoder::Encoder() {
     this->numRW = -1;  // set the number of reaction wheels to -1 to throw a warning if not set
     this->clicksPerRotation = -1;
-
-    return;
-}
-
-/*! Module Destructor.  */
-Encoder::~Encoder() {
-    return;
 }
 
 /*! This method is used to reset the module.
@@ -56,8 +49,6 @@ void Encoder::reset(uint64_t currentSimNanos) {
         // set the remaining clicks to zero
         this->remainingClicks[i] = 0.0;
     }
-
-    return;
 }
 
 /*! This method reads the speed input message
@@ -65,8 +56,6 @@ void Encoder::reset(uint64_t currentSimNanos) {
 void Encoder::readInputMessages() {
     // read the incoming power message
     this->rwSpeedBuffer = this->rwSpeedInMsg();
-
-    return;
 }
 
 /*! This method writes encoded the wheel speed message.
@@ -75,8 +64,6 @@ void Encoder::readInputMessages() {
  */
 void Encoder::writeOutputMessages(uint64_t CurrentClock) {
     this->rwSpeedOutMsg.write(this->rwSpeedConverted, this->moduleID, CurrentClock);
-
-    return;
 }
 
 /*! This method applies an encoder to the reaction wheel speeds.
@@ -128,7 +115,6 @@ void Encoder::encode(uint64_t currentSimNanos) {
             }
         }
     }
-    return;
 }
 
 /*! This method runs the encoder module in the sim.
@@ -139,6 +125,4 @@ void Encoder::updateState(uint64_t currentSimNanos) {
     this->writeOutputMessages(currentSimNanos);
 
     this->prevTime = currentSimNanos;
-
-    return;
 }
