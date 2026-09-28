@@ -62,3 +62,22 @@ TEST(Encoder, offSignalSendsZeroSpeed) {
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[1], 0.0);
     EXPECT_DOUBLE_EQ(out.wheelSpeeds[2], 0.0);
 }
+
+//! An off signal erases the remaining clicks. After the signal is nominal again, the count starts from zero.
+TEST(Encoder, nominalSignalAfterOffStartsFromZeroClicks) {
+    EncoderHarness harness(3, 2);
+    harness.encoder.reset(0);
+    std::vector<double> const speeds{100.0, 200.0, 300.0};
+    harness.step(speeds, 0);
+    harness.step(speeds, oneSecond);
+    harness.step(speeds, 2 * oneSecond);
+
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_OFF; }
+    harness.step(speeds, 3 * oneSecond);
+    for (int i = 0; i < 3; ++i) { harness.encoder.rwSignalState[i] = SIGNAL_NOMINAL; }
+    RWSpeedMsgPayload const out = harness.step({500.0, 400.0, 300.0}, 4 * oneSecond);
+
+    EXPECT_NEAR(out.wheelSpeeds[0], 159.0 * pi, tolerance);
+    EXPECT_NEAR(out.wheelSpeeds[1], 127.0 * pi, tolerance);
+    EXPECT_NEAR(out.wheelSpeeds[2], 95.0 * pi, tolerance);
+}
