@@ -23,62 +23,76 @@ enum class EncoderSignal {
     Stuck     //!< The encoder sends the speed of the previous step.
 };
 
-/*! @brief wheel speed encoder module class */
+/*! @brief Reaction wheel speed encoder.
+
+    The encoder counts the clicks of each wheel in each time step. It sends the wheel speed that agrees with that
+    count. It also simulates encoder failures with a signal state for each wheel. */
 class Encoder : public SysModel {
 public:
-    /*! @brief Make an encoder for the given wheel count and resolution.
+    /*! @brief Makes an encoder for the given wheel count and resolution. All signal states are nominal.
         @param numRW number of reaction wheels, from one to RW_EFF_CNT.
         @param clicksPerRotation number of clicks in one rotation. Zero is not permitted.
         @throws std::invalid_argument if a parameter is not in its permitted range. */
     Encoder(std::size_t numRW, std::uint32_t clicksPerRotation);
 
+    /*! @brief Sets the remaining clicks and the output speeds to zero. The signal states do not change.
+        @param currentSimNanos [ns] simulation time
+        @throws std::invalid_argument if rwSpeedInMsg is not linked. */
     void reset(uint64_t currentSimNanos) override;
+    /*! @brief Reads the input message, calculates the encoder output, and writes the output message.
+        @param currentSimNanos [ns] simulation time */
     void updateState(uint64_t currentSimNanos) override;
+    /*! @brief Reads the reaction wheel speed input message. */
     void readInputMessages();
-    void writeOutputMessages(uint64_t CurrentClock);
+    /*! @brief Writes the encoder output speeds to the output message.
+        @param currentClock [ns] simulation time */
+    void writeOutputMessages(uint64_t currentClock);
+    /*! @brief Calculates the encoder output speeds from the input speeds and the signal states.
+        @param currentSimNanos [ns] simulation time */
     void encode(uint64_t currentSimNanos);
 
-    /*! @brief Set the number of reaction wheels that the encoder reads.
+    /*! @brief Sets the number of reaction wheels that the encoder reads. The output speeds and the remaining clicks of
+        the other wheels change to zero.
         @param numRW number of reaction wheels, from one to RW_EFF_CNT.
         @throws std::invalid_argument if numRW is zero or more than RW_EFF_CNT. */
     void setNumRW(std::size_t numRW);
-    /*! @brief Get the number of reaction wheels that the encoder reads. */
+    /*! @brief Gets the number of reaction wheels that the encoder reads. */
     std::size_t getNumRW() const;
-    /*! @brief Set the number of encoder clicks in one full wheel rotation.
+    /*! @brief Sets the number of encoder clicks in one full wheel rotation.
         @param clicksPerRotation number of clicks in one rotation. Zero is not permitted.
         @throws std::invalid_argument if clicksPerRotation is zero. */
     void setClicksPerRotation(std::uint32_t clicksPerRotation);
-    /*! @brief Get the number of encoder clicks in one full wheel rotation. */
+    /*! @brief Gets the number of encoder clicks in one full wheel rotation. */
     std::uint32_t getClicksPerRotation() const;
-    /*! @brief Set the signal state of one wheel encoder.
+    /*! @brief Sets the signal state of one wheel encoder.
         @param wheel index of the reaction wheel, less than the wheel count.
         @param state signal state of the encoder.
-        @throws std::invalid_argument if the wheel index or the state is not valid. */
+        @throws std::invalid_argument if the wheel index or the state is incorrect. */
     void setSignalState(std::size_t wheel, EncoderSignal state);
-    /*! @brief Get the signal state of one wheel encoder.
+    /*! @brief Gets the signal state of one wheel encoder.
         @param wheel index of the reaction wheel, less than the wheel count.
-        @throws std::invalid_argument if the wheel index is not valid. */
+        @throws std::invalid_argument if the wheel index is incorrect. */
     EncoderSignal getSignalState(std::size_t wheel) const;
-    /*! @brief Set the signal states of all wheel encoders.
+    /*! @brief Sets the signal states of all wheel encoders.
         @param states one signal state for each reaction wheel. The size must be equal to the wheel count.
-        @throws std::invalid_argument if the size or a state is not valid. The encoder keeps its states. */
+        @throws std::invalid_argument if the size or a state is incorrect. The encoder keeps its states. */
     void setSignalStates(std::vector<EncoderSignal> const &states);
-    /*! @brief Get the signal states of all wheel encoders, one for each reaction wheel. */
+    /*! @brief Gets the signal states of all wheel encoders, one for each reaction wheel. */
     std::vector<EncoderSignal> getSignalStates() const;
 
 public:
-    Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
-    ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] reaction wheel speed input message
+    Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] encoder output wheel speeds
+    ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] input wheel speeds
 
 private:
     std::size_t numRW = 0;                                 //!< number of reaction wheels
     std::uint32_t clicksPerRotation = 0;                   //!< number of clicks per full rotation
     std::array<EncoderSignal, RW_EFF_CNT> signalStates{};  //!< signal state of each wheel encoder
-    RWSpeedMsgPayload rwSpeedBuffer{};                     //!< reaction wheel speed buffer for internal calculations
-    RWSpeedMsgPayload rwSpeedConverted{};                  //!< reaction wheel speed buffer for converted values
-    double remainingClicks[RW_EFF_CNT]{};                  //!< remaining clicks from the previous iteration
+    RWSpeedMsgPayload rwSpeedBuffer{};                     //!< [rad/s] input wheel speeds of this step
+    RWSpeedMsgPayload rwSpeedConverted{};                  //!< [rad/s] encoder output wheel speeds
+    double remainingClicks[RW_EFF_CNT]{};                  //!< remaining part of a click from the previous step
 
-    uint64_t prevTime = 0;  //!< -- Previous simulation time observed
+    uint64_t prevTime = 0;  //!< [ns] simulation time of the previous step
 };
 
 #endif

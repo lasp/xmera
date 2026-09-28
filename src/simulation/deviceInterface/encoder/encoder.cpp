@@ -29,9 +29,6 @@ Encoder::Encoder(std::size_t const numRW, std::uint32_t const clicksPerRotation)
     this->setClicksPerRotation(clicksPerRotation);
 }
 
-/*! This method is used to reset the module.
- @return void
- */
 void Encoder::reset(uint64_t currentSimNanos) {
     // check if input message is linked
     if (!this->rwSpeedInMsg.isLinked()) { throw std::invalid_argument("encoder: rwSpeedInMsg is not linked."); }
@@ -46,23 +43,15 @@ void Encoder::reset(uint64_t currentSimNanos) {
     for (double &clicks : this->remainingClicks) { clicks = 0.0; }
 }
 
-/*! This method reads the speed input message
- */
 void Encoder::readInputMessages() {
     // read the incoming wheel speed message
     this->rwSpeedBuffer = this->rwSpeedInMsg();
 }
 
-/*! This method writes encoded the wheel speed message.
- @return void
- @param CurrentClock The clock time associated with the model call
- */
-void Encoder::writeOutputMessages(uint64_t CurrentClock) {
-    this->rwSpeedOutMsg.write(this->rwSpeedConverted, this->moduleID, CurrentClock);
+void Encoder::writeOutputMessages(uint64_t currentClock) {
+    this->rwSpeedOutMsg.write(this->rwSpeedConverted, this->moduleID, currentClock);
 }
 
-/*! This method applies an encoder to the reaction wheel speeds.
- */
 void Encoder::encode(uint64_t currentSimNanos) {
     // convert clicks per rotation to clicks per radian
     double const clicksPerRadian = static_cast<double>(this->clicksPerRotation) / (2 * std::numbers::pi);
@@ -113,8 +102,6 @@ void Encoder::encode(uint64_t currentSimNanos) {
     }
 }
 
-/*! This method runs the encoder module in the sim.
- */
 void Encoder::updateState(uint64_t currentSimNanos) {
     this->readInputMessages();
     this->encode(currentSimNanos);
