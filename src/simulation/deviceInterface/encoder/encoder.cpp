@@ -10,13 +10,6 @@
 #include <cmath>
 #include <numbers>
 
-/*! This is the constructor for the module class.  It sets default variable
-    values and initializes the various parts of the model */
-Encoder::Encoder() {
-    this->numRW = -1;  // set the number of reaction wheels to -1 to throw a warning if not set
-    this->clicksPerRotation = -1;
-}
-
 /*! This method is used to reset the module.
  @return void
  */
