@@ -40,10 +40,8 @@ def test_encoder():
     speed_payload.wheelSpeeds = [100, 200, 300]
     speed_msg = messaging.RWSpeedMsg().write(speed_payload)
 
-    wheel_speed_encoder = encoder.Encoder()
+    wheel_speed_encoder = encoder.Encoder(num_rw, 2)
     wheel_speed_encoder.modelTag = "rwSpeedsEncoder"
-    wheel_speed_encoder.clicksPerRotation = 2
-    wheel_speed_encoder.numRW = num_rw
     wheel_speed_encoder.rwSpeedInMsg.subscribeTo(speed_msg)
     sim.AddModelToTask(task_name, wheel_speed_encoder)
 

@@ -21,9 +21,7 @@ namespace encodertest {
     class EncoderHarness {
     public:
         //! Make an encoder with the given wheel count and clicks per rotation, then connect its messages.
-        EncoderHarness(std::size_t numRW, std::uint32_t clicksPerRotation) {
-            this->encoder.setNumRW(numRW);
-            this->encoder.setClicksPerRotation(clicksPerRotation);
+        EncoderHarness(std::size_t numRW, std::uint32_t clicksPerRotation) : encoder(numRW, clicksPerRotation) {
             this->encoder.rwSpeedInMsg.subscribeTo(&this->speedInMsg);
             this->speedOut = this->encoder.rwSpeedOutMsg.addSubscriber();
         }

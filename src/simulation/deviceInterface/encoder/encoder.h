@@ -25,7 +25,11 @@ enum class EncoderSignal {
 /*! @brief wheel speed encoder module class */
 class Encoder : public SysModel {
 public:
-    Encoder() = default;
+    /*! @brief Make an encoder for the given wheel count and resolution.
+        @param numRW number of reaction wheels, from one to RW_EFF_CNT.
+        @param clicksPerRotation number of clicks in one rotation. Zero is not permitted.
+        @throws std::invalid_argument if a parameter is not in its permitted range. */
+    Encoder(std::size_t numRW, std::uint32_t clicksPerRotation);
 
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
@@ -53,8 +57,8 @@ public:
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
 private:
-    std::size_t numRW = 0;                 //!< number of reaction wheels, zero until set
-    std::uint32_t clicksPerRotation = 0;   //!< number of clicks per full rotation, zero until set
+    std::size_t numRW = 0;                 //!< number of reaction wheels
+    std::uint32_t clicksPerRotation = 0;   //!< number of clicks per full rotation
     RWSpeedMsgPayload rwSpeedBuffer{};     //!< reaction wheel speed buffer for internal calculations
     RWSpeedMsgPayload rwSpeedConverted{};  //!< reaction wheel speed buffer for converted values
     double remainingClicks[RW_EFF_CNT]{};  //!< remaining clicks from the previous iteration

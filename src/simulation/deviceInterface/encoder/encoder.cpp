@@ -10,25 +10,17 @@
 #include <numbers>
 #include <stdexcept>
 
+Encoder::Encoder(std::size_t const numRW, std::uint32_t const clicksPerRotation) {
+    this->setNumRW(numRW);
+    this->setClicksPerRotation(clicksPerRotation);
+}
+
 /*! This method is used to reset the module.
  @return void
  */
 void Encoder::reset(uint64_t currentSimNanos) {
     // check if input message is linked
     if (!this->rwSpeedInMsg.isLinked()) { throw std::invalid_argument("encoder: rwSpeedInMsg is not linked."); }
-
-    // if the number of clicks is not set, log an error
-    if (this->clicksPerRotation == 0) {
-        bskLogger.bskLog(BSK_ERROR, "encoder: number of clicks must be a positive integer.");
-    }
-
-    // if the number of reaction wheels is not set, log an error
-    if (this->numRW == 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "encoder: number of reaction wheels must be a positive integer. It may not have been set."
-        );
-    }
 
     // reset the previous time
     this->prevTime = currentSimNanos;

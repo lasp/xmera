@@ -99,16 +99,14 @@ TEST(Encoder, stuckSignalHoldsPreviousSpeed) {
 
 //! The encoder cannot operate without an input message. Reset rejects an encoder with no connected input message.
 TEST(Encoder, resetRejectsUnlinkedInputMessage) {
-    Encoder encoder;
-    encoder.setNumRW(3);
-    encoder.setClicksPerRotation(2);
+    Encoder encoder(3, 2);
 
     EXPECT_THROW(encoder.reset(0), std::invalid_argument);
 }
 
 //! The setters reject zero for the wheel count and for the clicks per rotation.
 TEST(Encoder, settersRejectZero) {
-    Encoder encoder;
+    Encoder encoder(3, 2);
 
     EXPECT_THROW(encoder.setNumRW(0), std::invalid_argument);
     EXPECT_THROW(encoder.setClicksPerRotation(0), std::invalid_argument);
@@ -116,7 +114,7 @@ TEST(Encoder, settersRejectZero) {
 
 //! The output message has RW_EFF_CNT wheel slots. The wheel count setter rejects a count that is more than RW_EFF_CNT.
 TEST(Encoder, setNumRWRejectsCountAboveRwEffCnt) {
-    Encoder encoder;
+    Encoder encoder(3, 2);
 
     EXPECT_NO_THROW(encoder.setNumRW(RW_EFF_CNT));
     EXPECT_THROW(encoder.setNumRW(RW_EFF_CNT + 1), std::invalid_argument);
