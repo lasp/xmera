@@ -517,7 +517,7 @@ class Controller:
 
         self._save_monte_carlo_controller()
 
-        with JobRunner(self.results_dir) as runner:
+        with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
             failures = self._drive_jobs(
                 self.generate_ic_sims(run_indexes), len(run_indexes), runner.queue,
             )
