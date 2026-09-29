@@ -27,7 +27,7 @@ import numpy as np
 import multiprocessing as mp
 import pickle as pickle
 from xmera.utilities.MonteCarlo.DataWriter import DataWriter
-from xmera.utilities.MonteCarlo.PathWalk import _apply_modification
+from xmera.utilities.MonteCarlo.PathWalk import apply_modification, generate_modifications
 from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
@@ -826,22 +826,12 @@ class SimulationExecutor:
             cls.populate_seeds(sim_instance, modifications)
 
             # we may want to disperse parameters
-            for disp in sim_params.dispersions:
-                try:
-                    name = disp.get_name()
-                    if name not in modifications:  # could be using a saved parameter.
-                        modifications[name] = disp.generate_string(sim_instance)
-                        if sim_params.should_save_disp_mag:
-                            magnitudes[name] = disp.generate_mag_string()
-                except TypeError:
-                    # This accomodates dispersion variables that are co-dependent
-                    disp.generate(sim_instance)
-                    for i in range(1, disp.number_of_sub_disps + 1):
-                        name = disp.get_name(i)
-                        if name not in modifications:  # could be using a saved parameter.
-                            modifications[name] = disp.generate_string(i, sim_instance)
-                            if sim_params.should_save_disp_mag:
-                                magnitudes[name] = disp.generate_mag_string()
+            generate_modifications(
+                sim_instance,
+                sim_params.dispersions,
+                modifications,
+                magnitudes if sim_params.should_save_disp_mag else None,
+            )
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
             # save the _dispersions and random seeds for this run
@@ -859,7 +849,7 @@ class SimulationExecutor:
             # apply the _dispersions and the random seeds
             for variable, value in list(modifications.items()):
                 log.debug(f"Applying parameter modification -> {variable} = {value}")
-                _apply_modification(sim_instance, variable, value)
+                apply_modification(sim_instance, variable, value)
 
             # setup data logging
             if len(sim_params.retention_policies) > 0:
@@ -936,4 +926,4 @@ class SimulationExecutor:
         """
         for variable, value in modifications.items():
             if ".RNGSeed" in variable:
-                _apply_modification(sim_instance, variable, value)
+                apply_modification(sim_instance, variable, value)

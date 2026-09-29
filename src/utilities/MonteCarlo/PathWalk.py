@@ -56,6 +56,16 @@ def _resolve_parent(obj, tokens):
     return current, tokens[-1]
 
 
+def resolve_path(obj, path: str):
+    """Return the object at ``path`` on ``obj``.
+
+    Raises :class:`DispersionApplyError` if the path cannot be parsed or a segment does not exist.
+    """
+    tokens = _tokenize_path(path)
+    parent, leaf = _resolve_parent(obj, tokens)
+    return _get_leaf(parent, leaf)
+
+
 def _get_leaf(parent, leaf):
     try:
         return getattr(parent, leaf[1]) if leaf[0] == 'attr' else parent[leaf[1]]
@@ -70,7 +80,7 @@ def _set_leaf(parent, leaf, value) -> None:
         parent[leaf[1]] = value
 
 
-def _apply_modification(sim_instance, path: str, value_str: str) -> None:
+def apply_modification(sim_instance, path: str, value_str: str) -> None:
     """Apply one dispersion modification to ``sim_instance`` at ``path``.
 
     The function follows ``path`` to its leaf. If the leaf is data, the function sets the leaf to the
@@ -89,3 +99,55 @@ def _apply_modification(sim_instance, path: str, value_str: str) -> None:
         target(*args)
     else:
         _set_leaf(parent, leaf, parsed_value)
+
+
+def apply_modifications(sim_instance, modifications: dict) -> None:
+    """Apply each ``path: value_str`` item of ``modifications`` to ``sim_instance``, in order."""
+    for path, value_str in modifications.items():
+        apply_modification(sim_instance, path, value_str)
+
+
+def generate_modifications(sim_instance, dispersions, modifications=None, magnitudes=None) -> dict:
+    """Generate one value for each dispersion, as a ``path: value_str`` dictionary.
+
+    A path that is already in ``modifications`` keeps its value. Thus a rerun uses the saved values.
+    A dispersion that does not accept ``get_name()`` without an index is co-dependent: the function
+    calls ``generate`` one time, and then reads each of its ``number_of_sub_disps`` values.
+
+    :param sim_instance: The sim that the dispersions read their nominal values from.
+    :param dispersions: The dispersion objects.
+    :param modifications: The dictionary to add to. If None, the function makes a new dictionary.
+    :param magnitudes: If not None, the function adds the magnitude string of each new value.
+    :return: The modifications dictionary.
+    """
+    if modifications is None:
+        modifications = {}
+    for disp in dispersions:
+        try:
+            name = disp.get_name()
+            if name not in modifications:
+                modifications[name] = disp.generate_string(sim_instance)
+                if magnitudes is not None:
+                    magnitudes[name] = disp.generate_mag_string()
+        except TypeError:
+            disp.generate(sim_instance)
+            for i in range(1, disp.number_of_sub_disps + 1):
+                name = disp.get_name(i)
+                if name not in modifications:
+                    modifications[name] = disp.generate_string(i, sim_instance)
+                    if magnitudes is not None:
+                        magnitudes[name] = disp.generate_mag_string()
+    return modifications
+
+
+def apply_dispersions(sim_instance, dispersions) -> dict:
+    """Generate a value for each dispersion and apply it to ``sim_instance``.
+
+    This is the same generate and apply sequence that a Monte Carlo worker uses, without the random
+    seeds. Use it to test that dispersion paths resolve and values reach the sim.
+
+    :return: The applied ``path: value_str`` dictionary.
+    """
+    modifications = generate_modifications(sim_instance, dispersions)
+    apply_modifications(sim_instance, modifications)
+    return modifications
