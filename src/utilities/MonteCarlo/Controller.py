@@ -629,7 +629,7 @@ class Controller:
         pool and records as failed each job that did not report success. Then it raises KeyboardInterrupt again.
 
         :param sim_generator: A generator that yields SimulationParameters for each run.
-        :param total: The expected number of runs. The progress bar and the failed-tail logic use this number.
+        :param total: The expected number of runs. The progress bar uses this number.
         :param queue: The multiprocessing queue that the DataWriter uses for the retained results.
         :param num_processes: The number of workers for this stream. The default is the setting of the controller.
         """
@@ -669,11 +669,11 @@ class Controller:
                 )
                 num_processes = total
 
+            jobs = [(x, queue) for x in sim_generator]
+            job_indexes = [job[0].index for job in jobs]
             pool = mp.Pool(num_processes)
             try:
-                for success, index, exc_type, tb in pool.imap_unordered(
-                    simulation_executor, [(x, queue) for x in sim_generator],
-                ):
+                for success, index, exc_type, tb in pool.imap_unordered(simulation_executor, jobs):
                     if not success:
                         failures.append(FailureRecord(
                             run_index=index, exception_type=exc_type, traceback=tb,
@@ -684,12 +684,12 @@ class Controller:
                 pool.close()
             except KeyboardInterrupt:
                 logger.info("Ctrl-C was hit, closing pool")
-                self._record_unfinished(failures, finished_indexes, total, "KeyboardInterrupt")
+                self._record_unfinished(failures, finished_indexes, job_indexes, "KeyboardInterrupt")
                 pool.terminate()
                 raise
             except Exception as e:
                 logger.exception("Unknown exception while running simulations")
-                self._record_unfinished(failures, finished_indexes, total, type(e).__name__)
+                self._record_unfinished(failures, finished_indexes, job_indexes, type(e).__name__)
                 pool.terminate()
             finally:
                 pool.join()
@@ -701,8 +701,9 @@ class Controller:
 
     @staticmethod
     def _record_unfinished(failures: list[FailureRecord], finished_indexes: set[int],
-                            total: int, exception_type: str) -> None:
-        for i in range(total):
+                           job_indexes: list[int], exception_type: str) -> None:
+        """Add a failure record for each job index that did not finish."""
+        for i in job_indexes:
             if i not in finished_indexes:
                 failures.append(FailureRecord(run_index=i, exception_type=exception_type))
 

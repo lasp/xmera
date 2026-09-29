@@ -56,3 +56,45 @@ def test_run_initial_conditions_passes_var_cast(tmp_path, no_jobs):
     mc.run_initial_conditions([0, 2], str(ic_directory))
 
     assert [runner.var_cast for runner in no_jobs] == ["float"]
+
+
+class _Job:
+    def __init__(self, index):
+        self.index = index
+
+
+class _FailingPool:
+    """Replaces mp.Pool. It reports the first job as a success, then raises an unexpected error."""
+
+    def __init__(self, num_processes):
+        pass
+
+    def imap_unordered(self, function, jobs):
+        yield True, jobs[0][0].index, "", ""
+        raise RuntimeError("pool stopped")
+
+    def close(self):
+        pass
+
+    def terminate(self):
+        pass
+
+    def join(self):
+        pass
+
+
+def test_record_unfinished_uses_the_job_indexes():
+    failures = []
+    Controller._record_unfinished(failures, {4}, [4, 9, 12], "KeyboardInterrupt")
+    assert [f.run_index for f in failures] == [9, 12]
+    assert {f.exception_type for f in failures} == {"KeyboardInterrupt"}
+
+
+def test_pool_error_records_the_unfinished_non_consecutive_runs(monkeypatch):
+    monkeypatch.setattr(controller_module.mp, "Pool", _FailingPool)
+    jobs = (_Job(index) for index in [4, 9, 12])
+
+    failures = Controller()._drive_jobs(jobs, 3, None, num_processes=2)
+
+    assert [f.run_index for f in failures] == [9, 12]
+    assert {f.exception_type for f in failures} == {"RuntimeError"}
