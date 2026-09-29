@@ -98,3 +98,22 @@ def test_pool_error_records_the_unfinished_non_consecutive_runs(monkeypatch):
 
     assert [f.run_index for f in failures] == [9, 12]
     assert {f.exception_type for f in failures} == {"RuntimeError"}
+
+
+def test_execute_simulations_without_archive_dir_raises(no_jobs):
+    mc = Controller()
+    mc.set_execution_count(1)
+    with pytest.raises(ValueError, match="archive_dir"):
+        mc.execute_simulations()
+
+
+def test_run_initial_conditions_without_archive_dir_raises(tmp_path, no_jobs):
+    ic_directory = tmp_path / "initial_conditions"
+    _write_initial_conditions(ic_directory, [0])
+    with pytest.raises(ValueError, match="archive_dir"):
+        Controller().run_initial_conditions([0], str(ic_directory))
+
+
+def test_re_run_cases_without_a_run_raises(no_jobs):
+    with pytest.raises(ValueError, match="Controller.load"):
+        Controller().re_run_cases([0])

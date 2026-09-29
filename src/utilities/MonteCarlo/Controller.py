@@ -354,7 +354,7 @@ class Controller:
             --- results
         """
         if not self._archive_dir:
-            return
+            raise ValueError("Set archive_dir before the controller runs simulations")
 
         os.makedirs(self._archive_dir, exist_ok=True)
 
@@ -445,6 +445,9 @@ class Controller:
         :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
         :rtype: list[FailureRecord]
         """
+        if not self._ic_directory:
+            raise ValueError("re_run_cases needs a completed or loaded Monte Carlo run, see Controller.load")
+
         runnable_indexes = []
         for run_index in run_indexes:
             old_run_file = self._make_initial_conditions_directory_file_name(run_index)
