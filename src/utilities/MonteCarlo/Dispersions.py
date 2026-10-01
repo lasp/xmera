@@ -625,8 +625,10 @@ class OrbitalElementDispersion:
     def generate_string(self, index, sim=None):
         if index == 1:
             next_value = self.disp_r
-        if index == 2:
+        elif index == 2:
             next_value = self.disp_v
+        else:
+            raise IndexError(f"OrbitalElementDispersion has the indexes 1 and 2, not {index}")
         val = '['
         for i in range(3):
             val += str(next_value[i]) + ','
@@ -638,6 +640,7 @@ class OrbitalElementDispersion:
             return self.var_name1
         if index == 2:
             return self.var_name2
+        raise IndexError(f"OrbitalElementDispersion has the indexes 1 and 2, not {index}")
 
 class MRPDispersionPerAxis(VectorVariableDispersion):
     def __init__(self, var_name, bounds=None):
