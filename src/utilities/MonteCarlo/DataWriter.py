@@ -82,7 +82,8 @@ class DataWriter(mp.Process):
                     # If the .data file doesn't exist save the dataframe to create the file
                     # and skip the remainder of the loop
                     if not os.path.exists(file_path):
-                        pickle.dump([df], open(file_path, "wb"))
+                        with open(file_path, "wb") as pkl:
+                            pickle.dump([df], pkl)
                         continue
 
                     # If the .data file does exists, append the message's pickle.
