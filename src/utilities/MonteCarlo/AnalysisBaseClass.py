@@ -121,11 +121,10 @@ class McAnalysisBaseClass:
 
         mean_run, median_run, std_run = self.generate_stat_curves()
         var_idx_list = range(self.variable_dim)
-        var_idx_list_str = str(var_idx_list)
 
-        mean_run.columns = pd.MultiIndex.from_product([['mean'], [0,1,2]], names=["stats", "varIdx"])
-        median_run.columns = pd.MultiIndex.from_product([['median'], [0,1,2]], names=["stats", "varIdx"])
-        std_run.columns = pd.MultiIndex.from_product([['std'], [0,1,2]], names=["stats", "varIdx"])
+        mean_run.columns = pd.MultiIndex.from_product([['mean'], list(var_idx_list)], names=["stats", "varIdx"])
+        median_run.columns = pd.MultiIndex.from_product([['median'], list(var_idx_list)], names=["stats", "varIdx"])
+        std_run.columns = pd.MultiIndex.from_product([['std'], list(var_idx_list)], names=["stats", "varIdx"])
 
         mean_run_plot = DS_Plot(mean_run, title="Mean Plot: " + self.variable_name,
                                xAxisLabel='time[s]', yAxisLabel= self.variable_name.split('.')[-1],
