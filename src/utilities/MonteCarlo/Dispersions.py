@@ -443,7 +443,6 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             return
         else:
             separator = '.'
-            thruster_object = getattr(sim, self.var_name_components[0])
             total_var = separator.join(self.var_name_components[0:-1])
             dir_vec = eval('sim.' + total_var + '.thrDir_B')
             angle = np.random.normal(0, self.phi_std, 1)
