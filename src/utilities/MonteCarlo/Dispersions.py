@@ -685,6 +685,8 @@ class SymmetricSolarArrayDispersion():
         self.angle2_profiler_val = -disp_value
 
     def generate_string(self, index, sim=None):
+        if not 1 <= index <= self.number_of_sub_disps:
+            raise IndexError(f"{type(self).__name__} has the indexes 1 to {self.number_of_sub_disps}, not {index}")
         if index == 1:
             next_value = self.angle1_dyn_val
         if index == 2:
@@ -713,6 +715,7 @@ class SymmetricSolarArrayDispersion():
             return self.angle1_profiler_str
         if index == 6:
             return self.angle2_profiler_str
+        raise IndexError(f"{type(self).__name__} has the indexes 1 to {self.number_of_sub_disps}, not {index}")
 
 
 class SymmetricSolarArrayWithReferenceDispersion():
@@ -742,6 +745,8 @@ class SymmetricSolarArrayWithReferenceDispersion():
         self.ref_angle2_val = -disp_value
 
     def generate_string(self, index, sim=None):
+        if not 1 <= index <= self.number_of_sub_disps:
+            raise IndexError(f"{type(self).__name__} has the indexes 1 to {self.number_of_sub_disps}, not {index}")
         if index == 1:
             next_value = self.angle1_dyn_val
         if index == 2:
@@ -778,3 +783,4 @@ class SymmetricSolarArrayWithReferenceDispersion():
             return self.ref_angle1_str
         if index == 8:
             return self.ref_angle2_str
+        raise IndexError(f"{type(self).__name__} has the indexes 1 to {self.number_of_sub_disps}, not {index}")
