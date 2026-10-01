@@ -135,7 +135,7 @@ def plotSuite(dataDir):
     return plotList
 
 
-def run(show_plots):
+def run(show_plots, show_all_data=True, show_extreme_data=True, optional_plots=False):
     """
     **This script is meant to be configured based on the user's needs. It can be configured using the following
     three booleans:**
@@ -153,9 +153,6 @@ def run(show_plots):
     :param optional_plots: plots additional user-defined plots
     """
 
-    show_all_data = True
-    show_extreme_data = True
-    optional_plots = False
 
     plotList = []
     analysis = McAnalysisBaseClass()
