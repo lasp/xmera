@@ -84,6 +84,8 @@ def run(show_plots):
     monteCarlo.add_retention_policy(retentionPolicy)
 
     failures = monteCarlo.execute_simulations()
+    if failures:
+        print(f"{len(failures)} Monte Carlo runs failed")
 
     if show_plots:
         monteCarlo.execute_callbacks()

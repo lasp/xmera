@@ -146,6 +146,8 @@ def run():
 
     # After the monteCarlo run is configured, it is executed.
     failures = monteCarlo.execute_simulations()
+    if failures:
+        print(f"{len(failures)} Monte Carlo runs failed")
 
     # Now we clean up data from this test
     shutil.rmtree(dirName)
