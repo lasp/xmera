@@ -3,23 +3,22 @@
 # Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 
-# MonteCarlo module. Please read the accompanying README.md for usage information.
-#
-# Purpose:  This module is used to run a simulation with varying initial parameters.
-# Author:   Nathan Bellowe
-# Creation Date:  July. 20, 2017
-#
-
+import dataclasses
+import multiprocessing.queues
 import os
 import random
 import shutil
-import sys
 import traceback
 import warnings
+import logging
+
+from dataclasses import dataclass
+from typing import Generator, Optional
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
-import copy
+
+import glob
 import gzip
 import json
 import signal
@@ -28,847 +27,865 @@ import numpy as np
 import multiprocessing as mp
 import pickle as pickle
 from xmera.utilities.MonteCarlo.DataWriter import DataWriter
+from xmera.utilities.MonteCarlo.PathWalk import apply_modification, generate_modifications
 from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
 
+logger = logging.getLogger("montecarlo_controller")
+
+
+@dataclass(frozen=True)
+class FailureRecord:
+    """Information captured when a Monte Carlo run fails.
+
+    ``execute_simulations`` and ``run_initial_conditions`` return a list of these records, not only
+    the run indices. Thus the caller can find the cause of a failure without the worker logs.
+    """
+
+    run_index: int
+    exception_type: str = ""
+    traceback: str = ""
+
+
+class JobRunner:
+    """Context manager for the mp.Manager, Queue, and DataWriter of one Monte Carlo batch.
+
+    The job runner drains the data writer and stops the manager when the ``with`` block ends. It
+    also does this when the ``with`` block raises an exception:
+
+        with JobRunner(results_dir, var_cast=None) as runner:
+            failed = drive_jobs(runner.queue)
+    """
+
+    _DRAIN_POLL_SECONDS = 1
+    _SHUTDOWN_GRACE_SECONDS = 5
+
+    def __init__(self, results_dir: str, var_cast: Optional[str] = None):
+        self._results_dir = results_dir
+        self._var_cast = var_cast
+        self._manager = None
+        self._queue = None
+        self._writer = None
+
+    @property
+    def queue(self):
+        return self._queue
+
+    @property
+    def writer(self):
+        return self._writer
+
+    @property
+    def manager(self):
+        return self._manager
+
+    def __enter__(self):
+        self._manager = mp.Manager()
+        self._queue = self._manager.Queue()
+        self._writer = DataWriter(self._queue)
+        self._writer.daemon = False
+        self._writer.set_log_dir(self._results_dir)
+        self._writer.set_var_cast(self._var_cast)
+        self._writer.start()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        try:
+            if self._queue is not None:
+                # Wait until the data writer pickles the remaining items, then send the shutdown sentinel.
+                while not self._queue.empty():
+                    time.sleep(self._DRAIN_POLL_SECONDS)
+                self._queue.put((None, None, True))
+            if self._writer is not None:
+                self._writer.join(timeout=self._SHUTDOWN_GRACE_SECONDS)
+        finally:
+            if self._manager is not None:
+                self._manager.shutdown()
+            self._manager = None
+            self._queue = None
+            self._writer = None
+        return False  # do not suppress exceptions
+
+
+class SimulationParameters:
+    """
+    Run parameters for one simulation in a Monte Carlo batch.
+    """
+
+    def __init__(self,
+                 creation_function,
+                 execution_function,
+                 configure_function,
+                 retention_policies,
+                 dispersions,
+                 should_disperse_seeds,
+                 results_filename,
+                 initial_conditions_filename,
+                 magnitudes_filename,
+                 index=None):
+        self.index = index
+        self.creation_function = creation_function
+        self.execution_function = execution_function
+        self.configure_function = configure_function
+        self.retention_policies = retention_policies
+        self.dispersions = dispersions
+        self.should_disperse_seeds = should_disperse_seeds
+        self.results_filename = results_filename
+        self.initial_conditions_filename = initial_conditions_filename
+        self.magnitudes_filename = magnitudes_filename
+        self.log_level = "INFO"
+        self.modifications = {}
+        self.dispersion_mag = {}
+        self.should_save_disp_mag = False
+        self.show_progress_bar = False
+
+
 class Controller:
     """
-    The MonteCarloController class is used to run a monte carlo simulation.
-    It is used to execute multiple runs of a simulation with varying initial parameters. Data from each run is retained
-    in order to analyze differences in the simulation runs and the parameters used.
+    The Monte Carlo controller executes many runs of a simulation with different initial parameters.
+    The controller keeps the data from each run for analysis at a later time.
     """
 
     def __init__(self):
-        self.executionCount = 0
-        self.ICrunFlag = False
-        self.icDirectory = ""
-        self.archiveDir = None
-        self.varCast = None
-        self.numProcess = mp.cpu_count()
+        self.should_save_disp_mag = None
+        self.should_disperse_seeds = False
+        self.num_simulation_runs = 0
+        self.var_cast = None
+        self.num_processes = mp.cpu_count()
+        self._log_level = "WARNING"
+        self.show_progress_bar = False
+        self.creation_function=None
+        self.execution_function=None
+        self.configure_function=None
+        self._retention_policies=[]
+        self._dispersions=[]
+        self._ic_directory = ""
+        self._archive_dir = ""
+        self._mc_run_dir = None
+        self._results_dir = None
 
-        self.simParams = SimulationParameters(
-            creationFunction=None,
-            executionFunction=None,
-            configureFunction=None,
-            retentionPolicies=[],
-            shouldArchiveParameters=False,
-            shouldDisperseSeeds=False,
-            dispersions=[],
-            filename="",
-            icfilename=""
-        )
-
-    def setShowProgressBar(self, value):
+    def set_show_progress_bar(self, value: bool) -> None:
         """
-        To enable or disable progress bar to show simulation progress
-        Args:
-            value: boolean value, decide to show/hide progress bar
+        Enable or disable the progress bar that shows the progress of the simulation.
+        :param value: True shows the progress bar. False does not show it.
+        :type value: bool
         """
-        self.simParams.showProgressBar = value
+        self.show_progress_bar = value
 
     @staticmethod
-    def load(runDirectory):
+    def latest_run_dir(archive_dir: str) -> str:
         """
-        Load a previously completed MonteCarlo simulation
-        Args:
-            The path to the MonteCarlo.data file that contains the archived MonteCarlo run
-        """
-        filename = os.path.abspath(runDirectory) + "/MonteCarlo.data"
+        Find the most recent run directory inside an archive directory.
 
-        with gzip.open(filename) as pickledData:
-            data = pickle.load(pickledData)
-            if data.simParams.verbose:
-                print("Loading montecarlo at", filename)
-            data.multiProcManager = mp.Manager()
-            data.dataOutQueue = data.multiProcManager.Queue()
-            data.dataWriter = DataWriter(data.dataOutQueue)
-            data.dataWriter.daemon = False
+        Each execution writes into its own ``mc_run_<timestamp>`` directory in the archive
+        directory. A caller that knows only the archive directory uses this method to find the
+        data of the most recent execution.
+
+        :param archive_dir: The archive directory that the controller used for the execution.
+        :type archive_dir: str
+
+        :return: The path of the most recently created run directory.
+        :rtype: str
+        """
+        candidates = glob.glob(os.path.join(archive_dir, "mc_run_*"))
+        candidates = [c for c in candidates if os.path.isdir(c)]
+        if not candidates:
+            raise FileNotFoundError(f"No mc_run_* directory found in {archive_dir}")
+        return max(candidates, key=lambda c: (os.path.getmtime(c), c))
+
+    @staticmethod
+    def load(run_directory: str):
+        """
+        Load a completed Monte Carlo batch.
+        :param run_directory: The path to the directory that contains the archived Monte Carlo file MonteCarlo.data
+        :type run_directory: str
+        """
+        filename = os.path.abspath(run_directory) + "/MonteCarlo.data"
+
+        with gzip.open(filename) as pickled_data:
+            data = pickle.load(pickled_data)
+            logger.debug(f"Loading monte carlo at {filename}")
             return data
 
-    def setExecutionFunction(self, newModule):
+    def set_execution_function(self, execution_function):
         """
         Set an execution function that executes a simulation instance.
 
-        Args:
-            executionFunction: (sim: SimulationBaseClass) => None
-                A function with one parameter, a simulation instance.
-                The function will be called after the creationFunction and configurationFunction in each simulation run.
-                It must execute the simulation.
-                Its return value is not used.
+        :param execution_function: A function with one parameter, a simulation instance. In each run, the controller
+        calls this function after the creation_function and the configurationFunction. The function must execute the
+        simulation. The controller ignores its return value.
+        :type execution_function: type.function(SimulationBaseClass) -> None
         """
-        self.simParams.executionFunction = newModule
+        self.execution_function = execution_function
 
-    def setConfigureFunction(self, newModule):
+    def set_configure_function(self, configure_function):
         """
-        Set an execution function that executes a simulation instance.
+        Set a configure function that configures a simulation instance.
 
-        Args:
-            executionFunction: (sim: SimulationBaseClass) => None
-                A function with one parameter, a simulation instance.
-                The function will be called after the creationFunction and configurationFunction in each simulation run.
-                It must execute the simulation.
-                Its return value is not used.
+        :param configure_function: A function with one parameter, a simulation instance. In each run, the controller
+        calls this function after the creation_function and before it applies the dispersions. The controller ignores
+        its return value.
+        :type configure_function: type.function(SimulationBaseClass) -> None
         """
-        self.simParams.configureFunction = newModule
+        self.configure_function = configure_function
 
-    def setSimulationFunction(self, newObject):
+    def set_simulation_function(self, simulation_function):
         """
         Set the function that creates the simulation instance.
 
-        Args:
-            creationFunction: () => SimulationBaseClass
-                A function with no parameters, that returns a simulation instance.
+        :param simulation_function: A function with no parameters that returns a simulation instance.
+        :type simulation_function: type.function() -> None
         """
-        self.simParams.creationFunction = newObject
+        self.creation_function = simulation_function
 
-    def setShouldDisperseSeeds(self, seedDisp):
+    def set_should_disperse_seeds(self, seed_disp: bool):
         """
-        Disperse the RNG seeds of each run in the MonteCarlo
+        Set whether the controller disperses the RNG seeds of each run in the Monte Carlo batch.
 
-        Args:
-            seedDisp: bool
-                Whether to disperse the RNG seeds in each run of the simulation
+        :param seed_disp: True disperses the RNG seeds in each run of the simulation.
+        :type seed_disp: bool
         """
-        self.simParams.shouldDisperseSeeds = seedDisp
+        self.should_disperse_seeds = seed_disp
 
-    def setExecutionCount(self, newCount):
+    def set_execution_count(self, num_runs: int):
         """
-        Set the number of runs for the MonteCarlo simulation
+        Set the number of runs in the Monte Carlo batch.
 
-        Args:
-            newCount: int
-                The number of runs to use for the simulation
+        :param num_runs: The number of runs in the Monte Carlo batch.
+        :type num_runs: int
         """
-        self.executionCount = newCount
+        self.num_simulation_runs = num_runs
 
-    def addDispersion(self, disp):
+    def add_dispersion(self, disp):
         """
         Add a dispersion to the simulation.
 
-        Args:
-            disp: Dispersion
-                The dispersion to add to the simulation.
-        """
-        self.simParams.dispersions.append(disp)
+        :param disp: The dispersion to add to the simulation.
+        :type disp: Dispersion
 
-    def addRetentionPolicy(self, policy):
+        """
+        self._dispersions.append(disp)
+
+    def add_retention_policy(self, policy):
         """
         Add a retention policy to the simulation.
 
-        Args:
-            disp: RetentionPolicy
-                The retention policy to add to the simulation.
-                This defines variables to be logged and saved
+        :param policy: The retention policy to add to the simulation. It gives the variables that the controller logs
+            and saves.
+        :type policy: RetentionPolicy
         """
-        self.simParams.retentionPolicies.append(policy)
+        self._retention_policies.append(policy)
 
-    def setThreadCount(self, threads):
+    def set_num_worker_processes(self, num_processes: int):
         """
-        Set the number of threads to use for the monte carlo simulation
+        Set the number of worker processes for the Monte Carlo batch.
 
-        Args:
-            threads: int
-                Number of threads to execute the montecarlo run on.
+        :param num_processes: The number of worker processes that execute the runs.
+        :type num_processes: int
         """
-        self.numProcess = threads
+        self.num_processes = num_processes
 
-    def setVerbose(self, verbose):
+    def set_should_save_disp_mag(self, magnitudes):
         """
-        Use verbose output for this MonteCarlo run
+        Set whether each run saves a .txt file with the magnitude of each dispersion.
 
-        Args:
-            verbose: bool
-                Whether to print verbose information during this MonteCarlo sim.
+        The file gives each magnitude as a percent or as a number of sigma from the mean.
+
+        :param magnitudes: True saves these additional files for analysis.
+        :type magnitudes: bool
         """
-        self.simParams.verbose = verbose
+        self.should_save_disp_mag = magnitudes
 
-    def setDispMagnitudeFile(self, magnitudes):
+    def set_var_cast(self, var_cast: str):
         """
-        Save .txt with the magnitude of each dispersion in % or sigma away from mean
+        Set the type that the data writer casts double values to.
 
-        Args:
-            magnitudes: bool
-                Whether to save extra files for analysis.
+        :param var_cast: 'float', 'integer', 'signed', or 'unsigned'. Refer to the pandas.to_numeric documentation.
+        :type var_cast: str
         """
-        self.simParams.saveDispMag = magnitudes
+        self.var_cast = var_cast
 
-    def setShouldArchiveParameters(self, shouldArchiveParameters):
-        self.simParams.shouldArchiveParameters = shouldArchiveParameters
+    @property
+    def log_level(self) -> str:
+        return self._log_level
 
-    def setArchiveDir(self, dirName):
+    @log_level.setter
+    def log_level(self, value: str):
+        # getLevelName gives the number of a known level name, and a string for other names. It is
+        # in Python 3.9. logging.getLevelNamesMapping is not available before Python 3.11.
+        if not isinstance(logging.getLevelName(value), int):
+            raise ValueError("log_level must be a logging level name, for example DEBUG, INFO or WARNING")
+        self._log_level = value
+
+    @property
+    def mc_run_dir(self):
+        return self._mc_run_dir
+
+    @property
+    def results_dir(self):
+        return self._results_dir
+
+    @property
+    def ic_directory(self):
+        return self._ic_directory
+
+    @property
+    def archive_dir(self):
+        return self._archive_dir
+
+    @archive_dir.setter
+    def archive_dir(self, directory: str):
         """
-        Set-up archives for this MonteCarlo run
+        Set the archive directory for this Monte Carlo batch.
 
-        Args:
-            dirName: string
-                The name of the directory to archive runs in.
-                None, if no archive desired.
+        :param directory: The path of the directory that will contain the Monte Carlo data root directory.
+        :type directory: str
         """
-        self.archiveDir = os.path.abspath(dirName) + "/"
-        self.simParams.shouldArchiveParameters = dirName is not None
-        self.simParams.filename = self.archiveDir
+        self._archive_dir = os.path.abspath(directory)
 
-    def setVarCast(self, varCast):
+    def _setup_archive_directory(self):
         """
-        Set the variable type to downcast the data to
-
-        :param varCast: 'float', 'integer', 'signed', 'unsigned' (see pandas.to_numeric documentation)
-        :return:
+        Make the directory structure for the data of this Monte Carlo batch.
+        The directory structure is:
+            - root directory (_archive_dir)
+            -- mc run directory with timestamp (_mc_run_dir)
+            --- initial_conditions
+            --- results
         """
-        self.varCast = varCast
+        if not self._archive_dir:
+            raise ValueError("Set archive_dir before the controller runs simulations")
 
-    def setICDir(self, dirName):
+        os.makedirs(self._archive_dir, exist_ok=True)
+
+        # The timestamp has a resolution of one second. Thus two batches that start in the same
+        # second get the same name. Keep the readable name and add a counter if the name is in use.
+        directory_id = time.strftime("%Y%m%d-%H%M%S")
+        attempt = 0
+        while True:
+            suffix = "" if attempt == 0 else f"_{attempt}"
+            candidate = os.path.join(self._archive_dir, f"mc_run_{directory_id}{suffix}")
+            try:
+                os.mkdir(candidate)
+                break
+            except FileExistsError:
+                attempt += 1
+        self._mc_run_dir = candidate
+
+        self._ic_directory = os.path.join(self._mc_run_dir, "initial_conditions")
+        os.mkdir(self._ic_directory)
+
+        self._results_dir = os.path.join(self._mc_run_dir, "results")
+        os.mkdir(self._results_dir)
+
+    def _make_results_directory_file_name(self, index):
+        return os.path.join(self._results_dir, "run" + str(index) + ".data")
+
+    def _make_dispersion_magnitudes_file_name(self, index):
+        return os.path.join(self._results_dir, "run" + str(index) + "mag.txt")
+
+    def _make_initial_conditions_directory_file_name(self, index):
+        return os.path.join(self._ic_directory, "run" + str(index) + ".json")
+
+    def get_retained_data(self, case: int):
         """
-        Set-up archives containing IC data
+        Get the retained data of one run.
 
-        Args:
-            dirName: string
-                The name of the directory to archive runs in.
-                None, if no archive desired.
+        :param case: The run to get the data from.
+        :type case: int
+
+        :return The retained data.
+        :rtype: list
         """
-        self.icDirectory = os.path.abspath(dirName) + "/"
-        self.simParams.shouldArchiveParameters = True
-        self.simParams.icfilename = self.icDirectory
+        results_data_file = self._make_results_directory_file_name(case)
 
-    def setICRunFlag(self, bool):
-        """
-        Set the number of threads to use for the monte carlo simulation
-
-        Args:
-            threads: int
-                Number of threads to execute the montecarlo run on.
-        """
-        self.ICrunFlag = bool
-
-    def getRetainedData(self, case):
-        """
-        Get the data that was retained for a run, or list of runs.
-
-        Args:
-            cases: int The desired case to get data from.
-        Returns:
-            The retained data for that run is returned.
-        """
-        if self.ICrunFlag:
-            oldRunDataFile = self.icDirectory + "run" + str(case) + ".data"
-        else:
-            oldRunDataFile = self.archiveDir + "run" + str(case) + ".data"
-
-        with gzip.open(oldRunDataFile) as pickledData:
-            data = pickle.load(pickledData)
+        with gzip.open(results_data_file) as pickled_data:
+            data = pickle.load(pickled_data)
             return data
 
-    def getRetainedDatas(self, cases):
+    def get_retained_datas(self, cases: list[int]):
         """
-        Get the data that was retained for a list of runs.
+        Get the retained data of a list of runs.
 
-        Args:
-            cases: int[] The desired cases to get data from.
-        Returns:
-            A generator is returned, which will yield, in-order, the retained data for each of these cases
+        :param cases: The run_indexes to get the data from.
+        :type cases: list[int]
+
+        :return A generator that yields the retained data of each of these run_indexes, in the given order
         """
-
         for case in cases:
-            yield self.getRetainedData(case)  # call this method recursively, yielding the result
+            yield self.get_retained_data(case)  # call this method recursively, yielding the result
 
-    def getParameters(self, caseNumber):
+    def get_parameters(self, run_index):
         """
-        Get the parameters used for a particular run of the montecarlo
+        Get the parameters of one run of the Monte Carlo batch.
 
-        :param caseNumber: The number of the run to get the parameters used for.
-        :type caseNumber: int
+        :param run_index: The number of the run.
+        :type run_index: int
 
-        :return: A dictionary of the parameters of the simulation
+        :return: A dictionary of the parameters of the simulation.
                  For example:
                  {"keyForSim": parameterValue, 'TaskList[0].TaskModels[0].RNGSeed': 1674764759}
         """
-        if self.ICrunFlag:
-            filename = self.icDirectory + "run" + str(caseNumber) + ".json"
-        else:
-            filename = self.archiveDir + "run" + str(caseNumber) + ".json"
-        with open(filename, "r") as dispersionFile:
-            dispersions = json.load(dispersionFile)
+        filename = self._make_initial_conditions_directory_file_name(run_index)
+
+        with open(filename, "r") as dispersion_file:
+            dispersions = json.load(dispersion_file)
             return dispersions
 
-    def reRunCases(self, caseList):
+    def re_run_cases(self, run_indexes: list[int]) -> list[FailureRecord]:
         """
-        Rerun some cases from a MonteCarlo run. Does not run in parallel
+        Rerun selected run indexes from a Monte Carlo batch. The reruns do not occur in parallel.
 
-        Args:
-            caseList: int[]
-                The list of runs to repeat, a list of numbers.
-        Returns:
-            failures: int[]
-                The list of failed runs.
+        If the initial conditions file of a run index is missing, the controller skips that run
+        index. It does not report a failure, because there is no data to rerun.
+
+        :param run_indexes: The list of runs to do again, a list of numbers.
+        :type run_indexes: list[int]
+
+        :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
+        :rtype: list[FailureRecord]
         """
-        # the list of failures
-        failed = []
+        if not self._ic_directory:
+            raise ValueError("re_run_cases needs a completed or loaded Monte Carlo run, see Controller.load")
 
-        for caseNumber in caseList:
-            if self.simParams.verbose:
-                print("Rerunning", caseNumber)
-
-            oldRunFile = self.archiveDir + "run" + str(caseNumber) + ".json"
-            if not os.path.exists(oldRunFile):
-                print("ERROR re-running case: " + oldRunFile)
+        runnable_indexes = []
+        for run_index in run_indexes:
+            old_run_file = self._make_initial_conditions_directory_file_name(run_index)
+            if not os.path.exists(old_run_file):
+                logger.info(f"File {old_run_file} not found. Therefore, cannot re-run case: {run_index}")
                 continue
+            runnable_indexes.append(run_index)
+
+        # Reruns keep no data. Thus the reruns do not use a data writer, and nothing reads the queue.
+        failures = self._drive_jobs(
+            self.generate_rerun_sims(runnable_indexes), len(runnable_indexes), None,
+            num_processes=1,
+        )
+
+        if failures:
+            logger.info(f"Failed rerunning run_indexes: {sorted(f.run_index for f in failures)}")
+
+        return failures
+
+    def generate_rerun_sims(self, run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
+        """
+        Generator function that clones a baseSimulation for a rerun of an existing case.
+
+        A rerun uses the seeds and dispersions that the original run saved. A rerun keeps
+        none of its own data.
+
+        :param run_indexes: The run indexes to rerun. Each run index has an initial conditions file.
+        :type run_indexes: list[int]
+
+        :return sim_params: A generator that yields that number of cloned simulations
+        :rtype: sim_params: Generator[SimulationParameters]
+        """
+        for run_index in run_indexes:
+            logger.debug(f"Rerunning {run_index}")
 
             # use old simulation parameters, modified slightly.
-            simParams = copy.deepcopy(self.simParams)
-            simParams.index = caseNumber
-            # don't redisperse seeds, we want to use the ones saved in the oldRunFile
-            simParams.shouldDisperseSeeds = False
+            sim_params = self.create_sim_parameters(run_index)
+            sim_params.index = run_index
+            # don't redisperse seeds, we want to use the ones saved in the old run file
+            sim_params.should_disperse_seeds = False
             # don't retain any data so remove all retention policies
-            simParams.retentionPolicies = []
+            sim_params.retention_policies = []
 
-            with open(oldRunFile, "r") as runParameters:
-                simParams.modifications = json.load(runParameters)
+            with open(self._make_initial_conditions_directory_file_name(run_index), "r") as run_parameters:
+                sim_params.modifications = json.load(run_parameters)
 
-            # execute simulation with dispersion
-            executor = SimulationExecutor()
-            success = executor([simParams, self.dataOutQueue])
+            yield sim_params
 
-            if not success:
-                print("Error re-executing run", caseNumber)
-                failed.append(caseNumber)
-
-        if len(failed) > 0:
-            failed.sort()
-            print("Failed rerunning cases:", failed)
-
-        return failed
-
-    def runInitialConditions(self, caseList):
+    def run_initial_conditions(self, run_indexes, ic_directory) -> list[FailureRecord]:
         """
-        Run initial conditions given in a file
+        Run the initial conditions of selected run indexes.
 
-        Args:
-            caseList: int[]
-                The list of runs to repeat, a list of numbers.
-        Returns:
-            failures: int[]
-                The list of failed runs.
+        :param run_indexes: The list of runs to do again, a list of numbers.
+        :type run_indexes: int[]
+        :param ic_directory: The directory that contains the initial conditions data files.
+        :type ic_directory: str
+
+        :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
+        :rtype: list[FailureRecord]
         """
-        # the list of failures
-        failed = []
+        assert ic_directory != "", "No initial condition directory was given"
 
-        assert self.icDirectory != "", "No initial condition directory was given"
-        assert self.ICrunFlag is not False, "IC run flag was not set"
+        logger.debug(f"Beginning simulation with {self.num_simulation_runs} runs on {self.num_processes} processes")
+        self._setup_archive_directory()
 
-        if self.simParams.verbose:
-            print("Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess))
+        # Copy the initial conditions files of the run_indexes into the new Monte Carlo directory
+        file_paths = [os.path.join(ic_directory, "run" + str(case) + ".json") for case in run_indexes]
+        destination_file_paths = [self._make_initial_conditions_directory_file_name(case) for case in run_indexes]
+        [shutil.copyfile(src, dst) for src, dst in zip(file_paths, destination_file_paths)]
 
-        if self.simParams.shouldArchiveParameters:
-            if not os.path.exists(self.icDirectory):
-                print("Cannot run initial conditions: the directory given does not exist")
+        self._save_monte_carlo_controller()
 
-            if self.simParams.verbose:
-                print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
-            try:
-                with gzip.open(self.icDirectory + "MonteCarlo.data", "w") as pickleFile:
-                    pickle.dump(self, pickleFile)  # dump this controller object into a file.
-            except Exception as e:
-                print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
+        with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
+            failures = self._drive_jobs(
+                self.generate_ic_sims(run_indexes), len(run_indexes), runner.queue,
+            )
 
-        # Create Queue, but don't ever start it.
-        self.multiProcManager = mp.Manager()
-        self.dataOutQueue = self.multiProcManager.Queue()
-        self.dataWriter = DataWriter(self.dataOutQueue)
-        self.dataWriter.daemon = False
+        self._save_failed_indexes(failures)
+        return failures
 
-        # If archiving the rerun data -- make sure not to delete the original data!
-        if self.archiveDir is not None:
-            if self.archiveDir != self.icDirectory:
-                if os.path.exists(self.archiveDir):
-                    shutil.rmtree(self.archiveDir)
-                os.mkdir(self.archiveDir)
-                self.dataWriter.setLogDir(self.archiveDir)
-                self.dataWriter.start()
-            else:
-                print("ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data " \
-                      "within: " + self.archiveDir + " with the select rerun cases! Exiting.\n")
-                sys.exit("Change the archive directory to a new location when rerunning cases.")
-        else:
-            print("No archive data specified; no data will be logged to dataframes")
-
-        jobsFinished = 0  # keep track of what simulations have finished
-
-        # The simulation executor is responsible for executing simulation given a simulation's parameters
-        # It is called within worker threads with each worker's simulation parameters
-        simulationExecutor = SimulationExecutor()
-        #
-        progressBar = SimulationProgressBar(len(caseList), self.simParams.showProgressBar)
-        if self.numProcess == 1:  # don't make child thread
-            if self.simParams.verbose:
-                print("Executing sequentially...")
-            i = 0
-            for i in range(len(caseList)):
-                simGenerator = self.generateICSims(caseList[i:i+1])
-                for sim in simGenerator:
-                    try:
-                        simulationExecutor([sim,  self.dataOutQueue])
-                    except:
-                        failed.append(i)
-                i += 1
-                progressBar.update(i)
-        else:
-            numSims = len(caseList)
-            if self.numProcess > numSims:
-                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
-                self.numProcess = numSims
-            for i in range(numSims//self.numProcess):
-                # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
-                    offset = numSims % self.numProcess
-                else:
-                    offset = 0
-
-                simGenerator = self.generateICSims(caseList[self.numProcess*i:self.numProcess*(i+1)+offset])
-                pool = mp.Pool(self.numProcess)
-                try:
-                    # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                        if result[0] is not True:  # workers return True on success
-                            failed.append(result[1])  # add failed jobs to the list of failures
-                            print("Job", result[1], "failed...")
-
-                        jobsFinished += 1
-                        progressBar.update(jobsFinished)
-                    pool.close()
-                except KeyboardInterrupt as e:
-                    print("Ctrl-C was hit, closing pool")
-                    # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                    pool.terminate()
-                    raise e
-                except Exception as e:
-                    print("Unknown exception while running simulations:", e)
-                    # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                    traceback.print_exc()
-                    pool.terminate()
-                finally:
-                    pool.join()
-
-        progressBar.markComplete()
-        progressBar.close()
-        # If the data was archiving, close the queue.
-        if self.archiveDir is not None and self.archiveDir != self.icDirectory:
-            while not self.dataOutQueue.empty():
-               time.sleep(1)
-            self.dataOutQueue.put((None, None, True))
-            time.sleep(5)
-
-        # if there are failures
-        if len(failed) > 0:
-            failed.sort()
-
-            if self.simParams.verbose:
-                print("Failed", failed, "saving to 'failures.txt'")
-
-            if self.simParams.shouldArchiveParameters:
-                # write a file that contains log of failed runs
-                with open(self.icDirectory + "failures.txt", "w") as failFile:
-                    failFile.write(str(failed))
-
-        return failed
-
-    def generateICSims(self, caseList):
+    def generate_ic_sims(self, run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
         """
-        Generator function to clone a baseSimulation for IC run
+        Generator function that clones a baseSimulation for an initial conditions run.
 
-        Args:
-            baseSimulation: SimulationParams
-                A base simulation to clone.
-            numSims: int[]
-                The desired runs to generate.
-        Returns:
-            generator<SimulationParams>
-                A generator that yields that number of cloned simulations
+        :param run_indexes: The run indexes. The generator makes simulation parameters from the saved
+            initial conditions file of each run index.
+        :type run_indexes: list[int]
+
+        :return sim_params: A generator that yields that number of cloned simulations
+        :rtype: sim_params: Generator[SimulationParameters]
         """
 
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
         # simulations to execute
-        for caseNumber in caseList:
-            if self.simParams.verbose:
-                print("Running IC ", caseNumber)
+        for run_index in run_indexes:
+            sim_params = self.create_sim_parameters(run_index)
+            sim_params.index = run_index
+            # do not disperse the seeds again, use the seeds that the old_run_file saved
+            sim_params.should_disperse_seeds = False
 
-            oldRunFile = self.icDirectory + "run" + str(caseNumber) + ".json"
-            if not os.path.exists(oldRunFile):
-                print("ERROR running IC case: " + oldRunFile)
-                continue
+            sim_params.initial_conditions_filename = self._make_initial_conditions_directory_file_name(run_index)
+            with open(sim_params.initial_conditions_filename, "r") as run_parameters:
+                sim_params.modifications = json.load(run_parameters)
 
-            # use old simulation parameters, modified slightly.
-            simParams = copy.deepcopy(self.simParams)
-            simParams.index = caseNumber
-            # don't redisperse seeds, we want to use the ones saved in the oldRunFile
-            simParams.shouldDisperseSeeds = False
+            yield sim_params
 
-            simParams.icfilename = self.icDirectory + "run" + str(caseNumber)
-            with open(oldRunFile, "r") as runParameters:
-                simParams.modifications = json.load(runParameters)
-
-            yield simParams
-
-    def generateSims(self, simNumList):
+    def create_sim_parameters(self, index: int) -> SimulationParameters:
         """
-        Generator function to clone a baseSimulation
+        Create a simulation job definition.
 
-        Args:
-            baseSimulation: SimulationParams
-                A base simulation to clone.
-            numSims: int[]
-                The desired runs to generate.
-        Returns:
-            generator<SimulationParams>
-                A generator that yields that number of cloned simulations
+        :param index: The index of the simulation job
+        :type index: int
+
+        :return sim_params: A simulation parameter job definition
+        :rtype: sim_params: SimulationParameters
+        """
+        sim_params = SimulationParameters(self.creation_function,
+                                          self.execution_function,
+                                          self.configure_function,
+                                          self._retention_policies,
+                                          self._dispersions,
+                                          self.should_disperse_seeds,
+                                          self._make_results_directory_file_name(index),
+                                          self._make_initial_conditions_directory_file_name(index),
+                                          self._make_dispersion_magnitudes_file_name(index),
+                                          index)
+        sim_params.log_level = self._log_level
+        sim_params.show_progress_bar = self.show_progress_bar
+        sim_params.should_save_disp_mag = self.should_save_disp_mag
+        return sim_params
+
+    def generate_sims(self, sim_run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
+        """
+        Generator function that clones a baseSimulation.
+
+        :param sim_run_indexes: The run indexes to make simulation parameters for
+        :type sim_run_indexes: list[int]
+
+        :return sim_params: A generator that yields that number of simulations
+        :rtype: sim_params: Generator[SimulationParameters]
         """
 
         # make a list of simulations to execute by cloning the base-simulation and
         # changing each clone's index and filename to make a list of
         # simulations to execute
-        for i in simNumList:
-            simClone = copy.deepcopy(self.simParams)
-            simClone.index = i
-            simClone.filename += "run" + str(i)
+        for run_index in sim_run_indexes:
+            sim_params = self.create_sim_parameters(run_index)
+            sim_params.index = run_index
 
-            yield simClone
+            yield sim_params
 
-    def executeCallbacks(self, rng=None, retentionPolicies=[]):
+    def execute_callbacks(self, run_indexes=None, retention_policies=None):
         """
-        Execute retention policy callbacks after running a monteCarlo sim.
+        Execute the retention policy callbacks after a Monte Carlo batch.
 
-        Args:
-            rng: A list of simulations to execute callbacks on
-            retentionPolicies: the retention policies to execute
-        """
-
-        if rng is None:
-            rng = list(range(self.executionCount))
-
-        if retentionPolicies == []:
-            retentionPolicies = self.simParams.retentionPolicies
-
-        for simIndex in rng:
-            data = self.getRetainedData(simIndex)
-            for retentionPolicy in retentionPolicies:
-                retentionPolicy.executeCallback(data)
-
-    def executeSimulations(self):
-        """
-        Execute simulations in parallel
-
-        :return: failed: int[]
-                 A list of the indices of all failed simulation runs.
+        :param run_indexes: The simulations to execute the callbacks on.
+        :type run_indexes: list[int]
+        :param retention_policies: The retention policies to execute.
+        :type retention_policies: list[RetentionPolicy]
         """
 
-        if self.simParams.verbose:
-            print("Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess))
+        if run_indexes is None:
+            run_indexes = list(range(self.num_simulation_runs))
 
-        if self.simParams.shouldArchiveParameters:
-            if os.path.exists(self.archiveDir):
-                shutil.rmtree(self.archiveDir, ignore_errors=True)
-            os.mkdir(self.archiveDir)
-            if self.simParams.verbose:
-                print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
-            try:
-                with gzip.open(self.archiveDir + "MonteCarlo.data", "wb") as pickleFile:
-                    pickle.dump(self, pickleFile)  # dump this controller object into a file.
-            except Exception as e:
-                print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
+        if not retention_policies:
+            retention_policies = self._retention_policies
 
-        self.multiProcManager = mp.Manager()
-        self.dataOutQueue = self.multiProcManager.Queue()
-        self.dataWriter = DataWriter(self.dataOutQueue)
-        self.dataWriter.daemon = False
+        for index in run_indexes:
+            data = self.get_retained_data(index)
+            for retention_policy in retention_policies:
+                retention_policy.execute_callback(data)
 
-        numSims = self.executionCount
+    def _drive_jobs(self, sim_generator: Generator[SimulationParameters, None, None],
+                    total: int, queue, num_processes: Optional[int] = None) -> list[FailureRecord]:
+        """Send a Monte Carlo job stream to the sequential executor or to a worker pool.
 
-        # start data writer process
-        self.dataWriter.setLogDir(self.archiveDir)
-        self.dataWriter.setVarCast(self.varCast)
-        self.dataWriter.start()
+        The job driver sends the retained data to ``queue``. It returns a list of :class:`FailureRecord`
+        instances, one for each run that failed. A run fails when it raises an exception in the
+        sequential executor, or when the worker returns ``False``. Pool dispatch can get a
+        KeyboardInterrupt or a different unexpected exception. If this occurs, the job driver stops the
+        pool and records as failed each job that did not report success. Then it raises KeyboardInterrupt again.
 
-        # Avoid building a full list of all simulations to run in memory,
-        # instead only generating simulations right before they are needed by a waiting worker
-        # This is accomplished using a generator and pool.imap, -- simulations are only built
-        # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
-        # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
-        # simGenerator = self.generateSims(range(numSims))
-        failed = []  # keep track of the indices of failed simulations
-        jobsFinished = 0  # keep track of what simulations have finished
+        :param sim_generator: A generator that yields SimulationParameters for each run.
+        :param total: The expected number of runs. The progress bar uses this number.
+        :param queue: The multiprocessing queue that the DataWriter uses for the retained results.
+        :param num_processes: The number of workers for this stream. The default is the setting of the controller.
+        """
+        failures: list[FailureRecord] = []
+        finished_indexes: set[int] = set()
 
-        # The simulation executor is responsible for executing simulation given a simulation's parameters
-        # It is called within worker threads with each worker's simulation parameters
-        simulationExecutor = SimulationExecutor()
+        if num_processes is None:
+            num_processes = self.num_processes
 
-        progressBar = SimulationProgressBar(numSims, self.simParams.showProgressBar)
+        simulation_executor = SimulationExecutor()
+        progress_bar = SimulationProgressBar(total, self.show_progress_bar)
 
-        # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
-        # is a temporary fix to a memory leak which is assumed to be a result of the simGenerator not collecting
-        # garbage properly. # TODO: Find a more permenant solution to the leak.
-
-        if self.numProcess == 1:  # don't make child thread
-            if self.simParams.verbose:
-                print("Executing sequentially...")
-            i = 0
-            for i in range(numSims):
-                simGenerator = self.generateSims(list(range(i,i+1)))
-                for sim in simGenerator:
-                    try:
-                        run_ok = simulationExecutor([sim, self.dataOutQueue])[0]
-                    except:
-                        failed.append(i)
-                    else:
-                        if not run_ok:
-                            failed.append(i)
-                    i += 1
-                    progressBar.update(i)
-        else:
-            if self.numProcess > numSims:
-                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
-                self.numProcess = numSims
-            for i in range(numSims//self.numProcess):
-                # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
-                    offset = numSims % self.numProcess
-                else:
-                    offset = 0
-                simGenerator = self.generateSims(list(range(self.numProcess*i, self.numProcess*(i+1)+offset)))
-                pool = mp.Pool(self.numProcess)
+        if num_processes <= 1:
+            logger.debug("Executing sequentially...")
+            for sim in sim_generator:
                 try:
-                    # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                        if result[0] is not True:  # workers return True on success
-                            failed.append(result[1])  # add failed jobs to the list of failures
-                            print("Job", result[1], "failed...")
-
-                        jobsFinished += 1
-                        progressBar.update(jobsFinished)
-                    pool.close()
-                except KeyboardInterrupt as e:
-                    print("Ctrl-C was hit, closing pool")
-                    failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
-                    pool.terminate()
-                    raise e
+                    success, index, exc_type, tb = simulation_executor((sim, queue))
                 except Exception as e:
-                    print("Unknown exception while running simulations:", e)
-                    failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
-                    traceback.print_exc()
-                    pool.terminate()
-                finally:
-                    # Wait until all data is logged from the spawned runs before proceeding with the next set.
-                    pool.join()
+                    logger.exception(f"Simulation run {sim.index} raised in sequential executor")
+                    failures.append(FailureRecord(
+                        run_index=sim.index,
+                        exception_type=type(e).__name__,
+                        traceback=traceback.format_exc(),
+                    ))
+                else:
+                    if not success:
+                        failures.append(FailureRecord(
+                            run_index=index, exception_type=exc_type, traceback=tb,
+                        ))
+                finished_indexes.add(sim.index)
+                progress_bar.update(len(finished_indexes))
+        else:
+            if num_processes > total:
+                logger.info(
+                    f"Fewer MCs spawned than processes assigned ({total} < {num_processes}). "
+                    f"Changing processes count to {total}."
+                )
+                num_processes = total
 
-        progressBar.markComplete()
-        progressBar.close()
-        # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
-        while not self.dataOutQueue.empty():
-           time.sleep(1)
-        self.dataOutQueue.put((None, None, True))
-        time.sleep(5)
+            jobs = [(x, queue) for x in sim_generator]
+            job_indexes = [job[0].index for job in jobs]
+            pool = mp.Pool(num_processes)
+            try:
+                for success, index, exc_type, tb in pool.imap_unordered(simulation_executor, jobs):
+                    if not success:
+                        failures.append(FailureRecord(
+                            run_index=index, exception_type=exc_type, traceback=tb,
+                        ))
+                        logger.info(f"Job {index} failed ({exc_type})")
+                    finished_indexes.add(index)
+                    progress_bar.update(len(finished_indexes))
+                pool.close()
+            except KeyboardInterrupt:
+                logger.info("Ctrl-C was hit, closing pool")
+                self._record_unfinished(failures, finished_indexes, job_indexes, "KeyboardInterrupt")
+                pool.terminate()
+                raise
+            except Exception as e:
+                logger.exception("Unknown exception while running simulations")
+                self._record_unfinished(failures, finished_indexes, job_indexes, type(e).__name__)
+                pool.terminate()
+            finally:
+                pool.join()
 
-        # if there are failures
-        if len(failed) > 0:
-            failed.sort()
+        progress_bar.markComplete()
+        progress_bar.close()
 
-            if self.simParams.verbose:
-                print("Failed", failed, "saving to 'failures.txt'")
+        return failures
 
-            if self.simParams.shouldArchiveParameters:
-                # write a file that contains log of failed runs
-                with open(self.archiveDir + "failures.txt", "w") as failFile:
-                    failFile.write(str(failed))
+    @staticmethod
+    def _record_unfinished(failures: list[FailureRecord], finished_indexes: set[int],
+                           job_indexes: list[int], exception_type: str) -> None:
+        """Add a failure record for each job index that did not finish."""
+        for i in job_indexes:
+            if i not in finished_indexes:
+                failures.append(FailureRecord(run_index=i, exception_type=exception_type))
 
-        return failed
+    def _save_failed_indexes(self, failures: list[FailureRecord]) -> None:
+        """
+        Save the failures from this Monte Carlo batch to disk.
 
+        ``failures.txt`` keeps its old format, a sorted list of run indexes, for the users of that
+        format, for example ``re_run_cases``. ``failures.json`` is a structured record with more data.
+        It gives the exception type and traceback of each failed run.
+        """
+        if not failures:
+            return
 
-class SimulationParameters():
-    """
-    This class represents the run parameters for a simulation, with information including
+        sorted_failures = sorted(failures, key=lambda f: f.run_index)
+        indexes = [f.run_index for f in sorted_failures]
 
-     - a function that creates the simulation
-     - a function that executes the simulation
-     - the dispersions to use on that simulation
-     - parameters describing the data to be retained for a simulation
-     - whether randomized seeds should be applied to the simulation
-     - whether data should be archived
-    """
+        logger.debug(f"Failed {indexes}, saving to 'failures.txt' and 'failures.json'")
+        with open(os.path.join(self._mc_run_dir, "failures.txt"), "w") as fail_file:
+            fail_file.write(str(indexes))
+        with open(os.path.join(self._mc_run_dir, "failures.json"), "w") as fail_json:
+            json.dump([dataclasses.asdict(f) for f in sorted_failures], fail_json, indent=2)
 
-    def __init__(self, creationFunction, executionFunction, configureFunction,
-                 retentionPolicies, dispersions, shouldDisperseSeeds,
-                 shouldArchiveParameters, filename, icfilename, index=None, verbose=False, modifications={},
-                 showProgressBar=False):
-        self.index = index
-        self.creationFunction = creationFunction
-        self.executionFunction = executionFunction
-        self.configureFunction = configureFunction
-        self.retentionPolicies = retentionPolicies
-        self.dispersions = dispersions
-        self.shouldDisperseSeeds = shouldDisperseSeeds
-        self.shouldArchiveParameters = shouldArchiveParameters
-        self.filename = filename
-        self.icfilename = icfilename
-        self.verbose = verbose
-        self.modifications = modifications
-        self.dispersionMag = {}
-        self.saveDispMag = False
-        self.showProgressBar = showProgressBar
+    def _save_monte_carlo_controller(self):
+        """
+        Save a serialized copy of the Monte Carlo controller.
+        """
+        logger.debug("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
+        try:
+            with gzip.open(os.path.join(self._mc_run_dir, "MonteCarlo.data"), "wb") as pickleFile:
+                pickle.dump(self, pickleFile)  # dump this controller object into a file.
+        except Exception as e:
+            logger.info(f"Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n{e}")
 
+    def execute_simulations(self) -> list[FailureRecord]:
+        """
+        Execute the simulation runs.
+
+        :return: failures: A list of :class:`FailureRecord` for each failed simulation run.
+        :rtype: list[FailureRecord]
+        """
+        logger.debug(f"Beginning simulation with {self.num_simulation_runs} runs on {self.num_processes} processes")
+        self._setup_archive_directory()
+        self._save_monte_carlo_controller()
+
+        num_sims = self.num_simulation_runs
+        with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
+            failures = self._drive_jobs(
+                self.generate_sims(list(range(num_sims))), num_sims, runner.queue,
+            )
+
+        self._save_failed_indexes(failures)
+        return failures
 
 
 class SimulationExecutor:
     """
-    This class is used to execute a simulation in a worker thread.
-    To use, create an instance of this class, and then call the instance with the simulation parameters to run them in::
+    This class executes a simulation in a worker process.
+    To use it, create an instance of this class. Then call the instance with the simulation parameters::
 
         executor = SimulationExecutor()
-        simParams = SimulationParameters()
-        successFlag = executor(simParams)
+        sim_params = SimulationParameters()
+        successFlag = executor(sim_params)
 
-    This class can be used to execute a simulation on a different thread, by using this class as the processes target.
+    To execute a simulation in a different process, use this class as the target of that process.
     """
-    #
 
     @classmethod
-    def __call__(cls, params):
+    def __call__(cls, params: tuple[SimulationParameters, multiprocessing.Queue]) -> tuple[bool, int, str, str]:
         """
-        In each worker process, we execute this function (by calling this object)
+        Execute one simulation. Each worker process calls this object, which executes this function.
 
-        Args:
-            params [simParams, data out queue]:
-                A SimulationParameters object for the simulation to be executed and the output data queue
-                for the data writer.
-        Returns:
-            success: bool
-                (True, simParams.index) if simulation run was successful
-                (False, simParams.index) if simulation run was unsuccessful
+        :param params: The SimulationParameters object of the simulation to execute, and the output data queue of
+        the data writer.
+        :type params: tuple[SimulationParameters, multiprocessing.Queue]
+
+        :return: A 4-tuple ``(success, run_index, exception_type, traceback)``. The exception type
+            and traceback strings are empty if ``success`` is True.
+        :rtype: tuple[bool, int, str, str]
         """
-        simParams = params[0]
-        dataOutQueue = params[1]
+        sim_params = params[0]
+        data_out_queue = params[1]
+
+        log = logging.getLogger(str(sim_params.index))
+        log.setLevel(sim_params.log_level)
+        # Sequential dispatch and reruns execute the same index in one process. Thus attach
+        # the handler one time only, not one time for each call.
+        if not log.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter('Worker pid:%(process)d - %(message)s'))
+            log.addHandler(handler)
 
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN)  # On ctrl-c ignore the signal... let the parent deal with it.
 
-            # must make new random seed on each new thread.
-            np.random.seed(simParams.index * 10)
-            random.seed(simParams.index * 10)
+            # each new process must make a new random seed.
+            np.random.seed(sim_params.index * 10)
+            random.seed(sim_params.index * 10)
 
-            # create the users sim by calling their supplied creationFunction
-            simInstance = simParams.creationFunction()
+            # create the users sim by calling their supplied creation_function
+            sim_instance = sim_params.creation_function()
 
             # build a list of the parameter and random seed modifications to make
-            modifications = simParams.modifications
-            magnitudes = simParams.dispersionMag
+            modifications = sim_params.modifications
+            magnitudes = sim_params.dispersion_mag
 
             # we may want to disperse random seeds
-            if simParams.shouldDisperseSeeds:
+            if sim_params.should_disperse_seeds:
                 # generate the random seeds for the model (but don't apply them yet)
                 # Note: This sets the RNGSeeds before all other modifications
-                randomSeedDispersions = cls.disperseSeeds(simInstance)
-                for name, value in randomSeedDispersions.items():
+                random_seed_dispersions = cls.disperse_seeds(sim_instance)
+                for name, value in random_seed_dispersions.items():
                     modifications[name] = value
 
             # used if rerunning ICs from a .json file, modifications will contain the
             # RNGSeeds that need to be set before reset()
-            cls.populateSeeds(simInstance, modifications)
+            cls.populate_seeds(sim_instance, modifications)
 
             # we may want to disperse parameters
-            for disp in simParams.dispersions:
-                try:
-                    name = disp.getName()
-                    if name not in modifications:  # could be using a saved parameter.
-                        modifications[name] = disp.generateString(simInstance)
-                        if simParams.saveDispMag:
-                            magnitudes[name] = disp.generateMagString()
-                except TypeError:
-                    # This accomodates dispersion variables that are co-dependent
-                    disp.generate(simInstance)
-                    for i in range(1, disp.numberOfSubDisps+1):
-                        name = disp.getName(i)
-                        if name not in modifications:  # could be using a saved parameter.
-                            modifications[name] = disp.generateString(i, simInstance)
-                            if simParams.saveDispMag:
-                                magnitudes[name] = disp.generateMagString()
+            generate_modifications(
+                sim_instance,
+                sim_params.dispersions,
+                modifications,
+                magnitudes if sim_params.should_save_disp_mag else None,
+            )
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
-            if simParams.shouldArchiveParameters:
-                # save the dispersions and random seeds for this run
-                if simParams.icfilename != "":
-                    with open(simParams.icfilename + ".json", 'w') as outfile:
-                        json.dump(modifications, outfile)
-                else:
-                    with open(simParams.filename + ".json", 'w') as outfile:
-                        json.dump(modifications, outfile)
-                    if simParams.saveDispMag:
-                        with open(simParams.filename + "mag.txt", 'w') as outfileMag:
-                            for k in sorted(magnitudes.keys()):
-                                outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
+            # save the _dispersions and random seeds for this run
+            with open(sim_params.initial_conditions_filename, 'w') as outfile:
+                json.dump(modifications, outfile)
+            if sim_params.should_save_disp_mag:
+                with open(sim_params.magnitudes_filename, 'w') as outfileMag:
+                    for k in sorted(magnitudes.keys()):
+                        outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
 
-            if simParams.configureFunction is not None:
-                if simParams.verbose:
-                    print("Configuring sim")
-                simParams.configureFunction(simInstance)
+            if sim_params.configure_function is not None:
+                log.debug("Configuring sim")
+                sim_params.configure_function(sim_instance)
 
-            # apply the dispersions and the random seeds
+            # apply the _dispersions and the random seeds
             for variable, value in list(modifications.items()):
-                expresion = "simInstance." + variable
-                dispersionExpresion = None
-                if eval("callable(" + expresion + ")"):
-                    dispersionExpresion = expresion + "(" + value + ")"
-                else:
-                    dispersionExpresion = expresion + "=" + value
-
-                if simParams.verbose:
-                    print("Executing parameter modification -> ", dispersionExpresion)
-                exec(dispersionExpresion)
+                log.debug(f"Applying parameter modification -> {variable} = {value}")
+                apply_modification(sim_instance, variable, value)
 
             # setup data logging
-            if len(simParams.retentionPolicies) > 0:
-                if simParams.verbose:
-                    print("Adding retained data")
-                RetentionPolicy.addRetentionPoliciesToSim(simInstance, simParams.retentionPolicies)
+            if len(sim_params.retention_policies) > 0:
+                log.debug("Adding retained data")
+                RetentionPolicy.add_retention_policies_to_sim(sim_instance, sim_params.retention_policies)
 
-            if simParams.verbose:
-                print("Executing simulation")
-            # execute the simulation, with the user-supplied executionFunction
+            log.debug(f"Executing simulation {sim_params.index}")
+            # execute the simulation, with the user-supplied execution_function
             try:
-                simParams.executionFunction(simInstance)
+                sim_params.execution_function(sim_instance)
             except TypeError:
-                simParams.executionFunction(simInstance, simParams.filename)
+                sim_params.execution_function(sim_instance, sim_params.results_filename)
 
-            if len(simParams.retentionPolicies) > 0:
-                if simParams.icfilename != "":
-                    retentionFile = simParams.icfilename + ".data"
-                else:
-                    retentionFile = simParams.filename + ".data"
+            if len(sim_params.retention_policies) > 0:
+                retention_file = sim_params.results_filename
 
-                if simParams.verbose:
-                    print("Retaining data for run in", retentionFile)
+                log.debug(f"Retaining data for run {sim_params.index} in {retention_file}")
 
-                retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
-                dataOutQueue.put((retainedData, simParams.index, None))
+                retained_data = RetentionPolicy.get_data_for_retention(sim_instance, sim_params.retention_policies)
+                data_out_queue.put((retained_data, sim_params.index, None))
                 time.sleep(1)
 
-                with gzip.open(retentionFile, "w") as archive:
-                    retainedData["index"] = simParams.index # add run index
-                    pickle.dump(retainedData, archive)
+                with gzip.open(retention_file, "w") as archive:
+                    retained_data["index"] = sim_params.index # add run index
+                    pickle.dump(retained_data, archive)
 
-            if simParams.verbose:
-                print("Terminating simulation")
+            log.debug(f"Job {sim_params.index} finished successfully")
 
-            if simParams.verbose:
-                print("Thread", os.getpid(), "Job", simParams.index, "finished successfully")
-
-            return (True, simParams.index)  # this function returns true only if the simulation was successful
+            return True, sim_params.index, "", ""
 
         except Exception as e:
-            print("Error in worker thread", e)
-            traceback.print_exc()
-            return (False, simParams.index)  # there was an error
+            log.exception(f"Error in worker process for run {sim_params.index}")
+            return False, sim_params.index, type(e).__name__, traceback.format_exc()
 
     @staticmethod
-    def disperseSeeds(simInstance):
+    def disperse_seeds(sim_instance):
         """
         Disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds.
         Example return dictionary::
@@ -880,36 +897,33 @@ class SimulationExecutor:
                 '.TaskList[2].TaskModels[0]': 1123244
              }
 
-        :param simInstance: A xmera simulation to set random seeds on
-        :type simInstance: SimulationBaseClass
+        :param sim_instance: A xmera simulation to set random seeds on
+        :type sim_instance: SimulationBaseClass
         :return: A dictionary with the random seeds that should be applied to the sim
-                        """
-
-        randomSeeds = {}
-        for i, task in enumerate(simInstance.TaskList):
+        """
+        random_seeds = {}
+        for i, task in enumerate(sim_instance.TaskList):
             for j, model in enumerate(task.TaskModels):
-                taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
-                rand = str(random.randint(0, 1 << 32 - 1))
+                task_var = f'TaskList[{i}].TaskModels[{j}].RNGSeed'
+                rand = random.randint(0, (1 << 32) - 1)
                 try:
-                    execStatement = "simInstance." + taskVar + "=" + str(rand)
-                    exec(execStatement)  # if this fails don't add to the list of modification
-                    randomSeeds[taskVar] = rand
-                except:
+                    model.RNGSeed = rand
+                    random_seeds[task_var] = str(rand)
+                except AttributeError:
+                    # This task model has no random seed, thus there is no seed to set.
                     pass
-        return randomSeeds
+        return random_seeds
 
     @staticmethod
-    def populateSeeds(simInstance, modifications):
+    def populate_seeds(sim_instance, modifications):
         """
-        only populate the RNG seeds of all the tasks in the sim
+        Set the RNG seeds of all the tasks in the simulation.
 
-        Args:
-            simInstance: SimulationBaseClass
-                A xmera simulation to set random seeds on
-            modifications:
-                A dictionary containing RNGSeeds to be populate for the sim, among other sim modifications.
+        :param sim_instance: A xmera simulation to set random seeds on
+        :type sim_instance: SimulationBaseClass
+        :param modifications: A dictionary with the modifications to apply
+        :type modifications: dict
         """
         for variable, value in modifications.items():
             if ".RNGSeed" in variable:
-                rngStatement = "simInstance." + variable + "=" + value
-                exec(rngStatement)
+                apply_modification(sim_instance, variable, value)

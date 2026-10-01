@@ -28,15 +28,15 @@ The following two plots illustrate what this particular simulation setup will yi
 
     Figure 2: Zoomed in and nearly rendered view of the attitude error data details
 
-The next plot illustrates the output if you run ``scenario_AttFeedbackMC.py`` with more simulation cases,
-40 in this plot.
+The next plot shows the output of ``scenario_AttFeedbackMC.py`` with more simulation runs.
+This plot shows 40 runs.
 
 .. _scenarioAnalyzeMonteCarlo-ds2:
 .. figure:: /_images/static/ds-2.png
     :align: center
     :scale: 50%
 
-    Figure 3: Larger simulation run with 40 simulation cases shown
+    Figure 3: Larger Monte Carlo batch with 40 simulation runs
 
 Configuring a Python Environment For this Script
 ------------------------------------------------
@@ -89,12 +89,13 @@ bokeh server will keep running until stopped.
 import inspect
 import os
 
-from xmera.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
 from bokeh.palettes import RdYlBu9
-from xmera.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
-from xmera.utilities.DS_Plot import DS_Plot
 
 import xmera.utilities.macros as macros
+from xmera.utilities.DS_Plot import DS_Plot
+from xmera.utilities.MonteCarlo.AnalysisBaseClass import McAnalysisBaseClass
+from xmera.utilities.MonteCarlo.Controller import Controller
+from xmera.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -135,55 +136,55 @@ def plotSuite(dataDir):
     return plotList
 
 
-def run(show_plots):
+def run(show_plots, show_all_data=True, show_extreme_data=True, optional_plots=False):
     """
     **This script is meant to be configured based on the user's needs. It can be configured using the following
     three booleans:**
 
     First, set ``show_all_data = True`` to get a broad view of the data and find a time window to investigate closer.
 
-    Once the data is characterized, the user can set ``show_extreme_data = True`` to look at specific run cases
-    within the window.
+    When you know the behavior of the data, set ``show_extreme_data = True`` to look at specific runs
+    in the window.
 
-    Finally, the user can set ``show_optional_data = True`` to look at any extra data to determine why the extrema
-    cases exist.
+    Finally, set ``show_optional_data = True`` to look at extra data. This data can show why the extrema
+    runs occur.
 
     :param show_all_data: plot all MC runs for the plots specified in the plotSuite method
     :param show_extreme_data: call plotSuite method for user-defined number of extrema MC runs
     :param optional_plots: plots additional user-defined plots
     """
 
-    show_all_data = True
-    show_extreme_data = True
-    optional_plots = False
 
     plotList = []
-    analysis = mcAnalysisBaseClass()
-    analysis.dataDir = os.path.join(path, "scenario_AttFeedbackMC")
+    analysis = McAnalysisBaseClass()
+    # Each execution writes to a new run directory that has a timestamp in its name. The data
+    # file for each variable is in the results directory of that execution.
+    analysis.data_dir = os.path.join(
+        Controller.latest_run_dir(os.path.join(path, "scenario_AttFeedbackMC")), "results")
 
-    # save_as_static: save off static .html files of the plots generated into the staticDir directory.
-    # The staticDir will be created inside the dataDir folder.
+    # save_as_static: save off static .html files of the plots generated into the static_dir directory.
+    # The static_dir will be created inside the data_dir folder.
     # (Note: This inhibits dynamic plotting!
     analysis.save_as_static = True
-    analysis.staticDir = "/plots/"
+    analysis.static_dir = "/plots/"
 
     if show_all_data:
-        plotList.extend(plotSuite(analysis.dataDir))
+        plotList.extend(plotSuite(analysis.data_dir))
 
     if show_extreme_data:
-        analysis.variableName = "attGuidMsg.sigma_BR"
-        analysis.variableDim = 1
+        analysis.variable_name = "attGuidMsg.sigma_BR"
+        analysis.variable_dim = 1
 
-        extrema_run_numbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1e9, 550 * 1e9])
+        extrema_run_numbers = analysis.get_extrema_run_indices(num_extrema=1, window=[500 * 1e9, 550 * 1e9])
 
-        analysis.extractSubsetOfRuns(runIdx=extrema_run_numbers)
-        plotList.extend(plotSuite(os.path.join(analysis.dataDir, "subset")))
+        analysis.extract_subset_of_runs(run_idx=extrema_run_numbers)
+        plotList.extend(plotSuite(os.path.join(analysis.data_dir, "subset")))
 
     if optional_plots:
         # nominalRuns = analysis.getNominalRunIndices(50)
         # statPlots = analysis.generateStatPlots()
 
-        shadowFactor = pull_and_format_df(os.path.join(analysis.dataDir, "eclipse_data_0.shadowFactor.data"), 1)
+        shadowFactor = pull_and_format_df(os.path.join(analysis.data_dir, "eclipse_data_0.shadowFactor.data"), 1)
         shadowFactor = shadowFactor.dropna(axis=1)
         shadowFactorPlot = DS_Plot(shadowFactor, title="Optional Plots: Eclipse",
                                                xAxisLabel='time[s]', yAxisLabel='Eclipse Factor',
@@ -191,10 +192,10 @@ def run(show_plots):
                                                cmap=RdYlBu9,
                                                plotFcn=curve_per_df_column)
 
-        # plotList.extend([statPlots])
+        # plot_list.extend([statPlots])
         plotList.extend([shadowFactorPlot])
 
-    analysis.renderPlots(plotList)
+    analysis.render_plots(plotList)
 
 # The following must be commented out before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not run this script

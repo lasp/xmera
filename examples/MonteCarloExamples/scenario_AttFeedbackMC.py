@@ -48,16 +48,16 @@ def run(show_plots):
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
     monteCarlo = Controller()
-    monteCarlo.setSimulationFunction(scenario_AttFeedback.scenario_AttFeedback)  # Required: function that configures the base scenario
-    monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
-    monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
+    monteCarlo.set_simulation_function(scenario_AttFeedback.scenario_AttFeedback)  # Required: function that configures the base scenario
+    monteCarlo.set_execution_function(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
+    monteCarlo.set_execution_count(4)  # Required: Number of MCs to run
 
-    monteCarlo.setArchiveDir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
-    monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
-    monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on
-    monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
-    monteCarlo.setVarCast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
-    monteCarlo.setDispMagnitudeFile(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
+    monteCarlo.archive_dir = os.path.join(path, "scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
+    monteCarlo.set_should_disperse_seeds(True)  # Optional: Randomize the seed for each module
+    monteCarlo.set_num_worker_processes(2)  # Optional: Number of processes to spawn MCs on
+    monteCarlo.log_level = "DEBUG"  # Optional: Produce supplemental text output in console describing status
+    monteCarlo.set_var_cast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
+    monteCarlo.set_should_save_disp_mag(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
@@ -68,25 +68,27 @@ def run(show_plots):
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
 
     # Add dispersions with their dispersion type
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion('TaskList[0].TaskModels[0].hub.sigma_BNInit'))
-    monteCarlo.addDispersion(NormalVectorCartDispersion('TaskList[0].TaskModels[0].hub.omega_BN_BInit', 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion('TaskList[0].TaskModels[0].hub.mHub', ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion('TaskList[0].TaskModels[0].hub.r_BcB_B', [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.add_dispersion(UniformEulerAngleMRPDispersion('TaskList[0].TaskModels[0].hub.sigma_BNInit'))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion('TaskList[0].TaskModels[0].hub.omega_BN_BInit', 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.add_dispersion(UniformDispersion('TaskList[0].TaskModels[0].hub.mHub', ([750.0 - 0.05 * 750, 750.0 + 0.05 * 750])))
+    monteCarlo.add_dispersion(NormalVectorCartDispersion('TaskList[0].TaskModels[0].hub.r_BcB_B', [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also can have a callback,
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     samplingTime = int(2E9)
-    retentionPolicy.addMessageLog(sNavTransName, ["r_BN_N"])
-    retentionPolicy.addMessageLog(attGuidName, ["sigma_BR", "omega_BR_B"])
-    retentionPolicy.setDataCallback(displayPlots)
-    monteCarlo.addRetentionPolicy(retentionPolicy)
+    retentionPolicy.add_message_log(sNavTransName, ["r_BN_N"])
+    retentionPolicy.add_message_log(attGuidName, ["sigma_BR", "omega_BR_B"])
+    retentionPolicy.set_data_callback(displayPlots)
+    monteCarlo.add_retention_policy(retentionPolicy)
 
-    failures = monteCarlo.executeSimulations()
+    failures = monteCarlo.execute_simulations()
+    if failures:
+        print(f"{len(failures)} Monte Carlo runs failed")
 
     if show_plots:
-        monteCarlo.executeCallbacks()
+        monteCarlo.execute_callbacks()
         plt.show()
 
     return

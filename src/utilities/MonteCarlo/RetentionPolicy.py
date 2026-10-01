@@ -1,24 +1,26 @@
-import numpy as np
+import logging
 from dataclasses import dataclass
 from xmera.utilities import unitTestSupport
+
+logger = logging.getLogger("montecarlo_retention")
 
 @dataclass
 class VariableRetentionParameters:
     """
     Represents a variable's logging parameters.
     """
-    varName:str
-    varRate:int
-    startIndex:int
-    stopIndex:int
-    varType:str
+    var_name:str
+    var_rate:int
+    start_index:int
+    stop_index:int
+    var_type:str
 
-    def __init__(self, varName, varRate, startIndex=0, stopIndex=0, varType='double'):
-        self.varName = varName
-        self.varRate = varRate
-        self.startIndex = startIndex
-        self.stopIndex = stopIndex
-        self.varType = varType
+    def __init__(self, var_name, var_rate, start_index=0, stop_index=0, var_type='double'):
+        self.var_name = var_name
+        self.var_rate = var_rate
+        self.start_index = start_index
+        self.stop_index = stop_index
+        self.var_type = var_type
 
 @dataclass
 class MessageRetentionParameters:
@@ -26,14 +28,14 @@ class MessageRetentionParameters:
     Represents a message's logging parameters.
     Args:
         name: name of the message recorder
-        retainedVars: the message variable to record
+        retained_vars: the message variable to record
     """
-    msgRecName:str
-    retainedVars:str
+    msg_rec_name:str
+    retained_vars:str
 
-    def __init__(self, name, retainedVars):
-        self.msgRecName = name
-        self.retainedVars = retainedVars
+    def __init__(self, name, retained_vars):
+        self.msg_rec_name = name
+        self.retained_vars = retained_vars
 
 class RetentionPolicy:
     """
@@ -42,58 +44,78 @@ class RetentionPolicy:
     """
 
     def __init__(self, rate=int(1E10)):
-        self.logRate = rate
-        self.messageLogList = []
-        self.varLogList = []
-        self.dataCallback = None
-        self.retentionFunctions = []
+        self.log_rate = rate
+        self.message_log_list = []
+        self.var_log_list = []
+        self.data_callback = None
+        self.retention_functions = []
 
-    def addMessageLog(self, name, retainedVars):
-        self.messageLogList.append(MessageRetentionParameters(name, retainedVars))
+    def add_message_log(self, name, retained_vars):
+        self.message_log_list.append(MessageRetentionParameters(name, retained_vars))
 
-    def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
-        if logRate is None:
-            logRate = self.logRate
-        varContainer = VariableRetentionParameters(variableName, logRate, startIndex, stopIndex, varType)
-        self.varLogList.append(varContainer)
+    def add_variable_log(self, variable_name, start_index=0, stop_index=0, var_type='double', log_rate=None):
+        if log_rate is None:
+            log_rate = self.log_rate
+        var_container = VariableRetentionParameters(variable_name, log_rate, start_index, stop_index, var_type)
+        self.var_log_list.append(var_container)
 
-    def addLogsToSim(self, simInstance):
-        for variable in self.varLogList:
-            simInstance.AddVariableForMultiProcessLogging(variable.varName, variable.varRate,
-                                              variable.startIndex, variable.stopIndex, variable.varType)
+    def add_logs_to_sim(self, sim_instance):
+        for variable in self.var_log_list:
+            sim_instance.AddVariableForMultiProcessLogging(variable.var_name,
+                                                           variable.var_rate,
+                                                           variable.start_index,
+                                                           variable.stop_index,
+                                                           variable.var_type)
 
 
 
-    def addRetentionFunction(self, function):
-        self.retentionFunctions.append(function)
+    def add_retention_function(self, function):
+        self.retention_functions.append(function)
 
-    def setDataCallback(self, dataCallback):
-        self.dataCallback = dataCallback
+    def set_data_callback(self, data_callback):
+        self.data_callback = data_callback
 
-    def executeCallback(self, data):
-        if self.dataCallback is not None:
-            self.dataCallback(data, self)
+    def execute_callback(self, data):
+        if self.data_callback is not None:
+            self.data_callback(data, self)
 
     @staticmethod
-    def addRetentionPoliciesToSim(simInstance, retentionPolicies):
-        """ Adds logs for variables and messages to a simInstance
+    def add_retention_policies_to_sim(sim_instance, retention_policies):
+        """ Add logs for variables and messages to a sim_instance.
+
+        The method keeps only the first entry of each variable name, in all policies and in each
+        policy. It logs each duplicate after the first entry at WARNING. The warning tells the user that
+        a retention policy occurs two times, for example because of an error in a combination of policies.
+
         Args:
-            simInstance: The simulation instance to add logs to.
-            retentionPolicies: RetentionPolicy[] list that defines the data to log.
+            sim_instance: The simulation instance to add logs to.
+            retention_policies: RetentionPolicy[] list that defines the data to log.
         """
-
-        for retentionPolicy in retentionPolicies:
-            retentionPolicy.addLogsToSim(simInstance)
-
-        # TODO handle duplicates somehow?
+        seen_var_names: set[str] = set()
+        for retention_policy in retention_policies:
+            for variable in retention_policy.var_log_list:
+                if variable.var_name in seen_var_names:
+                    logger.warning(
+                        f"Duplicate retention entry for variable {variable.var_name!r}; ignoring "
+                        "subsequent occurrence (first wins)"
+                    )
+                    continue
+                seen_var_names.add(variable.var_name)
+                sim_instance.AddVariableForMultiProcessLogging(
+                    variable.var_name,
+                    variable.var_rate,
+                    variable.start_index,
+                    variable.stop_index,
+                    variable.var_type,
+                )
 
     @staticmethod
-    def getDataForRetention(simInstance, retentionPolicies):
-        """ Returns the data that should be retained given a simInstance and the retentionPolicies
+    def get_data_for_retention(sim_instance, retention_policies):
+        """ Returns the data that should be retained given a sim_instance and the retention_policies
 
         Args:
-            simInstance: The simulation instance to retrieve data from
-            retentionPolicies: A list of RetentionPolicy objects defining the data to retain
+            sim_instance: The simulation instance to retrieve data from
+            retention_policies: A list of RetentionPolicy objects defining the data to retain
 
         Returns:
             Retained Data in the form of a dictionary with two sub-dictionaries for messages and variables::
@@ -103,32 +125,32 @@ class RetentionPolicy:
                         "messageName": [value1,value2,value3]
                     },
                     "variables": {
-                        "variableName": [value1,value2,value3]
+                        "variable_name": [value1,value2,value3]
                     }
                 }
         """
         data = {"messages": {}, "variables": {}, "custom": {} }
 
-        for retentionPolicy in retentionPolicies:
-            for msgParam in retentionPolicy.messageLogList:
+        for retention_policy in retention_policies:
+            for msg_param in retention_policy.message_log_list:
 
                 # record the message recording times
-                msgTimes = simInstance.msgRecList[msgParam.msgRecName].times()
+                msg_times = sim_instance.msgRecList[msg_param.msg_rec_name].times()
 
                 # record the message variables
-                for varName in msgParam.retainedVars:
+                for var_name in msg_param.retained_vars:
                     # To ensure the current datashaders utilities continue to work, the
                     # retained data is combined with the time information as it was in
                     # BSK1.x releases.
-                    msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
-                    msgData = unitTestSupport.addTimeColumn(msgTimes, msgData)
-                    data["messages"][msgParam.msgRecName + "." + varName] = msgData
+                    msg_data = getattr(sim_instance.msgRecList[msg_param.msg_rec_name], var_name)
+                    msg_data = unitTestSupport.addTimeColumn(msg_times, msg_data)
+                    data["messages"][msg_param.msg_rec_name + "." + var_name] = msg_data
 
-            for variable in retentionPolicy.varLogList:
-                data["variables"][variable.varName] = simInstance.GetMultiProcessLoggerVariableData(variable.varName)
+            for variable in retention_policy.var_log_list:
+                data["variables"][variable.var_name] = sim_instance.GetMultiProcessLoggerVariableData(variable.var_name)
 
-            for func in retentionPolicy.retentionFunctions:
-                tmpModuleData = func(simInstance)
-                for (key, value) in tmpModuleData.items():
+            for func in retention_policy.retention_functions:
+                tmp_module_data = func(sim_instance)
+                for (key, value) in tmp_module_data.items():
                     data["custom"][key] = value
         return data
