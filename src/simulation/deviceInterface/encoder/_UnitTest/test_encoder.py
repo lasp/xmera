@@ -4,211 +4,60 @@
 #
 
 """
-Module Name:        motorThermal
+Module Name:        encoder
 """
 
-import inspect
-import os
-
 import numpy as np
-import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'xmera'
-splitPath = path.split(bskName)
-
-
-# Import all of the modules that we are going to be called in this simulation
+from xmera.architecture import messaging
+from xmera.simulation import encoder
 from xmera.utilities import SimulationBaseClass
-from xmera.simulation import encoder                    # import the module that is to be tested
-from xmera.architecture import messaging                      # import the message definitions
 from xmera.utilities import macros
-from xmera.utilities import unitTestSupport
 
 
-
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-@pytest.mark.parametrize("accuracy", [1e-8])
-
-def test_encoder(show_plots, accuracy):
+def test_encoder():
     r"""
     **Validation Test Description**
 
-    This unit test script tests the the features of an encoder, namely discretization and signal failures. It sets up
-    the reaction wheel speed message and encoder modules and runs the simulation for a number of steps. The script tests
-    each functionality of the module, including the discretization of the wheel speeds and the signal failures, such as
-    the signal being turned off or being stuck at the previous iteration.
+    This test makes sure that the Python bindings of the encoder operate in a simulation. The C++ unit tests in
+    this folder examine the encoder behavior in more detail.
 
-    In the reaction wheel message, three wheels are considered with varying values. Throughout the simulation, the
-    encoder module assumes different operating states, such as nominal (everything works as intended), off (wheel speeds
-    are off) and stuck (wheel speeds remain constant).
-
-    The limitations of this test are the same as the ones discussed on the module's .rst file. Also, the value of the
-    accuracy used is the limit for the test to pass.
-
-    **Test Parameters**
-
-    Args:
-        accuracy (float): absolute accuracy value used in the validation tests
+    The test connects the encoder to a reaction wheel speed message and simulates two steps of one second. The
+    encoder uses two clicks for each rotation.
 
     **Description of Variables Being Tested**
 
-    In this file we are checking the values of the variables
-
-    - ``wheelSpeedsEncoded``
-
-    which represents the array of reaction wheel speeds. This array is compared to the ``truewheelSpeedsEncoded`` array,
-    which contains the expected values of the wheel speeds after encoding.
+    The test compares the ``wheelSpeeds`` field of the encoder output message with the known values.
     """
-    [testResults, testMessage] = encoderTest(show_plots, accuracy)
-    assert testResults < 1, testMessage
+    task_name = "unitTask"
+    num_rw = 3
+
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("TestProcess")
+    process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(1)))
+
+    speed_payload = messaging.RWSpeedMsgPayload()
+    speed_payload.wheelSpeeds = [100, 200, 300]
+    speed_msg = messaging.RWSpeedMsg().write(speed_payload)
+
+    wheel_speed_encoder = encoder.Encoder(num_rw, 2)
+    wheel_speed_encoder.modelTag = "rwSpeedsEncoder"
+    wheel_speed_encoder.rwSpeedInMsg.subscribeTo(speed_msg)
+    sim.AddModelToTask(task_name, wheel_speed_encoder)
+
+    encoded_log = wheel_speed_encoder.rwSpeedOutMsg.recorder()
+    sim.AddModelToTask(task_name, encoded_log)
+
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(macros.sec2nano(1))
+    sim.ExecuteSimulation()
+
+    encoded_speeds = np.array(encoded_log.wheelSpeeds)[:, 0:num_rw]
+    true_encoded_speeds = np.array([[100.0, 200.0, 300.0],
+                                    [31.0 * np.pi, 63.0 * np.pi, 95.0 * np.pi]])
+
+    np.testing.assert_allclose(encoded_speeds, true_encoded_speeds, rtol=0.0, atol=1e-8)
 
 
-def encoderTest(show_plots, accuracy):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
-    # Create simulation variable names
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-
-    #
-    #  create the simulation process
-    #
-
-    testProcessRate = macros.sec2nano(1)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
-    #
-    #   setup the simulation tasks/objects
-    #
-
-    #
-    # Create RW speed message
-    #
-
-    speedMsgData = messaging.RWSpeedMsgPayload()
-    speedMsgData.wheelSpeeds = [100, 200, 300]
-    speedMsg = messaging.RWSpeedMsg().write(speedMsgData)
-
-    numRW = 3
-
-    #
-    #   Setup the reaction wheel speed encoder
-    #
-
-    wheelSpeedEncoder = encoder.Encoder()
-    wheelSpeedEncoder.modelTag = 'rwSpeedsEncoder'
-    wheelSpeedEncoder.clicksPerRotation = 2
-    wheelSpeedEncoder.numRW = numRW
-    wheelSpeedEncoder.rwSpeedInMsg.subscribeTo(speedMsg)
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, wheelSpeedEncoder)
-
-    #
-    # log data
-    #
-
-    # log the RW speeds
-    wheelSpeedEncodedLog = wheelSpeedEncoder.rwSpeedOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, wheelSpeedEncodedLog)
-
-    #
-    #   initialize Simulation
-    #
-
-    unitTestSim.InitializeSimulation()
-    numSteps = 0
-
-    # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
-    numSteps += 1
-    unitTestSim.TotalSim.singleStepProcesses()
-    numSteps += 1
-    unitTestSim.TotalSim.singleStepProcesses()
-    numSteps += 1
-
-    # update the encoder to be OFF
-    wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_OFF]*numRW
-
-    # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
-    numSteps += 1
-
-    # update the wheel speeds
-    speedMsgData.wheelSpeeds = [500, 400, 300]
-    speedMsg = messaging.RWSpeedMsg().write(speedMsgData)
-    wheelSpeedEncoder.rwSpeedInMsg.subscribeTo(speedMsg)
-    wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_NOMINAL] * numRW
-
-    # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
-    numSteps += 1
-
-    # change the wheel speeds but make the encoder stuck
-    speedMsgData.wheelSpeeds = [100, 200, 300]
-    speedMsg = messaging.RWSpeedMsg().write(speedMsgData)
-    wheelSpeedEncoder.rwSpeedInMsg.subscribeTo(speedMsg)
-    wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_STUCK] * numRW
-
-    # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
-    numSteps += 1
-
-    #
-    # retrieve the logged data
-    #
-
-    wheelSpeedsEncoded = np.array(wheelSpeedEncodedLog.wheelSpeeds)
-
-    #
-    # set the truth vectors
-    #
-
-    trueWheelSpeedsEncoded = np.array([[100., 200., 300.],
-                                       [ 97.38937226, 197.92033718, 298.45130209],
-                                       [100.53096491, 201.06192983, 298.45130209],
-                                       [0., 0., 0.],
-                                       [499.51323192, 398.98226701, 298.45130209],
-                                       [499.51323192, 398.98226701, 298.45130209]])
-
-    #
-    # compare the module results to the true values
-    #
-
-    fail = 0
-    for i in range(numSteps):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(wheelSpeedsEncoded[i, 0:3], trueWheelSpeedsEncoded[i, :], 3, accuracy):
-            fail += 1
-
-    if fail > 0:
-        testFailCount += 1
-
-    if not testFailCount:
-        print("PASSED")
-    else:
-        testMessages.append("FAILED: Encoder Test")
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
-
-#
-# Run this unitTest as a stand-along python script
-#
 if __name__ == "__main__":
-    test_encoder(
-        False,  # show_plots
-        1e-8    # accuracy
-    )
+    test_encoder()

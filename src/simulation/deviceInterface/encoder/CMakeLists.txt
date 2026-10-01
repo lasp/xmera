@@ -8,3 +8,5 @@ xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   encoder.cpp
 )
+
+add_subdirectory(_UnitTest)
