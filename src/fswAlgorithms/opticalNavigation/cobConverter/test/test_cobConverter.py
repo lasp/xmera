@@ -603,5 +603,38 @@ def test_brown_conrady_calibration(k1, k2, k3, p1, p2, label, centerOfBrightness
                 f"({radial_distorted} <= {radial_identity})")
 
 
+def test_attributes_match_getters():
+    """Each attribute stores the value that its getter returns."""
+    module = cobConverter.CobConverter(noCorr, 25.0 * 1e3)
+    values = {"radius": 30.0 * 1e3, "radiusUncertainty": 100.0, "numStandardDeviations": 4.0, "standardDeviation": 0.5}
+    for name, value in values.items():
+        setattr(module, name, value)
+        assert getattr(module, name) == value
+        assert getattr(module, "get" + name[0].upper() + name[1:])() == value
+
+    covariance = np.diag([1e-4, 2e-4, 3e-4])
+    module.attitudeCovariance = covariance
+    np.testing.assert_array_equal(np.array(module.attitudeCovariance), covariance)
+    np.testing.assert_array_equal(np.array(module.getAttitudeCovariance()), covariance)
+
+
+def test_calibration_coefficients_attribute():
+    """The calibrationCoefficients attribute sets the Brown-Conrady coefficients as one struct."""
+    module = cobConverter.CobConverter(noCorr, 25.0 * 1e3)
+    coefficients = cobConverter.CalibrationCoefficients()
+    coefficients.k1, coefficients.k2, coefficients.k3 = 0.1, 0.2, 0.3
+    coefficients.p1, coefficients.p2 = 0.4, 0.5
+    module.calibrationCoefficients = coefficients
+
+    for stored in (module.calibrationCoefficients, module.getBrownConradyCoefficients()):
+        assert (stored.k1, stored.k2, stored.k3, stored.p1, stored.p2) == (0.1, 0.2, 0.3, 0.4, 0.5)
+
+    # The getter returns a copy. A change to one field of the copy does not change the module.
+    module.calibrationCoefficients.k1 = 9.0
+    assert module.calibrationCoefficients.k1 == 0.1
+
+
+
+
 if __name__ == '__main__':
     test_cob_converter(False, [512, 512], [152, 251], 75, [-1.0, -1.0, 0.0], 36e6, binary)

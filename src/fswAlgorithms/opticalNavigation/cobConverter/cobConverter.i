@@ -12,6 +12,14 @@
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
+%include <attribute.i>
+%attribute(CobConverter, double, radius, getRadius, setRadius)
+%attribute(CobConverter, double, radiusUncertainty, getRadiusUncertainty, setRadiusUncertainty)
+%attribute(CobConverter, Eigen::Matrix3d, attitudeCovariance, getAttitudeCovariance, setAttitudeCovariance)
+%attribute(CobConverter, double, numStandardDeviations, getNumStandardDeviations, setNumStandardDeviations)
+%attribute(CobConverter, double, standardDeviation, getStandardDeviation, setStandardDeviation)
+%attributeval(CobConverter, CalibrationCoefficients, calibrationCoefficients, getBrownConradyCoefficients, setBrownConradyCoefficients)
+
 %include "cobConverter.h"
 %include "cobConverterAlgorithm.h"
 
