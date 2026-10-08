@@ -477,3 +477,27 @@ def test_message_chaining_recorder():
         assert rawRec.imageBufferLength[-1] == W * H * 2
     finally:
         os.unlink(img_path)
+
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+def test_attributes_match_getters(tmp_path):
+    """Each attribute stores the value that its getter returns."""
+    mod = fpgaImagePipeline.FpgaImagePipeline()
+    values = {
+        "imageWidth": 640,
+        "imageHeight": 480,
+        "kernelSize": 7,
+        "threshold": 1200,
+        "roiRegionSize": 128,
+        "calibRegA": 1,
+        "calibRegB": 2,
+        "calibRegC": 3,
+        "calibRegD": 4,
+        "calibEnabled": True,
+        "saveImages": True,
+        "saveDir": str(tmp_path),
+    }
+    for name, value in values.items():
+        setattr(mod, name, value)
+        assert getattr(mod, name) == value
+        assert getattr(mod, "get" + name[0].upper() + name[1:])() == value
