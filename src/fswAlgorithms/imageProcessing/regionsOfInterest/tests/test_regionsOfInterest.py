@@ -391,6 +391,21 @@ def region_identification(show_plots, num_regions, use_windowing):
         plt.close('all')
 
 
+def test_attributes_match_getters():
+    """Each attribute stores the value that its getter returns."""
+    roi_module = regionsOfInterest.RegionsOfInterest()
+
+    roi_module.maxRoiSeparation = 123
+    assert roi_module.maxRoiSeparation == 123
+    assert roi_module.getMaxRoiSeparation() == 123
+
+    roi_module.windowCenter = [256, 128]
+    np.testing.assert_array_equal(np.array(roi_module.windowCenter).reshape([2]), [256, 128])
+    np.testing.assert_array_equal(np.array(roi_module.getWindowCenter()).reshape([2]), [256, 128])
+
+
+
+
 if __name__ == "__main__":
     region_identification(True,
                          3,
