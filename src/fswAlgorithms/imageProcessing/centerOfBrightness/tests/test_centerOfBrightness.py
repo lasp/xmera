@@ -271,6 +271,23 @@ def test_img_msg_check_for_new_image():
     assert result == 0
 
 
+def test_attributes_match_getters():
+    """Each attribute stores the value that its getter returns."""
+    for reader in (centerOfBrightness.ImageReaderFromFile(), centerOfBrightness.ImageReaderFromMessage()):
+        reader.blurSize = 7
+        assert reader.blurSize == 7
+        assert reader.getBlurSize() == 7
+
+    module = centerOfBrightness.CenterOfBrightness(centerOfBrightness.ImageReaderFromMessage())
+    values = {"relativeBrightnessIncreaseThreshold": 0.25, "numberOfPointsBrightnessAverage": 4, "cameraID": 2}
+    for name, value in values.items():
+        setattr(module, name, value)
+        assert getattr(module, name) == value
+        assert getattr(module, "get" + name[0].upper() + name[1:])() == value
+
+
+
+
 
 if __name__ == '__main__':
     test_threshold_impact()

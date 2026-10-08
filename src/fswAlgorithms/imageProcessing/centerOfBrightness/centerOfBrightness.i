@@ -23,6 +23,13 @@
 %shared_ptr(ImageReaderFromFile)
 %shared_ptr(ImageReaderFromMessage)
 
+%include <attribute.i>
+%attribute(ImageReaderFromFile, int, blurSize, getBlurSize, setBlurSize)
+%attribute(ImageReaderFromMessage, int, blurSize, getBlurSize, setBlurSize)
+%attribute(CenterOfBrightness, double, relativeBrightnessIncreaseThreshold, getRelativeBrightnessIncreaseThreshold, setRelativeBrightnessIncreaseThreshold)
+%attribute(CenterOfBrightness, int32_t, numberOfPointsBrightnessAverage, getNumberOfPointsBrightnessAverage, setNumberOfPointsBrightnessAverage)
+%attribute(CenterOfBrightness, int32_t, cameraID, getCameraID, setCameraID)
+
 %include "imageReader/imageReaderInterface.h"
 %include "imageReader/imageReaderFromFile.h"
 %include "imageReader/imageReaderFromMessage.h"
