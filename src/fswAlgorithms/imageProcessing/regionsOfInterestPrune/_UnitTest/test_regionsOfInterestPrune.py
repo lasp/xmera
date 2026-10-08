@@ -406,3 +406,14 @@ def test_pruning(test_image_path, row_col_span, tmp_path, threshold=None):
         count_str += f"  |  R2 pixel count (approx): {regions[1].numberOfPixels}"
     print(count_str)
     print(f"test_pruning: {len(regions)} candidate(s); visualisation saved by module to {save_dir}")
+
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+def test_attributes_match_getters(tmp_path):
+    """Each attribute stores the value that its getter returns."""
+    pruner = regionsOfInterestPrune.RegionsOfInterestPrune()
+    values = {"maxRowSpans": 5, "maxColSpans": 4, "saveImages": True, "saveDir": str(tmp_path)}
+    for name, value in values.items():
+        setattr(pruner, name, value)
+        assert getattr(pruner, name) == value
+        assert getattr(pruner, "get" + name[0].upper() + name[1:])() == value
