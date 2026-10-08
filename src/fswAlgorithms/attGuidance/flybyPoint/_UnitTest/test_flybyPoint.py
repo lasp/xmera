@@ -454,6 +454,25 @@ def plot_ref_accelerations(time_data, omegaDot_RN):
     plt.ylabel(r'Reference accelerations')
 
 
+def test_attributes_match_getters():
+    """Each attribute stores the value that its getter returns."""
+    flyby_guidance = flybyPoint.FlybyPoint()
+    values = {
+        "timeBetweenFilterData": 60.0,
+        "toleranceForCollinearity": 1e-5,
+        "signOfOrbitNormalFrameVector": -1,
+        "maximumAccelerationThreshold": 0.01,
+        "maximumRateThreshold": 0.02,
+        "positionKnowledgeSigma": 5.0,
+    }
+    for name, value in values.items():
+        setattr(flyby_guidance, name, value)
+        assert getattr(flyby_guidance, name) == value
+        assert getattr(flyby_guidance, "get" + name[0].upper() + name[1:])() == value
+
+
+
+
 if __name__ == "__main__":
     test_flybyPoint(True,
                     [-5e7, 7.5e6, 5e5],
