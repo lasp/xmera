@@ -16,10 +16,14 @@ from numpy.linalg import inv
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+needs_four_wheels = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this case uses"
+)
+
 @pytest.mark.parametrize("num_wheels, default_desired", [(3, True),
-                                                         (4, True),
+                                                         pytest.param(4, True, marks=needs_four_wheels),
                                                          (3, False),
-                                                         (4, False)])
+                                                         pytest.param(4, False, marks=needs_four_wheels)])
 
 def test_rw_null_space(num_wheels, default_desired):
     unit_task_name = "unitTask"
