@@ -165,11 +165,11 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
     time_list = []
     for i in range(number_steps+1):
         for j in range(simple_nav_object.numberOfGyroBuffers):
-            time_list.append(test_packets[i]["accPkts.measTime"] - test_packets[0]["accPkts.measTime"])
+            time_list.append(test_packets[i]["accPkts[0].measTime"] - test_packets[0]["accPkts[0].measTime"])
     for i in range(number_steps):
         for j in range(simple_nav_object.numberOfGyroBuffers):
-            rate_array[i*simple_nav_object.numberOfGyroBuffers + j, :] = np.array(test_packets[i]["accPkts.gyro_B"])
-            accel_array[i*simple_nav_object.numberOfGyroBuffers + j, :] = np.array(test_packets[i]["accPkts.accel_B"])
+            rate_array[i*simple_nav_object.numberOfGyroBuffers + j, :] = np.array(test_packets[i]["accPkts[0].gyro_B"])
+            accel_array[i*simple_nav_object.numberOfGyroBuffers + j, :] = np.array(test_packets[i]["accPkts[0].accel_B"])
     avg_rate = np.mean(rate_array, axis=0)
     avg_accel = np.mean(accel_array, axis=0)
     avg_time = np.mean(time_list)
