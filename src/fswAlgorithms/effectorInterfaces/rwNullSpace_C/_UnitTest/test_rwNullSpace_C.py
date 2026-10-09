@@ -20,6 +20,10 @@ from numpy.linalg import inv
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+needs_four_wheels = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this case uses"
+)
+
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
 # Uncomment this line if this test has an expected failure, adjust message as needed.
@@ -29,9 +33,9 @@ path = os.path.dirname(os.path.abspath(filename))
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numWheels, defaultDesired", [
      (3, True)
-    , (4, True)
+    , pytest.param(4, True, marks=needs_four_wheels)
     , (3, False)
-    , (4, False)
+    , pytest.param(4, False, marks=needs_four_wheels)
 ])
 
 
