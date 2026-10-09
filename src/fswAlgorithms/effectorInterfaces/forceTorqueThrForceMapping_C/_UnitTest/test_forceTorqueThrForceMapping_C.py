@@ -143,6 +143,7 @@ def test_forceTorqueThrForceMapping3():
     assert testResults < 1, testMessage
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
+@pytest.mark.skipif(messaging.MAX_EFF_CNT < 12, reason="MAX_EFF_CNT is less than the number of thrusters")
 def test_forceTorqueThrForceMapping4():
     r"""
     **Test Description**
