@@ -16,6 +16,10 @@ from xmera.utilities import SimulationBaseClass, macros, fswSetupRW
 from xmera.fswAlgorithms import thrMomentumManagementCpp
 from xmera.architecture import messaging
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 
 @pytest.mark.parametrize("hsMinCheck", [(0), (1)])
 def test_thrMomentumManagement(show_plots, hsMinCheck):
