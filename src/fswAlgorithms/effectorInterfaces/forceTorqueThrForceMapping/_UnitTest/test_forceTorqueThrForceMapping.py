@@ -88,7 +88,11 @@ Test 5: Ensures that the forceTorqueThrForce module can compute a valid solution
                          [(rcs_location_data_1, rcs_direction_data_1, [0.4, 0.2, 0.4], [0.9, 1.1, 0.], True),
                           (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], True),
                           (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], False),
-                          (rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.], True),
+                          pytest.param(rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.],
+                                       True,
+                                       marks=pytest.mark.skipif(
+                                           messaging.MAX_EFF_CNT < len(rcs_location_data_2),
+                                           reason="MAX_EFF_CNT is less than the number of thrusters")),
                           (rcs_location_data_3, rcs_direction_data_3, [0.3, -0.2, 0.5], [0.4, 0.7, -0.1], True)])
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
