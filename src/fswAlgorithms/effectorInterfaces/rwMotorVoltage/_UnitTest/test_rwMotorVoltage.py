@@ -16,6 +16,10 @@ from xmera.utilities import fswSetupRW
 from xmera.utilities import macros
 from xmera.architecture import messaging
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
