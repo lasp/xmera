@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: ISC
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
+#include "forceTorqueThrForceMapping.h"
 #include "forceTorqueThrForceMappingAlgorithm.h"
 
 #include <gtest/gtest.h>
@@ -222,4 +223,59 @@ TEST(ForceTorqueThrForceMappingAlgorithm, resetRejectsNonPositiveMaxThrust) {
     thrConfig.thrusters[2].maxThrust = 0.0;
 
     EXPECT_THROW(algorithm.reset(vehConfig, thrConfig), std::invalid_argument);
+}
+
+//! Reset rejects a module whose thruster configuration message is not connected.
+TEST(ForceTorqueThrForceMapping, resetRejectsUnlinkedThrusterConfig) {
+    ForceTorqueThrForceMapping module;
+    Message<VehicleConfigMsgPayload> vehConfigMsg;
+    vehConfigMsg.write(makeVehicleConfig(), 0, 0);
+    module.vehConfigInMsg.subscribeTo(&vehConfigMsg);
+
+    EXPECT_THROW(module.reset(0), std::invalid_argument);
+}
+
+//! Reset rejects a module whose vehicle configuration message is not connected.
+TEST(ForceTorqueThrForceMapping, resetRejectsUnlinkedVehicleConfig) {
+    ForceTorqueThrForceMapping module;
+    Message<THRArrayConfigMsgPayload> thrConfigMsg;
+    thrConfigMsg.write(makeThrusterConfig(boxLocations, boxDirections), 0, 0);
+    module.thrConfigInMsg.subscribeTo(&thrConfigMsg);
+
+    EXPECT_THROW(module.reset(0), std::invalid_argument);
+}
+
+//! The module uses zero torque when the torque message is not connected. The output is the same as
+//! for a connected torque message with zero torque.
+TEST(ForceTorqueThrForceMapping, unlinkedTorqueMessageGivesZeroTorque) {
+    Message<VehicleConfigMsgPayload> vehConfigMsg;
+    vehConfigMsg.write(makeVehicleConfig(), 0, 0);
+    Message<THRArrayConfigMsgPayload> thrConfigMsg;
+    thrConfigMsg.write(makeThrusterConfig(boxLocations, boxDirections), 0, 0);
+    CmdForceBodyMsgPayload cmdForce{};
+    cmdForce.forceRequestBody[0] = 0.9;
+    cmdForce.forceRequestBody[1] = 1.1;
+    Message<CmdForceBodyMsgPayload> cmdForceMsg;
+    cmdForceMsg.write(cmdForce, 0, 0);
+    Message<CmdTorqueBodyMsgPayload> zeroTorqueMsg;
+    zeroTorqueMsg.write(CmdTorqueBodyMsgPayload{}, 0, 0);
+
+    auto runModule = [&](bool linkTorque) {
+        ForceTorqueThrForceMapping module;
+        module.vehConfigInMsg.subscribeTo(&vehConfigMsg);
+        module.thrConfigInMsg.subscribeTo(&thrConfigMsg);
+        module.cmdForceInMsg.subscribeTo(&cmdForceMsg);
+        if (linkTorque) { module.cmdTorqueInMsg.subscribeTo(&zeroTorqueMsg); }
+        ReadFunctor<THRArrayCmdForceMsgPayload> out = module.thrForceCmdOutMsg.addSubscriber();
+        module.reset(0);
+        module.updateState(0);
+        return out();
+    };
+
+    THRArrayCmdForceMsgPayload const unlinked = runModule(false);
+    THRArrayCmdForceMsgPayload const linked = runModule(true);
+
+    for (std::size_t i = 0; i < MAX_EFF_CNT; ++i) {
+        EXPECT_DOUBLE_EQ(unlinked.thrForce[i], linked.thrForce[i]) << "thruster " << i;
+    }
 }

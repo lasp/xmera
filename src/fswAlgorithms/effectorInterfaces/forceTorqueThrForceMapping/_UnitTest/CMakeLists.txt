@@ -1,6 +1,7 @@
 # The SWIG Python module is the only target that compiles the module sources. The tests
 # cannot link to it as a C++ library. Thus the tests compile the sources directly.
 add_executable(test_forceTorqueThrForceMapping
+  ../forceTorqueThrForceMapping.cpp
   ../forceTorqueThrForceMappingAlgorithm.cpp
   test_forceTorqueThrForceMapping.cpp
 )
