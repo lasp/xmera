@@ -22,6 +22,10 @@ from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_NUM_CSS_SENSORS < 8, reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this test uses"
+)
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
