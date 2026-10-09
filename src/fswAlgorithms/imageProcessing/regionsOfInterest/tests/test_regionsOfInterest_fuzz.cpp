@@ -4,29 +4,32 @@
 #include "../regionsOfInterestAlgorithm.h"
 #include "gtest/gtest.h"
 #include "test_regionsOfInterest.cpp"
+
 #include <fuzztest/fuzztest.h>
 
 #include <cmath>
 
 // Fuzz-specific tolerances
-constexpr int32_t FUZZ_MAX_IMAGE_SIZE = 4096;
+constexpr int32_t FUZZ_MAX_IMAGE_SIZE = 4'096;
 constexpr int32_t FUZZ_MIN_IMAGE_SIZE = 64;
-constexpr int32_t FUZZ_MAX_PIXELS = 10000;
+constexpr int32_t FUZZ_MAX_PIXELS = 10'000;
 
 /*! @brief Main fuzz test for RegionsOfInterestAlgorithm
  *
  *  Tests the algorithm across a wide range of region configurations.
  *  Ensures the algorithm doesn't crash and produces reasonable results.
  */
-void fuzzRegionIdentification(int32_t numRegions,
-                              int32_t maxSeparation,
-                              int32_t minDetectionSize,
-                              int32_t region1_x,
-                              int32_t region1_y,
-                              int32_t region1_pixels,
-                              int32_t region2_x,
-                              int32_t region2_y,
-                              int32_t region2_pixels) {
+void fuzzRegionIdentification(
+    int32_t numRegions,
+    int32_t maxSeparation,
+    int32_t minDetectionSize,
+    int32_t region1_x,
+    int32_t region1_y,
+    int32_t region1_pixels,
+    int32_t region2_x,
+    int32_t region2_y,
+    int32_t region2_pixels
+) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
     // Set up first region if numRegions >= 1
@@ -63,27 +66,31 @@ void fuzzRegionIdentification(int32_t numRegions,
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzRegionIdentification)
-    .WithDomains(fuzztest::InRange(0, 5),                    // numRegions
-                 fuzztest::InRange(1, 2000),                 // maxSeparation
-                 fuzztest::InRange(0, 100),                  // minDetectionSize
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region1_x
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region1_y
-                 fuzztest::InRange(0, FUZZ_MAX_PIXELS),      // region1_pixels
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region2_x
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region2_y
-                 fuzztest::InRange(0, FUZZ_MAX_PIXELS));     // region2_pixels
+    .WithDomains(
+        fuzztest::InRange(0, 5),                    // numRegions
+        fuzztest::InRange(1, 2'000),                // maxSeparation
+        fuzztest::InRange(0, 100),                  // minDetectionSize
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region1_x
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region1_y
+        fuzztest::InRange(0, FUZZ_MAX_PIXELS),      // region1_pixels
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region2_x
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region2_y
+        fuzztest::InRange(0, FUZZ_MAX_PIXELS)
+    );  // region2_pixels
 
 /*! @brief Fuzz test for windowing functionality
  *
  *  Tests the windowing feature with various window configurations.
  */
-void fuzzWindowingBehavior(int32_t window_center_x,
-                           int32_t window_center_y,
-                           int32_t window_width,
-                           int32_t window_height,
-                           int32_t region_x,
-                           int32_t region_y,
-                           int32_t region_pixels) {
+void fuzzWindowingBehavior(
+    int32_t window_center_x,
+    int32_t window_center_y,
+    int32_t window_width,
+    int32_t window_height,
+    int32_t region_x,
+    int32_t region_y,
+    int32_t region_pixels
+) {
     RegionsOfInterestAlgorithm algorithm;
     algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
     // Set window parameters
@@ -113,28 +120,32 @@ void fuzzWindowingBehavior(int32_t window_center_x,
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzWindowingBehavior)
-    .WithDomains(fuzztest::InRange(401, FUZZ_MAX_IMAGE_SIZE - 401),  // window_center_x
-                 fuzztest::InRange(301, FUZZ_MAX_IMAGE_SIZE - 301),  // window_center_y
-                 fuzztest::InRange(0, 800),                          // window_width
-                 fuzztest::InRange(0, 600),                          // window_height
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),          // region_x
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),          // region_y
-                 fuzztest::InRange(0, FUZZ_MAX_PIXELS));             // region_pixels
+    .WithDomains(
+        fuzztest::InRange(401, FUZZ_MAX_IMAGE_SIZE - 401),  // window_center_x
+        fuzztest::InRange(301, FUZZ_MAX_IMAGE_SIZE - 301),  // window_center_y
+        fuzztest::InRange(0, 800),                          // window_width
+        fuzztest::InRange(0, 600),                          // window_height
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),          // region_x
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),          // region_y
+        fuzztest::InRange(0, FUZZ_MAX_PIXELS)
+    );  // region_pixels
 
 /*! @brief Fuzz test for region merging logic
  *
  *  Tests scenarios where multiple regions might be merged based on proximity.
  */
-void fuzzRegionMerging(int32_t maxSeparation,
-                       int32_t region1_x,
-                       int32_t region1_y,
-                       int32_t region1_pixels,
-                       int32_t region2_x,
-                       int32_t region2_y,
-                       int32_t region2_pixels,
-                       int32_t region3_x,
-                       int32_t region3_y,
-                       int32_t region3_pixels) {
+void fuzzRegionMerging(
+    int32_t maxSeparation,
+    int32_t region1_x,
+    int32_t region1_y,
+    int32_t region1_pixels,
+    int32_t region2_x,
+    int32_t region2_y,
+    int32_t region2_pixels,
+    int32_t region3_x,
+    int32_t region3_y,
+    int32_t region3_pixels
+) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
     regions[0].numberOfPixels = region1_pixels;
@@ -173,16 +184,18 @@ void fuzzRegionMerging(int32_t maxSeparation,
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzRegionMerging)
-    .WithDomains(fuzztest::InRange(10, 1000),  // maxSeparation
-                 fuzztest::InRange(0, 1024),   // region1_x
-                 fuzztest::InRange(0, 768),    // region1_y
-                 fuzztest::InRange(0, 1000),   // region1_pixels
-                 fuzztest::InRange(0, 1024),   // region2_x
-                 fuzztest::InRange(0, 768),    // region2_y
-                 fuzztest::InRange(0, 1000),   // region2_pixels
-                 fuzztest::InRange(0, 1024),   // region3_x
-                 fuzztest::InRange(0, 768),    // region3_y
-                 fuzztest::InRange(0, 1000));  // region3_pixels
+    .WithDomains(
+        fuzztest::InRange(10, 1'000),  // maxSeparation
+        fuzztest::InRange(0, 1'024),   // region1_x
+        fuzztest::InRange(0, 768),     // region1_y
+        fuzztest::InRange(0, 1'000),   // region1_pixels
+        fuzztest::InRange(0, 1'024),   // region2_x
+        fuzztest::InRange(0, 768),     // region2_y
+        fuzztest::InRange(0, 1'000),   // region2_pixels
+        fuzztest::InRange(0, 1'024),   // region3_x
+        fuzztest::InRange(0, 768),     // region3_y
+        fuzztest::InRange(0, 1'000)
+    );  // region3_pixels
 
 /*! @brief Fuzz test for edge cases with extreme values
  *
@@ -211,14 +224,18 @@ void fuzzEdgeCases(int32_t maxSeparation, int32_t minDetectionSize) {
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzEdgeCases)
-    .WithDomains(fuzztest::OneOf(fuzztest::InRange(1, 10),      // Very small separation
-                                 fuzztest::InRange(100, 500),   // Normal separation
-                                 fuzztest::InRange(1000, 5000)  // Very large separation
-                                 ),
-                 fuzztest::OneOf(fuzztest::InRange(0, 5),    // Very small threshold
-                                 fuzztest::InRange(5, 50),   // Normal threshold
-                                 fuzztest::InRange(50, 500)  // Very large threshold
-                                 ));
+    .WithDomains(
+        fuzztest::OneOf(
+            fuzztest::InRange(1, 10),        // Very small separation
+            fuzztest::InRange(100, 500),     // Normal separation
+            fuzztest::InRange(1'000, 5'000)  // Very large separation
+        ),
+        fuzztest::OneOf(
+            fuzztest::InRange(0, 5),    // Very small threshold
+            fuzztest::InRange(5, 50),   // Normal threshold
+            fuzztest::InRange(50, 500)  // Very large threshold
+        )
+    );
 
 /*! @brief Fuzz test for full region array
  *
@@ -243,6 +260,8 @@ void fuzzFullRegionArray(int32_t maxSeparation, int32_t basePixelCount, int32_t 
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzFullRegionArray)
-    .WithDomains(fuzztest::InRange(10, 500),     // maxSeparation
-                 fuzztest::InRange(1, 100),      // basePixelCount
-                 fuzztest::InRange(100, 2048));  // positionSpread
+    .WithDomains(
+        fuzztest::InRange(10, 500),  // maxSeparation
+        fuzztest::InRange(1, 100),   // basePixelCount
+        fuzztest::InRange(100, 2'048)
+    );  // positionSpread
