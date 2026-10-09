@@ -11,7 +11,12 @@ from xmera.utilities import (macros, fswSetupThrusters, SimulationBaseClass)
 from .Support.thruster_force_mapping_test_oracle import ThrForceMappingTestOracle
 
 
-@pytest.mark.parametrize("useDVThruster", [True, False])
+@pytest.mark.parametrize("useDVThruster", [
+    pytest.param(True, marks=pytest.mark.skipif(
+        messaging.MAX_EFF_CNT < 6, reason="MAX_EFF_CNT is less than the 6 DV thrusters this case uses")),
+    pytest.param(False, marks=pytest.mark.skipif(
+        messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 RCS thrusters this case uses")),
+])
 @pytest.mark.parametrize(["useCOMOffset","dropThruster", "use2ndLoop"],[
                          (False, 0, False),
                          (False, 1, True),
