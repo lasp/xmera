@@ -24,6 +24,10 @@ from xmera.utilities import macros
 from xmera.utilities import fswSetupThrusters
 from xmera.architecture import messaging
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this test uses"
+)
+
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
 # Uncomment this line if this test has an expected failure, adjust message as needed.
