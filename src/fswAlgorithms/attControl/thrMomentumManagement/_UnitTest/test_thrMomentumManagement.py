@@ -26,6 +26,10 @@ from xmera.utilities import macros
 from xmera.utilities import fswSetupRW
 from xmera.architecture import messaging
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
