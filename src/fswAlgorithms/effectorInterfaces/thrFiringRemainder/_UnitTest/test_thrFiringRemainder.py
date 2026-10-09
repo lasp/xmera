@@ -13,6 +13,10 @@ from xmera.architecture import messaging
 
 import numpy as np
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this test uses"
+)
+
 @pytest.mark.parametrize("reset_check, dv_on", [
     (False,False),
     (True,False),
