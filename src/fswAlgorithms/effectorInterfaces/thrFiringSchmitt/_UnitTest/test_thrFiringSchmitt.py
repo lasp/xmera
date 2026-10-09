@@ -12,6 +12,10 @@ from xmera.utilities import fswSetupThrusters
 from xmera.utilities import macros
 from xmera.utilities import unitTestSupport
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this test uses"
+)
+
 
 @pytest.mark.parametrize("resetCheck, dvOn", [
     (False, False),
