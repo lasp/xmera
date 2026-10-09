@@ -17,6 +17,8 @@
 
 #include <Eigen/Dense>
 
+static_assert(SICP_POINT_DIM == 3, "SICP works only with 3D points. Set SICP_POINT_DIM to 3.");
+
 /*! @brief Scaling iterative Closest Point Algorithm */
 class ScalingIterativeClosestPoint : public SysModel {
 public:
