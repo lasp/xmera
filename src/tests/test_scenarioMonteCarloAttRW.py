@@ -22,6 +22,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples/')
 import scenarioMonteCarloAttRW
+from xmera.architecture import messaging
+
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 3, reason="RW_EFF_CNT is less than the 3 wheels this test uses"
+)
 
 
 # Run initial conditions and plot with matplotlib
