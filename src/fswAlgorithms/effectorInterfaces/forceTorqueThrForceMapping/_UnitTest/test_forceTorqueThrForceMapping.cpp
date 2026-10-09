@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <Eigen/Geometry>
 #include <Eigen/SVD>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -193,3 +194,32 @@ INSTANTIATE_TEST_SUITE_P(
     ),
     [](::testing::TestParamInfo<MappingCase> const &info) { return info.param.name; }
 );
+
+//! A zero force and torque request gives zero force on all thrusters.
+TEST(ForceTorqueThrForceMappingAlgorithm, zeroRequestGivesZeroForces) {
+    THRArrayCmdForceMsgPayload const out = runAlgorithm(
+        MappingCase{"zero", boxLocations, boxDirections, Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero()}
+    );
+
+    for (std::size_t i = 0; i < MAX_EFF_CNT; ++i) { EXPECT_NEAR(out.thrForce[i], 0.0, tolerance) << "thruster " << i; }
+}
+
+//! Reset rejects a thruster count that is larger than MAX_EFF_CNT.
+TEST(ForceTorqueThrForceMappingAlgorithm, resetRejectsThrusterCountAboveMaxEffCnt) {
+    ForceTorqueThrForceMappingAlgorithm algorithm{};
+    VehicleConfigMsgPayload vehConfig = makeVehicleConfig();
+    THRArrayConfigMsgPayload thrConfig{};
+    thrConfig.numThrusters = MAX_EFF_CNT + 1;
+
+    EXPECT_THROW(algorithm.reset(vehConfig, thrConfig), std::invalid_argument);
+}
+
+//! Reset rejects a thruster with a maximum thrust of zero or less.
+TEST(ForceTorqueThrForceMappingAlgorithm, resetRejectsNonPositiveMaxThrust) {
+    ForceTorqueThrForceMappingAlgorithm algorithm{};
+    VehicleConfigMsgPayload vehConfig = makeVehicleConfig();
+    THRArrayConfigMsgPayload thrConfig = makeThrusterConfig(boxLocations, boxDirections);
+    thrConfig.thrusters[2].maxThrust = 0.0;
+
+    EXPECT_THROW(algorithm.reset(vehConfig, thrConfig), std::invalid_argument);
+}
