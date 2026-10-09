@@ -116,19 +116,11 @@ def test_force_torque_thr_force_mapping(rcs_location, rcs_direction, requested_t
     cmd_force_in_msg_data.forceRequestBody = requested_force
     cmd_force_in_msg = messaging.CmdForceBodyMsg().write(cmd_force_in_msg_data)
 
-    num_thrusters = len(rcs_location)
     max_thrust = 3.0  # N
-    MAX_EFF_CNT = messaging.MAX_EFF_CNT
-    rcs_location_data = np.zeros((MAX_EFF_CNT, 3))
-    rcs_direction_data = np.zeros((MAX_EFF_CNT, 3))
-
-    rcs_location_data[0:len(rcs_location)] = rcs_location
-
-    rcs_direction_data[0:len(rcs_location)] = rcs_direction
 
     fswSetupThrusters.clearSetup()
-    for i in range(num_thrusters):
-        fswSetupThrusters.create(rcs_location_data[i], rcs_direction_data[i], max_thrust)
+    for location, direction in zip(rcs_location, rcs_direction):
+        fswSetupThrusters.create(location, direction, max_thrust)
     thr_config_in_msg = fswSetupThrusters.writeConfigMessage()
 
     CoM_B = np.array([0.1, 0.1, 0.1])
