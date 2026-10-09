@@ -24,6 +24,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
 import scenarioAttitudeFeedbackRW
+from xmera.architecture import messaging
+
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 3, reason="RW_EFF_CNT is less than the 3 wheels this test uses"
+)
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
