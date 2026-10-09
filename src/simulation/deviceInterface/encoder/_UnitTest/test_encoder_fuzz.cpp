@@ -6,6 +6,7 @@
 #include <fuzztest/fuzztest.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -17,7 +18,7 @@
 namespace {
     using encodertest::EncoderHarness;
 
-    constexpr std::size_t maxFuzzWheels = 4;
+    constexpr std::size_t maxFuzzWheels = std::min<std::size_t>(4, RW_EFF_CNT);
     constexpr std::size_t maxFuzzSteps = 50;
     constexpr double maxWheelSpeed = 1000.0;             // [rad/s]
     constexpr uint64_t minTimeStep = 1'000'000ULL;       // [ns] 1 ms
