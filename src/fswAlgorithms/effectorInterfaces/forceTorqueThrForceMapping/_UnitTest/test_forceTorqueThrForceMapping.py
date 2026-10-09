@@ -16,7 +16,10 @@ from xmera.utilities import SimulationBaseClass
 from xmera.utilities import fswSetupThrusters
 from xmera.utilities import macros
 
-pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
+pytestmark = [
+    pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform"),
+    pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the number of thrusters"),
+]
 
 TASK_NAME = "unitTask"
 TASK_RATE = macros.sec2nano(0.5)

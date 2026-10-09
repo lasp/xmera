@@ -198,6 +198,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 //! A zero force and torque request gives zero force on all thrusters.
 TEST(ForceTorqueThrForceMappingAlgorithm, zeroRequestGivesZeroForces) {
+    if (boxLocations.size() > MAX_EFF_CNT) { GTEST_SKIP() << "MAX_EFF_CNT is less than the number of thrusters"; }
     THRArrayCmdForceMsgPayload const out = runAlgorithm(
         MappingCase{"zero", boxLocations, boxDirections, Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero()}
     );
@@ -217,6 +218,7 @@ TEST(ForceTorqueThrForceMappingAlgorithm, resetRejectsThrusterCountAboveMaxEffCn
 
 //! Reset rejects a thruster with a maximum thrust of zero or less.
 TEST(ForceTorqueThrForceMappingAlgorithm, resetRejectsNonPositiveMaxThrust) {
+    if (boxLocations.size() > MAX_EFF_CNT) { GTEST_SKIP() << "MAX_EFF_CNT is less than the number of thrusters"; }
     ForceTorqueThrForceMappingAlgorithm algorithm{};
     VehicleConfigMsgPayload vehConfig = makeVehicleConfig();
     THRArrayConfigMsgPayload thrConfig = makeThrusterConfig(boxLocations, boxDirections);
@@ -237,6 +239,7 @@ TEST(ForceTorqueThrForceMapping, resetRejectsUnlinkedThrusterConfig) {
 
 //! Reset rejects a module whose vehicle configuration message is not connected.
 TEST(ForceTorqueThrForceMapping, resetRejectsUnlinkedVehicleConfig) {
+    if (boxLocations.size() > MAX_EFF_CNT) { GTEST_SKIP() << "MAX_EFF_CNT is less than the number of thrusters"; }
     ForceTorqueThrForceMapping module;
     Message<THRArrayConfigMsgPayload> thrConfigMsg;
     thrConfigMsg.write(makeThrusterConfig(boxLocations, boxDirections), 0, 0);
@@ -248,6 +251,7 @@ TEST(ForceTorqueThrForceMapping, resetRejectsUnlinkedVehicleConfig) {
 //! The module uses zero torque when the torque message is not connected. The output is the same as
 //! for a connected torque message with zero torque.
 TEST(ForceTorqueThrForceMapping, unlinkedTorqueMessageGivesZeroTorque) {
+    if (boxLocations.size() > MAX_EFF_CNT) { GTEST_SKIP() << "MAX_EFF_CNT is less than the number of thrusters"; }
     Message<VehicleConfigMsgPayload> vehConfigMsg;
     vehConfigMsg.write(makeVehicleConfig(), 0, 0);
     Message<THRArrayConfigMsgPayload> thrConfigMsg;

@@ -14,6 +14,7 @@ from xmera.utilities import macros
 from xmera.utilities import unitTestSupport
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
+@pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the number of thrusters")
 def test_forceTorqueThrForceMapping1():
     r"""
     **Test Description**
@@ -57,6 +58,7 @@ def test_forceTorqueThrForceMapping1():
     assert testResults < 1, testMessage
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
+@pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the number of thrusters")
 def test_forceTorqueThrForceMapping2():
     r"""
     **Test Description**
@@ -100,6 +102,7 @@ def test_forceTorqueThrForceMapping2():
     assert testResults < 1, testMessage
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
+@pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the number of thrusters")
 def test_forceTorqueThrForceMapping3():
     r"""
     **Test Description**
