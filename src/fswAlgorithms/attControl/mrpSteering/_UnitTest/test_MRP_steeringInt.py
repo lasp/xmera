@@ -12,6 +12,10 @@ from xmera.utilities import RigidBodyKinematics
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1.0, 0])
 @pytest.mark.parametrize("omega_max", [1.5 * macros.D2R, 0.001])
