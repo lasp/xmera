@@ -64,13 +64,13 @@ def run(show_plots):
         myCreationFunction = scenario.scenario_OpNav
 
         monteCarlo = Controller()
-        monteCarlo.setShouldDisperseSeeds(True)
-        monteCarlo.setExecutionFunction(myExecutionFunction)
-        monteCarlo.setSimulationFunction(myCreationFunction)
-        monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
-        monteCarlo.setThreadCount(PROCESSES)
-        monteCarlo.setVerbose(True)
-        monteCarlo.setArchiveDir(dirName)
+        monteCarlo.set_should_disperse_seeds(True)
+        monteCarlo.set_execution_function(myExecutionFunction)
+        monteCarlo.set_simulation_function(myCreationFunction)
+        monteCarlo.set_execution_count(NUMBER_OF_RUNS)
+        monteCarlo.set_num_worker_processes(PROCESSES)
+        monteCarlo.log_level = "DEBUG"
+        monteCarlo.archive_dir = dirName
 
         # Add some dispersions
         dispDict = {}
@@ -91,27 +91,27 @@ def run(show_plots):
         dispCR = 'get_DynModel().cameraMod.cosmicRays'
         dispBlur = 'get_DynModel().cameraMod.blurParam'
 
-        monteCarlo.addDispersion(OrbitalElementDispersion(disp1Name,disp2Name, dispDict))
-        monteCarlo.addDispersion(MRPDispersionPerAxis(disp3Name, bounds=[[1./3-0.051, 1./3+0.051], [1./3-0.051, 1./3+0.051], [-1./3-0.051, -1./3+0.051]]))
-        monteCarlo.addDispersion(UniformDispersion(dispGauss, [0,5]))
-        monteCarlo.addDispersion(UniformDispersion(dispSP, [0,2.5]))
-        monteCarlo.addDispersion(UniformDispersion(dispCR, [0.5,4]))
-        monteCarlo.addDispersion(UniformDispersion(dispBlur, [1,6]))
+        monteCarlo.add_dispersion(OrbitalElementDispersion(disp1Name, disp2Name, dispDict))
+        monteCarlo.add_dispersion(MRPDispersionPerAxis(disp3Name, bounds=[[1. / 3 - 0.051, 1. / 3 + 0.051], [1. / 3 - 0.051, 1. / 3 + 0.051], [-1. / 3 - 0.051, -1. / 3 + 0.051]]))
+        monteCarlo.add_dispersion(UniformDispersion(dispGauss, [0, 5]))
+        monteCarlo.add_dispersion(UniformDispersion(dispSP, [0, 2.5]))
+        monteCarlo.add_dispersion(UniformDispersion(dispCR, [0.5, 4]))
+        monteCarlo.add_dispersion(UniformDispersion(dispBlur, [1, 6]))
 
         # Add retention policy
         retentionPolicy = RetentionPolicy()
-        retentionPolicy.addMessageLog(retainedMessageName1, [var1, var2])
-        retentionPolicy.addMessageLog(retainedMessageName2, [var3])
-        monteCarlo.addRetentionPolicy(retentionPolicy)
+        retentionPolicy.add_message_log(retainedMessageName1, [var1, var2])
+        retentionPolicy.add_message_log(retainedMessageName2, [var3])
+        monteCarlo.add_retention_policy(retentionPolicy)
 
-        failures = monteCarlo.executeSimulations()
+        failures = monteCarlo.execute_simulations()
         assert len(failures) == 0, "No runs should fail"
 
     if POST:
         monteCarlo = Controller.load(dirName)
         for i in range(0,NUMBER_OF_RUNS):
             try:
-                monteCarloData = monteCarlo.getRetainedData(i)
+                monteCarloData = monteCarlo.get_retained_data(i)
             except FileNotFoundError:
                 print("File not found, ",  i)
                 continue
@@ -165,7 +165,7 @@ def run(show_plots):
         csvfile.close()
 
     if show_plots:
-        monteCarlo.executeCallbacks()
+        monteCarlo.execute_callbacks()
         plt.show()
 
     return
