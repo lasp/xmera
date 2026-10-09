@@ -16,6 +16,7 @@ import os
 import sys
 
 import pytest
+from xmera.architecture import messaging
 from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -29,22 +30,35 @@ sys.path.append(path + '/../../examples/BskSim/scenarios')
 # @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
 
+# BSK_Dynamics has 8 attitude control thrusters, 6 DV thrusters, 4 wheels and 8 sun sensors.
+# BSK_FormationDynamics has 4 wheels on each spacecraft.
+needs_bsk_dynamics = [
+    pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters BSK_Dynamics uses"),
+    pytest.mark.skipif(messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels BSK_Dynamics uses"),
+    pytest.mark.skipif(messaging.MAX_NUM_CSS_SENSORS < 8,
+                       reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors BSK_Dynamics uses"),
+]
+needs_formation_dynamics = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels BSK_FormationDynamics uses"
+)
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("bskSimCase", [
-                                        'scenario_BasicOrbit'
-                                        , 'scenario_AttEclipse'
-                                        , 'scenario_AttGuidance'
-                                        , 'scenario_AttGuidHyperbolic'
-                                        , 'scenario_AttSteering'
-                                        , 'scenario_FeedbackRW'
-                                        , 'scenario_AttModes'
-                                        , 'scenario_BasicOrbitFormation'
-                                        , 'scenario_RelativePointingFormation'
-                                        , 'scenario_AddRWFault'
-                                        , 'scenario_LambertGuidance'
-                                        , 'scenario_ClosedLoopManeuver'
-                                        ])
+    pytest.param('scenario_BasicOrbit', marks=needs_bsk_dynamics),
+    pytest.param('scenario_AttEclipse', marks=needs_bsk_dynamics),
+    pytest.param('scenario_AttGuidance', marks=needs_bsk_dynamics),
+    pytest.param('scenario_AttGuidHyperbolic', marks=needs_bsk_dynamics),
+    pytest.param('scenario_AttSteering', marks=needs_bsk_dynamics),
+    pytest.param('scenario_FeedbackRW', marks=needs_bsk_dynamics),
+    pytest.param('scenario_AttModes', marks=needs_bsk_dynamics),
+    pytest.param('scenario_BasicOrbitFormation', marks=needs_formation_dynamics),
+    pytest.param('scenario_RelativePointingFormation', marks=needs_formation_dynamics),
+    pytest.param('scenario_AddRWFault', marks=needs_bsk_dynamics),
+    pytest.param('scenario_LambertGuidance', marks=needs_bsk_dynamics),
+    pytest.param('scenario_ClosedLoopManeuver', marks=needs_bsk_dynamics),
+])
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, bskSimCase):
 
