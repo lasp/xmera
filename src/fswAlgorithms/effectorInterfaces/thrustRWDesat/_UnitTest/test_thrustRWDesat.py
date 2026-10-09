@@ -9,6 +9,12 @@ Module Name:        thrustRWDesat
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import thrustRWDesat
 from xmera.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
+import pytest
+
+pytestmark = [
+    pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this test uses"),
+    pytest.mark.skipif(messaging.RW_EFF_CNT < 3, reason="RW_EFF_CNT is less than the 3 wheels this test uses"),
+]
 
 
 def test_thrustRWDesat():

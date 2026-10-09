@@ -209,6 +209,8 @@ def test_step2_rank1_only():
 
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
+@pytest.mark.skipif(messaging.MAX_NUMBER_REGIONS < 2,
+                    reason="MAX_NUMBER_REGIONS is less than the 2 regions this test uses")
 def test_step2_rank1_and_rank2():
     """Two real objects; both appear in regionsIdentifiedOutMsg with correct
     center coordinates.
@@ -261,6 +263,8 @@ def test_step2_rank1_and_rank2():
 
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
+@pytest.mark.skipif(messaging.MAX_NUMBER_REGIONS < 3,
+                    reason="MAX_NUMBER_REGIONS is less than the 3 regions this test uses")
 def test_step2_rank2_by_count():
     """Three objects sorted by pixel count; all three fit in MAX_NUMBER_REGIONS=3
     and appear in regionsIdentifiedOutMsg in the correct order.

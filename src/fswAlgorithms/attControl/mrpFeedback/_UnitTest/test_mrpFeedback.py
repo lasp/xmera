@@ -10,6 +10,10 @@ from xmera.fswAlgorithms import mrpFeedback
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 @pytest.mark.parametrize("int_gain", [0.01, -1])
 @pytest.mark.parametrize("rw_num", [4, 0])
 @pytest.mark.parametrize("integral_limit", [0, 20])

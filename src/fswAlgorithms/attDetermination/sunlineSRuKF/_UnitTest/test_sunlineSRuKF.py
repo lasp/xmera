@@ -10,6 +10,10 @@ from xmera.fswAlgorithms import sunlineSRuKF
 from xmera.utilities import SimulationBaseClass, macros
 from xmera.utilities import RigidBodyKinematics as rbk
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_NUM_CSS_SENSORS < 8, reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this test uses"
+)
+
 
 def add_time_column(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))

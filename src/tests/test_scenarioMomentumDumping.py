@@ -24,6 +24,12 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
 import scenarioMomentumDumping
+from xmera.architecture import messaging
+
+pytestmark = [
+    pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this test uses"),
+    pytest.mark.skipif(messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"),
+]
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

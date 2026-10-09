@@ -55,6 +55,9 @@ def test_all_functions_ekf(show_plots):
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
+@pytest.mark.skipif(
+    messaging.MAX_NUM_CSS_SENSORS < 8, reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this test uses"
+)
 @pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
     (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
     (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),

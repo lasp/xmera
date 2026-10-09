@@ -24,6 +24,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
 import scenarioAttitudeSteering
+from xmera.architecture import messaging
+
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 3, reason="RW_EFF_CNT is less than the 3 wheels this test uses"
+)
 
 
 

@@ -11,6 +11,10 @@ from xmera.utilities import SimulationBaseClass, macros
 
 import SunLineSuKF_test_utilities as FilterPlots
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_NUM_CSS_SENSORS < 8, reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this test uses"
+)
+
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))

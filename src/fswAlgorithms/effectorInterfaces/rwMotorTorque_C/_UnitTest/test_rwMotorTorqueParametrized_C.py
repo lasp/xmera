@@ -30,7 +30,12 @@ from Support import results_rwMotorTorque_C
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numControlAxes", [0, 1, 2, 3])
-@pytest.mark.parametrize("numWheels", [2, 4, messaging.RW_EFF_CNT])
+@pytest.mark.parametrize("numWheels", [
+    2,
+    pytest.param(4, marks=pytest.mark.skipif(
+        messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this case uses")),
+    messaging.RW_EFF_CNT,
+])
 @pytest.mark.parametrize("numInputCmdTorques", [1, 2])
 @pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
 
@@ -149,7 +154,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
             0.0, 1.0, 0.0,
             0.0, 0.0, 1.0,
             0.5773502691896258, 0.5773502691896258, 0.5773502691896258
-        ]
+        ][:numWheels * 3]
         rwConfigParams.JsList = [0.1]*numWheels
 
     rwConfigParams.numRW = numWheels

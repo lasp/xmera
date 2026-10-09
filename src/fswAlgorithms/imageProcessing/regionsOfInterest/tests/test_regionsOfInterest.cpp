@@ -220,6 +220,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, SingleRegion) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, MultipleRegionsSelectsLargest) {
+    if (MAX_NUMBER_REGIONS < 3) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 3 regions this test uses"; }
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(900, 900);
@@ -248,6 +249,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, MultipleRegionsSelectsLargest) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, CloseRegionsMerges) {
+    if (MAX_NUMBER_REGIONS < 2) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 2 regions this test uses"; }
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
@@ -275,6 +277,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, CloseRegionsMerges) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, ThreeRegionsTwoCloseMerges) {
+    if (MAX_NUMBER_REGIONS < 3) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 3 regions this test uses"; }
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
@@ -305,6 +308,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ThreeRegionsTwoCloseMerges) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, FiltersRegionsBelowThreshold) {
+    if (MAX_NUMBER_REGIONS < 2) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 2 regions this test uses"; }
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
@@ -330,6 +334,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, FiltersRegionsBelowThreshold) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, ExludeRegionsBelowThreshold) {
+    if (MAX_NUMBER_REGIONS < 3) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 3 regions this test uses"; }
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
@@ -362,6 +367,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ExludeRegionsBelowThreshold) {
 // ============================================================================
 
 TEST_F(RegionsOfInterestAlgorithmTest, WindowingFiltersOutsideRegions) {
+    if (MAX_NUMBER_REGIONS < 2) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 2 regions this test uses"; }
     // Set up a window
     Eigen::Vector2i windowCenter(512, 384);
     algorithm.setWindowCenter(windowCenter);
@@ -388,6 +394,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, WindowingFiltersOutsideRegions) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, WindowingAllRegionsOutsideReturnsEmpty) {
+    if (MAX_NUMBER_REGIONS < 2) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 2 regions this test uses"; }
     // Set up a window
     Eigen::Vector2i windowCenter(512, 384);
     algorithm.setWindowCenter(windowCenter);
@@ -416,6 +423,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, WindowingAllRegionsOutsideReturnsEmpty) {
 // ============================================================================
 
 TEST_F(RegionsOfInterestAlgorithmTest, RegionsOrderedByPixelCount) {
+    if (MAX_NUMBER_REGIONS < 3) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 3 regions this test uses"; }
     // Verify that regions are processed in descending order of pixel count
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
@@ -505,6 +513,7 @@ TEST(RegionsOfInterestTest, SingleBrightTarget) {
 }
 
 TEST(RegionsOfInterestTest, MultipleTargetsSelectBrightest) {
+    if (MAX_NUMBER_REGIONS < 3) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 3 regions this test uses"; }
     // Multiple targets, should select the brightest
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
@@ -529,6 +538,7 @@ TEST(RegionsOfInterestTest, MultipleTargetsSelectBrightest) {
 }
 
 TEST(RegionsOfInterestTest, SplitDetectionMerges) {
+    if (MAX_NUMBER_REGIONS < 2) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 2 regions this test uses"; }
     // Object split into two detections due to saturation
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
@@ -553,6 +563,7 @@ TEST(RegionsOfInterestTest, SplitDetectionMerges) {
 }
 
 TEST(RegionsOfInterestTest, WindowedDetectionFiltersSurroundings) {
+    if (MAX_NUMBER_REGIONS < 2) { GTEST_SKIP() << "MAX_NUMBER_REGIONS is less than the 2 regions this test uses"; }
     // Use windowing to focus on a specific region of the sky
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 

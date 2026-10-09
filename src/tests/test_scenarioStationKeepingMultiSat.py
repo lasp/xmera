@@ -21,6 +21,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples/MultiSatBskSim/scenariosMultiSat')
 import scenario_StationKeepingMultiSat
+from xmera.architecture import messaging
+
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
