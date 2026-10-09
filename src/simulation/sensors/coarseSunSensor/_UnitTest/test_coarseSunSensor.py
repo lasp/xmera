@@ -46,7 +46,9 @@ path = os.path.dirname(os.path.abspath(__file__))
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 10.0, 1e-10, "sunDistance", 4, 3.),
         (False, 0.5, 3 * np.pi / 8., 0.15, 2.0, 0.5, 0.0, 0.5, 2.0, 0.0, 10., 1e-10, "cleanCombined", -3, 5.),
         (False, 0.5, 3 * np.pi / 8., 0.15, 2.0, 0.5, 0.125, 0.5, 2.0, -10., 10., 3e-2, "combined", -6, 1.),
-        (True, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "constellation", 0, 1.)
+        pytest.param(True, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "constellation", 0, 1.,
+                     marks=pytest.mark.skipif(messaging.MAX_NUM_CSS_SENSORS < 4,
+                                              reason="MAX_NUM_CSS_SENSORS is less than the 4 sensors this case uses"))
     ])
 # provide a unique test method name, starting with test_
 def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd,
