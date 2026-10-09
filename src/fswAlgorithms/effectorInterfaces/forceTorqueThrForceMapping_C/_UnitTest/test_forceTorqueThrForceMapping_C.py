@@ -217,19 +217,11 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
     cmdForceInMsgData.forceRequestBody = requested_force
     cmdForceInMsg = messaging.CmdForceBodyMsg().write(cmdForceInMsgData)
 
-    numThrusters = len(rcsLocation)
     maxThrust = 3.0  # N
-    MAX_EFF_CNT = messaging.MAX_EFF_CNT
-    rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
-    rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
-
-    rcsLocationData[0:len(rcsLocation)] = rcsLocation
-
-    rcsDirectionData[0:len(rcsLocation)] = rcsDirection
 
     fswSetupThrusters.clearSetup()
-    for i in range(numThrusters):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
+    for location, direction in zip(rcsLocation, rcsDirection):
+        fswSetupThrusters.create(location, direction, maxThrust)
     thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
 
     vehConfigInMsgData = messaging.VehicleConfigMsgPayload()
