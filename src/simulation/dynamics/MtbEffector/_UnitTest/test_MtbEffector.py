@@ -19,6 +19,10 @@ from xmera.utilities import macros
 from xmera.utilities import spice_utilities
 from xmera.utilities import unitTestSupport
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 3, reason="MAX_EFF_CNT is less than the 3 torque bars this test uses"
+)
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -152,7 +156,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
         0., 1., 0.,
         0., 0., 1.
     ]
-    mtbConfigParams.maxMtbDipoles = [maxDipole]*4
+    mtbConfigParams.maxMtbDipoles = [maxDipole] * mtbConfigParams.numMTB
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
 
 
