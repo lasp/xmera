@@ -13,3 +13,5 @@ target_sources("${module}" PRIVATE
 target_link_libraries("${module}" PRIVATE
   Eigen3::Eigen
 )
+
+add_subdirectory(_UnitTest)
