@@ -41,7 +41,7 @@ void fuzzRegionIdentification(
     }
 
     // Set up second region if numRegions >= 2
-    if (numRegions >= 2) {
+    if (numRegions >= 2 && MAX_NUMBER_REGIONS >= 2) {
         regions[1].numberOfPixels = region2_pixels;
         regions[1].centerOfBrightness << region2_x, region2_y;
         regions[1].regionCenter << region2_x, region2_y;
@@ -146,6 +146,7 @@ void fuzzRegionMerging(
     int32_t region3_y,
     int32_t region3_pixels
 ) {
+    if constexpr (MAX_NUMBER_REGIONS < 3) { return; }
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
     regions[0].numberOfPixels = region1_pixels;
@@ -202,6 +203,7 @@ FUZZ_TEST(RegionsOfInterestFuzz, fuzzRegionMerging)
  *  Tests the algorithm's robustness with boundary conditions.
  */
 void fuzzEdgeCases(int32_t maxSeparation, int32_t minDetectionSize) {
+    if constexpr (MAX_NUMBER_REGIONS < 2) { return; }
     RegionsOfInterestAlgorithm algorithm;
 
     // Test with extreme parameter values
