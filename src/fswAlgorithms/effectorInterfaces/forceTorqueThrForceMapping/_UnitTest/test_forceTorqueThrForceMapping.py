@@ -7,7 +7,6 @@ import sys
 
 import numpy as np
 import pytest
-from datetime import datetime
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import forceTorqueThrForceMapping
 from xmera.utilities import SimulationBaseClass
@@ -58,20 +57,19 @@ rcs_direction_data_2 = [[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, 0.0, 1.0]]
 
-# Use today's date as the seed for the random number generator. This ensures that several pytest threads receive the
-# same randomized parameter inputs, while testing different randomized values over time. That number is rounded to the
-# closest day based on the hour such that threads started close to midnight still result in the same seed number.
-date_string = datetime.now().strftime("%Y%m%d")
-date_number = float(date_string)
-date_rounded = int(round(date_number + datetime.now().hour/24))
-np.random.seed(date_rounded)
+rcs_location_data_3 = [[0.5, -0.3, 1.2],
+                       [-0.7, 0.4, 0.9],
+                       [1.1, 0.2, -0.6],
+                       [-0.2, -1.0, 0.3],
+                       [0.8, 0.9, -1.1],
+                       [-1.2, 0.6, -0.4]]
 
-num_thr_rand = np.random.randint(1, messaging.MAX_EFF_CNT)
-rcs_location_data_rand = np.round(np.random.randn(num_thr_rand, 3), 3).tolist()
-randomized_directions = np.round(np.random.randn(num_thr_rand, 3), 3)
-rcs_direction_data_rand = (randomized_directions / np.linalg.norm(randomized_directions, axis=1)[:, None]).tolist()
-torque_rand = np.random.rand(3)
-force_rand = np.random.rand(3)
+rcs_direction_data_3 = [[0.6, 0.8, 0.0],
+                        [0.0, 0.6, -0.8],
+                        [-0.8, 0.0, 0.6],
+                        [0.48, 0.6, 0.64],
+                        [-0.6, -0.48, 0.64],
+                        [0.64, -0.6, -0.48]]
 
 r"""
 Test 1: Ensures that the forceTorqueThrForce module can compute a valid solution for cases where there is a direction
@@ -82,6 +80,8 @@ Test 3: Ensures that the forceTorqueThrForce module can compute a valid solution
         input message, but a requested non-zero force.
 Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where Thrusters point in
         each direction.
+Test 5: Ensures that the forceTorqueThrForce module can compute a valid solution for thrusters with general locations
+        and directions.
 """
 
 @pytest.mark.parametrize("rcs_location, rcs_direction, requested_torque, requested_force, torque_in_msg_flag",
@@ -89,7 +89,7 @@ Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution
                           (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], True),
                           (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], False),
                           (rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.], True),
-                          (rcs_location_data_rand, rcs_direction_data_rand, torque_rand, force_rand, True)])
+                          (rcs_location_data_3, rcs_direction_data_3, [0.3, -0.2, 0.5], [0.4, 0.7, -0.1], True)])
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 def test_force_torque_thr_force_mapping(rcs_location, rcs_direction, requested_torque, requested_force,
