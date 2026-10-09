@@ -2,6 +2,9 @@
 # Copyright (c) 2021, Autonomous Vehicle System Lab, University of Colorado at Boulder
 # Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
+# Interface test for the forceTorqueThrForceMapping module. The C++ gtest in this directory
+# examines the numerical solution and the reset checks. This file shows how to connect the
+# module in a simulation and shows its behavior.
 
 import sys
 
@@ -13,175 +16,112 @@ from xmera.utilities import SimulationBaseClass
 from xmera.utilities import fswSetupThrusters
 from xmera.utilities import macros
 
-rcs_location_data_1 = [[-0.86360, -0.82550, 1.79070],
-                       [-0.82550, -0.86360, 1.79070],
-                       [0.82550, 0.86360, 1.79070],
-                       [0.86360, 0.82550, 1.79070],
-                       [-0.86360, -0.82550, -1.79070],
-                       [-0.82550, -0.86360, -1.79070],
-                       [0.82550, 0.86360, -1.79070],
-                       [0.86360, 0.82550, -1.79070]]
+pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 
-rcs_location_data_2 = [[-1, -1, 1],
-                       [-1, -1, 1],
-                       [-1, -1, 1],
-                       [1, 1, 1],
-                       [1, 1, 1],
-                       [1, 1, 1],
-                       [1, 1, -1],
-                       [1, 1, -1],
-                       [1, 1, -1],
-                       [-1, -1, -1],
-                       [-1, -1, -1],
-                       [-1, -1, -1]]
+TASK_NAME = "unitTask"
+TASK_RATE = macros.sec2nano(0.5)
+COM_B = np.array([0.1, 0.1, 0.1])
 
-rcs_direction_data_1 = [[1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0]]
+# Eight thrusters at the corners of a box. No thruster points along z.
+RCS_LOCATIONS = np.array([[-0.86360, -0.82550, 1.79070],
+                          [-0.82550, -0.86360, 1.79070],
+                          [0.82550, 0.86360, 1.79070],
+                          [0.86360, 0.82550, 1.79070],
+                          [-0.86360, -0.82550, -1.79070],
+                          [-0.82550, -0.86360, -1.79070],
+                          [0.82550, 0.86360, -1.79070],
+                          [0.86360, 0.82550, -1.79070]])
+RCS_DIRECTIONS = np.array([[1.0, 0.0, 0.0],
+                           [0.0, 1.0, 0.0],
+                           [0.0, -1.0, 0.0],
+                           [-1.0, 0.0, 0.0],
+                           [1.0, 0.0, 0.0],
+                           [0.0, 1.0, 0.0],
+                           [0.0, -1.0, 0.0],
+                           [-1.0, 0.0, 0.0]])
+NUM_THRUSTERS = len(RCS_LOCATIONS)
 
-rcs_direction_data_2 = [[1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, 0.0, -1.0],
-                        [0.0, 0.0, -1.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [0.0, 0.0, 1.0],
-                        [1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, 0.0, 1.0]]
 
-rcs_location_data_3 = [[0.5, -0.3, 1.2],
-                       [-0.7, 0.4, 0.9],
-                       [1.1, 0.2, -0.6],
-                       [-0.2, -1.0, 0.3],
-                       [0.8, 0.9, -1.1],
-                       [-1.2, 0.6, -0.4]]
+def setup_sim(force_request):
+    """Make a simulation with the module and a force command. The torque message is not connected.
 
-rcs_direction_data_3 = [[0.6, 0.8, 0.0],
-                        [0.0, 0.6, -0.8],
-                        [-0.8, 0.0, 0.6],
-                        [0.48, 0.6, 0.64],
-                        [-0.6, -0.48, 0.64],
-                        [0.64, -0.6, -0.48]]
+    Returns (sim, module, force_msg, recorder, config_msgs). Keep config_msgs alive while the
+    simulation runs.
+    """
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("TestProcess")
+    process.addTask(sim.CreateNewTask(TASK_NAME, TASK_RATE))
 
-r"""
-Test 1: Ensures that the forceTorqueThrForce module can compute a valid solution for cases where there is a direction
-        where no thrusters point - ensures matrix invertibility is handled.
-Test 2: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is zero
-        requested torque in a connected input message, but a requested non-zero force.
-Test 3: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is no torque
-        input message, but a requested non-zero force.
-Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where Thrusters point in
-        each direction.
-Test 5: Ensures that the forceTorqueThrForce module can compute a valid solution for thrusters with general locations
-        and directions.
-"""
-
-@pytest.mark.parametrize("rcs_location, rcs_direction, requested_torque, requested_force, torque_in_msg_flag",
-                         [(rcs_location_data_1, rcs_direction_data_1, [0.4, 0.2, 0.4], [0.9, 1.1, 0.], True),
-                          (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], True),
-                          (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], False),
-                          pytest.param(rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.],
-                                       True,
-                                       marks=pytest.mark.skipif(
-                                           messaging.MAX_EFF_CNT < len(rcs_location_data_2),
-                                           reason="MAX_EFF_CNT is less than the number of thrusters")),
-                          (rcs_location_data_3, rcs_direction_data_3, [0.3, -0.2, 0.5], [0.4, 0.7, -0.1], True)])
-
-@pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_force_torque_thr_force_mapping(rcs_location, rcs_direction, requested_torque, requested_force,
-                                        torque_in_msg_flag):
-    unit_task_name = "unitTask"
-    unit_process_name = "TestProcess"
-
-    unit_test_sim = SimulationBaseClass.SimBaseClass()
-    test_process_rate = macros.sec2nano(0.5)
-    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
-
-    # setup module to be tested
     module = forceTorqueThrForceMapping.ForceTorqueThrForceMapping()
-    module.modelTag = "forceTorqueThrForceMappingTag"
-    unit_test_sim.AddModelToTask(unit_task_name, module)
-
-    # Configure blank module input messages
-    cmd_torque_in_msg_data = messaging.CmdTorqueBodyMsgPayload()
-    cmd_torque_in_msg_data.torqueRequestBody = requested_torque
-    cmd_torque_in_msg = messaging.CmdTorqueBodyMsg().write(cmd_torque_in_msg_data)
-
-    cmd_force_in_msg_data = messaging.CmdForceBodyMsgPayload()
-    cmd_force_in_msg_data.forceRequestBody = requested_force
-    cmd_force_in_msg = messaging.CmdForceBodyMsg().write(cmd_force_in_msg_data)
-
-    max_thrust = 3.0  # N
+    module.modelTag = "forceTorqueThrForceMapping"
+    sim.AddModelToTask(TASK_NAME, module)
 
     fswSetupThrusters.clearSetup()
-    for location, direction in zip(rcs_location, rcs_direction):
-        fswSetupThrusters.create(location, direction, max_thrust)
-    thr_config_in_msg = fswSetupThrusters.writeConfigMessage()
+    for location, direction in zip(RCS_LOCATIONS, RCS_DIRECTIONS):
+        fswSetupThrusters.create(location, direction, 3.0)
+    thr_config_msg = fswSetupThrusters.writeConfigMessage()
 
-    CoM_B = np.array([0.1, 0.1, 0.1])
+    veh_config = messaging.VehicleConfigMsgPayload()
+    veh_config.CoM_B = COM_B
+    veh_config_msg = messaging.VehicleConfigMsg().write(veh_config)
 
-    veh_config_in_msg_data = messaging.VehicleConfigMsgPayload()
-    veh_config_in_msg_data.CoM_B = CoM_B
-    veh_config_in_msg = messaging.VehicleConfigMsg().write(veh_config_in_msg_data)
+    force_cmd = messaging.CmdForceBodyMsgPayload()
+    force_cmd.forceRequestBody = force_request
+    force_msg = messaging.CmdForceBodyMsg().write(force_cmd)
 
-    # subscribe input messages to module
-    if torque_in_msg_flag:
-        module.cmdTorqueInMsg.subscribeTo(cmd_torque_in_msg)
-    module.cmdForceInMsg.subscribeTo(cmd_force_in_msg)
-    module.thrConfigInMsg.subscribeTo(thr_config_in_msg)
-    module.vehConfigInMsg.subscribeTo(veh_config_in_msg)
+    module.thrConfigInMsg.subscribeTo(thr_config_msg)
+    module.vehConfigInMsg.subscribeTo(veh_config_msg)
+    module.cmdForceInMsg.subscribeTo(force_msg)
 
-    unit_test_sim.InitializeSimulation()
-    unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))
-    unit_test_sim.ExecuteSimulation()
+    recorder = module.thrForceCmdOutMsg.recorder()
+    sim.AddModelToTask(TASK_NAME, recorder)
 
-    truth = compute_thrust_mapping_truth(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B)
-
-    accuracy = 1e-12
-    np.testing.assert_allclose(np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]).flatten(), truth,
-                               atol=accuracy, rtol=0, verbose=True)
+    return sim, module, force_msg, recorder, (thr_config_msg, veh_config_msg)
 
 
-def compute_thrust_mapping_truth(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B):
-    F = np.array([requested_torque, requested_force]).flatten()
+def body_force_and_torque(thr_force):
+    """Return the total body force and the torque about the center of mass from the thruster forces."""
+    force_vectors = thr_force[:, None] * RCS_DIRECTIONS
+    torque = np.cross(RCS_LOCATIONS - COM_B, force_vectors).sum(axis=0)
+    return force_vectors.sum(axis=0), torque
 
-    r_thr_B = np.array(rcs_location)
-    r_M_B = np.array(CoM_B)
-    r_thrM_B = r_thr_B - r_M_B
-    gt_thr_B = np.array(rcs_direction)
 
-    tau_B = np.cross(r_thrM_B, gt_thr_B, axis=1)
+def test_thrusters_produce_requested_force():
+    """The thruster forces together give the requested force and no torque."""
+    force_request = [1.0, 0.0, 0.0]
+    sim, module, _, _, _ = setup_sim(force_request)
 
-    DG = np.vstack([tau_B.T, gt_thr_B.T])
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(0)
+    sim.ExecuteSimulation()
 
-    DG_nonzero = []
-    F_nonzero = []
-    for i in range(6):
-        if np.any(abs(DG[i]) > 1e-7):
-            DG_nonzero.append(DG[i].tolist())
-            F_nonzero.append(F[i].tolist())
+    thr_force = np.array(module.thrForceCmdOutMsg.read().thrForce[:NUM_THRUSTERS])
+    force, torque = body_force_and_torque(thr_force)
 
-    DG_nonzero = np.array(DG_nonzero)
-    F_nonzero = np.array(F_nonzero)
+    assert np.all(thr_force >= 0.0)
+    np.testing.assert_allclose(force, force_request, atol=1e-12)
+    np.testing.assert_allclose(torque, np.zeros(3), atol=1e-12)
 
-    thr_force = np.linalg.pinv(DG_nonzero) @ F_nonzero
-    thr_force -= np.min(thr_force)
 
-    return thr_force
+def test_output_follows_force_command():
+    """The module reads the force command on each step. Two times the force gives two times the thruster forces."""
+    sim, _, force_msg, recorder, _ = setup_sim([1.0, 0.0, 0.0])
+
+    sim.InitializeSimulation()
+    sim.ConfigureStopTime(TASK_RATE)
+    sim.ExecuteSimulation()
+
+    force_cmd = messaging.CmdForceBodyMsgPayload()
+    force_cmd.forceRequestBody = [2.0, 0.0, 0.0]
+    force_msg.write(force_cmd)
+    sim.ConfigureStopTime(2 * TASK_RATE)
+    sim.ExecuteSimulation()
+
+    thr_force = recorder.thrForce[:, :NUM_THRUSTERS]
+    np.testing.assert_allclose(thr_force[1], thr_force[0], atol=1e-12)
+    np.testing.assert_allclose(thr_force[2], 2.0 * thr_force[0], atol=1e-12)
 
 
 if __name__ == "__main__":
-    test_force_torque_thr_force_mapping(rcs_location_data_1,
-                                        rcs_direction_data_1,
-                                        [0.4, 0.2, 0.4],
-                                        [0.9, 1.1, 0.],
-                                        True)
+    test_thrusters_produce_requested_force()
+    test_output_follows_force_command()
