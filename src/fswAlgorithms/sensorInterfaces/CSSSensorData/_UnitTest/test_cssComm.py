@@ -21,8 +21,12 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 @pytest.mark.parametrize("numSensors, sensorData", [
-    (4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6]),  # Five data inputs used despite four sensors to ensure all reset conditions are tested.
-    pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6]), # Zero sensor number to ensure all reset conditions are tested
+    pytest.param(4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6],  # Five data inputs used despite four sensors to ensure all reset conditions are tested.
+                 marks=pytest.mark.skipif(messaging.MAX_NUM_CSS_SENSORS < 5,
+                                          reason="MAX_NUM_CSS_SENSORS is less than the 5 values this case uses")),
+    pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6],  # Zero sensor number to ensure all reset conditions are tested
+                 marks=pytest.mark.skipif(messaging.MAX_NUM_CSS_SENSORS < 4,
+                                          reason="MAX_NUM_CSS_SENSORS is less than the 4 values this case uses")),
     pytest.param(messaging.MAX_NUM_CSS_SENSORS+1, [200e-6]*messaging.MAX_NUM_CSS_SENSORS)  # Indicate more sensor devices than is allowed.  The output should be clipped to the allowed length
 ])
 
