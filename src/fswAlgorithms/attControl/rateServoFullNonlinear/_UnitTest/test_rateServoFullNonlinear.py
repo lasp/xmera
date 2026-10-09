@@ -10,6 +10,10 @@ from xmera.fswAlgorithms import rateServoFullNonlinear  # import the module that
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 @pytest.mark.parametrize("rw_num", [4, 0])
 @pytest.mark.parametrize("int_gain", [0.01, -1])
 @pytest.mark.parametrize("omegap_BastR_B", [[1.87766650e-04, -3.91233583e-05, 3.56369489e-05], [0, 0, 0]])
