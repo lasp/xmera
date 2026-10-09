@@ -12,6 +12,6 @@
 
 %include "thrFiringSchmitt.h"
 
-%include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>

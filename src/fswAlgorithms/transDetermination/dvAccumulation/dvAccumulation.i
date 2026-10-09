@@ -12,5 +12,5 @@
 %include "dvAccumulation.h"
 
 %include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-%include <architecture/msgPayloadDef/AccDataMsgPayload.h>
-%include <architecture/msgPayloadDef/AccPktDataMsgPayload.h>
+%import <architecture/msgPayloadDef/AccDataMsgPayload.h>
+%import <architecture/msgPayloadDef/AccPktDataMsgPayload.h>

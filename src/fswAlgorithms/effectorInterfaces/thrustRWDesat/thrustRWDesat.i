@@ -13,7 +13,7 @@
 %include "thrustRWDesat.h"
 
 %include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-%include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
-%include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
+%import <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>

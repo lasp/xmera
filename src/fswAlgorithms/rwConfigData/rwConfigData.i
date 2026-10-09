@@ -13,4 +13,4 @@
 %include "rwConfigData.h"
 
 %include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
-%include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
+%import <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
