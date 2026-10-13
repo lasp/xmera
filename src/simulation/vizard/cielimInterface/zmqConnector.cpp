@@ -17,17 +17,15 @@ void ZmqConnector::connect() {
 }
 
 bool ZmqConnector::isConnected() const {
-    if (this->requesterSocket) {
-        return (this->requesterSocket->handle() != nullptr);
-    }
+    if (this->requesterSocket) { return (this->requesterSocket->handle() != nullptr); }
     return false;
 }
 
-void ZmqConnector::send(const cielimMessage::CielimMessage& message) {
+void ZmqConnector::send(cielimMessage::CielimMessage const &message) {
     /*! - send protobuffer raw over zmq_socket */
     size_t byteCount = message.ByteSizeLong();
     void* serialized_message = malloc(byteCount);
-    message.SerializeToArray(serialized_message, (int)byteCount);
+    message.SerializeToArray(serialized_message, (int) byteCount);
     auto payload = zmq::message_t(serialized_message, byteCount, ZmqConnector::message_buffer_deallocate, nullptr);
 
     this->requesterSocket->send(zmq::message_t("SIM_UPDATE", 10), zmq::send_flags::sndmore);
@@ -41,15 +39,21 @@ void ZmqConnector::send(const cielimMessage::CielimMessage& message) {
     static_cast<void>(this->requesterSocket->recv(pong, zmq::recv_flags::none));
 }
 
-void ZmqConnector::message_buffer_deallocate(void* data, void* hint) { free(data); }
+void ZmqConnector::message_buffer_deallocate(void* data, void* hint) {
+    free(data);
+}
 
 ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage, bool shouldReturnDiagnostics) {
     this->requesterSocket->send(zmq::message_t("REQUEST_IMAGE", 13), zmq::send_flags::sndmore);
     this->requesterSocket->send(zmq::message_t(std::to_string(cameraId)), zmq::send_flags::sndmore);
-    this->requesterSocket->send(zmq::message_t(std::to_string(shouldReturnImage).c_str(), sizeof(char)),
-                                zmq::send_flags::sndmore);
-    this->requesterSocket->send(zmq::message_t(std::to_string(shouldReturnDiagnostics).c_str(), sizeof(char)),
-                                zmq::send_flags::none);
+    this->requesterSocket->send(
+        zmq::message_t(std::to_string(shouldReturnImage).c_str(), sizeof(char)),
+        zmq::send_flags::sndmore
+    );
+    this->requesterSocket->send(
+        zmq::message_t(std::to_string(shouldReturnDiagnostics).c_str(), sizeof(char)),
+        zmq::send_flags::none
+    );
 
     // SAFETY: it's okay to discard these [[nodiscard]] values because
     //   1) the returned optional could only be empty if ZeroMQ fails due to EAGAIN on a non-blocking socket;
@@ -62,8 +66,8 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage, bo
     static_cast<void>(this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none));
     static_cast<void>(this->requesterSocket->recv(diagnosticsMessage, zmq::recv_flags::none));
 
-    const int32_t* lengthPoint = imageLengthMessage.data<int32_t>();
-    const void* imagePoint = imageMessage.data();
+    int32_t const* lengthPoint = imageLengthMessage.data<int32_t>();
+    void const* imagePoint = imageMessage.data();
     int32_t imageBufferLength = *lengthPoint;
     void* image = malloc(imageBufferLength * sizeof(char));
     memcpy(image, imagePoint, imageBufferLength * sizeof(char));
@@ -103,4 +107,6 @@ void ZmqConnector::init() {
     static_cast<void>(this->requesterSocket->recv(message, zmq::recv_flags::none));
 }
 
-void ZmqConnector::setComPortNumber(std::string& portNumber) { this->comPortNumber = portNumber; }
+void ZmqConnector::setComPortNumber(std::string &portNumber) {
+    this->comPortNumber = portNumber;
+}

@@ -7,6 +7,7 @@
 
 #include "cielimMessage.pb.h"
 #include "imageDiagnostics.pb.h"
+
 #include <Eigen/Core>
 #include <string>
 #include <zmq.hpp>
@@ -20,19 +21,19 @@ struct ImageData {
 };
 
 class ZmqConnector {
-   public:
+public:
     ZmqConnector();
     ~ZmqConnector() = default;
 
     void connect();
     [[nodiscard]] bool isConnected() const;
-    void send(const cielimMessage::CielimMessage& messagePayload);
+    void send(cielimMessage::CielimMessage const &messagePayload);
     ImageData requestImage(size_t cameraId, bool shoudReturnImage = true, bool shouldReturnDiagnostics = true);
-    void setComPortNumber(std::string& portNumber);
+    void setComPortNumber(std::string &portNumber);
     void ping();
     void init();
 
-   private:
+private:
     std::shared_ptr<zmq::context_t> context;
     std::unique_ptr<zmq::socket_t> requesterSocket;
     std::string comProtocol = "tcp";

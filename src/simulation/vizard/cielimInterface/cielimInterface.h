@@ -5,25 +5,25 @@
 #ifndef CIELIM_INTERFACE_H
 #define CIELIM_INTERFACE_H
 
+#include "cielimMessage.pb.h"
+#include "zmqConnector.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraRenderingMsgPayload.h>
 #include <architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h>
-#include <architecture/msgPayloadDef/ImageDiagnosticsPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
+#include <architecture/msgPayloadDef/ImageDiagnosticsPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
 #include <architecture/utilities/rigidBodyKinematics.hpp>
-#include "cielimMessage.pb.h"
-#include "zmqConnector.h"
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/util/delimited_message_util.h>
 #include <zmq.h>
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -32,14 +32,14 @@
 enum class ClosedLoopMode { OPEN_LOOP = 0, ALL_FRAMES = 1, REQUESTED_FRAMES = 2 };
 
 class MessageStatus {
-   public:
+public:
     uint64_t lastTimeTag = UINT64_MAX;  //!< [ns] The previous read time-tag for msg
-    bool dataFresh = false;                     //!< [-] Flag indicating that new data has been read
+    bool dataFresh = false;             //!< [-] Flag indicating that new data has been read
 };
 
 /*! Structure defining vizard gravity body values */
 class SpiceBody {
-   public:
+public:
     std::string name{};                                                           //!< [-] celestial body name
     ReadFunctor<SpicePlanetStateMsgPayload> spiceStateMessage{};                  //!< [-] celestial body name
     SpicePlanetStateMsgPayload spiceStatePayload{};                               //!< [-] celestial body name
@@ -51,7 +51,7 @@ class SpiceBody {
 /*!  @brief The interface to Cielim via ZMQ and protobuffers
  */
 class CielimInterface : public SysModel {
-   public:
+public:
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
     void readBskMessages();
@@ -60,12 +60,12 @@ class CielimInterface : public SysModel {
     void setOpNavMode(ClosedLoopMode mode);
     ClosedLoopMode getOpNavMode() const;
     int64_t getFrameNumber() const;
-    void setSaveFile(const std::string& pathAndFilename);
+    void setSaveFile(std::string const &pathAndFilename);
     std::string getSaveFilename() const;
     void closeProtobufFile();
     void setLiveStream(bool liveStreaming);
     void setPortNumber(std::string port);
-    void addCelestialBody(const SpiceBody& celestialBodiesList);
+    void addCelestialBody(SpiceBody const &celestialBodiesList);
     std::vector<SpiceBody> getCelestialBodies() const;
 
     ReadFunctor<SCStatesMsgPayload> spacecraftMessage;              //!< [-] vector of spacecraft data containers
@@ -78,7 +78,7 @@ class CielimInterface : public SysModel {
     Message<OpNavCOBMsgPayload> centerOfBrightnessOutMessage;  //!< The true image center of brightness output message
     Message<ImageDiagnosticsPayload> imageDiagnosticsOutMessage;  //!< Image diagnostics received
 
-   private:
+private:
     void requestImage(uint64_t currentSimNanos);  //!<   request image and store it in output image message
     bool shouldRequestACameraImage(uint64_t currentSimNanos) const;
 
