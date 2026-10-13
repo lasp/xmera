@@ -217,3 +217,11 @@ TEST(VizInterfaceReset, throwsForBodyNameTooLong) {
 
     EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
 }
+
+//! Reset throws when a spacecraft state message is not linked.
+TEST(VizInterfaceReset, throwsForUnlinkedSpacecraftState) {
+    VizHarness harness;
+    harness.viz.scData.emplace_back();
+
+    EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
+}
