@@ -9,6 +9,9 @@ void ZmqConnector::connect() {
     if (!this->isConnected()) {
         this->context = std::make_shared<zmq::context_t>();
         this->requesterSocket = std::make_unique<zmq::socket_t>(*this->context, ZMQ_REQ);
+        // Do not wait for unsent messages when the socket closes. Thus the destructor does not
+        // block when the renderer is not available.
+        this->requesterSocket->set(zmq::sockopt::linger, 0);
         std::cout << this->comAddress << ":" << this->comPortNumber << std::endl;
         this->requesterSocket->connect(this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber);
     }
