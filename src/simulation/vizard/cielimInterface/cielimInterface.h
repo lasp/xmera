@@ -52,6 +52,13 @@ public:
  */
 class CielimInterface : public SysModel {
 public:
+    CielimInterface() = default;
+    ~CielimInterface() override;
+    CielimInterface(CielimInterface const &) = delete;
+    CielimInterface &operator=(CielimInterface const &) = delete;
+    CielimInterface(CielimInterface &&) = delete;
+    CielimInterface &operator=(CielimInterface &&) = delete;
+
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
     void readBskMessages();
@@ -82,10 +89,9 @@ private:
     void requestImage(uint64_t currentSimNanos);  //!<   request image and store it in output image message
     bool shouldRequestACameraImage(uint64_t currentSimNanos) const;
 
-    bool saveFile{false};    //!< [Bool] Set True if Vizard should save a file of the data.
-    bool liveStream{false};  //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
-    void* imagePointer;      /*!< [RUN] permanent pointers for the images to be used
-                                  without relying on ZMQ because ZMQ will free it (whenever, who knows) */
+    bool saveFile{false};          //!< [Bool] Set True if Vizard should save a file of the data.
+    bool liveStream{false};        //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
+    void* imagePointer = nullptr;  //!< latest image, freed on the next image, on reset and at destruction
     ZmqConnector connector{};
     ClosedLoopMode opNavMode{ClosedLoopMode::ALL_FRAMES}; /*!< [int] Set if Unity/Viz couple in direct communication. */
     int64_t frameNumber{-1};  //!< Number of frames that have been updated for TimeStamp message

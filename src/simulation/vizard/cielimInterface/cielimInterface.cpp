@@ -4,12 +4,19 @@
 
 #include "cielimInterface.h"
 
+/*! Free the latest image.
+ */
+CielimInterface::~CielimInterface() {
+    free(this->imagePointer);
+}
+
 /*! Reset module time-tags, message freshness, and zmq connector
  @param currentSimNanos The current sim time in nanoseconds
 */
 void CielimInterface::reset(uint64_t currentSimNanos) {
+    free(this->imagePointer);
+    this->imagePointer = nullptr;
     if (this->opNavMode != ClosedLoopMode::OPEN_LOOP || this->liveStream) {
-        this->imagePointer = nullptr;
         if (!this->connector.isConnected()) { this->connector.connect(); }
     }
 
@@ -456,7 +463,8 @@ bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const 
  * */
 void CielimInterface::requestImage(uint64_t currentSimNanos) {
     auto imageData = this->connector.requestImage(this->cameraModelPayload.cameraId);
-    this->imagePointer = &imageData.imageBuffer;
+    free(this->imagePointer);
+    this->imagePointer = imageData.imageBuffer;
 
     CameraImageMsgPayload imagePayload = {};
     imagePayload.timeTag = currentSimNanos;
