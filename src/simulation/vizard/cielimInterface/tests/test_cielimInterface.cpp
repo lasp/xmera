@@ -170,3 +170,14 @@ TEST(CielimInterfaceFile, unlinkedBodyHasIdentityAttitude) {
     std::vector<double> const identity{1, 0, 0, 0, 1, 0, 0, 0, 1};
     EXPECT_EQ(std::vector<double>(attitude.begin(), attitude.end()), identity);
 }
+
+//! Reset throws when a body name does not fit in the spice message name.
+TEST(CielimInterfaceReset, throwsForBodyNameTooLong) {
+    CielimHarness harness;
+    harness.cielim.setOpNavMode(ClosedLoopMode::OPEN_LOOP);
+    SpiceBody body;
+    body.name = std::string(MAX_BODY_NAME_LENGTH, 'x');
+    harness.cielim.addCelestialBody(body);
+
+    EXPECT_THROW(harness.cielim.reset(0), std::invalid_argument);
+}
