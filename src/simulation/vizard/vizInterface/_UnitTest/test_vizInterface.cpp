@@ -153,3 +153,19 @@ TEST(VizInterfaceFile, opNavModeTwoWritesCompleteFrames) {
     EXPECT_EQ(frames[2].currenttime().framenumber(), 3);
     EXPECT_EQ(frames[2].cameras_size(), 1);
 }
+
+//! A second reset closes the first connection and makes the PING handshake again.
+TEST(VizInterfaceLiveStream, resetAgainReconnects) {
+    FakeVizard vizard;
+    VizHarness harness;
+    harness.viz.liveStream = true;
+    harness.viz.comPortNumber = vizard.getPort();
+    harness.addSpacecraft({"sat", 0, 0, 0});
+
+    harness.run(2);
+    harness.run(2);
+    std::vector<Request> const& requests = vizard.stop();
+
+    std::vector<std::string> const expected{"PING", "PING", "SIM_UPDATE", "PING", "PING", "SIM_UPDATE"};
+    EXPECT_EQ(commands(requests), expected);
+}
