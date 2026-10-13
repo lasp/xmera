@@ -169,3 +169,24 @@ TEST(VizInterfaceLiveStream, resetAgainReconnects) {
     std::vector<std::string> const expected{"PING", "PING", "SIM_UPDATE", "PING", "PING", "SIM_UPDATE"};
     EXPECT_EQ(commands(requests), expected);
 }
+
+//! When the length frame claims more bytes than the image frame has, the image message is not valid.
+TEST(VizInterfaceOpNav, rejectsImageLengthLargerThanFrame) {
+    FakeVizard vizard;
+    vizard.setImage("SHORT");
+    vizard.setImageLengthOverride(1'000'000);
+    VizHarness harness;
+    harness.viz.opNavMode = 2;
+    harness.viz.comPortNumber = vizard.getPort();
+    harness.addSpacecraft({"sat", 0, 0, 0});
+    harness.addCamera(1, oneSecond);
+    ReadFunctor<CameraImageMsgPayload> imageReader = harness.viz.opnavImageOutMsgs[0]->addSubscriber();
+
+    harness.run(2);
+    vizard.stop();
+
+    CameraImageMsgPayload const image = imageReader();
+    EXPECT_EQ(image.valid, 0);
+    EXPECT_EQ(image.imageBufferLength, 0);
+    EXPECT_EQ(image.imagePointer, nullptr);
+}
