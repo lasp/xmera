@@ -428,8 +428,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         this->connector.send(visPayload);
 
         /*! - If the camera is requesting periodic images, request them */
-        if (this->opNavMode != ClosedLoopMode::OPEN_LOOP && currentSimNanos % this->cameraModelPayload.renderRate == 0
-            && this->cameraModelPayload.renderRate > 0) {
+        if (this->opNavMode != ClosedLoopMode::OPEN_LOOP && this->shouldRequestACameraImage(currentSimNanos)) {
             this->requestImage(currentSimNanos);
         }
         if (this->shouldRequestACameraImage(currentSimNanos)) { this->connector.ping(); }
@@ -452,10 +451,7 @@ void CielimInterface::updateState(uint64_t currentSimNanos) {
  @param currentSimNanos The current sim time
  * */
 bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const {
-    if (currentSimNanos % this->cameraModelPayload.renderRate == 0 && this->cameraModelPayload.renderRate > 0) {
-        return true;
-    }
-    return false;
+    return this->cameraModelPayload.renderRate > 0 && currentSimNanos % this->cameraModelPayload.renderRate == 0;
 }
 
 /*! Issue an image request
