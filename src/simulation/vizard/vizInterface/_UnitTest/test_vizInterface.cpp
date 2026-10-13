@@ -208,3 +208,12 @@ TEST(VizInterfaceOpNav, zeroRenderRateRequestsNoImage) {
     std::vector<std::string> const expected{"PING", "PING", "SIM_UPDATE"};
     EXPECT_EQ(commands(requests), expected);
 }
+
+//! Reset throws when a body name does not fit in the spice message name.
+TEST(VizInterfaceReset, throwsForBodyNameTooLong) {
+    VizHarness harness;
+    harness.addSpacecraft({"sat", 0, 0, 0});
+    harness.addPlanet(std::string(MAX_BODY_NAME_LENGTH, 'x'), false);
+
+    EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
+}
