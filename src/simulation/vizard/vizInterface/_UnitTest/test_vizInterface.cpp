@@ -75,3 +75,21 @@ TEST(VizInterfaceOpNav, modeTwoRequestsImageThenPings) {
     ASSERT_EQ(image.imageBufferLength, 6);
     EXPECT_EQ(std::string(static_cast<char const*>(image.imagePointer), 6), "PIXELS");
 }
+
+//! In opNav mode 1, each step sends SIM_UPDATE, then REQUEST_IMAGE_<id> when an image is due.
+//! This mode does not send PING after the image.
+TEST(VizInterfaceOpNav, modeOneRequestsImageWithoutPing) {
+    FakeVizard vizard;
+    VizHarness harness;
+    harness.viz.opNavMode = 1;
+    harness.viz.comPortNumber = vizard.getPort();
+    harness.addSpacecraft({"sat", 0, 0, 0});
+    harness.addCamera(3, oneSecond);
+
+    harness.run(3);
+    std::vector<Request> const& requests = vizard.stop();
+
+    std::vector<std::string> const expected{
+        "PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_3", "SIM_UPDATE", "REQUEST_IMAGE_3"};
+    EXPECT_EQ(commands(requests), expected);
+}
