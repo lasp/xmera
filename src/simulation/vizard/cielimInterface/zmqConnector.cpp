@@ -66,11 +66,20 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage, bo
     static_cast<void>(this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none));
     static_cast<void>(this->requesterSocket->recv(diagnosticsMessage, zmq::recv_flags::none));
 
-    int32_t const* lengthPoint = imageLengthMessage.data<int32_t>();
-    void const* imagePoint = imageMessage.data();
-    int32_t imageBufferLength = *lengthPoint;
-    void* image = malloc(imageBufferLength * sizeof(char));
-    memcpy(image, imagePoint, imageBufferLength * sizeof(char));
+    // The length must be in the length frame and must not be larger than the image frame.
+    // Otherwise the image is empty, and the caller writes an image message that is not valid.
+    int32_t imageBufferLength = 0;
+    if (imageLengthMessage.size() >= sizeof(int32_t)) {
+        memcpy(&imageBufferLength, imageLengthMessage.data(), sizeof(int32_t));
+    }
+    if (imageBufferLength < 0 || static_cast<size_t>(imageBufferLength) > imageMessage.size()) {
+        imageBufferLength = 0;
+    }
+    void* image = nullptr;
+    if (imageBufferLength > 0) {
+        image = malloc(imageBufferLength * sizeof(char));
+        memcpy(image, imageMessage.data(), imageBufferLength * sizeof(char));
+    }
 
     auto returnData = ImageData();
     returnData.imageBuffer = image;
