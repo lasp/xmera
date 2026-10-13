@@ -1054,7 +1054,8 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
     }
 
     {
-        google::protobuf::uint8 varIntBuffer[4];
+        constexpr size_t maxVarint32Bytes = 5;  // a 32-bit varint uses 7 bits in each byte
+        google::protobuf::uint8 varIntBuffer[maxVarint32Bytes];
         uint32_t byteCount = (uint32_t) message->ByteSizeLong();
         google::protobuf::uint8* end =
             google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
