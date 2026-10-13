@@ -142,16 +142,15 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             MsgCurrStatus thrStatus;
             thrStatus.dataFresh = false;
             thrStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
-            int thrCounter = 0;
-
-            for (thrCounter = 0; thrCounter < (int) scIt->thrInMsgs.size(); thrCounter++) {
-                if (scIt->thrInMsgs.at(thrCounter).isLinked()) {
-                    scIt->thrMsgStatus.push_back(thrStatus);
-                    THROutputMsgPayload logMsg;
-                    scIt->thrOutputMessage.push_back(logMsg);
-                } else {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%d) msg requested but not found.", thrCounter);
+            scIt->thrMsgStatus.clear();
+            scIt->thrOutputMessage.clear();
+            for (size_t idx = 0; idx < scIt->thrInMsgs.size(); idx++) {
+                if (!scIt->thrInMsgs.at(idx).isLinked()) {
+                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%zu) msg requested but not found.", idx);
                 }
+                scIt->thrMsgStatus.push_back(thrStatus);
+                THROutputMsgPayload logMsg = {};
+                scIt->thrOutputMessage.push_back(logMsg);
             }
             if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
                 bskLogger.bskLog(
