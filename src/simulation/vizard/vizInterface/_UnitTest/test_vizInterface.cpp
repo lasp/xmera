@@ -225,3 +225,22 @@ TEST(VizInterfaceReset, throwsForUnlinkedSpacecraftState) {
 
     EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
 }
+
+//! Reset throws when a RW, CSS or thruster message of a spacecraft is not linked.
+TEST(VizInterfaceReset, throwsForUnlinkedDeviceMessage) {
+    VizHarness rwHarness;
+    rwHarness.addSpacecraft({"sat", 1, 0, 0});
+    rwHarness.viz.scData[0].rwInMsgs.emplace_back();
+    EXPECT_THROW(rwHarness.viz.reset(0), std::invalid_argument);
+
+    VizHarness cssHarness;
+    cssHarness.addSpacecraft({"sat", 0, 0, 1});
+    cssHarness.viz.scData[0].cssInMsgs.emplace_back();
+    EXPECT_THROW(cssHarness.viz.reset(0), std::invalid_argument);
+
+    VizHarness thrHarness;
+    thrHarness.addSpacecraft({"sat", 0, 1, 0});
+    thrHarness.viz.scData[0].thrInMsgs.emplace_back();
+    thrHarness.viz.scData[0].thrInfo.emplace_back();
+    EXPECT_THROW(thrHarness.viz.reset(0), std::invalid_argument);
+}
