@@ -10,7 +10,9 @@ using viztest::commands;
 using viztest::FakeVizard;
 using viztest::oneSecond;
 using viztest::parseFrame;
+using viztest::readFrames;
 using viztest::Request;
+using viztest::TempFile;
 using viztest::VizHarness;
 
 //! In live stream mode, reset sends two PING requests. Each later step sends one SIM_UPDATE
@@ -92,4 +94,39 @@ TEST(VizInterfaceOpNav, modeOneRequestsImageWithoutPing) {
     std::vector<std::string> const expected{
         "PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_3", "SIM_UPDATE", "REQUEST_IMAGE_3"};
     EXPECT_EQ(commands(requests), expected);
+}
+
+//! In file mode, each step after time zero adds one length-delimited frame to the file.
+//! The first frame has the settings and the epoch. Each frame has the current input states.
+TEST(VizInterfaceFile, writesOneDelimitedFramePerStep) {
+    TempFile file("vizFrames");
+    {
+        VizHarness harness;
+        harness.viz.saveFile = true;
+        harness.viz.protoFilename = file.string();
+        harness.addSpacecraft({"sat", 1, 1, 1});
+        harness.addPlanet("earth", true);
+        harness.addPlanet("moon", false);
+        harness.run(3);
+    }
+
+    auto const frames = readFrames(file.string());
+
+    ASSERT_EQ(frames.size(), 2u);
+    EXPECT_EQ(frames[0].currenttime().framenumber(), 1);
+    EXPECT_EQ(frames[1].currenttime().framenumber(), 2);
+    EXPECT_DOUBLE_EQ(frames[1].currenttime().simtimeelapsed(), 2.0 * oneSecond);
+    EXPECT_TRUE(frames[0].has_settings());
+    EXPECT_FALSE(frames[1].has_settings());
+    ASSERT_EQ(frames[1].spacecraft_size(), 1);
+    auto const& sat = frames[1].spacecraft(0);
+    EXPECT_EQ(sat.spacecraftname(), "sat");
+    EXPECT_DOUBLE_EQ(sat.position(0), 7.0e6);
+    EXPECT_DOUBLE_EQ(sat.rotation(2), 0.2);
+    ASSERT_EQ(sat.reactionwheels_size(), 1);
+    EXPECT_DOUBLE_EQ(sat.reactionwheels(0).wheelspeed(), 200.0);
+    ASSERT_EQ(frames[1].celestialbodies_size(), 2);
+    EXPECT_EQ(frames[1].celestialbodies(1).bodyname(), "moon");
+    EXPECT_DOUBLE_EQ(frames[1].celestialbodies(1).rotation(0), 1.0);
+    EXPECT_DOUBLE_EQ(frames[1].celestialbodies(1).position(0), 0.0);
 }

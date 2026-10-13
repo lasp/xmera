@@ -7,10 +7,19 @@
 #include "fakeVizard.hpp"
 #include "vizInterface.h"
 
+#include <gtest/gtest.h>
+
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/util/delimited_message_util.h>
+
 #include <cstdint>
 #include <deque>
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
+
+#include <unistd.h>
 
 namespace viztest {
 
@@ -142,6 +151,37 @@ namespace viztest {
         vizProtobufferMessage::VizMessage frame;
         frame.ParseFromString(bytes);
         return frame;
+    }
+
+    //! A file path in the gtest temporary directory. The destructor removes the file.
+    class TempFile {
+       public:
+        explicit TempFile(std::string const& name)
+            : path(std::filesystem::path(::testing::TempDir()) / (name + "_" + std::to_string(::getpid()) + ".bin")) {}
+        ~TempFile() { std::filesystem::remove(this->path); }
+        TempFile(TempFile const&) = delete;
+        TempFile& operator=(TempFile const&) = delete;
+        TempFile(TempFile&&) = delete;
+        TempFile& operator=(TempFile&&) = delete;
+
+        [[nodiscard]] std::string string() const { return this->path.string(); }
+
+       private:
+        std::filesystem::path path;
+    };
+
+    //! Read all length-delimited frames of a saved Vizard file.
+    inline std::vector<vizProtobufferMessage::VizMessage> readFrames(std::string const& path) {
+        std::ifstream input(path, std::ios::binary);
+        google::protobuf::io::IstreamInputStream stream(&input);
+        std::vector<vizProtobufferMessage::VizMessage> frames;
+        while (true) {
+            vizProtobufferMessage::VizMessage frame;
+            bool cleanEof = false;
+            if (!google::protobuf::util::ParseDelimitedFromZeroCopyStream(&frame, &stream, &cleanEof)) { break; }
+            frames.push_back(frame);
+        }
+        return frames;
     }
 
 }  // namespace viztest
