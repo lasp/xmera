@@ -6,7 +6,9 @@
 
 #include <gtest/gtest.h>
 
+using viztest::commands;
 using viztest::FakeVizard;
+using viztest::oneSecond;
 using viztest::parseFrame;
 using viztest::Request;
 using viztest::VizHarness;
@@ -46,4 +48,30 @@ TEST(VizInterfaceLiveStream, sendsHandshakeThenOneUpdatePerStep) {
     EXPECT_EQ(second.spacecraft(0).thrusters_size(), 2);
     EXPECT_EQ(second.spacecraft(0).css_size(), 1);
     EXPECT_EQ(second.celestialbodies_size(), 1);
+}
+
+//! In opNav mode 2, each step with an image sends SIM_UPDATE, then REQUEST_IMAGE_<id>, then PING.
+//! The image goes to the image output message of the camera.
+TEST(VizInterfaceOpNav, modeTwoRequestsImageThenPings) {
+    FakeVizard vizard;
+    vizard.setImage("PIXELS");
+    VizHarness harness;
+    harness.viz.opNavMode = 2;
+    harness.viz.comPortNumber = vizard.getPort();
+    harness.addSpacecraft({"sat", 0, 0, 0});
+    harness.addCamera(1, oneSecond);
+    ReadFunctor<CameraImageMsgPayload> imageReader = harness.viz.opnavImageOutMsgs[0]->addSubscriber();
+
+    harness.run(3);
+    std::vector<Request> const& requests = vizard.stop();
+
+    std::vector<std::string> const expected{
+        "PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_1", "PING", "SIM_UPDATE", "REQUEST_IMAGE_1", "PING"};
+    EXPECT_EQ(commands(requests), expected);
+    CameraImageMsgPayload const image = imageReader();
+    EXPECT_EQ(image.valid, 1);
+    EXPECT_EQ(image.cameraID, 1);
+    EXPECT_EQ(image.timeTag, 2 * oneSecond);
+    ASSERT_EQ(image.imageBufferLength, 6);
+    EXPECT_EQ(std::string(static_cast<char const*>(image.imagePointer), 6), "PIXELS");
 }

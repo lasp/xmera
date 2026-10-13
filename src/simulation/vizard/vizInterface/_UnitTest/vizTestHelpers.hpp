@@ -4,11 +4,13 @@
 #ifndef VIZ_INTERFACE_TEST_HELPERS_HPP
 #define VIZ_INTERFACE_TEST_HELPERS_HPP
 
+#include "fakeVizard.hpp"
 #include "vizInterface.h"
 
 #include <cstdint>
 #include <deque>
 #include <string>
+#include <vector>
 
 namespace viztest {
 
@@ -55,6 +57,20 @@ namespace viztest {
             ReadFunctor<SpicePlanetStateMsgPayload> reader;
             if (linked) { reader = this->spiceMsgs.emplace_back().addSubscriber(); }
             this->viz.spiceInMsgs.push_back(reader);
+        }
+
+        //! Add an instrument camera that takes one image each renderRate nanoseconds.
+        void addCamera(int64_t cameraID, uint64_t renderRate) {
+            CameraConfigMsgPayload config = {};
+            config.cameraID = cameraID;
+            config.isOn = 1;
+            config.renderRate = renderRate;
+            config.fieldOfView = 0.5;
+            config.resolution[0] = 512;
+            config.resolution[1] = 512;
+            Message<CameraConfigMsgPayload>& msg = this->cameraMsgs.emplace_back();
+            msg.write(config, 0, 0);
+            this->viz.addCamMsgToModule(&msg);
         }
 
         //! Write every input message at time t, then update the module.
@@ -111,7 +127,15 @@ namespace viztest {
         std::deque<Message<THROutputMsgPayload>> thrMsgs;
         std::deque<Message<CSSConfigLogMsgPayload>> cssMsgs;
         std::deque<Message<SpicePlanetStateMsgPayload>> spiceMsgs;
+        std::deque<Message<CameraConfigMsgPayload>> cameraMsgs;
     };
+
+    //! Return the first frame of each request, in order.
+    inline std::vector<std::string> commands(std::vector<Request> const& requests) {
+        std::vector<std::string> names;
+        for (auto const& request : requests) { names.push_back(request.front()); }
+        return names;
+    }
 
     //! Parse the payload frame of a SIM_UPDATE request.
     inline vizProtobufferMessage::VizMessage parseFrame(std::string const& bytes) {
