@@ -1085,6 +1085,7 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
             zmq_msg_recv(&receive_buffer, requester_socket, 0);
+            zmq_msg_close(&receive_buffer);
 
             /*! - send protobuffer raw over zmq_socket */
             void* serialized_message = malloc(byteCount);
