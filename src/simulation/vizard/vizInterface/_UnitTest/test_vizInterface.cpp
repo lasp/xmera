@@ -244,3 +244,12 @@ TEST(VizInterfaceReset, throwsForUnlinkedDeviceMessage) {
     thrHarness.viz.scData[0].thrInfo.emplace_back();
     EXPECT_THROW(thrHarness.viz.reset(0), std::invalid_argument);
 }
+
+//! Reset throws when a spacecraft has a different number of thrInfo entries and thruster messages.
+TEST(VizInterfaceReset, throwsForThrusterInfoSizeMismatch) {
+    VizHarness harness;
+    harness.addSpacecraft({"sat", 0, 2, 0});
+    harness.viz.scData[0].thrInfo.pop_back();
+
+    EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
+}
