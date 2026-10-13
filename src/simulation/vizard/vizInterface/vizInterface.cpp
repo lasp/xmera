@@ -1129,8 +1129,6 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         /*!  Write protobuffer to file */
         if (!this->saveFile || !message->SerializeToOstream(this->outputStream)) { return; }
     }
-
-    google::protobuf::ShutdownProtobufLibrary();
 }
 
 /*! Update this module at the task rate
