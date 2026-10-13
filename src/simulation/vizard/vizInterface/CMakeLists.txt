@@ -57,6 +57,8 @@ target_link_libraries("${module}" PRIVATE
   vizInterfaceCore
 )
 
+add_subdirectory(_UnitTest)
+
 install(
   FILES vizMessage.proto
   DESTINATION protobuf/
