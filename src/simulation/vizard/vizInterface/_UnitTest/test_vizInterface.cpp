@@ -130,3 +130,26 @@ TEST(VizInterfaceFile, writesOneDelimitedFramePerStep) {
     EXPECT_DOUBLE_EQ(frames[1].celestialbodies(1).rotation(0), 1.0);
     EXPECT_DOUBLE_EQ(frames[1].celestialbodies(1).position(0), 0.0);
 }
+
+//! With a saved file and opNav mode 2, each step still writes a complete frame to the file.
+TEST(VizInterfaceFile, opNavModeTwoWritesCompleteFrames) {
+    TempFile file("vizOpNavFrames");
+    {
+        FakeVizard vizard;
+        VizHarness harness;
+        harness.viz.opNavMode = 2;
+        harness.viz.saveFile = true;
+        harness.viz.protoFilename = file.string();
+        harness.viz.comPortNumber = vizard.getPort();
+        harness.addSpacecraft({"sat", 0, 0, 0});
+        harness.addCamera(1, oneSecond);
+        harness.run(4);
+        vizard.stop();
+    }
+
+    auto const frames = readFrames(file.string());
+
+    ASSERT_EQ(frames.size(), 3u);
+    EXPECT_EQ(frames[2].currenttime().framenumber(), 3);
+    EXPECT_EQ(frames[2].cameras_size(), 1);
+}
