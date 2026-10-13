@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 void message_buffer_deallocate(void* data, void* hint);
 
@@ -427,7 +428,7 @@ void VizInterface::ReadBSKMessages() {
  @param currentSimNanos The current sim time in nanoseconds
  */
 void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
-    vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
+    auto message = std::make_unique<vizProtobufferMessage::VizMessage>();
 
     /*! Send the Vizard settings once */
     if (this->settings.dataFresh) {
@@ -1129,7 +1130,6 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         if (!this->saveFile || !message->SerializeToOstream(this->outputStream)) { return; }
     }
 
-    delete message;
     google::protobuf::ShutdownProtobufLibrary();
 }
 
