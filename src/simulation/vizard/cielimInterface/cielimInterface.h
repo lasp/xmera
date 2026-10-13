@@ -33,7 +33,7 @@ enum class ClosedLoopMode { OPEN_LOOP = 0, ALL_FRAMES = 1, REQUESTED_FRAMES = 2 
 
 class MessageStatus {
    public:
-    uint64_t lastTimeTag = 0xFFFFFFFFFFFFFFFF;  //!< [ns] The previous read time-tag for msg
+    uint64_t lastTimeTag = UINT64_MAX;  //!< [ns] The previous read time-tag for msg
     bool dataFresh = false;                     //!< [-] Flag indicating that new data has been read
 };
 
