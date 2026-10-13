@@ -1212,18 +1212,35 @@ void VizInterface::requestImage(size_t camCounter, uint64_t currentSimNanos) {
     zmq_msg_recv(&length, this->requester_socket, 0);
     zmq_msg_recv(&image, this->requester_socket, 0);
 
-    int32_t* lengthPoint = (int32_t*) zmq_msg_data(&length);
     void* imagePoint = zmq_msg_data(&image);
-    int32_t length_unswapped = *lengthPoint;
-    /*! --  Endianness switch for the length of the buffer */
-    int32_t imageBufferLength = ((length_unswapped >> 24) & 0xff) |        // move byte 3 to byte 0
-                                ((length_unswapped << 8) & 0xff'0000) |    // move byte 1 to byte 2
-                                ((length_unswapped >> 8) & 0xff00) |       // move byte 2 to byte 1
-                                ((length_unswapped << 24) & 0xff00'0000);  // byte 0 to byte 3
+    int32_t imageBufferLength = 0;
+    size_t const lengthFrameSize = zmq_msg_size(&length);
+    size_t const imageFrameSize = zmq_msg_size(&image);
+    if (lengthFrameSize >= sizeof(int32_t)) {
+        int32_t length_unswapped = 0;
+        memcpy(&length_unswapped, zmq_msg_data(&length), sizeof(int32_t));
+        /*! --  Endianness switch for the length of the buffer */
+        imageBufferLength = ((length_unswapped >> 24) & 0xff) |        // move byte 3 to byte 0
+                            ((length_unswapped << 8) & 0xff'0000) |    // move byte 1 to byte 2
+                            ((length_unswapped >> 8) & 0xff00) |       // move byte 2 to byte 1
+                            ((length_unswapped << 24) & 0xff00'0000);  // byte 0 to byte 3
+    }
+    if (lengthFrameSize < sizeof(int32_t) || imageBufferLength < 0
+        || static_cast<size_t>(imageBufferLength) > imageFrameSize) {
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "vizInterface: the image length %d from Vizard is not in the image frame of %zu bytes.",
+            imageBufferLength,
+            imageFrameSize
+        );
+        imageBufferLength = 0;
+    }
 
     /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
-    this->bskImagePtrs[camCounter] = malloc(imageBufferLength * sizeof(char));
-    memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength * sizeof(char));
+    if (imageBufferLength > 0) {
+        this->bskImagePtrs[camCounter] = malloc(imageBufferLength * sizeof(char));
+        memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength * sizeof(char));
+    }
 
     /*! -- Write out the image information to the Image message */
     CameraImageMsgPayload imageData = {};
