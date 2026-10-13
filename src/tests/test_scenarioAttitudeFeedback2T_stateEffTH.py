@@ -16,6 +16,7 @@ import os
 import sys
 
 import pytest
+from xmera.architecture import messaging
 from xmera.utilities import unitTestSupport
 
 # Get current file path
@@ -33,7 +34,12 @@ import scenarioAttitudeFeedback2T_stateEffTH
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDVThrusters", [False, True])
+@pytest.mark.parametrize("useDVThrusters", [
+    pytest.param(False, marks=pytest.mark.skipif(
+        messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this case uses")),
+    pytest.param(True, marks=pytest.mark.skipif(
+        messaging.MAX_EFF_CNT < 6, reason="MAX_EFF_CNT is less than the 6 DV thrusters this case uses")),
+])
 @pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_

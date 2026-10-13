@@ -18,6 +18,10 @@ from xmera.fswAlgorithms import dvExecuteGuidance
 from xmera.utilities import macros
 from xmera.architecture import messaging
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 6, reason="MAX_EFF_CNT is less than the 6 thrusters this test uses"
+)
+
 
 # parameters
 dvMagnitude = [4.3, 5.0, 10.0]

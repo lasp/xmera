@@ -18,6 +18,13 @@ import shutil
 import sys
 
 import pytest
+from xmera.architecture import messaging
+
+pytestmark = [
+    pytest.mark.skipif(messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this test uses"),
+    pytest.mark.skipif(messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"),
+    pytest.mark.skipif(messaging.MAX_NUM_CSS_SENSORS < 8, reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this test uses"),
+]
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

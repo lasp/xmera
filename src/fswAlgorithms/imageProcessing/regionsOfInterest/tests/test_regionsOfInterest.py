@@ -12,6 +12,10 @@ from xmera.fswAlgorithms import regionsOfInterest
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_NUMBER_REGIONS < 3, reason="MAX_NUMBER_REGIONS is less than the 3 regions this test uses"
+)
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
