@@ -92,3 +92,18 @@ TEST(CielimInterfaceLiveStream, allFramesRequestsImageEachStep) {
     ASSERT_EQ(image.imageBufferLength, 6);
     EXPECT_EQ(std::string(static_cast<char const*>(image.imagePointer), 6), "PIXELS");
 }
+
+//! A camera with a render rate of zero does not request images and does not divide by zero.
+TEST(CielimInterfaceLiveStream, zeroRenderRateRequestsNoImage) {
+    FakeCielim renderer;
+    CielimHarness harness;
+    std::string port = renderer.getPort();
+    harness.cielim.setPortNumber(port);
+    harness.addCamera(2, 0);
+
+    harness.run(3);
+    std::vector<Request> const &requests = renderer.stop();
+
+    std::vector<std::string> const expected{"PING", "INIT_SCENE", "SIM_UPDATE", "SIM_UPDATE"};
+    EXPECT_EQ(commands(requests), expected);
+}
