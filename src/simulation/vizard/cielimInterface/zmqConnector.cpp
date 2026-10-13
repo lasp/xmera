@@ -73,11 +73,11 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage, bo
 
     returnData.imageBufferLength = imageBufferLength;
     returnData.centerOfBrightness = std::nullopt;
-    auto* diagnostics = new imageDiagnostics::DiagnosticData();
-    if (diagnostics->ParseFromArray(diagnosticsMessage.data(), diagnosticsMessage.size())) {
-        returnData.centerOfBrightness = Eigen::Vector2d(diagnostics->cob_x(), diagnostics->cob_y());
-        returnData.coverage = diagnostics->coverage();
-        returnData.brightPixels = diagnostics->totalbrightpixels();
+    imageDiagnostics::DiagnosticData diagnostics;
+    if (diagnostics.ParseFromArray(diagnosticsMessage.data(), static_cast<int>(diagnosticsMessage.size()))) {
+        returnData.centerOfBrightness = Eigen::Vector2d(diagnostics.cob_x(), diagnostics.cob_y());
+        returnData.coverage = diagnostics.coverage();
+        returnData.brightPixels = diagnostics.totalbrightpixels();
     }
 
     return returnData;
