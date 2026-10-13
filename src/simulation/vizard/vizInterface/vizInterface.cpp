@@ -39,6 +39,7 @@ VizInterface::VizInterface() {
  */
 VizInterface::~VizInterface() {
     for (size_t c = 0; c < this->opnavImageOutMsgs.size(); c++) { delete this->opnavImageOutMsgs.at(c); }
+    for (void* imagePtr : this->bskImagePtrs) { free(imagePtr); }
     this->closeConnection();
 }
 
@@ -61,11 +62,13 @@ void VizInterface::closeConnection() {
  @param currentSimNanos The current sim time in nanoseconds
  */
 void VizInterface::reset(uint64_t currentSimNanos) {
+    for (auto& imagePtr : this->bskImagePtrs) {
+        free(imagePtr);
+        imagePtr = nullptr;
+    }
+
     if (this->opNavMode > 0 || this->liveStream) {
         /* setup zeroMQ */
-        for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
-            this->bskImagePtrs[camCounter] = NULL;
-        }
         this->closeConnection();
         this->context = zmq_ctx_new();
         this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
