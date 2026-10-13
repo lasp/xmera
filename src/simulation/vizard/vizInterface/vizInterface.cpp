@@ -39,8 +39,22 @@ VizInterface::VizInterface() {
  */
 VizInterface::~VizInterface() {
     for (size_t c = 0; c < this->opnavImageOutMsgs.size(); c++) { delete this->opnavImageOutMsgs.at(c); }
+    this->closeConnection();
+}
 
-    return;
+/*! Close the Vizard socket without waiting for unsent messages, then close its context.
+ */
+void VizInterface::closeConnection() {
+    if (this->requester_socket != nullptr) {
+        int const linger = 0;
+        zmq_setsockopt(this->requester_socket, ZMQ_LINGER, &linger, sizeof(linger));
+        zmq_close(this->requester_socket);
+        this->requester_socket = nullptr;
+    }
+    if (this->context != nullptr) {
+        zmq_ctx_term(this->context);
+        this->context = nullptr;
+    }
 }
 
 /*! A Reset method to put the module back into a clean state
@@ -52,6 +66,7 @@ void VizInterface::reset(uint64_t currentSimNanos) {
         for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = NULL;
         }
+        this->closeConnection();
         this->context = zmq_ctx_new();
         this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
         zmq_connect(

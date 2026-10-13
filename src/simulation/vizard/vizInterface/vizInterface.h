@@ -74,13 +74,14 @@ class VizInterface : public SysModel {
 
    private:
     // ZeroMQ State
-    void* context;
-    void* requester_socket;
+    void* context = nullptr;
+    void* requester_socket = nullptr;
     int firstPass;  //!< Flag to intialize the viz at first timestep
 
     std::vector<MsgCurrStatus> spiceInMsgStatus;           //!< [-] status of the incoming planets' spice data messages
     std::vector<SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream outputStream;                            //!< [-] Output file stream opened in reset
+    void closeConnection();  //!< close the Vizard socket and its context
     void requestImage(size_t camCounter,
                       uint64_t currentSimNanos);  //!<   request image from Vizard and store it in output img msg
 };
