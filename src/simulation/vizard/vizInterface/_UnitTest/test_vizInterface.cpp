@@ -253,3 +253,13 @@ TEST(VizInterfaceReset, throwsForThrusterInfoSizeMismatch) {
 
     EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
 }
+
+//! Reset throws when there are more spice messages than celestial bodies.
+TEST(VizInterfaceReset, throwsForMoreSpiceMessagesThanBodies) {
+    VizHarness harness;
+    harness.addSpacecraft({"sat", 0, 0, 0});
+    harness.addPlanet("earth", true);
+    harness.viz.spiceInMsgs.emplace_back();
+
+    EXPECT_THROW(harness.viz.reset(0), std::invalid_argument);
+}
