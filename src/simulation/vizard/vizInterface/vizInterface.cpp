@@ -185,6 +185,12 @@ void VizInterface::reset(uint64_t currentSimNanos) {
     }
 
     /* Check Spice input message */
+    if (this->spiceInMsgs.size() > this->gravBodyInformation.size()) {
+        throw std::invalid_argument(
+            "vizInterface: there are " + std::to_string(this->spiceInMsgs.size()) + " spiceInMsgs and only "
+            + std::to_string(this->gravBodyInformation.size()) + " gravBodyInformation entries."
+        );
+    }
     {
         MsgCurrStatus spiceStatus;
         spiceStatus.dataFresh = true;  // this ensures that default planet states are also used
