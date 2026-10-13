@@ -167,11 +167,10 @@ void VizInterface::reset(uint64_t currentSimNanos) {
                 scIt->thrOutputMessage.push_back(logMsg);
             }
             if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
-                bskLogger.bskLog(
-                    BSK_ERROR,
-                    "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)",
-                    (int) scIt->thrInfo.size(),
-                    (int) scIt->thrInMsgs.size()
+                throw std::invalid_argument(
+                    "vizInterface: spacecraft '" + scIt->spacecraftName + "' has "
+                    + std::to_string(scIt->thrInfo.size()) + " thrInfo entries and "
+                    + std::to_string(scIt->thrInMsgs.size()) + " thrInMsgs. The sizes must be equal."
                 );
             }
         }
