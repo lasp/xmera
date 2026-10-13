@@ -102,8 +102,7 @@ private:
     EpochMsgPayload epochPayload{};      //!< [-] epoch msg data
     MessageStatus epochMessageStatus{};  //!< [-] ID of the epoch msg
 
-    std::vector<SpicePlanetStateMsgPayload> spiceBodyPayloads;  //!< [-] payloads of planet Spice data
-    std::vector<MessageStatus> spiceBodyMessageStatus;          //!< [-] status of the incoming planets' spice data
+    std::vector<MessageStatus> spiceBodyMessageStatus;  //!< [-] status of the incoming planets' spice data
     std::vector<CelestialBodyParametersMsgPayload> celestialParametersPayloads;  //!< [-] celestial parameters payloads
     std::vector<MessageStatus> celestialParametersMessageStatus;  //!< [-] status of celestial parameter messages
     std::vector<SpiceBody> celestialBodiesList;                   //!< [-] celestial body names

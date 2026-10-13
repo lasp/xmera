@@ -74,7 +74,7 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
         }
         strcpy(logMsg.PlanetName, this->celestialBodiesList.at(c).name.c_str());
         this->spiceBodyMessageStatus.push_back(spiceStatus);
-        this->spiceBodyPayloads.push_back(logMsg);
+        this->celestialBodiesList.at(c).spiceStatePayload = logMsg;
     }
 
     this->frameNumber = -1;
