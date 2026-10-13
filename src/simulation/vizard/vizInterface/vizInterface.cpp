@@ -11,6 +11,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
+#include <cmath>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -605,11 +606,11 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
 
         // define the GUI scaling factor
         vizSettings->set_customguiscale(this->settings.customGUIScale);
-        if (abs(this->settings.customGUIScale) > 3.0) {
+        if (std::fabs(this->settings.customGUIScale) > 3.0) {
             bskLogger.bskLog(
                 BSK_WARNING,
                 "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of "
-                "%d was received.",
+                "%f was received.",
                 this->settings.customGUIScale
             );
         }
