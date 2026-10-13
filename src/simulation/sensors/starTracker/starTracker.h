@@ -15,6 +15,7 @@
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <Eigen/Dense>
+#include <random>
 #include <vector>
 
 /*! @brief star tracker class */
@@ -33,6 +34,15 @@ public:
     void computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValue);
     void computeAngularVelocity(uint64_t currentSimNanos);
     void setDcmCB(Eigen::Matrix3d const &dcm_CB);
+
+    void setRateNoiseStd(double sigma) {
+        this->rateNoiseStd = sigma;
+    }
+
+    double getRateNoiseStd() const {
+        return this->rateNoiseStd;
+    }
+
     void setPMatrix(Eigen::Matrix3d const &PMatrix);
     void setWalkBounds(Eigen::Vector3d const &walkBounds);
     Eigen::Matrix3d const &getDcmCB() const;
@@ -58,6 +68,8 @@ private:
     Eigen::Matrix3d AMatrix;                    //!< AMatrix that we use for error propagation
     GaussMarkov<3> errorModel;                  //!< Gauss-markov error states
     uint64_t previousSimTime = 0;               //!< [ns] Previous sim time
+    double rateNoiseStd{};
+    std::mt19937 rateNoiseGen;
     Eigen::Vector4d betaPrevious_CN{
         1.0,
         0.0,

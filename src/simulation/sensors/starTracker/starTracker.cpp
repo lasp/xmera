@@ -100,18 +100,14 @@ void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* 
     compute platform angular velocity from sensed quaternions
  */
 void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
-    Eigen::Vector4d beta_CN = cArrayToEigenVector(this->sensedValues.qInrtl2Case);
+    (void) currentSimNanos;
+    Eigen::Vector3d omega_BN_B = cArrayToEigenVector(this->scState.omega_BN_B);
+    Eigen::Vector3d omega_CN_C = this->dcm_CB * omega_BN_B;
 
-    // Determine betaDot_CN
-    Eigen::Vector4d betaDot_CN = Eigen::Vector4d::Zero();
-    if (currentSimNanos != this->previousSimTime) {
-        double dt = (currentSimNanos - this->previousSimTime) * NANO2SEC;
-        betaDot_CN = (beta_CN - this->betaPrevious_CN) / dt;
+    if (this->rateNoiseStd > 0.0) {
+        std::normal_distribution<double> dist(0.0, this->rateNoiseStd);
+        omega_CN_C += Eigen::Vector3d(dist(this->rateNoiseGen), dist(this->rateNoiseGen), dist(this->rateNoiseGen));
     }
-
-    Eigen::Matrix<double, 3, 4> bInv = binvEp(beta_CN);
-
-    Eigen::Vector3d omega_CN_C = 2 * bInv * betaDot_CN;
     eigenVectorToCArray(omega_CN_C, this->sensedValues.omega_CN_C);
 }
 
