@@ -190,3 +190,21 @@ TEST(VizInterfaceOpNav, rejectsImageLengthLargerThanFrame) {
     EXPECT_EQ(image.imageBufferLength, 0);
     EXPECT_EQ(image.imagePointer, nullptr);
 }
+
+//! A camera with a render rate of zero does not request images and does not divide by zero.
+//! Without an image request, the socket still waits for the SIM_UPDATE reply, thus the
+//! keep-alive PING is not sent.
+TEST(VizInterfaceOpNav, zeroRenderRateRequestsNoImage) {
+    FakeVizard vizard;
+    VizHarness harness;
+    harness.viz.opNavMode = 2;
+    harness.viz.comPortNumber = vizard.getPort();
+    harness.addSpacecraft({"sat", 0, 0, 0});
+    harness.addCamera(1, 0);
+
+    harness.run(2);
+    std::vector<Request> const& requests = vizard.stop();
+
+    std::vector<std::string> const expected{"PING", "PING", "SIM_UPDATE"};
+    EXPECT_EQ(commands(requests), expected);
+}
