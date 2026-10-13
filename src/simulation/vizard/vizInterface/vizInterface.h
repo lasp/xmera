@@ -24,8 +24,6 @@
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/simDefinitions.h>
 
-#define VIZ_MAX_SIZE 100000
-
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 class VizInterface : public SysModel {
