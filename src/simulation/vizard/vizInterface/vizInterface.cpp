@@ -15,6 +15,8 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
+#include <string>
 
 void message_buffer_deallocate(void* data, void* hint);
 
@@ -182,7 +184,14 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
             m33SetIdentity(logMsg.J20002Pfix);
-            strcpy(logMsg.PlanetName, this->gravBodyInformation.at(c).bodyName.c_str());
+            std::string const& bodyName = this->gravBodyInformation.at(c).bodyName;
+            if (bodyName.size() >= MAX_BODY_NAME_LENGTH) {
+                throw std::invalid_argument(
+                    "vizInterface: the body name '" + bodyName + "' has more than "
+                    + std::to_string(MAX_BODY_NAME_LENGTH - 1) + " characters."
+                );
+            }
+            strcpy(logMsg.PlanetName, bodyName.c_str());
 
             this->spiceInMsgStatus.push_back(spiceStatus);
             this->spiceMessage.push_back(logMsg);
