@@ -32,6 +32,10 @@ class VizInterface : public SysModel {
    public:
     VizInterface();
     ~VizInterface();
+    VizInterface(VizInterface const&) = delete;
+    VizInterface& operator=(VizInterface const&) = delete;
+    VizInterface(VizInterface&&) = delete;
+    VizInterface& operator=(VizInterface&&) = delete;
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
     void ReadBSKMessages();
