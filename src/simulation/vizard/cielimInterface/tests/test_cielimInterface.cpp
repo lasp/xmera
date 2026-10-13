@@ -107,3 +107,23 @@ TEST(CielimInterfaceLiveStream, zeroRenderRateRequestsNoImage) {
     std::vector<std::string> const expected{"PING", "INIT_SCENE", "SIM_UPDATE", "SIM_UPDATE"};
     EXPECT_EQ(commands(requests), expected);
 }
+
+//! When the length frame claims more bytes than the image frame has, the image message is not valid.
+TEST(CielimInterfaceLiveStream, rejectsImageLengthLargerThanFrame) {
+    FakeCielim renderer;
+    renderer.setImage("SHORT");
+    renderer.setImageLengthOverride(1'000'000);
+    CielimHarness harness;
+    std::string port = renderer.getPort();
+    harness.cielim.setPortNumber(port);
+    harness.addCamera(2, oneSecond);
+    ReadFunctor<CameraImageMsgPayload> imageReader = harness.cielim.imageOutMessage.addSubscriber();
+
+    harness.run(2);
+    renderer.stop();
+
+    CameraImageMsgPayload const image = imageReader();
+    EXPECT_EQ(image.valid, 0);
+    EXPECT_EQ(image.imageBufferLength, 0);
+    EXPECT_EQ(image.imagePointer, nullptr);
+}
