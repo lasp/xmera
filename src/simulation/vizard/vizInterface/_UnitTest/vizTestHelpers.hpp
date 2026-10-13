@@ -7,10 +7,10 @@
 #include "fakeVizard.hpp"
 #include "vizInterface.h"
 
-#include <gtest/gtest.h>
-
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/util/delimited_message_util.h>
+#include <gtest/gtest.h>
+#include <unistd.h>
 
 #include <cstdint>
 #include <deque>
@@ -19,10 +19,7 @@
 #include <string>
 #include <vector>
 
-#include <unistd.h>
-
 namespace viztest {
-
     constexpr uint64_t oneSecond = 1'000'000'000;
 
     //! Device counts of one test spacecraft.
@@ -36,13 +33,15 @@ namespace viztest {
     /*! Owns a VizInterface and the input messages that it reads. The messages are in deques,
         thus their addresses do not change when more messages are added. */
     class VizHarness {
-       public:
+    public:
         //! Add a spacecraft with linked state, RW, thruster and CSS messages.
-        void addSpacecraft(SpacecraftLayout const& layout) {
+        void addSpacecraft(SpacecraftLayout const &layout) {
             VizSpacecraftData data;
             data.spacecraftName = layout.name;
             data.scStateInMsg.subscribeTo(&this->scStateMsgs.emplace_back());
-            for (size_t i = 0; i < layout.numRW; i++) { data.rwInMsgs.push_back(this->rwMsgs.emplace_back().addSubscriber()); }
+            for (size_t i = 0; i < layout.numRW; i++) {
+                data.rwInMsgs.push_back(this->rwMsgs.emplace_back().addSubscriber());
+            }
             for (size_t i = 0; i < layout.numThr; i++) {
                 data.thrInMsgs.push_back(this->thrMsgs.emplace_back().addSubscriber());
                 ThrClusterMap info;
@@ -56,7 +55,7 @@ namespace viztest {
         }
 
         //! Add a celestial body. A linked body reads a spice message, an unlinked body keeps default states.
-        void addPlanet(std::string const& name, bool linked) {
+        void addPlanet(std::string const &name, bool linked) {
             GravBodyInfo info;
             info.bodyName = name;
             info.mu = 3.986e14;
@@ -77,7 +76,7 @@ namespace viztest {
             config.fieldOfView = 0.5;
             config.resolution[0] = 512;
             config.resolution[1] = 512;
-            Message<CameraConfigMsgPayload>& msg = this->cameraMsgs.emplace_back();
+            Message<CameraConfigMsgPayload> &msg = this->cameraMsgs.emplace_back();
             msg.write(config, 0, 0);
             this->viz.addCamMsgToModule(&msg);
         }
@@ -92,28 +91,28 @@ namespace viztest {
                 payload.sigma_BN[2] = 0.1 * seconds;
                 this->scStateMsgs[i].write(payload, 0, t);
             }
-            for (auto& msg : this->rwMsgs) {
+            for (auto &msg : this->rwMsgs) {
                 RWConfigLogMsgPayload payload = {};
                 payload.Omega = 100.0 * seconds;
                 payload.Omega_max = 600.0;
                 payload.gsHat_B[0] = 1.0;
                 msg.write(payload, 0, t);
             }
-            for (auto& msg : this->thrMsgs) {
+            for (auto &msg : this->thrMsgs) {
                 THROutputMsgPayload payload = {};
                 payload.maxThrust = 1.0;
                 payload.thrustForce = 0.5;
                 payload.thrusterDirection[2] = 1.0;
                 msg.write(payload, 0, t);
             }
-            for (auto& msg : this->cssMsgs) {
+            for (auto &msg : this->cssMsgs) {
                 CSSConfigLogMsgPayload payload = {};
                 payload.signal = 0.25;
                 payload.maxSignal = 1.0;
                 payload.nHat_B[0] = 1.0;
                 msg.write(payload, 0, t);
             }
-            for (auto& msg : this->spiceMsgs) {
+            for (auto &msg : this->spiceMsgs) {
                 SpicePlanetStateMsgPayload payload = {};
                 payload.PositionVector[0] = 1.5e11;
                 payload.J20002Pfix[0][0] = payload.J20002Pfix[1][1] = payload.J20002Pfix[2][2] = 1.0;
@@ -130,7 +129,7 @@ namespace viztest {
 
         VizInterface viz;
 
-       private:
+    private:
         std::deque<Message<SCStatesMsgPayload>> scStateMsgs;
         std::deque<Message<RWConfigLogMsgPayload>> rwMsgs;
         std::deque<Message<THROutputMsgPayload>> thrMsgs;
@@ -140,14 +139,14 @@ namespace viztest {
     };
 
     //! Return the first frame of each request, in order.
-    inline std::vector<std::string> commands(std::vector<Request> const& requests) {
+    inline std::vector<std::string> commands(std::vector<Request> const &requests) {
         std::vector<std::string> names;
-        for (auto const& request : requests) { names.push_back(request.front()); }
+        for (auto const &request : requests) { names.push_back(request.front()); }
         return names;
     }
 
     //! Parse the payload frame of a SIM_UPDATE request.
-    inline vizProtobufferMessage::VizMessage parseFrame(std::string const& bytes) {
+    inline vizProtobufferMessage::VizMessage parseFrame(std::string const &bytes) {
         vizProtobufferMessage::VizMessage frame;
         frame.ParseFromString(bytes);
         return frame;
@@ -155,23 +154,29 @@ namespace viztest {
 
     //! A file path in the gtest temporary directory. The destructor removes the file.
     class TempFile {
-       public:
-        explicit TempFile(std::string const& name)
+    public:
+        explicit TempFile(std::string const &name)
             : path(std::filesystem::path(::testing::TempDir()) / (name + "_" + std::to_string(::getpid()) + ".bin")) {}
-        ~TempFile() { std::filesystem::remove(this->path); }
-        TempFile(TempFile const&) = delete;
-        TempFile& operator=(TempFile const&) = delete;
-        TempFile(TempFile&&) = delete;
-        TempFile& operator=(TempFile&&) = delete;
 
-        [[nodiscard]] std::string string() const { return this->path.string(); }
+        ~TempFile() {
+            std::filesystem::remove(this->path);
+        }
 
-       private:
+        TempFile(TempFile const &) = delete;
+        TempFile &operator=(TempFile const &) = delete;
+        TempFile(TempFile &&) = delete;
+        TempFile &operator=(TempFile &&) = delete;
+
+        [[nodiscard]] std::string string() const {
+            return this->path.string();
+        }
+
+    private:
         std::filesystem::path path;
     };
 
     //! Read all length-delimited frames of a saved Vizard file.
-    inline std::vector<vizProtobufferMessage::VizMessage> readFrames(std::string const& path) {
+    inline std::vector<vizProtobufferMessage::VizMessage> readFrames(std::string const &path) {
         std::ifstream input(path, std::ios::binary);
         google::protobuf::io::IstreamInputStream stream(&input);
         std::vector<vizProtobufferMessage::VizMessage> frames;
@@ -183,7 +188,6 @@ namespace viztest {
         }
         return frames;
     }
-
 }  // namespace viztest
 
 #endif  // VIZ_INTERFACE_TEST_HELPERS_HPP

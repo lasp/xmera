@@ -65,7 +65,7 @@ void VizInterface::closeConnection() {
  @param currentSimNanos The current sim time in nanoseconds
  */
 void VizInterface::reset(uint64_t currentSimNanos) {
-    for (auto& imagePtr : this->bskImagePtrs) {
+    for (auto &imagePtr : this->bskImagePtrs) {
         free(imagePtr);
         imagePtr = nullptr;
     }
@@ -103,7 +103,9 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->scStateInMsgStatus.dataFresh = false;
             scIt->scStateInMsgStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
         } else {
-            throw std::invalid_argument("vizInterface: the state msg of spacecraft '" + scIt->spacecraftName + "' is not linked.");
+            throw std::invalid_argument(
+                "vizInterface: the state msg of spacecraft '" + scIt->spacecraftName + "' is not linked."
+            );
         }
 
         /* Check CSS data input messages */
@@ -185,7 +187,7 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
             m33SetIdentity(logMsg.J20002Pfix);
-            std::string const& bodyName = this->gravBodyInformation.at(c).bodyName;
+            std::string const &bodyName = this->gravBodyInformation.at(c).bodyName;
             if (bodyName.size() >= MAX_BODY_NAME_LENGTH) {
                 throw std::invalid_argument(
                     "vizInterface: the body name '" + bodyName + "' has more than "

@@ -26,7 +26,7 @@ TEST(VizInterfaceLiveStream, sendsHandshakeThenOneUpdatePerStep) {
     harness.addPlanet("earth", true);
 
     harness.run(3);
-    std::vector<Request> const& requests = vizard.stop();
+    std::vector<Request> const &requests = vizard.stop();
 
     ASSERT_EQ(requests.size(), 4u);
     EXPECT_EQ(requests[0], Request{"PING"});
@@ -65,10 +65,10 @@ TEST(VizInterfaceOpNav, modeTwoRequestsImageThenPings) {
     ReadFunctor<CameraImageMsgPayload> imageReader = harness.viz.opnavImageOutMsgs[0]->addSubscriber();
 
     harness.run(3);
-    std::vector<Request> const& requests = vizard.stop();
+    std::vector<Request> const &requests = vizard.stop();
 
-    std::vector<std::string> const expected{
-        "PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_1", "PING", "SIM_UPDATE", "REQUEST_IMAGE_1", "PING"};
+    std::vector<std::string> const
+        expected{"PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_1", "PING", "SIM_UPDATE", "REQUEST_IMAGE_1", "PING"};
     EXPECT_EQ(commands(requests), expected);
     CameraImageMsgPayload const image = imageReader();
     EXPECT_EQ(image.valid, 1);
@@ -89,10 +89,10 @@ TEST(VizInterfaceOpNav, modeOneRequestsImageWithoutPing) {
     harness.addCamera(3, oneSecond);
 
     harness.run(3);
-    std::vector<Request> const& requests = vizard.stop();
+    std::vector<Request> const &requests = vizard.stop();
 
-    std::vector<std::string> const expected{
-        "PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_3", "SIM_UPDATE", "REQUEST_IMAGE_3"};
+    std::vector<std::string> const
+        expected{"PING", "PING", "SIM_UPDATE", "REQUEST_IMAGE_3", "SIM_UPDATE", "REQUEST_IMAGE_3"};
     EXPECT_EQ(commands(requests), expected);
 }
 
@@ -119,7 +119,7 @@ TEST(VizInterfaceFile, writesOneDelimitedFramePerStep) {
     EXPECT_TRUE(frames[0].has_settings());
     EXPECT_FALSE(frames[1].has_settings());
     ASSERT_EQ(frames[1].spacecraft_size(), 1);
-    auto const& sat = frames[1].spacecraft(0);
+    auto const &sat = frames[1].spacecraft(0);
     EXPECT_EQ(sat.spacecraftname(), "sat");
     EXPECT_DOUBLE_EQ(sat.position(0), 7.0e6);
     EXPECT_DOUBLE_EQ(sat.rotation(2), 0.2);
@@ -164,7 +164,7 @@ TEST(VizInterfaceLiveStream, resetAgainReconnects) {
 
     harness.run(2);
     harness.run(2);
-    std::vector<Request> const& requests = vizard.stop();
+    std::vector<Request> const &requests = vizard.stop();
 
     std::vector<std::string> const expected{"PING", "PING", "SIM_UPDATE", "PING", "PING", "SIM_UPDATE"};
     EXPECT_EQ(commands(requests), expected);
@@ -203,7 +203,7 @@ TEST(VizInterfaceOpNav, zeroRenderRateRequestsNoImage) {
     harness.addCamera(1, 0);
 
     harness.run(2);
-    std::vector<Request> const& requests = vizard.stop();
+    std::vector<Request> const &requests = vizard.stop();
 
     std::vector<std::string> const expected{"PING", "PING", "SIM_UPDATE"};
     EXPECT_EQ(commands(requests), expected);
