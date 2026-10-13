@@ -580,11 +580,3 @@ void CielimInterface::addCelestialBody(SpiceBody const &celestialBodyNames) {
 std::vector<SpiceBody> CielimInterface::getCelestialBodies() const {
     return this->celestialBodiesList;
 }
-
-/*! A cleaning method to ensure the message buffers are wiped clean.
- @param data The current sim time in nanoseconds
- @param hint
- */
-void message_buffer_deallocate(void* data, void* hint) {
-    free(data);
-}
