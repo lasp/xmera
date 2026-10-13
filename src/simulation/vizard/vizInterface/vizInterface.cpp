@@ -103,7 +103,7 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->scStateInMsgStatus.dataFresh = false;
             scIt->scStateInMsgStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "vizInterface: spacecraft msg not linked.");
+            throw std::invalid_argument("vizInterface: the state msg of spacecraft '" + scIt->spacecraftName + "' is not linked.");
         }
 
         /* Check CSS data input messages */
