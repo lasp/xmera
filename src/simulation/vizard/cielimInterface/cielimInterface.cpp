@@ -4,6 +4,9 @@
 
 #include "cielimInterface.h"
 
+#include <stdexcept>
+#include <string>
+
 /*! Free the latest image.
  */
 CielimInterface::~CielimInterface() {
@@ -72,7 +75,14 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) { logMsg.J20002Pfix[i][j] = (i == j) ? 1.0 : 0.0; }
         }
-        strcpy(logMsg.PlanetName, this->celestialBodiesList.at(c).name.c_str());
+        std::string const &bodyName = this->celestialBodiesList.at(c).name;
+        if (bodyName.size() >= MAX_BODY_NAME_LENGTH) {
+            throw std::invalid_argument(
+                "cielimInterface: the body name '" + bodyName + "' has more than "
+                + std::to_string(MAX_BODY_NAME_LENGTH - 1) + " characters."
+            );
+        }
+        strcpy(logMsg.PlanetName, bodyName.c_str());
         this->spiceBodyMessageStatus.push_back(spiceStatus);
         this->celestialBodiesList.at(c).spiceStatePayload = logMsg;
     }
