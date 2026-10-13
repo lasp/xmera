@@ -173,9 +173,8 @@ void VizInterface::reset(uint64_t currentSimNanos) {
     }
 
     this->FrameNumber = -1;
-    if (this->saveFile) {
-        this->outputStream = new std::ofstream(this->protoFilename, std::ios::out | std::ios::binary);
-    }
+    if (this->outputStream.is_open()) { this->outputStream.close(); }
+    if (this->saveFile) { this->outputStream.open(this->protoFilename, std::ios::out | std::ios::binary); }
 
     this->settings.dataFresh = true;  // reset flag to transmit Vizard settings
 
@@ -1060,7 +1059,7 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         google::protobuf::uint8* end =
             google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
         unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
-        if (this->saveFile) { this->outputStream->write(reinterpret_cast<char*>(varIntBuffer), (int) varIntBytes); }
+        if (this->saveFile) { this->outputStream.write(reinterpret_cast<char*>(varIntBuffer), (int) varIntBytes); }
 
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides
@@ -1128,7 +1127,7 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
             }
         }
         /*!  Write protobuffer to file */
-        if (!this->saveFile || !message->SerializeToOstream(this->outputStream)) { return; }
+        if (!this->saveFile || !message->SerializeToOstream(&this->outputStream)) { return; }
     }
 }
 

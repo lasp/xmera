@@ -80,7 +80,7 @@ class VizInterface : public SysModel {
 
     std::vector<MsgCurrStatus> spiceInMsgStatus;           //!< [-] status of the incoming planets' spice data messages
     std::vector<SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
-    std::ofstream* outputStream;                           //!< [-] Output file stream opened in reset
+    std::ofstream outputStream;                            //!< [-] Output file stream opened in reset
     void requestImage(size_t camCounter,
                       uint64_t currentSimNanos);  //!<   request image from Vizard and store it in output img msg
 };
