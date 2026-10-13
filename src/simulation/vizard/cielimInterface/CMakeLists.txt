@@ -77,6 +77,8 @@ target_link_libraries("${module}" PRIVATE
   cielimInterfaceCore
 )
 
+add_subdirectory(tests)
+
 install(
   FILES cielimMessage.proto
   FILES imageDiagnostics.proto
