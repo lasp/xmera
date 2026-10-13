@@ -1059,7 +1059,10 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         google::protobuf::uint8* end =
             google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
         unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
-        if (this->saveFile) { this->outputStream.write(reinterpret_cast<char*>(varIntBuffer), (int) varIntBytes); }
+        if (this->saveFile) {
+            this->outputStream.write(reinterpret_cast<char*>(varIntBuffer), (int) varIntBytes);
+            message->SerializeToOstream(&this->outputStream);
+        }
 
         /*! Enter in lock-step with the vizard to simulate a camera */
         /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides
@@ -1126,8 +1129,6 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
                 return;
             }
         }
-        /*!  Write protobuffer to file */
-        if (!this->saveFile || !message->SerializeToOstream(&this->outputStream)) { return; }
     }
 }
 
