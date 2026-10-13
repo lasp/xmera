@@ -11,6 +11,24 @@ Module Assumptions and Limitations
 The module is only able to read Xmera simulation state messages that are accessable from the task group that
 is calling ``vizInterface``.
 
+Reset Errors
+^^^^^^^^^^^^
+The ``reset()`` method examines the module configuration. For each of these conditions, the method stops
+with an exception (``std::invalid_argument`` in C++, ``RuntimeError`` in Python):
+
+- The state message of a spacecraft in ``scData`` is not connected.
+- A RW, CSS or thruster input message of a spacecraft is not connected.
+- For a spacecraft, the size of ``thrInfo`` and the size of ``thrInMsgs`` are not the same.
+- The quantity of ``spiceInMsgs`` is more than the quantity of ``gravBodyInformation`` entries.
+- A body name in ``gravBodyInformation`` has more than 63 characters.
+
+The exception occurs in ``InitializeSimulation()``, before the first time step.
+
+Image Messages
+^^^^^^^^^^^^^^
+If the image length from Vizard is more than the quantity of received data, the module writes an image
+message with ``valid`` set to 0. That message has an ``imageBufferLength`` of 0 and a null ``imagePointer``.
+
 
 Message Connection Descriptions
 -------------------------------
