@@ -4,8 +4,13 @@
 #include "cielimInterface.h"
 #include "fakeCielim.hpp"
 
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/util/delimited_message_util.h>
 #include <gtest/gtest.h>
+#include <unistd.h>
 
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -50,6 +55,20 @@ namespace {
         Message<SCStatesMsgPayload> spacecraftMsg;
         Message<CameraModelMsgPayload> cameraMsg;
     };
+
+    //! Read all length-delimited frames of a saved Cielim file.
+    std::vector<cielimMessage::CielimMessage> readFrames(std::string const &path) {
+        std::ifstream input(path, std::ios::binary);
+        google::protobuf::io::IstreamInputStream stream(&input);
+        std::vector<cielimMessage::CielimMessage> frames;
+        while (true) {
+            cielimMessage::CielimMessage frame;
+            bool cleanEof = false;
+            if (!google::protobuf::util::ParseDelimitedFromZeroCopyStream(&frame, &stream, &cleanEof)) { break; }
+            frames.push_back(frame);
+        }
+        return frames;
+    }
 
     //! Return the first frame of each request, in order.
     std::vector<std::string> commands(std::vector<Request> const &requests) {
@@ -126,4 +145,28 @@ TEST(CielimInterfaceLiveStream, rejectsImageLengthLargerThanFrame) {
     EXPECT_EQ(image.valid, 0);
     EXPECT_EQ(image.imageBufferLength, 0);
     EXPECT_EQ(image.imagePointer, nullptr);
+}
+
+//! A body without a spice message has an identity attitude in the saved frames.
+TEST(CielimInterfaceFile, unlinkedBodyHasIdentityAttitude) {
+    std::filesystem::path const path =
+        std::filesystem::path(::testing::TempDir()) / ("cielimFrames_" + std::to_string(::getpid()) + ".bin");
+    {
+        CielimHarness harness;
+        harness.cielim.setOpNavMode(ClosedLoopMode::OPEN_LOOP);
+        harness.cielim.setSaveFile(path.string());
+        SpiceBody body;
+        body.name = "bennu";
+        harness.cielim.addCelestialBody(body);
+        harness.run(2);
+    }
+
+    auto const frames = readFrames(path.string());
+    std::filesystem::remove(path);
+
+    ASSERT_EQ(frames.size(), 1u);
+    ASSERT_EQ(frames[0].celestialbodies_size(), 1);
+    auto const &attitude = frames[0].celestialbodies(0).attitude();
+    std::vector<double> const identity{1, 0, 0, 0, 1, 0, 0, 0, 1};
+    EXPECT_EQ(std::vector<double>(attitude.begin(), attitude.end()), identity);
 }
