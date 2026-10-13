@@ -25,20 +25,36 @@ add_custom_command(
   DEPENDS_EXPLICIT_ONLY
 )
 
-xmera_add_swig_module("${module}")
-target_sources("${module}" PRIVATE
+# The SWIG Python module and the C++ tests both link this library.
+add_library(vizInterfaceCore STATIC
   "${CMAKE_CURRENT_BINARY_DIR}/vizMessage.pb.cc"
   vizInterface.cpp
 )
 
-target_include_directories("${module}" PRIVATE
+target_include_directories(vizInterfaceCore PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}"
   "${CMAKE_CURRENT_BINARY_DIR}"
+  "${CMAKE_SOURCE_DIR}"
+  "${CMAKE_BINARY_DIR}"
+  "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles"
 )
 
-target_link_libraries("${module}" PRIVATE
+# The mission parameters directory comes first, as in xmera_add_swig_module().
+target_include_directories(vizInterfaceCore BEFORE PUBLIC
+  "$<TARGET_PROPERTY:Xmera::MissionParameters,INTERFACE_INCLUDE_DIRECTORIES>"
+)
+
+target_link_libraries(vizInterfaceCore PUBLIC
+  Xmera::Core
   ArchitectureUtilities
   cppzmq
   protobuf::libprotobuf
+)
+
+xmera_add_swig_module("${module}")
+
+target_link_libraries("${module}" PRIVATE
+  vizInterfaceCore
 )
 
 install(
