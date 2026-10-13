@@ -117,7 +117,10 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->cssInMessage.clear();
             for (size_t idx = 0; idx < (size_t) scIt->cssInMsgs.size(); idx++) {
                 if (!scIt->cssInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: CSS(%zu) msg not linked.", idx);
+                    throw std::invalid_argument(
+                        "vizInterface: CSS msg " + std::to_string(idx) + " of spacecraft '" + scIt->spacecraftName
+                        + "' is not linked."
+                    );
                 }
                 scIt->cssConfLogInMsgStatus.push_back(cssStatus);
                 CSSConfigLogMsgPayload logMsg = {};
@@ -134,7 +137,10 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->rwInMessage.clear();
             for (size_t idx = 0; idx < (size_t) scIt->rwInMsgs.size(); idx++) {
                 if (!scIt->rwInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: RW(%zu) msg not linked.", idx);
+                    throw std::invalid_argument(
+                        "vizInterface: RW msg " + std::to_string(idx) + " of spacecraft '" + scIt->spacecraftName
+                        + "' is not linked."
+                    );
                 }
                 scIt->rwInMsgStatus.push_back(rwStatus);
                 RWConfigLogMsgPayload logMsg = {};
@@ -151,7 +157,10 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->thrOutputMessage.clear();
             for (size_t idx = 0; idx < scIt->thrInMsgs.size(); idx++) {
                 if (!scIt->thrInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%zu) msg requested but not found.", idx);
+                    throw std::invalid_argument(
+                        "vizInterface: thruster msg " + std::to_string(idx) + " of spacecraft '" + scIt->spacecraftName
+                        + "' is not linked."
+                    );
                 }
                 scIt->thrMsgStatus.push_back(thrStatus);
                 THROutputMsgPayload logMsg = {};
