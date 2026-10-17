@@ -5,6 +5,9 @@
 #include "sys_model_task.h"
 
 inline uint64_t SysModelTask::projectToCurrentSchedule(uint64_t time) {
+    // The schedule starts at `firstUpdateNanos`; there is no earlier update to project onto.
+    if (time < this->firstUpdateNanos) { return this->firstUpdateNanos; }
+
     // Judge everything relative to the origin, `firstUpdateNanos`.
     time -= this->firstUpdateNanos;
 
