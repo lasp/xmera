@@ -132,3 +132,29 @@ TEST(SysModelTaskTest, normalLifecycleSucceeds) {
         }
     }
 }
+
+TEST(SysModelTaskTest, resetBeforeFirstUpdateKeepsFirstUpdateTime) {
+    RecordProperty("description", "A reset before the first update time schedules the first update at that time");
+
+    auto task = SysModelTask(200, 150);
+
+    task.reset(0);
+    EXPECT_THAT(task.getNextStartTime(), Eq(150u));
+
+    task.executeModels(task.getNextStartTime());
+    EXPECT_THAT(task.getNextStartTime(), Eq(350u));
+}
+
+TEST(SysModelTaskTest, resetAfterFirstUpdateFollowsSchedule) {
+    RecordProperty("description", "A reset after the first update time schedules the next update on the schedule");
+
+    auto task = SysModelTask(200, 150);
+
+    // 400 is between the scheduled updates at 350 and 550.
+    task.reset(400);
+    EXPECT_THAT(task.getNextStartTime(), Eq(550u));
+
+    // A reset on a scheduled update keeps that update.
+    task.reset(750);
+    EXPECT_THAT(task.getNextStartTime(), Eq(750u));
+}
