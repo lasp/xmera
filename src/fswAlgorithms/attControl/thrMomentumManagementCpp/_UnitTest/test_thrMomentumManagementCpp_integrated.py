@@ -13,6 +13,10 @@ from xmera.fswAlgorithms import thrMomentumManagementCpp, inertial3D, attTrackin
 from xmera.utilities import SimulationBaseClass, macros, fswSetupRW, simIncludeRW, unitTestSupport
 from xmera.architecture import messaging
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

@@ -16,6 +16,12 @@ from xmera.fswAlgorithms import mtbMomentumManagement  # import the module that 
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 from xmera.utilities import unitTestSupport  # general support file with common unit test functions
+import pytest
+
+pytestmark = [
+    pytest.mark.skipif(messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"),
+    pytest.mark.skipif(messaging.MAX_EFF_CNT < 3, reason="MAX_EFF_CNT is less than the 3 torque bars this test uses"),
+]
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

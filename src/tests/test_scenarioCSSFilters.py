@@ -21,6 +21,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
 import scenarioCSSFilters
+from xmera.architecture import messaging
+
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_NUM_CSS_SENSORS < 8, reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this test uses"
+)
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
