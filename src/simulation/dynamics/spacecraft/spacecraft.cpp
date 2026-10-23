@@ -386,18 +386,10 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
     Eigen::Vector3d sumForceExternalMappedToB;
     sumForceExternalMappedToB = dcm_NB.transpose() * this->sumForceExternal_N;
 
-    // - Edit both v_trans and v_rot with gravity and external force and torque
-
-    // -  Make additional contributions to the matrices from the hub
-
-    // - Need to find force of gravity on the spacecraft
-    Eigen::Vector3d gravityForce_N;
-    gravityForce_N = (*this->m_SC)(0, 0) * gLocal_N;
-
-    Eigen::Vector3d gravityForce_B;
-    gravityForce_B = dcm_NB.transpose() * gravityForce_N;
-    this->hub.hubBackSubMatrices.vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
-    this->hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
+    // - Edit both v_trans and v_rot with external force and torque. Gravity is evaluated once at the center of mass, so
+    // it accelerates every body equally: it is left out of the back-substitution and added to the hub afterwards
+    this->hub.hubBackSubMatrices.vecTrans += sumForceExternalMappedToB + this->sumForceExternal_B;
+    this->hub.hubBackSubMatrices.vecRot += this->sumTorquePntB_B;
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
     this->hub.computeDerivatives(
@@ -406,16 +398,20 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
         this->hubOmega_BN_B->getStateDeriv(),
         this->hubSigma->getState()
     );
+    Eigen::Vector3d rDDotNonGrav_BN_N = this->hubV_N->getStateDeriv();
 
     // - Loop through state effectors for compute derivatives
     for (it = states.begin(); it != states.end(); it++) {
         (*it)->computeDerivatives(
             integTimeSeconds,
-            this->hubV_N->getStateDeriv(),
+            rDDotNonGrav_BN_N,
             this->hubOmega_BN_B->getStateDeriv(),
             this->hubSigma->getState()
         );
     }
+
+    // - Add gravity to the hub translational acceleration
+    this->hubV_N->setDerivative(rDDotNonGrav_BN_N + gLocal_N);
 }
 
 /*! Prepare for integration process

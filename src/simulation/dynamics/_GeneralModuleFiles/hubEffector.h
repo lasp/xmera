@@ -41,7 +41,7 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for the hub to update its mass props for the s/c
     void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     );  //!< -- Method for the hub to compute it's derivatives

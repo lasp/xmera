@@ -217,15 +217,15 @@ void PrescribedMotionStateEffector::updateContributions(
 /*! This method defines the state effector's MRP attitude state derivative
  @return void
  @param callTime [s] Time the method is called
- @param rDDot_BN_N [m/s^2] Acceleration of the vector pointing from the inertial frame origin to the B frame origin,
- expressed in inertial frame components
+ @param rDDotNonGrav_BN_N [m/s^2] Non-gravitational acceleration of the vector pointing from the inertial frame origin
+ to the B frame origin, expressed in inertial frame components
  @param omegaDot_BN_B [rad/s^2] Inertial time derivative of the angular velocity of the B frame with respect to the
  inertial frame, expressed in B frame components
  @param sigma_BN Current B frame attitude with respect to the inertial frame
 */
 void PrescribedMotionStateEffector::computeDerivatives(
     double callTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {

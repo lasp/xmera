@@ -202,14 +202,14 @@ private:
     ) override;
     void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     ) override;
     void updateState(uint64_t currentSimNanos) override;
 
     void computeTranslatingBodyInertialStates();
-    void computeBackSubContributions(BackSubMatrices &backSubContr, Eigen::Vector3d const &F_g);
+    void computeBackSubContributions(BackSubMatrices &backSubContr);
     void readInputMessages();
 };
 

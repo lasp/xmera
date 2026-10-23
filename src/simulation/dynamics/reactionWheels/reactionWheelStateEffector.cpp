@@ -154,20 +154,6 @@ void ReactionWheelStateEffector::updateContributions(
     double omegaw3;
     double dSquared;
     double OmegaSquared;
-    Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN;              /*! direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB;              /*! direction cosine matrix from B to N */
-    Eigen::Vector3d gravityTorquePntW_B; /*! torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gLocal_N;            /*! gravitational acceleration in N frame */
-    Eigen::Vector3d g_B;                 /*! gravitational acceleration in B frame */
-    gLocal_N = *this->g_N;
-
-    //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
-    dcm_NB = sigmaBNLocal.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
-    //! - Map gravity to body frame
-    g_B = dcm_BN * gLocal_N;
 
     omegaLoc_BN_B = this->hubOmega->getState();
 
@@ -238,8 +224,6 @@ void ReactionWheelStateEffector::updateContributions(
             omegaw2 = RWIt->w2Hat_B.transpose() * omegaLoc_BN_B;
             omegaw3 = RWIt->w3Hat_B.transpose() * omegaLoc_BN_B;
 
-            gravityTorquePntW_B = RWIt->d * RWIt->w2Hat_B.cross(RWIt->mass * g_B);
-
             dSquared = RWIt->d * RWIt->d;
 
             RWIt->aOmega = -RWIt->mass * RWIt->d / (RWIt->Js + RWIt->mass * dSquared) * RWIt->w3Hat_B;
@@ -250,7 +234,7 @@ void ReactionWheelStateEffector::updateContributions(
                          * (omegaw2 * omegaw3 * (-RWIt->mass * dSquared) - RWIt->J13 * omegaw2 * omegas
                             - RWIt->mass * RWIt->d * RWIt->w3Hat_B.transpose()
                                   * omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))
-                            + (RWIt->u_current + RWIt->frictionTorque) + RWIt->gsHat_B.dot(gravityTorquePntW_B));
+                            + (RWIt->u_current + RWIt->frictionTorque));
 
             backSubContr.matrixA += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
             backSubContr.matrixB += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
@@ -277,7 +261,7 @@ void ReactionWheelStateEffector::updateContributions(
 
 void ReactionWheelStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -296,7 +280,7 @@ void ReactionWheelStateEffector::computeDerivatives(
 
     //! Grab necessarry values from manager
     omegaDotBNLoc_B = omegaDot_BN_B;
-    rDDotBNLoc_N = rDDot_BN_N;
+    rDDotBNLoc_N = rDDotNonGrav_BN_N;
     sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();

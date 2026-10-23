@@ -7,7 +7,6 @@ import inspect
 import os
 
 import numpy
-import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -238,7 +237,6 @@ def test_hinged_rigid_body_gravity(show_plots):
                                  err_msg="Hinged Rigid Body integrated test failed gravity orbital energy unit test")
 
 
-@pytest.mark.xfail(strict=True, reason="Gravity cancellation in the back-substitution leaves round-off")
 def test_hinged_rigid_body_gravity_invariance(show_plots):
     """A spacecraft at rest in free fall must stay at rest: uniform gravity must not
     rotate the hub or swing the panels."""
