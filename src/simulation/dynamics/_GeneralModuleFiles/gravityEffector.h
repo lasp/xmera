@@ -117,8 +117,9 @@ public:
      *
      *   @param r_cF_N is position of center of mass of s/c wrt frame
      *   @param rDot_cF_N is the derivative of above
+     *   @return gravitational acceleration of the s/c center of mass in N frame components [m/s^2]
      */
-    void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
+    Eigen::Vector3d computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
 
     /** Updates the inertial position and velocity properties */
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
