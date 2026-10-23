@@ -5,7 +5,8 @@ This module is intended to be used as a model to represent a spacecraft that can
 \begin{itemize}
 	\item Updates the mass properties of the spacecraft by adding up all of the contributions to the mass properties from the hub and the state effectors
 	\item Adds up all of the matrix contributions from the hub and state effectors for the back substitution method and gives this information to the hub effector
-	\item Adds up all of the force and torque contributions from dynamicEffectors and gravityEffector
+	\item Adds up all of the force and torque contributions from dynamicEffectors
+	\item Adds the gravitational acceleration at the center of mass to the translational acceleration after the back substitution
 	\item Calls all of the \textit{computeDerivatives} methods for the hub and all of the state effectors which is essentially doing $\dot{\bm X} = \bm f(\bm X, t)$
 	\item Integrates the states forward one time step using the selected integrator
 	\item Calculates the total energy and momentum of the spacecraft by adding up contributions from the hub and the state effectors

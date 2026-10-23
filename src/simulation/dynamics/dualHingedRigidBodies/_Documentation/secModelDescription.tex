@@ -396,6 +396,7 @@ The hinge structure produces the other two torques $L_{i1,1}$ and $L_{i1,3}$. $\
 \begin{equation}
 	\bm \tau_{g,H_{i1}} = \bm r_{S_{c,i1}/H_{i1}} \times \bm F_g
 \end{equation}
+Gravity is evaluated at the spacecraft center of mass, so it gives every body the same acceleration and cancels from the panel equations. The implementation leaves it out of $\bm\tau_{\text{ext}}$ and $\bm F_{\text{ext}}$, which are non-gravitational below, and uses $\ddot{\bm r}_{B/N,\text{ng}}$ in place of $\ddot{\bm r}_{B/N}$.
 
 The inertial angular velocity vector for the solar panel frame is
 \begin{equation}

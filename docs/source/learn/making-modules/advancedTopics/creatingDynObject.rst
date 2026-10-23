@@ -21,8 +21,8 @@ The ``DynamicObject`` class contains two virtual methods ``preIntegration()`` an
 The ``DynamicObject`` subclass must define what steps are to be completed before the integration step,
 and what post-integrations must be completed.  For example, with :ref:`spacecraft` the pre-integration
 process determines the current time step to be integrated and stores some values used.  In the post-integration
-step the MRP spacecraft attitude states are checked to not have a norm larger than 1 and the conservative DV
-component is determined.
+step the MRP spacecraft attitude states are checked to not have a norm larger than 1 and the non-gravitational
+DV is accumulated.
 
 Xmera modules that are a subclass of ``DynamicObject`` are not restricted to mechanical integration
 scenarios as with the spacecraft example.  Any module that has to solve a set of ordinary differential
