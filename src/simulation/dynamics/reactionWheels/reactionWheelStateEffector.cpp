@@ -26,10 +26,9 @@ ReactionWheelStateEffector::~ReactionWheelStateEffector() {
 }
 
 void ReactionWheelStateEffector::linkInStates(DynParamManager &statesIn) {
-    //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
+    //! - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
     this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
@@ -297,8 +296,8 @@ void ReactionWheelStateEffector::computeDerivatives(
     RWConfigMsgPayload* RWIt;
 
     //! Grab necessarry values from manager
-    omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
-    rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
+    omegaDotBNLoc_B = omegaDot_BN_B;
+    rDDotBNLoc_N = rDDot_BN_N;
     sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();

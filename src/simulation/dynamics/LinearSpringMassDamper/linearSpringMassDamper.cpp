@@ -27,7 +27,6 @@ void LinearSpringMassDamper::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hub states
     this->omegaState = statesIn.getStateObject("hubOmega");
     this->sigmaState = statesIn.getStateObject("hubSigma");
-    this->velocityState = statesIn.getStateObject("hubVelocity");
 
     // - Grab access to gravity
     this->g_N = statesIn.getPropertyReference("g_N");
@@ -163,8 +162,8 @@ void LinearSpringMassDamper::computeDerivatives(
 
     // - Compute rhoDDot
     Eigen::MatrixXd conv(1, 1);
-    Eigen::Vector3d omegaDot_BN_B_local = this->omegaState->getStateDeriv();
-    Eigen::Vector3d rDDot_BN_N_local = this->velocityState->getStateDeriv();
+    Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
+    Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
     Eigen::Vector3d rDDot_BN_B_local = dcm_BN * rDDot_BN_N_local;
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
     this->rhoDotState->setDerivative(conv);
