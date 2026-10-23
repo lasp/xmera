@@ -267,6 +267,7 @@ Where the $\bm{L}_{T,j}$ represents the external torques. It contains the dampin
 \begin{equation}
 	\bm{L}_{T,j}=\bm{l_j}\times \bm{F_g}-\bm{D}\bm{l_j'} + \bm{\tau}_{ext,j}
 \end{equation}
+Gravity is evaluated at the spacecraft center of mass, so $\bm l_j\times m_j\bm g$ cancels from Eq.~\eqref{eq:dotH_T}: the implementation drops $\bm F_g$ and uses the non-gravitational acceleration of the spacecraft.
 It is necessary to express $\bm{H}_T$ of the fuel slosh particle as:
 \begin{equation}
 	\bm{H}_{T,j}= m_j \bm{l_j}\times \bm{\dot{l}_j}

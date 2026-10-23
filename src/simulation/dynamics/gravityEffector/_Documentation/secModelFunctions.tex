@@ -10,7 +10,7 @@ The mathematical description of gravity effects are implemented in gravityEffect
 		\item \textbf{Polyhedral:} The code can compute gravity acceleration between two bodies using the polyhedral model. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided with the vertexes positions and their assignment to faces.
 	\end{itemize}
 	\item \textbf{Multiple Body Effects}: The code can stack the effects of multiple gravity bodies on top of each other to determine the net effect on a spacecraft. The user must indicate in the spacecraft set-up which gravitational bodies should be taken into account.
-	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the DynParamManager.
+	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the DynParamManager, and returns the gravitational acceleration at the center of mass to the spacecraft.
 	\item \textbf{Interface: Energy Contributions}: The code sends spacecraft energy contributions via \\updateEnergyContributions() which is called by the spacecraft.
 	\item \textbf{Interface: GravBody States}: The code outputs GravBody states(ephemeris information) via the Basilisk messaging system.
 

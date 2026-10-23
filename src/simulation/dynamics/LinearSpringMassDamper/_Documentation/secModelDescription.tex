@@ -171,6 +171,7 @@ Moving the second order terms to the left hand side and introducing the tilde ma
 	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B}
 	\label{eq:sloshaccel5}
 \end{multline}
+Gravity is evaluated at the spacecraft center of mass, so $m_j\hat{\bm p}_j^T\bm g$ cancels from Eq.~\eqref{eq:sloshaccel5}: the implementation drops $\bm F_G$ and uses the non-gravitational acceleration $\ddot{\bm r}_{B/N,\text{ng}}$ in place of $\ddot{\bm r}_{B/N}$.
 
 \subsection{Derivation of Equations of Motion - Kane's Method}
 

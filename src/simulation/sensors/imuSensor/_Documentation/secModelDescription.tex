@@ -75,7 +75,7 @@ $\Delta_{2/1} \dot{\bm{r}}_{B/N}$ is calculated as the difference between the to
 \begin{equation}
 \Delta_{2/1} \dot{\bm{r}}_{B/N} = DV_{\textrm{body\_non-conservative},2} - DV_{\textrm{body\_non-conservative},1}
 \end{equation}
-The above $DV$ values are given by the spacecraft module in body frame coordinates but used in inertial coordinates. They are computed by accumulating the velocity after each dynamics integration and subtracting out the time-averaged gravitational acceleration multiplied by the dynamics time step. Then,
+The above $DV$ values are given by the spacecraft module in body frame coordinates but used in inertial coordinates. They accumulate the integral of the non-gravitational acceleration of the body frame over each dynamics step. Then,
 \begin{equation}
 	\Delta_{2/1} (\bm{\omega}_{B/N} \times \bm{r}_{S/B}) = \bm{\omega}_{{B/N}_2} \times \bm{r}_{{S/B}_2} - \bm{\omega}_{{B/N}_1} \times \bm{r}_{{S/B}_1}
 \end{equation}
