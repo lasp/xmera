@@ -82,7 +82,6 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
     this->omega_BN_BState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
 
     return;
 }
@@ -336,9 +335,9 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(
     Eigen::Vector3d omegaDotBNLoc_B;  /* time derivative of omegaBN in B frame */
 
     // Grab necessarry values from manager (these have been previously computed in hubEffector)
-    rDDotBNLoc_N = this->v_BN_NState->getStateDeriv();
+    rDDotBNLoc_N = rDDot_BN_N;
     sigmaBNLocal = (Eigen::Vector3d) this->sigma_BNState->getState();
-    omegaDotBNLoc_B = this->omega_BN_BState->getStateDeriv();
+    omegaDotBNLoc_B = omegaDot_BN_B;
     dcmNB = sigmaBNLocal.toRotationMatrix();
     dcmBN = dcmNB.transpose();
     rDDotBNLoc_B = dcmBN * rDDotBNLoc_N;

@@ -41,7 +41,6 @@ void SphericalPendulum::linkInStates(DynParamManager &statesIn) {
 
     this->omegaState = statesIn.getStateObject("hubOmega");
     this->sigmaState = statesIn.getStateObject("hubSigma");
-    this->velocityState = statesIn.getStateObject("hubVelocity");
 
     // - Grab access to gravity
     this->g_N = statesIn.getPropertyReference("g_N");
@@ -341,8 +340,8 @@ void SphericalPendulum::computeDerivatives(
     // - Compute lDDot
     Eigen::MatrixXd phi_conv(1, 1);
     Eigen::MatrixXd theta_conv(1, 1);
-    Eigen::Vector3d omegaDot_BN_B_local = this->omegaState->getStateDeriv();
-    Eigen::Vector3d rDDot_BN_N_local = this->velocityState->getStateDeriv();
+    Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
+    Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
     Eigen::Vector3d rDDot_BN_B_local = dcm_BN * rDDot_BN_N_local;
     phi_conv(0, 0) = this->aPhi.dot(rDDot_BN_B_local) + this->bPhi.dot(omegaDot_BN_B_local) + this->cPhi;
     this->phiDotState->setDerivative(phi_conv);

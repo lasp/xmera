@@ -32,8 +32,7 @@ void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
-    // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
+    // - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling and gravity
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
     this->g_N = statesIn.getPropertyReference("g_N");
@@ -435,9 +434,9 @@ void NHingedRigidBodyStateEffector::computeDerivatives(
     Eigen::Vector3d rDDotLoc_BN_N;
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Vector3d omegaDotLoc_BN_B;
-    rDDotLoc_BN_N = this->hubVelocity->getStateDeriv();
+    rDDotLoc_BN_N = rDDot_BN_N;
     sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
-    omegaDotLoc_BN_B = this->hubOmega->getStateDeriv();
+    omegaDotLoc_BN_B = omegaDot_BN_B;
 
     // - Find rDDotLoc_BN_B
     Eigen::Matrix3d dcm_BN;
