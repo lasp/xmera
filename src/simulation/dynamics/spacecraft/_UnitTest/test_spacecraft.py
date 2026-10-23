@@ -1115,6 +1115,86 @@ def sc_accum_dv_ext_force():
     return [test_fail_count, ''.join(test_messages)]
 
 
+@pytest.mark.xfail(strict=True, reason="Gravity cancellation in the accumulated delta-v leaves round-off")
+def test_spacecraft_free_fall_delta_v(show_plots):
+    """A spacecraft in free fall pushed by a small constant force: the accumulated delta-v and the non-conservative
+    acceleration must come only from that force, with no round-off from the much larger orbital velocity.
+
+    The mass and force are powers of two, so the acceleration is exact, and the force acts along the center of mass
+    offset, so the hub never rotates. Each step must then add exactly the RK4 integral of that acceleration over the
+    step the spacecraft integrates, which it finds from the simulation times in seconds."""
+    time_step = 1.0
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_proc = unit_test_sim.CreateNewProcess("TestProcess")
+    test_proc.addTask(unit_test_sim.CreateNewTask("unitTask", macros.sec2nano(time_step)))
+
+    sc_object = spacecraft.Spacecraft()
+    sc_object.hub.mHub = 512.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    unit_test_sim.AddModelToTask("unitTask", sc_object)
+
+    ext_force = extForceTorque.ExtForceTorque()
+    ext_force.extForce_N = [[0.0], [0.0], [0.5]]
+    sc_object.addDynamicEffector(ext_force)
+    unit_test_sim.AddModelToTask("unitTask", ext_force)
+
+    earth_grav_body = gravityEffector.GravBodyData()
+    earth_grav_body.planetName = "earth_planet_data"
+    earth_grav_body.mu = 0.3986004415E+15  # meters!
+    earth_grav_body.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_grav_body])
+
+    sc_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unitTask", sc_log)
+
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1000.0))
+    unit_test_sim.ExecuteSimulation()
+
+    times = sc_log.times() * macros.NANO2SEC
+    outputs = {
+        "TotalAccumDVBdy": sc_log.TotalAccumDVBdy,
+        "TotalAccumDV_BN_B": sc_log.TotalAccumDV_BN_B,
+        "TotalAccumDV_CN_N": sc_log.TotalAccumDV_CN_N,
+        "nonConservativeAccelpntB_B": sc_log.nonConservativeAccelpntB_B,
+    }
+
+    # Delta-v of each RK4 step of the constant acceleration, summed in the integrator's order
+    accel = 0.5 / 512.0
+    accum_dv = numpy.zeros((len(times), 3))
+    non_conservative_accel = numpy.zeros((len(times), 3))
+    for i in range(1, len(times)):
+        step = times[i] - times[i - 1]
+        step_dv = 0.0
+        for weight in [step / 6.0, step / 3.0, step / 3.0, step / 6.0]:
+            step_dv += weight * accel
+        accum_dv[i, 2] = accum_dv[i - 1, 2] + step_dv
+        non_conservative_accel[i, 2] = step_dv / step
+    expected = {
+        "TotalAccumDVBdy": accum_dv,
+        "TotalAccumDV_BN_B": accum_dv,
+        "TotalAccumDV_CN_N": accum_dv,
+        "nonConservativeAccelpntB_B": non_conservative_accel,
+    }
+
+    plt.close("all")
+    fig, axes = plt.subplots(4, 1, sharex=True, figsize=(8, 8))
+    for ax, (name, values) in zip(axes, outputs.items()):
+        ax.plot(times, values - expected[name])
+        ax.set_ylabel(name + " error")
+    axes[-1].set_xlabel("time (s)")
+    fig.tight_layout()
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    for name, values in outputs.items():
+        numpy.testing.assert_array_equal(values, expected[name], err_msg=name)
+
+
 if __name__ == "__main__":
     # scAttRef(True, 1e-3)
     # sc_translation(True)
@@ -1127,3 +1207,4 @@ if __name__ == "__main__":
     # sc_optional_ref(True, 0.001)
     # sc_accum_dv()
     # sc_accum_dv_ext_force()
+    # test_spacecraft_free_fall_delta_v(True)
