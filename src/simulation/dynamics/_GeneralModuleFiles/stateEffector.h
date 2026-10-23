@@ -12,8 +12,9 @@
 /*! @brief Back-substitution contributions of one state effector.
  *
  * The dynamicObject adds the contributions of all of its effectors, then solves
- * [matrixA matrixB; matrixC matrixD] [rDDot_BN_N; omegaDot_BN_B] = [vecTrans; vecRot] for the
- * acceleration of the spacecraft hub.
+ * [matrixA matrixB; matrixC matrixD] [rDDotNonGrav_BN_N; omegaDot_BN_B] = [vecTrans; vecRot] for the
+ * non-gravitational acceleration of the spacecraft hub. Gravity is evaluated once at the spacecraft
+ * center of mass, so it accelerates every body equally and does not enter the contributions.
  */
 struct BackSubMatrices {
     Eigen::Matrix3d matrixA;   //!< [kg] Back-substitution matrix A
@@ -74,8 +75,8 @@ public:
 
     /*! @brief Gives the back-substitution contributions of the effector.
      *
-     * The back-substitution method first calculates rDDot_BN_N and omegaDot_BN_B for the spacecraft
-     * from these contributions. computeDerivatives() then uses rDDot_BN_N and omegaDot_BN_B to
+     * The back-substitution method first calculates rDDotNonGrav_BN_N and omegaDot_BN_B for the spacecraft
+     * from these contributions. computeDerivatives() then uses rDDotNonGrav_BN_N and omegaDot_BN_B to
      * calculate the state derivatives of the effector.
      *
      * @param integTime [s] Integration time
@@ -142,13 +143,14 @@ public:
     /*! @brief Calculates the state derivatives of the effector.
      *
      * @param integTime [s] Integration time
-     * @param rDDot_BN_N [m/s^2] Acceleration of point B relative to frame N, in N frame components
+     * @param rDDotNonGrav_BN_N [m/s^2] Non-gravitational acceleration of point B relative to frame N, in N frame
+     * components
      * @param omegaDot_BN_B [rad/s^2] Angular acceleration of frame B relative to frame N, in B frame components
      * @param sigma_BN [-] MRP attitude of body frame B relative to inertial frame N
      */
     virtual void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     ) = 0;

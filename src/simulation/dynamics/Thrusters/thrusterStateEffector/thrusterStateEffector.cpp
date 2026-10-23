@@ -272,7 +272,7 @@ void ThrusterStateEffector::registerStates(DynParamManager &states) {
 /*! This method is used to find the derivatives for the thruster stateEffector */
 void ThrusterStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {

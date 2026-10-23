@@ -98,11 +98,11 @@ void HubEffector::updateEffectorMassProps(double integTime) {
     return;
 }
 
-/*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
- derivatives */
+/*! This method is for computing the derivatives of the hub: rDDotNonGrav_BN_N and omegaDot_BN_B, along with the
+ kinematic derivatives. The spacecraft adds gravity to the velocity derivative afterwards */
 void HubEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -139,7 +139,7 @@ void HubEffector::computeDerivatives(
     omegaDotLocal_BN_B = intermediateMatrix.inverse() * intermediateVector;
     omegaState->setDerivative(omegaDotLocal_BN_B);
 
-    // - Solve for rDDot_BN_N
+    // - Solve for rDDotNonGrav_BN_N
     velocityState->setDerivative(
         dcm_NB * hubBackSubMatrices.matrixA.inverse()
         * (hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB * omegaDotLocal_BN_B)

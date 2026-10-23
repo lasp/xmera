@@ -103,20 +103,6 @@ void LinearSpringMassDamper::updateContributions(
     Eigen::Vector3d omega_BN_B,
     Eigen::Vector3d g_N
 ) {
-    // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_BN;
-    Eigen::Matrix3d dcm_BN;
-    Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
-    dcm_NB = sigmaLocal_BN.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
-
-    // - Map gravity to body frame
-    Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_B;
-    gLocal_N = *this->g_N;
-    g_B = dcm_BN * gLocal_N;
-
     // - Define aRho
     this->aRho = -this->pHat_B;
 
@@ -128,7 +114,7 @@ void LinearSpringMassDamper::updateContributions(
     Eigen::Matrix3d omegaTilde_BN_B_local;
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
     cRho = 1.0 / (this->massSMD)
-         * (this->pHat_B.dot(this->massSMD * g_B) - this->k * this->rho - this->c * this->rhoDot
+         * (-this->k * this->rho - this->c * this->rhoDot
             - 2 * this->massSMD * this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
             - this->massSMD * this->pHat_B.dot(omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->r_PcB_B));
 
@@ -147,7 +133,7 @@ void LinearSpringMassDamper::updateContributions(
  derived using the back-sub method */
 void LinearSpringMassDamper::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -163,7 +149,7 @@ void LinearSpringMassDamper::computeDerivatives(
     // - Compute rhoDDot
     Eigen::MatrixXd conv(1, 1);
     Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
-    Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
+    Eigen::Vector3d rDDot_BN_N_local = rDDotNonGrav_BN_N;
     Eigen::Vector3d rDDot_BN_B_local = dcm_BN * rDDot_BN_N_local;
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
     this->rhoDotState->setDerivative(conv);
