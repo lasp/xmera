@@ -1115,7 +1115,6 @@ def sc_accum_dv_ext_force():
     return [test_fail_count, ''.join(test_messages)]
 
 
-@pytest.mark.xfail(strict=True, reason="Gravity cancellation in the accumulated delta-v leaves round-off")
 def test_spacecraft_free_fall_delta_v(show_plots):
     """A spacecraft in free fall pushed by a small constant force: the accumulated delta-v and the non-conservative
     acceleration must come only from that force, with no round-off from the much larger orbital velocity.
