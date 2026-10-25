@@ -33,6 +33,14 @@ It is possible to define an asymmetrical field of view for the CSS. This is usef
 
 where :math:`\xi` indicates the half-angle field of view in the :math:`+\boldsymbol{\hat{m}}` direction, :math:`\eta` indicates the half-angle field of view in the :math:`-\boldsymbol{\hat{m}}` direction, and :math:`\zeta` indicates the half-angle field of view in the positive :math:`\pm \boldsymbol{\hat{l}}` direction. By design, the field of view is symmetric with respect to the :math:`(l,n)` plane. The coefficients :math:`n_1` and :math:`n_2` are warping coefficients that allow to obtain more rectangular shapes for the two half ellipsoids as :math:`n_1, n_2 >> 2`. Setting :math:`n_1 = n_2 = 2` ensures that the half ellipsoids are, in fact, half ellipses; setting :math:`\xi = \eta = \zeta` returns a regular conical field of view.
 
+The sensor can also include albedo, the sunlight reflected off a planet. If ``albedoInMsg`` is connected, the module
+reads ``albedoAtInstrument`` from :ref:`albedo`. If it is not connected, the module uses the ``albedoValue`` variable.
+This value is the albedo flux as a ratio to the solar flux at the sensor. The module multiplies it by the sun distance
+factor :math:`(1\,\text{AU})^2 / r_{SC/Sun}^2`, as it does for the direct signal, and adds it to the signal before
+the scale factor, bias and noise. The shadow factor is not applied to the albedo, because albedo light still reaches a
+sensor in a planet's shadow. The albedo is also added when the sun is outside the sensor field of view. Values that are
+not positive are ignored.
+
 The coarse sun sensor module also supports user-enabled faulty behavior by assigning a values to the ``.faultState`` member of a given sensor. An example of such call would is ``cssSensor.faultState = coarse_sun_sensor.CSSFAULT_OFF`` where ``cssSensor`` is an instantiated sensor, and ``coarse_sun_sensor`` is the imported module.
 
 The module currently supports the following faults:
