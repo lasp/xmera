@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/SmallBodyNavUKFMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
@@ -38,7 +37,6 @@ public:
     Message<SmallBodyNavUKFMsgPayload>
         smallBodyNavUKFOutMsg;  //!< Small body nav UKF output msg - states and covariances
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double mu_ast;            //!< Gravitational constant of the small body
     Eigen::MatrixXd P_proc;   //!< Process noise covariance

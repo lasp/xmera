@@ -5,6 +5,7 @@
 #include "smallBodyNavEKF.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -55,14 +56,16 @@ SmallBodyNavEKF::SmallBodyNavEKF() {
 void SmallBodyNavEKF::reset(uint64_t currentSimNanos) {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navTransInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyNavEKF.navTransInMsg was not linked.");
     }
-    if (!this->navAttInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navAttInMsg was not linked."); }
+    if (!this->navAttInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("SmallBodyNavEKF.navAttInMsg was not linked.");
+    }
     if (!this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.asteroidEphemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyNavEKF.asteroidEphemerisInMsg was not linked.");
     }
     if (!this->sunEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.sunEphemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyNavEKF.sunEphemerisInMsg was not linked.");
     }
 }
 
@@ -107,7 +110,7 @@ void SmallBodyNavEKF::readMessages(uint64_t currentSimNanos) {
             this->thrusterInMsgBuffer.push_back(thrusterMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_WARNING, "Small Body Nav EKF has no thruster messages to read.");
+        xmera::logging::get(this->modelTag)->warn("Small Body Nav EKF has no thruster messages to read.");
     }
 }
 

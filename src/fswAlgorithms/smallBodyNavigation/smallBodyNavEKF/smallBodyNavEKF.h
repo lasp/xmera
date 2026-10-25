@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/SmallBodyNavMsgPayload.h>
 #include <architecture/msgPayloadDef/THROutputMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/orbitalMotion.h>
 
@@ -54,7 +53,6 @@ public:
     Message<SmallBodyNavMsgPayload> smallBodyNavOutMsg;    //!< Small body nav output msg - states and covariances
     Message<EphemerisMsgPayload> asteroidEphemerisOutMsg;  //!< Small body ephemeris output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double C_SRP;             //!< SRP scaling coefficient
     double P_0;               //!< SRP at 1 AU
