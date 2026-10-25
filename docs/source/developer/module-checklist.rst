@@ -42,7 +42,7 @@ Module Programming
       messages
    -  The ``reset()`` in the FSW modules should reset all the default
       module configuration parameters.
-- Is the module using the ``bskLogging`` Xmera logging function?
+- Does the module use ``xmera::logging`` to write log messages?
 
 Module Documentation
 --------------------

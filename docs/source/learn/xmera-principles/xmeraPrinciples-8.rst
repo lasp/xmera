@@ -41,16 +41,10 @@ The expected output from executing the script looks as follows:
 .. code-block::
 
     (.venv) source/code-samples % python xmera-8.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Module ID 1 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 0.000000s
+    [info] [module2] Variable dummy set to 0.000000 in reset.
+    [info] [module2] Module ID 1 ran Update at 0.000000s
     all tasks disabled
     BSK executed a single simulation step
-    BSK_INFORMATION: Module ID 1 ran Update at 2.000000s
+    [info] [module2] Module ID 1 ran Update at 2.000000s
     BSK executed a single simulation step
-    BSK_INFORMATION: Module ID 1 ran Update at 3.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 3.000000s
-    BSK executed a single simulation step
-    BSK_INFORMATION: Module ID 1 ran Update at 4.000000s
     BSK executed a single simulation step

@@ -94,16 +94,16 @@ When you run the script, you should see terminal output similar to:
 .. code-block::
 
     source/code-samples % python3 xmera-2.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    [info] [module2] Variable dummy set to 0.000000 in reset.
+    [info] [module3] Variable dummy set to 0.000000 in reset.
+    [info] [module1] Variable dummy set to 0.000000 in reset.
     InitializeSimulation() completed...
-    BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
-    BSK_INFORMATION: C++ Module ID 3 ran Update at 0.000000s
-    BSK_INFORMATION: C++ Module ID 1 ran Update at 0.000000s
-    BSK_INFORMATION: C++ Module ID 2 ran Update at 5.000000s
-    BSK_INFORMATION: C++ Module ID 3 ran Update at 5.000000s
-    BSK_INFORMATION: C++ Module ID 1_Update at 5.000000s
+    [info] [module2] Module ID 2 ran Update at 0.000000s
+    [info] [module3] Module ID 3 ran Update at 0.000000s
+    [info] [module1] Module ID 1 ran Update at 0.000000s
+    [info] [module2] Module ID 2 ran Update at 5.000000s
+    [info] [module3] Module ID 3 ran Update at 5.000000s
+    [info] [module1] Module ID 1 ran Update at 5.000000s
 
 The ``reset()`` method from :ref:`cppModuleTemplate` prints a statement when a variable
 is initialized. Since three modules are created, this reset message appears three times—once for each module.

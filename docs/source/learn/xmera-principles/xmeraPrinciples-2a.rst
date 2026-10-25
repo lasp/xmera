@@ -40,7 +40,7 @@ If you execute this python code you should see the following terminal output:
 
     $ python xmera-2a.py
     -10.0
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    [info] [module1] Variable dummy set to 0.000000 in reset.
     0.0
-    BSK_INFORMATION: Module ID 1 ran Update at 0.000000s
+    [info] [module1] Module ID 1 ran Update at 0.000000s
     1.0

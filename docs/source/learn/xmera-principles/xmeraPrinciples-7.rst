@@ -55,16 +55,9 @@ After executing the script you should see the following terminal output:
 .. code-block::
 
     source/code-samples % python xmera-7.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Module ID 1 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 1 ran Update at 1.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 1.000000s
-    mod1.dataOutMsg:
-    [2.0, 0.0, 0.0]
-    cppMsg:
-    [2.0, 0.0, 0.0]
+    [info] [cppModule2] Variable dummy set to 0.000000 in reset.
+    [info] [cppModule2] Module ID 1 ran Update at 0.000000s
+    [info] [cppModule2] Module ID 1 ran Update at 1.000000s
     mod2.dataOutMsg:
     [2.0, 0.0, 0.0]
     cppMsg:
