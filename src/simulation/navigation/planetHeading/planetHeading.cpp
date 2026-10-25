@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 
 /*! Customer constructor just sets the spacecraftSTateInMsg by default*/
 PlanetHeading::PlanetHeading() {}
@@ -58,10 +59,10 @@ void PlanetHeading::writeMessages(uint64_t currentSimNanos) {
 void PlanetHeading::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->planetPositionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "planetHeading.planetPositionInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("planetHeading.planetPositionInMsg was not linked.");
     }
     if (!this->spacecraftStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "planetHeading.spacecraftStateInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("planetHeading.spacecraftStateInMsg was not linked.");
     }
 
     return;

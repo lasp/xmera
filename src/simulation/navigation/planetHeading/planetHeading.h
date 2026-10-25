@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/BodyHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <Eigen/Dense>
@@ -31,7 +30,6 @@ public:
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;         //!< spacecraft state input message
     Message<BodyHeadingMsgPayload> planetHeadingOutMsg;           //!< body heading output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     Eigen::Vector3d r_PN_N;     //!< [m] planet position

@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/LandmarkMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>
@@ -70,7 +69,6 @@ public:
     std::vector<Message<LandmarkMsgPayload>*> landmarkOutMsgs;  //!< vector of landmark messages
     std::vector<LandmarkMsgPayload> landmarkMsgBuffer;          //!< buffer of landmark output data
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     /* Batch variables */
     Eigen::MatrixXi pixelBatchLmk;      //!< [-] batch of landmark pixels

@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 
 #include <Eigen/Dense>
@@ -46,7 +45,6 @@ public:
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;  //!< planet ephemeris input msg
     Message<EphemerisMsgPayload> ephemerisOutMsg;     //!< planet ephemeris output msg
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     PlanetNavCovar AMatrix;      //!< -- The matrix used to propagate the state

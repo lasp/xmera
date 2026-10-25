@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
 
@@ -40,9 +41,11 @@ void PinholeCamera::reset(uint64_t currentSimNanos) {
     this->n = int(this->r_LP_P.size());
 
     /* Check that required input messages are connected */
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "PinholeCamera.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("PinholeCamera.scStateInMsg was not linked.");
+    }
     if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "PinholeCamera.ephemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("PinholeCamera.ephemerisInMsg was not linked.");
     }
 
     /* Compute field of view */

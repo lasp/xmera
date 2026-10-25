@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -36,7 +37,9 @@ PlanetNav::~PlanetNav() {
 */
 void PlanetNav::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
-    if (!this->ephemerisInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "PlanetNav.ephemerisInMsg was not linked."); }
+    if (!this->ephemerisInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("PlanetNav.ephemerisInMsg was not linked.");
+    }
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity();
