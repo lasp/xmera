@@ -25,6 +25,7 @@ endif()
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(SWIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 include(XmeraGoogleTest)
 
 # Patch the Python3::Module interface link options to be more selective,
