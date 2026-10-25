@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/DvBurnCmdMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -21,8 +20,6 @@ public:
     void updateState(uint64_t callTime) override;
     Message<AttRefMsgPayload> attRefOutMsg;          //!< The name of the output message
     ReadFunctor<DvBurnCmdMsgPayload> burnDataInMsg;  //!< Input message that configures the vehicle burn
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
