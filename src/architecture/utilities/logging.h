@@ -26,6 +26,9 @@ namespace xmera::logging {
     /*! Set the level for the logger with this name. The level applies also if the logger does not exist yet. */
     void setLevel(std::string const &name, spdlog::level::level_enum level);
 
+    /*! Remove the levels set by name and set the global level of all loggers back to debug. */
+    void resetLevels();
+
     /*! Return true if at least one logger writes messages at this level. */
     bool enabled(spdlog::level::level_enum level);
 

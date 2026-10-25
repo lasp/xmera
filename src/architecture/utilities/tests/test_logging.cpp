@@ -18,7 +18,7 @@ namespace {
         }
 
         void TearDown() override {
-            xmera::logging::setLevel(spdlog::level::debug);
+            xmera::logging::resetLevels();
             xmera::logging::setSink(xmera::logging::parseSink("stdout"));
         }
 
@@ -69,6 +69,14 @@ TEST_F(Logging, namedLevelOverridesGlobalLevel) {
     xmera::logging::setLevel(spdlog::level::trace);
 
     EXPECT_EQ(xmera::logging::get("quietModule")->level(), spdlog::level::off);
+}
+
+TEST_F(Logging, resetLevelsRemovesNamedLevels) {
+    xmera::logging::setLevel("resetModule", spdlog::level::off);
+    xmera::logging::resetLevels();
+    xmera::logging::setLevel(spdlog::level::warn);
+
+    EXPECT_EQ(xmera::logging::get("resetModule")->level(), spdlog::level::warn);
 }
 
 TEST_F(Logging, enabledFollowsLowestLevel) {

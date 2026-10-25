@@ -80,6 +80,10 @@ namespace std {
         xmera::logging::setLevel(name, xmera::logging::parseLevel(level));
     }
 
+    void reset_log_levels() {
+        xmera::logging::resetLevels();
+    }
+
     void set_log_sink(std::string const& spec) {
         xmera::logging::setSink(xmera::logging::parseSink(spec));
     }

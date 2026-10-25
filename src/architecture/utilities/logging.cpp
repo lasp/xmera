@@ -80,6 +80,15 @@ namespace xmera::logging {
         updateLowestLevel(s);
     }
 
+    void resetLevels() {
+        State &s = state();
+        std::lock_guard lock(s.mutex);
+        s.namedLevels.clear();
+        s.globalLevel = spdlog::level::debug;
+        for (auto const &[name, logger] : s.loggers) { logger->set_level(s.globalLevel); }
+        updateLowestLevel(s);
+    }
+
     bool enabled(spdlog::level::level_enum level) {
         return level >= lowestLevel.load(std::memory_order_relaxed);
     }
