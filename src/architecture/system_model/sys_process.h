@@ -6,7 +6,6 @@
 #define XMAheader_sys_process
 
 #include <architecture/system_model/sys_model_task.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 

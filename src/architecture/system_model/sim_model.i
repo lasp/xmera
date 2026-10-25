@@ -65,7 +65,6 @@ namespace std {
 %include "sys_model_task.h"
 %include "sys_process.h"
 %include "sim_model.h"
-%include "architecture/utilities/bskLogging.h"
 
 %{
    #include "architecture/utilities/logging.h"

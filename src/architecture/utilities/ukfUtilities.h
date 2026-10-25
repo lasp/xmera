@@ -4,8 +4,6 @@
 #ifndef _UKF_UTILITIES_H_
 #define _UKF_UTILITIES_H_
 
-#include <architecture/utilities/bskLogging.h>
-
 #include <stdint.h>
 #include <string.h>
 

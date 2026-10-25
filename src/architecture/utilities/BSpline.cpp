@@ -249,7 +249,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
     if (Input.XDDot_0_flag == true) { K += 1; }
     if (Input.XDDot_N_flag == true) { K += 1; }
 
-    // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
+    // The maximum polynomial order is N + K. If a higher order is requested, print an error
     if (P > N + K) {
         std::cout << "Error in BSpline.interpolate: \n the desired polynomial order P is too high. Mass matrix A will "
                      "be singular. \n";
@@ -412,7 +412,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet* Outpu
     Eigen::VectorXd uk(N + 1);
     for (int n = 0; n < N + 1; n++) { uk[n] = T[n] / Ttot; }
 
-    // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
+    // The maximum polynomial order is N + K. If a higher order is requested, print an error
     if (P > Q) {
         std::cout << "Error in BSpline.approximate: \n the desired polynomial order P can't be higher than the number "
                      "of control points Q. \n";

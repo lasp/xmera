@@ -1,7 +1,6 @@
 # Build a linkable core library for C++ modules
 add_library(xmera_core SHARED
   _GeneralModuleFiles/sys_model.cpp
-  utilities/bskLogging.cpp
   utilities/logging.cpp
 )
 
