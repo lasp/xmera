@@ -5,6 +5,8 @@
 
 #include <architecture/utilities/linearAlgebra.h>
 
+#include <string>
+
 /*! This method takes the navigation message snippets created by the various
     navigation components in the FSW and aggregates them into a single complete
     navigation message.

@@ -14,6 +14,7 @@
 #include <architecture/utilities/eigenSupport.h>
 
 #include <Eigen/Core>
+#include <map>
 #include <string>
 #include <vector>
 
