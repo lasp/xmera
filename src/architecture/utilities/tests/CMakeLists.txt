@@ -54,6 +54,10 @@ add_executable(test_eigenSupport test_eigenSupport.cpp)
 target_link_libraries(test_eigenSupport GTest::gtest_main Xmera::Core ArchitectureUtilities)
 target_include_directories(test_eigenSupport PRIVATE "${CMAKE_SOURCE_DIR}")
 
+add_executable(test_logging test_logging.cpp)
+target_link_libraries(test_logging GTest::gtest_main Xmera::Core)
+target_include_directories(test_logging PRIVATE "${CMAKE_SOURCE_DIR}")
+
 gtest_discover_tests(test_discretize)
 gtest_discover_tests(test_gaussMarkov)
 gtest_discover_tests(test_orbitalMotion)
@@ -68,6 +72,7 @@ gtest_discover_tests(test_linearInterpolation)
 gtest_discover_tests(test_linearAlgebra)
 gtest_discover_tests(test_bilinearInterpolation)
 gtest_discover_tests(test_eigenSupport)
+gtest_discover_tests(test_logging)
 
 if(XMERA_ENABLE_FUZZTESTS)
   fuzztest_setup_fuzzing_flags()
