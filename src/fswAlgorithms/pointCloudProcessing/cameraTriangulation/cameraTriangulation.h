@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
 #include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 
@@ -33,7 +32,6 @@ public:
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;       //!< camera configuration input message
     Message<CameraLocalizationMsgPayload> cameraLocationOutMsg;  //!< estimated camera location output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double uncertaintyImageMeasurement =
         0.;  //!< [pixel] standard deviation of image point errors (about 1/4 to 1/2 px)

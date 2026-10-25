@@ -3,6 +3,8 @@
 
 #include "initializeICP.h"
 
+#include <architecture/utilities/logging.h>
+
 InitializeICP::InitializeICP() = default;
 
 InitializeICP::~InitializeICP() = default;
@@ -14,10 +16,14 @@ InitializeICP::~InitializeICP() = default;
  */
 void InitializeICP::reset(uint64_t currentSimNanos) {
     if (!this->inputMeasuredPointCloud.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("Measured Point Cloud wasn't connected.");
     }
-    if (!this->ephemerisInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "Ephemeris message wasn't connected."); }
-    if (!this->cameraConfigInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "Camera message was not linked."); }
+    if (!this->ephemerisInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("Ephemeris message wasn't connected.");
+    }
+    if (!this->cameraConfigInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("Camera message was not linked.");
+    }
 
     //! If the module is reset, use the ephemeris message for initialization
     this->initialPhase = true;

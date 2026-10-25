@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
 #include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 
@@ -37,7 +36,6 @@ public:
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;            //!< camera configuration input message
     Message<PointCloudMsgPayload> pointCloudOutMsg;                   //!< point cloud output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     //!< number of times (time steps) the module should use the ephemeris message before using the navigation message
     int numberTimeStepsInitialPhase = 5;

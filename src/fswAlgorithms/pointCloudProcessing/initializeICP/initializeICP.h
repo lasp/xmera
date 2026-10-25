@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
 #include <architecture/msgPayloadDef/SICPMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -35,7 +34,6 @@ public:
     Message<PointCloudMsgPayload> measuredPointCloud;           //!< The output fitted point cloud
     Message<SICPMsgPayload> initializeSICPMsg;                  //!< The output algorithm data
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double maxTimeBetweenMeasurements = 600;
     bool normalizeMeasuredCloud = false;
