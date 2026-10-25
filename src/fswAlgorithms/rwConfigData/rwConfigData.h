@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -23,8 +22,6 @@ public:
     /* declare module IO interfaces */
     ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg; /*!< RW array input message */
     Message<RWArrayConfigMsgPayload> rwParamsOutMsg;             /*!< RW array output message */
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
