@@ -5,6 +5,7 @@
 #include "headingSuKF.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/ukfUtilities.h>
@@ -23,7 +24,7 @@ void HeadingSuKF::reset(uint64_t callTime) {
 
     // check if the required input message is included
     if (!this->opnavDataInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: headingSuKF.opnavDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("headingSuKF.opnavDataInMsg wasn't connected.");
     }
 
     /*! - Check input message connections */

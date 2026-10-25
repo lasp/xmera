@@ -5,6 +5,7 @@
 #include "sunlineUKF.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/ukfUtilities.h>
@@ -32,20 +33,20 @@ void SunlineUKF::reset(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->cssConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineUKF.cssConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("sunlineUKF.cssConfigInMsg wasn't connected.");
     }
     if (!this->cssDataInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineUKF.cssDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("sunlineUKF.cssDataInMsg wasn't connected.");
     }
 
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     cssConfigInBuffer = this->cssConfigInMsg();
     if (cssConfigInBuffer.nCSS > MAX_NUM_CSS_SENSORS) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "sunlineUKF.cssConfigInMsg.nCSS must not be greater than "
-            "MAX_NUM_CSS_SENSORS value."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "sunlineUKF.cssConfigInMsg.nCSS must not be greater than "
+                "MAX_NUM_CSS_SENSORS value."
+            );
     }
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/

@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -71,8 +70,6 @@ public:
     double sensorUseThresh;         /*!< -- Threshold below which we discount sensors*/
     NavAttMsgPayload outputHeading; /*!< -- Output heading estimate data */
     OpNavMsgPayload opnavInBuffer;  /*!< -- message buffer */
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void headingSuKFTimeUpdate(HeadingSuKF* configData, double updateTime);

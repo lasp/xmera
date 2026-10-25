@@ -107,8 +107,6 @@ public:
     LowPassFilterData gyroFilt[3];            //!< [-] Low-pass filters for input gyro data
 
     STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void Read_STMessages(InertialUKF* configData);

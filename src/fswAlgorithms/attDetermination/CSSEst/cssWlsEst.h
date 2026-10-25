@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -37,8 +36,6 @@ public:
     uint64_t priorTime;                     //!< [ns] Last time the attitude control is called
     CSSConfigMsgPayload cssConfigInBuffer;  //!< CSS constellation configuration message buffer
     SunlineFilterMsgPayload filtStatus;     //!< Filter message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

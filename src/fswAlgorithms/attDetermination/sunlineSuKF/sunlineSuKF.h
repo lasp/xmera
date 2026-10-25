@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -87,8 +86,6 @@ public:
     NavAttMsgPayload outputSunline;              //!< -- Output sunline estimate data
     CSSArraySensorMsgPayload cssSensorInBuffer;  //!< [-] CSS sensor data read in from message bus
     uint32_t filterInitialized;                  //!< [-] Flag indicating if filter has been init or not
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 int sunlineSuKFTimeUpdate(SunlineSuKF* data, double updateTime);

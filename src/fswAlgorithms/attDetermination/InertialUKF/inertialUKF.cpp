@@ -5,6 +5,7 @@
 #include "inertialUKF.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/ukfUtilities.h>
@@ -24,16 +25,16 @@ void InertialUKF::reset(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->rwParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: inertialUKF.rwParamsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("inertialUKF.rwParamsInMsg wasn't connected.");
     }
     if (!this->massPropsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: inertialUKF.massPropsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("inertialUKF.massPropsInMsg wasn't connected.");
     }
     if (!this->rwSpeedsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: inertialUKF.rwSpeedsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("inertialUKF.rwSpeedsInMsg wasn't connected.");
     }
     if (!this->gyrBuffInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: inertialUKF.gyrBuffInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("inertialUKF.gyrBuffInMsg wasn't connected.");
     }
 
     /*! - Read static RW config data message and store it in module variables */
@@ -88,7 +89,7 @@ void InertialUKF::reset(uint64_t callTime) {
     this->timeTagOut = this->timeTag;
     Read_STMessages(this);
 
-    if (badUpdate < 0) { this->bskLogger.bskLog(BSK_WARNING, "Reset method contained bad update"); }
+    if (badUpdate < 0) { xmera::logging::get(this->modelTag)->warn("Reset method contained bad update"); }
     return;
 }
 
@@ -194,7 +195,7 @@ void InertialUKF::updateState(uint64_t callTime) {
             trackerValid = 1;
             if ((newTimeTag - this->timeTag) > this->maxTimeJump && this->maxTimeJump > 0) {
                 this->timeTag = newTimeTag - this->maxTimeJump;
-                this->bskLogger.bskLog(BSK_WARNING, "Large jump in state time that was set to max.");
+                xmera::logging::get(this->modelTag)->warn("Large jump in state time that was set to max.");
             }
             trackerValid += inertialUKFTimeUpdate(this, newTimeTag);
             trackerValid += inertialUKFMeasUpdate(this, this->stSensorOrder[i]);
