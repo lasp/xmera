@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <array>
 #include <cstdint>
@@ -31,8 +30,6 @@ public:
     std::array<EphemChangeConfig, MAX_NUM_CHANGE_BODIES> changeBodies{};  //!< [-] The list of bodies to change out
 
     uint32_t ephBdyCount;  //!< [-] The number of ephemeris bodies we are changing
-
-    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

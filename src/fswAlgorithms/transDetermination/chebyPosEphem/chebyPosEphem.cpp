@@ -5,6 +5,7 @@
 #include "chebyPosEphem.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h>
@@ -20,7 +21,7 @@
 void ChebyPosEphem::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->clockCorrInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("chebyPosEphem.clockCorrInMsg wasn't connected.");
     }
 
     int i, j, k, n;

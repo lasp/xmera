@@ -5,6 +5,7 @@
 #include "dvAccumulation.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <assert.h>
@@ -77,7 +78,7 @@ void dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end) {
 void DVAccumulation::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->accPktInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: dvAccumulation.accPktInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("dvAccumulation.accPktInMsg wasn't connected.");
     }
 
     /*! - read in the accelerometer data message */

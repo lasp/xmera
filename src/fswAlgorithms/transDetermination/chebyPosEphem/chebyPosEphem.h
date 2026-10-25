@@ -9,7 +9,7 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
+
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
@@ -41,8 +41,6 @@ public:
     uint32_t coeffSelector; /*!< [-] Index in the ephArray that we are currently using*/
 
     EphemerisMsgPayload outputState; /*!< [-] The local storage of the outgoing message data*/
-
-    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

@@ -4,6 +4,8 @@
 
 #include "ephemDifference.h"
 
+#include <architecture/utilities/logging.h>
+
 /*! @brief This method resets the module.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -11,7 +13,7 @@
 void EphemDifference::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->ephBaseInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("ephemDifference.ephBaseInMsg wasn't connected.");
     }
 
     this->ephBdyCount = 0;
@@ -24,11 +26,11 @@ void EphemDifference::reset(uint64_t callTime) {
     }
 
     if (this->ephBdyCount == 0) {
-        this->bskLogger.bskLog(
-            BSK_WARNING,
-            "Your outgoing ephemeris message count is zero. "
-            "Be sure to specify desired output messages."
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Your outgoing ephemeris message count is zero. "
+                "Be sure to specify desired output messages."
+            );
     }
 }
 

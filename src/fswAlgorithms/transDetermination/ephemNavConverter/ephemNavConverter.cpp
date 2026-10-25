@@ -4,6 +4,8 @@
 
 #include "ephemNavConverter.h"
 
+#include <architecture/utilities/logging.h>
+
 /*! Reset method for the module adapter interface.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -11,7 +13,7 @@
 void EphemNavConverter::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->ephInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: ephemNavConverter.ephInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("ephemNavConverter.ephInMsg wasn't connected.");
     }
 }
 
