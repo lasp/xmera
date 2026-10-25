@@ -4,6 +4,8 @@
 
 #include "horizonOpNav.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,13 +82,13 @@ void BackSub(double* R, double* inVec, int32_t nRow, double* n) {
 void HorizonOpNav::reset(uint64_t callTime) {
     // check that the required message has not been connected
     if (!this->cameraConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: horizonOpNav.cameraConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("horizonOpNav.cameraConfigInMsg wasn't connected.");
     }
     if (!this->limbInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: horizonOpNav.limbInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("horizonOpNav.limbInMsg wasn't connected.");
     }
     if (!this->attInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: horizonOpNav.attInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("horizonOpNav.attInMsg wasn't connected.");
     }
 }
 

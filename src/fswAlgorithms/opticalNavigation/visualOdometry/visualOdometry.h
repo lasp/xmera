@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -31,7 +30,6 @@ public:
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;
     Message<DirectionOfMotionMsgPayload> dirOfMotionMsgOutput;  //!< lambert problem output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double errorTolerance = 1E-5;
     double sigma_uv = 0.01;

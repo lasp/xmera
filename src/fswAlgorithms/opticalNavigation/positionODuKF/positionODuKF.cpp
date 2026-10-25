@@ -3,6 +3,8 @@
 
 #include "positionODuKF.h"
 
+#include <architecture/utilities/logging.h>
+
 PositionODuKF::PositionODuKF() = default;
 
 PositionODuKF::~PositionODuKF() = default;
@@ -15,7 +17,7 @@ PositionODuKF::~PositionODuKF() = default;
 void PositionODuKF::reset(uint64_t currentSimNanos) {
     /*! - Check if the required message has not been connected */
     if (!this->cameraPosMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Error: positionODuKF opNavUnitVecInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("positionODuKF opNavUnitVecInMsg wasn't connected.");
     }
 
     /*! - Initialize filter parameters and change units to km and s */

@@ -33,7 +33,6 @@ public:
     double sigmaFault;     //!< What is the sigma multiplication factor when comparing measurements
 
     // added for bsk
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

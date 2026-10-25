@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -29,8 +28,6 @@ public:
     ReadFunctor<OpNavCirclesMsgPayload> circlesInMsg;       //!< circles input message
 
     int32_t planetTarget;  //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

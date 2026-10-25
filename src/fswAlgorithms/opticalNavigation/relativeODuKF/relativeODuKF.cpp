@@ -4,6 +4,7 @@
 
 #include "relativeODuKF.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/ukfUtilities.h>
 
 #include <math.h>
@@ -35,7 +36,7 @@ static void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, do
 void RelODuKF::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->opNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("relativeODuKF.opNavInMsg wasn't connected.");
     }
 
     size_t i;
@@ -90,11 +91,11 @@ void RelODuKF::reset(uint64_t callTime) {
 
     this->timeTagOut = this->timeTag;
 
-    if (badUpdate < 0) { this->bskLogger.bskLog(BSK_WARNING, "relODuKF: Reset method contained bad update"); }
+    if (badUpdate < 0) { xmera::logging::get(this->modelTag)->warn("relODuKF: Reset method contained bad update"); }
 
     /* check that required input messages are linked */
     if (!this->opNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "relODuKF: required opNavInMsg is not linked");
+        xmera::logging::get(this->modelTag)->error("relODuKF: required opNavInMsg is not linked");
     }
     return;
 }
@@ -244,7 +245,7 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime) {
     mCopy(this->covar, this->numStates, this->numStates, this->covarPrev);
 
     /*! - Read the planet ID from the message*/
-    if (this->planetId == 0) { this->bskLogger.bskLog(BSK_ERROR, "relODuKF: Need a planet to navigate"); }
+    if (this->planetId == 0) { xmera::logging::get(this->modelTag)->error("relODuKF: Need a planet to navigate"); }
 
     mCopy(this->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/

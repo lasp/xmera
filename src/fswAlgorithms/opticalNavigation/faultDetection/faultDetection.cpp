@@ -4,6 +4,8 @@
 
 #include "faultDetection.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <math.h>
 #include <string.h>
 
@@ -14,16 +16,16 @@
 void FaultDetection::reset(uint64_t callTime) {
     // check that the opnave messages are linked
     if (!this->navMeasPrimaryInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: faultDetection.navMeasPrimaryInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("faultDetection.navMeasPrimaryInMsg wasn't connected.");
     }
     if (!this->navMeasSecondaryInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: faultDetection.navMeasSecondaryInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("faultDetection.navMeasSecondaryInMsg wasn't connected.");
     }
     if (!this->cameraConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: faultDetection.cameraConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("faultDetection.cameraConfigInMsg wasn't connected.");
     }
     if (!this->attInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: faultDetection.attInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("faultDetection.attInMsg wasn't connected.");
     }
 }
 

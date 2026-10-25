@@ -14,7 +14,6 @@
 #include <architecture/msgPayloadDef/FilterMsgPayload.h>
 #include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
@@ -102,8 +101,6 @@ private:
     Eigen::VectorXd postFits;              //!< [-] PostFit residuals
     Eigen::MatrixXd cholProcessNoise;      //!< [-] cholesky of Qnoise
     Eigen::MatrixXd cholMeasurementNoise;  //!< [-] cholesky of Qnoise
-
-    BSKLogger bskLogger;  //!< -- BSK Logging
 };
 
 #endif

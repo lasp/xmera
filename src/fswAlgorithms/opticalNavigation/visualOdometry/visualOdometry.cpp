@@ -3,6 +3,8 @@
 
 #include "visualOdometry.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <cmath>
 
 VisualOdometry::VisualOdometry() = default;
@@ -16,11 +18,11 @@ VisualOdometry::~VisualOdometry() = default;
 void VisualOdometry::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->keyPointPairInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VisialOdometry.keyPointPairInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("VisialOdometry.keyPointPairInMsg was not linked.");
     }
     // check that required input messages are connected
     if (!this->cameraConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VisialOdometry.cameraInputMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("VisialOdometry.cameraInputMsg was not linked.");
     }
 }
 

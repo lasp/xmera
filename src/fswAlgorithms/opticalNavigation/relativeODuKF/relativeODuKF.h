@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/OpNavFilterMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -81,8 +80,6 @@ public:
     double maxTimeJump;          //!< [s] Maximum time jump to allow in propagation
 
     OpNavMsgPayload opNavInBuffer;  //!< [-] ST sensor data read in from message bus
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
 #include <architecture/msgPayloadDef/PixelLineFilterMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -85,8 +84,6 @@ public:
     OpNavCirclesMsgPayload circlesInBuffer;  //!< [-] ST sensor data read in from message bus
     CameraConfigMsgPayload cameraSpecs;      //!< [-] Camera specs for nav
     NavAttMsgPayload attInfo;                //!< [-] Att info for frame transformation
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
