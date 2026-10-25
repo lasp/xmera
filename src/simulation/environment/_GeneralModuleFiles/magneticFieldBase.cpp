@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/simDefinitions.h>
 
@@ -151,7 +152,7 @@ bool MagneticFieldBase::readMessages() {
             this->scStates.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Atmosphere model has no spacecraft added to it.");
+        xmera::logging::get(this->modelTag)->error("Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

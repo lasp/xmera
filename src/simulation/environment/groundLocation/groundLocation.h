@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>
@@ -47,7 +46,6 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of sc state input messages
     Eigen::Vector3d r_LP_P_Init;  //!< [m] Initial position of the location in planet-centric coordinates; can also be
                                   //!< set using setGroundLocation.
-    BSKLogger bskLogger;          //!< -- BSK Logging
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;   //!< buffer of access output data

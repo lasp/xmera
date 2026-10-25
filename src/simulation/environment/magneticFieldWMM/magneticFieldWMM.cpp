@@ -6,6 +6,7 @@
 
 #include "EGM9615.h"
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
 
@@ -39,7 +40,7 @@ void MagneticFieldWMM::customreset(uint64_t CurrentClock) {
 
     //! - Check that required module variables are set
     if (this->dataPath == "") {
-        bskLogger.bskLog(BSK_ERROR, "WMM data path was not set.  No WMM.");
+        xmera::logging::get(this->modelTag)->error("WMM data path was not set.  No WMM.");
         return;
     }
 
@@ -115,7 +116,8 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime) {
     calendar.Month = localDateTime.tm_mon + 1;
     calendar.Day = localDateTime.tm_mday;
     if (!MAG_DateToYear(&calendar, Error_Message)) {
-        bskLogger.bskLog(BSK_ERROR, "Could not convert date to decimal year. \nError message: %s", Error_Message);
+        xmera::logging::get(this->modelTag)
+            ->error("Could not convert date to decimal year. \nError message: {}", Error_Message);
     }
 
     //! - determine number of days in this year
@@ -215,7 +217,7 @@ void MagneticFieldWMM::initializeWmm() {
     auto fileName = this->dataPath + "WMM.COF";
 
     if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()), &(this->magneticModels), 1)) {
-        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName.c_str());
+        xmera::logging::get(this->modelTag)->error("WMM unable to load file {}", fileName);
         return;
     }
 

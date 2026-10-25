@@ -7,6 +7,7 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/geodeticConversion.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -78,7 +79,7 @@ MsisAtmosphere::~MsisAtmosphere() {
 void MsisAtmosphere::customreset(uint64_t currentSimNanos) {
     for (int ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
-            bskLogger.bskLog(BSK_ERROR, "Required MSIS input messages No. %d are not connected.", ind);
+            xmera::logging::get(this->modelTag)->error("Required MSIS input messages No. {} are not connected.", ind);
         }
     }
 }

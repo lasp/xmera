@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/msgPayloadDef/SpiceTimeMsgPayload.h>
 #include <architecture/msgPayloadDef/TransRefMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 
@@ -94,7 +93,6 @@ public:
     uint16_t GPSWeek;                   //!< -- Current GPS week value
     uint64_t GPSRollovers;              //!< -- Count on the number of GPS rollovers
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::string GPSEpochTime;  //!< -- String for the GPS epoch

@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/geodeticConversion.h>
 
 #include <Eigen/Dense>
@@ -47,7 +46,6 @@ public:
     double halfFieldOfView;       //!< [r] Instrument half-fov, defaults to 10 degrees
     Eigen::Vector3d nHat_B;       //!< [-] Instrument unit direction vector in body frame components
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;  //!< Planet state input message
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;         //!< Spacecraft state input message

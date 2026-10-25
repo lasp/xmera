@@ -7,7 +7,6 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/msgPayloadDef/SwDataMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
 #include <time.h>
@@ -15,6 +14,7 @@
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
+
 
 extern "C" {
 #include "nrlmsise-00.h"
@@ -39,7 +39,6 @@ private:
 public:
     std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs;  //!< Vector of space weather input message names
     int epochDoy;                                             //!< [day] Day-of-Year at epoch
-    BSKLogger bskLogger;                                      //!< -- BSK Logging
 
 private:
     Eigen::Vector3d currentLLA;  //!< [-] Container for local Latitude, Longitude, Altitude geodetic position; units are

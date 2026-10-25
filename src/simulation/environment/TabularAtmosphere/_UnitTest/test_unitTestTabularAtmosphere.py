@@ -72,7 +72,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     testFailCount = 0                       # zero unit test result counter
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

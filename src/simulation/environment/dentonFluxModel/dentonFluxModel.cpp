@@ -5,6 +5,7 @@
 #include "dentonFluxModel.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <cmath>
 #include <fstream>
@@ -22,36 +23,39 @@ DentonFluxModel::~DentonFluxModel() = default;
 */
 void DentonFluxModel::reset(uint64_t currentSimNanos) {
     // Check that required input messages are connected
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("DentonFluxModel.scStateInMsg was not linked.");
+    }
 
     if (!this->earthStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.earthStateInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("DentonFluxModel.earthStateInMsg was not linked.");
     }
 
     if (!this->sunStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.sunStateInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("DentonFluxModel.sunStateInMsg was not linked.");
     }
     // Check that required parameters are set
-    if (this->numOutputEnergies < 0) { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set."); }
-    if (this->kpIndex == "") { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set."); }
-    if (this->dataPath == "") { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set."); }
+    if (this->numOutputEnergies < 0) {
+        xmera::logging::get(this->modelTag)->error("DentonFluxModel.numEnergies was not set.");
+    }
+    if (this->kpIndex == "") { xmera::logging::get(this->modelTag)->error("DentonFluxModel.kpIndex was not set."); }
+    if (this->dataPath == "") { xmera::logging::get(this->modelTag)->error("DentonFluxModel.dataPath was not set."); }
     // Check the desired array size is not larger than the maximum value
     if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
+        xmera::logging::get(this->modelTag)
+            ->error("DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
     // Check that the Kp index is a string of length 2
     if (!(this->kpIndex.length() == 2)) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
     }
     // Convert Kp index (such as '0o', '1-', '5+' etc.) to Kp index counter (int 0-27)
     char kpMain = this->kpIndex[0];  // main Kp index, between 0 and 9
     char kpSub = this->kpIndex[1];   // sub Kp index, either '-', 'o', or '+'
     int kpMainInt = kpMain - '0';    // convert main Kp from char to int
     if (kpMainInt < 0 || kpMainInt > 9) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index not set to a proper value.");
+        xmera::logging::get(this->modelTag)->error("DentonFluxModel: Kp index not set to a proper value.");
     }
     if (kpSub == '-') {
         this->kpIndexCounter = 3 * kpMainInt - 1;
@@ -60,14 +64,12 @@ void DentonFluxModel::reset(uint64_t currentSimNanos) {
     } else if (kpSub == '+') {
         this->kpIndexCounter = 3 * kpMainInt + 1;
     } else {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index not set to a proper value.");
+        xmera::logging::get(this->modelTag)->error("DentonFluxModel: Kp index not set to a proper value.");
     }
     // Check that Kp index is between 0o and 9o (corresponding to Kp index counter 0-27)
     if (this->kpIndexCounter < 0 || this->kpIndexCounter > MAX_NUM_KPS - 1) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
     }
 
     // convert energies to log10 values
@@ -123,10 +125,8 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos) {
     double r_GEO = 42000e3;  // GEO orbit radius
     double tol = 4000e3;     // tolerance how far spacecraft can be away from GEO
     if (v2Norm(r_BE_N) < r_GEO - tol || v2Norm(r_BE_N) > r_GEO + tol || abs(r_BE_N[2]) > tol) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO."
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn("DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO.");
     }
 
     // Find local lime from spacecraft and Earth state messages
@@ -311,7 +311,7 @@ void DentonFluxModel::readDentonDataFile(
             }
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + fileName).c_str());
+        xmera::logging::get(this->modelTag)->error(("Could not open " + this->dataPath + fileName).c_str());
     }
 
     // Close file

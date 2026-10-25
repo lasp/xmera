@@ -51,7 +51,7 @@ def test_module(show_plots, setRAN, setDEC, setLST, setRate):
 
 
 def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
-    sim_model.setDefaultLogLevel(sim_model.BSK_SILENT)
+    sim_model.set_log_level("off")
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

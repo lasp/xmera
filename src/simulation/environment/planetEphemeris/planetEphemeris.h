@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/orbitalMotion.h>
 
 #include <vector>
@@ -35,7 +34,6 @@ public:
 
     std::vector<double> rotRate;  //!< [r/s] planet rotation rate
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::vector<std::string> planetNames;  //!< -- Vector of planet names

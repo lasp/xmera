@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SolarFluxMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 
@@ -32,7 +31,6 @@ public:
     Message<SolarFluxMsgPayload> solarFluxOutMsg;              //!< solar flux output message
     ReadFunctor<EclipseMsgPayload> eclipseInMsg;               //!< (optional) eclipse input message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     double fluxAtSpacecraft;     //!< [W/m2]

@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <time.h>
 
@@ -52,7 +51,6 @@ public:
     double
         envMaxReach;  //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
     double planetRadius;  //!< [m]      Radius of the planet
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 protected:
     Eigen::Vector3d r_BP_N;  //!< [m] sc position vector relative to planet in inertial N frame components

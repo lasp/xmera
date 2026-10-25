@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
@@ -20,7 +21,9 @@ EphemerisConverter::~EphemerisConverter() {
  */
 void EphemerisConverter::reset(uint64_t CurrenSimNanos) {
     // check if the spiceInMsgs is empty or not
-    if (this->spiceInMsgs.size() == 0) { bskLogger.bskLog(BSK_ERROR, "ephemerisConverter.spiceInMsgs is empty."); }
+    if (this->spiceInMsgs.size() == 0) {
+        xmera::logging::get(this->modelTag)->error("ephemerisConverter.spiceInMsgs is empty.");
+    }
 }
 
 /*!

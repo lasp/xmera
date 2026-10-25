@@ -7,7 +7,6 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/environment/_GeneralModuleFiles/magneticFieldBase.h>
 
@@ -41,7 +40,6 @@ private:
 public:
     std::string dataPath;            //!< -- String with the path to the WMM coefficient file
     double epochDateFractionalYear;  //!< Specified epoch date as a fractional year
-    BSKLogger bskLogger;             //!< -- BSK Logging
 
 private:
     MAGtype_MagneticModel* magneticModels[1];

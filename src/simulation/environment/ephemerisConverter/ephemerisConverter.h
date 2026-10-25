@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <vector>
 
@@ -29,8 +28,6 @@ public:
 public:
     std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs;           //!< vector of planet ephemeris output messages
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;  //!< vector of planet spice state input messages
-
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::vector<EphemerisMsgPayload> ephemOutBuffers;        //!< output message buffers

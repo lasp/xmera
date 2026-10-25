@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EclipseMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <vector>
@@ -35,7 +34,6 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state
                                                                   //!< for which to evaluate eclipse conditions.
     std::vector<Message<EclipseMsgPayload>*> eclipseOutMsgs;      //!< vector of eclispe output msg names
-    BSKLogger bskLogger;                                          //!< BSK Logging
     double rEqCustom;                                             //!< [m] Custom radius
 
 private:

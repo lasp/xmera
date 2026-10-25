@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>
@@ -45,7 +44,6 @@ public:
     Eigen::Vector3d
         r_LB_B;  //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;   //!< buffer of access output data

@@ -5,6 +5,7 @@
 #include "tabularAtmosphere.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <iostream>
 
@@ -36,15 +37,15 @@ void TabularAtmosphere::customreset(uint64_t CurrentClock) {
     this->tempList_length = (int) this->tempList.size();
 
     if ((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)) {
-        bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
+        xmera::logging::get(this->modelTag)->error("Input arrays not of equal length.");
     }
 
     if (this->altList_length == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
+        xmera::logging::get(this->modelTag)->error("No data in altitude list.");
     } else if (this->rhoList_length == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No data in density list.");
+        xmera::logging::get(this->modelTag)->error("No data in density list.");
     } else if (this->tempList_length == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
+        xmera::logging::get(this->modelTag)->error("No data in temperature list.");
     }
 
     return;

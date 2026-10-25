@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/PlasmaFluxMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #define MAX_NUM_KPS 28
 #define MAX_NUM_ENERGIES 40
@@ -42,7 +41,6 @@ public:
 
     Message<PlasmaFluxMsgPayload> fluxOutMsg;  //!< output message with ion and electron fluxes
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     void calcLocalTime(double v1[3], double v2[3]);
