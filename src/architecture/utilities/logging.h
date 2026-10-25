@@ -4,7 +4,7 @@
 #ifndef XMERA_LOGGING_H
 #define XMERA_LOGGING_H
 
-#include <spdlog/spdlog.h>
+#include <spdlog/logger.h>
 
 #include <memory>
 #include <string>

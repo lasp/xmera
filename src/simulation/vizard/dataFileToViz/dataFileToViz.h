@@ -5,6 +5,13 @@
 #ifndef VIZ_DATAFILETOVIZ_H
 #define VIZ_DATAFILETOVIZ_H
 
+#include "../_GeneralModuleFiles/vizStructures.h"
+#include "architecture/utilities/logging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+
+#include <Eigen/Dense>
+#include <fstream>
+#include <iostream>
 #include <vector>
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
