@@ -5,6 +5,7 @@
 #include "hillToAttRef.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -17,18 +18,17 @@
  */
 void HillToAttRef::reset(uint64_t callTime) {
     if (!this->hillStateInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: hillToAttRef.hillStateInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("hillToAttRef.hillStateInMsg wasn't connected.");
     }
 
     if (this->attRefInMsg.isLinked() && this->attNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: hillToAttRef can't have both attRefInMsg and attNavInMsg connected.");
+        xmera::logging::get(this->modelTag)
+            ->error("hillToAttRef can't have both attRefInMsg and attNavInMsg connected.");
     }
 
     if (!this->attRefInMsg.isLinked() && !this->attNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "Error: hillToAttRef must have one of attRefInMsg and attNavInMsg connected."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("hillToAttRef must have one of attRefInMsg and attNavInMsg connected.");
     }
 
     return;

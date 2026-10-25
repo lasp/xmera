@@ -5,7 +5,6 @@
 #ifndef _ET_SPHERICAL_CONTROL_H_
 #define _ET_SPHERICAL_CONTROL_H_
 
-#include "architecture/utilities/bskLogging.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
@@ -43,13 +42,12 @@ public:
     Message<CmdForceInertialMsgPayload> forceInertialOutMsg;  //!< servicer inertial frame control force output message
     Message<CmdForceBodyMsgPayload> forceBodyOutMsg;          //!< servicer body frame control force output message
 
-    double mu;                 //!< [m^3/s^2]  gravitational parameter
-    double L_r;                //!< [m]  reference separation distance
-    double theta_r;            //!< [rad]  reference in-plane rotation angle
-    double phi_r;              //!< [rad]  reference out-of-plane rotation angle
-    double K[9];               //!< 3x3 symmetric positive definite feedback gain matrix [K]
-    double P[9];               //!< 3x3 symmetric positive definite feedback gain matrix [P]
-    BSKLogger bskLogger = {};  //!< BSK Logging
+    double mu;       //!< [m^3/s^2]  gravitational parameter
+    double L_r;      //!< [m]  reference separation distance
+    double theta_r;  //!< [rad]  reference in-plane rotation angle
+    double phi_r;    //!< [rad]  reference out-of-plane rotation angle
+    double K[9];     //!< 3x3 symmetric positive definite feedback gain matrix [K]
+    double P[9];     //!< 3x3 symmetric positive definite feedback gain matrix [P]
 };
 
 #endif

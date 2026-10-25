@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/HillRelStateMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -27,7 +26,6 @@ public:
     ReadFunctor<AttRefMsgPayload> attRefInMsg;           //!< (Optional) Provides basis for relative attitude
     ReadFunctor<NavAttMsgPayload> attNavInMsg;           //!< (Optional) Provides basis for relative attitude
     Message<AttRefMsgPayload> attRefOutMsg;              //!< Provides the attitude reference output message.
-    BSKLogger bskLogger = {};                            //!< BSK Logging
 
     double gainMatrix[3][6];  //!< User-configured gain matrix that maps from hill states to relative attitudes.
     double relMRPMin;         //!< Minimum value for the relative MRP components; user-configurable.

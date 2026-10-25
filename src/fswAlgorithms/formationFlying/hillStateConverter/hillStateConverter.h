@@ -9,7 +9,6 @@
 #include <stdint.h>
 
 //  Support imports
-#include <architecture/utilities/bskLogging.h>
 
 //  Message type imports
 #include <architecture/_GeneralModuleFiles/sys_model.h>
@@ -30,8 +29,6 @@ public:
         chiefStateInMsg;  //!< Input message containing chief inertial translational state estimate
     ReadFunctor<NavTransMsgPayload>
         depStateInMsg;  //!< Input message containing deputy inertial translational state estimate
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

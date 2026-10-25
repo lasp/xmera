@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -33,7 +32,6 @@ public:
     double mu;                   //!< [m^3/s^2] gravitational constant
     double req;                  //!< [m] equatorial planet radius
     double J2;                   //!< [] J2 planet oblateness parameter
-    BSKLogger bskLogger = {};    //!< BSK Logging
 };
 
 #endif

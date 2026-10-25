@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <vector>
 
@@ -37,7 +36,6 @@ public:
     bool useOrbitalElements;  //!< flag that determines whether to use cartesian or orbital elementd weighted averaging
     double mu;                //!< gravitational parameter to be used with orbital elements averaging
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::vector<NavTransMsgPayload> scNavBuffer;           //!< buffer of spacecraft navigation info

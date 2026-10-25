@@ -6,6 +6,7 @@
 #include "hillStateConverter.h"
 
 // Internal utilities
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/orbitalMotion.h>
 
 /*! This message checks to see that both of the input translational state messages were connected; if not, it errors.
@@ -15,10 +16,10 @@
 void HillStateConverter::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->chiefStateInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: hillStateConverter.chiefStateInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("hillStateConverter.chiefStateInMsg wasn't connected.");
     }
     if (!this->depStateInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: hillStateConverter.depStateInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("hillStateConverter.depStateInMsg wasn't connected.");
     }
 }
 

@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -28,8 +27,6 @@ public:
     double old_omega_RN_N[3];    /*!< -- Omega of previous timestep */
     int i;                       /*!< -- Flag used to set incorrect numerical answers to zero */
     uint64_t priorTime;          /*!< [ns] Last time the attitude control is called */
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

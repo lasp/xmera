@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/orbitalMotion.h>
 
 #include <stdint.h>
@@ -63,8 +62,6 @@ public:
     uint8_t thrustOnFlag;        //!< thrust control
     int attRefInIsLinked;        //!< flag if the attitude reference input message is linked
     ReconfigBurnArrayInfoMsgPayload burnArrayInfoOutMsgBuffer;  //!< msg buffer for burn array info
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
