@@ -67,6 +67,37 @@ namespace std {
 %include "sim_model.h"
 %include "architecture/utilities/bskLogging.h"
 
+%{
+   #include "architecture/utilities/logging.h"
+%}
+
+%inline %{
+    void _setGlobalLogLevel(std::string const& level) {
+        xmera::logging::setLevel(xmera::logging::parseLevel(level));
+    }
+
+    void _setNamedLogLevel(std::string const& name, std::string const& level) {
+        xmera::logging::setLevel(name, xmera::logging::parseLevel(level));
+    }
+
+    void set_log_sink(std::string const& spec) {
+        xmera::logging::setSink(xmera::logging::parseSink(spec));
+    }
+%}
+
+%pythoncode %{
+def set_log_level(level, name=None):
+    """Set the log level: trace, debug, info, warning, error, critical or off.
+
+    If name is None, the level applies to all loggers that do not have a level set by name.
+    Otherwise it applies to the logger with this name, usually a module modelTag.
+    """
+    if name is None:
+        _setGlobalLogLevel(level)
+    else:
+        _setNamedLogLevel(name, level)
+%}
+
 %attribute_readonly(SimModel, std::vector<SysProcess*> const&,
     processList,
     getProcesses,
