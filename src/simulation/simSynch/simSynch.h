@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/SynchClockMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <chrono>
 #include <string>
@@ -29,8 +28,7 @@ public:
     Message<SynchClockMsgPayload> clockOutMsg;  //!< [-] output message
 
     int64_t accuracyNanos;  //!< ns Level of accuracy that we want out of the timer, default is 10ms
-    bool displayTime;     //!< [-] Flag indicating that we want to display the time elapsed in cmd line, default is off
-    BSKLogger bskLogger;  //!< -- BSK Logging
+    bool displayTime;  //!< [-] Flag indicating that we want to display the time elapsed in cmd line, default is off
 
 private:
     bool timeInitialized;                                      //!< [-] Flag that the module has been reset
