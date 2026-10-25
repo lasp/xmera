@@ -8,7 +8,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/ModuleTemplateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/logging.h"
 
 /*! @brief basic Basilisk C++ module class */
 class CppModuleTemplate : public SysModel {
@@ -26,7 +26,8 @@ public:
     Message<ModuleTemplateMsgPayload> dataOutMsg;
     ReadFunctor<ModuleTemplateMsgPayload> dataInMsg;
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
+private:
+    std::shared_ptr<spdlog::logger> logger;  //!< logger of the module, set in reset
 };
 
 #endif

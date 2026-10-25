@@ -21,7 +21,8 @@ CppModuleTemplate::~CppModuleTemplate() {
 void CppModuleTemplate::reset(uint64_t currentSimNanos) {
     /*! - reset any required variables */
     this->dummy = 0.0;
-    bskLogger.bskLog(BSK_INFORMATION, "Variable dummy set to %f in reset.", this->dummy);
+    this->logger = xmera::logging::get(this->modelTag);
+    this->logger->info("Variable dummy set to {:f} in reset.", this->dummy);
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
@@ -52,6 +53,5 @@ void CppModuleTemplate::updateState(uint64_t currentSimNanos) {
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
-    bskLogger
-        .bskLog(BSK_INFORMATION, "Module ID %lld ran Update at %fs", this->moduleID, (double) currentSimNanos / (1e9));
+    this->logger->info("Module ID {} ran Update at {:f}s", this->moduleID, (double) currentSimNanos / (1e9));
 }
