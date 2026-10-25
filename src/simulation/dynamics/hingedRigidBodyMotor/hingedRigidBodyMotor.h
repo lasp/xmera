@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Calculates a motor torque to drive a hinged panel to a reference angle state. A sensed and reference hinged
    rigid body angle drives a simple PD control law.
@@ -31,8 +30,6 @@ public:
         hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)
 
     Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< motor torque on hinged rigid body
-
-    BSKLogger bskLogger;  //!< -- BSK Logging
 };
 
 #endif

@@ -4,6 +4,8 @@
 
 #include "hingedRigidBodyMotor.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -23,13 +25,14 @@ HingedRigidBodyMotor::~HingedRigidBodyMotor() {}
 void HingedRigidBodyMotor::reset(uint64_t currentSimNanos) {
     //! check that required input messages are connected
     if (!this->hingedBodyStateSensedInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor.hingedBodyStateSensedInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("HingedRigidBodyMotor.hingedBodyStateSensedInMsg was not linked.");
     }
     if (!this->hingedBodyStateReferenceInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor.hingedBodyStateReferenceInMsg was not linked.");
+        xmera::logging::get(this->modelTag)
+            ->error("HingedRigidBodyMotor.hingedBodyStateReferenceInMsg was not linked.");
     }
     if (this->K <= 0.0 || this->P <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor K and P must be set to positive values.");
+        xmera::logging::get(this->modelTag)->error("HingedRigidBodyMotor K and P must be set to positive values.");
     }
 }
 

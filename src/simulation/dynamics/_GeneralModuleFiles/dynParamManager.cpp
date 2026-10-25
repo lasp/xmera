@@ -3,6 +3,8 @@
 
 #include "dynParamManager.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <iostream>
 
 DynParamManager::DynParamManager() {
@@ -15,23 +17,22 @@ DynParamManager::~DynParamManager() {
 
 StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName) {
     if (stateName == "") {
-        bskLogger.bskLog(BSK_ERROR, "Your state name can't be an empty string.  Come on.  You get null.");
+        xmera::logging::get("dynParamManager")
+            ->error("Your state name can't be an empty string.  Come on.  You get null.");
         return nullptr;
     }
 
     std::map<std::string, StateData>::iterator it;
     it = stateContainer.stateMap.find(stateName);
     if (it != stateContainer.stateMap.end()) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You created a state with the name: %s more than once.  Go ahead and don't do this.",
-            stateName.c_str()
-        );
+        xmera::logging::get("dynParamManager")
+            ->warn("You created a state with the name: {} more than once.  Go ahead and don't do this.", stateName);
         if (it->second.getRowSize() != nRow || it->second.getColumnSize() != nCol) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "In addition to that, you tried to change the size of the state in question.  Come on.  You get null."
-            );
+            xmera::logging::get("dynParamManager")
+                ->error(
+                    "In addition to that, you tried to change the size of the state in question.  "
+                    "Come on.  You get null."
+                );
             return nullptr;
         }
     } else {
@@ -57,12 +58,12 @@ StateData* DynParamManager::getStateObject(std::string stateName) {
             Either the state name was miss-spelled, or the state simply
             doesn't exit in the current simulaiton setup (i.e. asking for the
             hub attitude in a translation only simulation setup */
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You requested this non-existent state name: %s You either miss-typed the stateName, or you "
-            "asked for a state that doesn't exist in your simulation setup.",
-            stateName.c_str()
-        );
+        xmera::logging::get("dynParamManager")
+            ->warn(
+                "You requested this non-existent state name: {} You either miss-typed the stateName, or you "
+                "asked for a state that doesn't exist in your simulation setup.",
+                stateName
+            );
     }
 
     return (statePtr);
@@ -117,11 +118,8 @@ Eigen::MatrixXd* DynParamManager::createProperty(std::string propName, Eigen::Ma
     if (it == dynProperties.end()) {
         dynProperties.insert(std::pair<std::string, Eigen::MatrixXd>(propName, propValue));
     } else {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You created the dynamic property: %s more than once.  You shouldn't be doing that.",
-            propName.c_str()
-        );
+        xmera::logging::get("dynParamManager")
+            ->warn("You created the dynamic property: {} more than once.  You shouldn't be doing that.", propName);
         it->second = propValue;
     }
     return (&(dynProperties.find(propName)->second));
@@ -131,8 +129,8 @@ Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName) {
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
-        bskLogger
-            .bskLog(BSK_ERROR, "You requested the property: %s which doesn't exist.  Null returned.", propName.c_str());
+        xmera::logging::get("dynParamManager")
+            ->error("You requested the property: {} which doesn't exist.  Null returned.", propName);
         return nullptr;
     } else {
         return (&(it->second));
@@ -143,11 +141,11 @@ void DynParamManager::setPropertyValue(std::string const propName, Eigen::Matrix
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "You tried to set the property value for: %s which has not been created yet. I can't do that.",
-            propName.c_str()
-        );
+        xmera::logging::get("dynParamManager")
+            ->error(
+                "You tried to set the property value for: {} which has not been created yet. I can't do that.",
+                propName
+            );
     } else {
         it->second = propValue;
     }

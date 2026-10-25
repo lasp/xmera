@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 
 #include <inttypes.h>
 
@@ -29,7 +30,7 @@ RadiationPressure::~RadiationPressure() {
  */
 void RadiationPressure::reset(uint64_t CurrenSimNanos) {
     if (!this->sunEphmInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Did not find a valid sun ephemeris message connection.");
+        xmera::logging::get(this->modelTag)->error("Did not find a valid sun ephemeris message connection.");
     }
 }
 
@@ -87,7 +88,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep) {
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
         this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Requested SRF Model not implemented.\n");
+        xmera::logging::get(this->modelTag)->error("Requested SRF Model not implemented.\n");
     }
 }
 

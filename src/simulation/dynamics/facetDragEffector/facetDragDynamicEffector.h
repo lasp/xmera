@@ -7,7 +7,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AtmoPropsMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
@@ -43,7 +42,6 @@ public:
     Eigen::Vector3d v_B;                             //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                         //!< class variable
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     bool readInputs();

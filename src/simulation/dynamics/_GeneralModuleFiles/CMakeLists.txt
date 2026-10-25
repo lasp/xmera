@@ -13,6 +13,7 @@ target_include_directories(dynamicsCommon PRIVATE
 
 target_link_libraries(dynamicsCommon PUBLIC
   Eigen3::Eigen
+  Xmera::Core
 )
 
 

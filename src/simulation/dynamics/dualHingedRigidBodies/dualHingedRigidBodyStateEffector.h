@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 
@@ -79,7 +78,6 @@ public:
     std::string nameOfTheta1DotState;  //!< [-] Identifier for the thetaDot state data container
     std::string nameOfTheta2State;     //!< [-] Identifier for the theta state data container
     std::string nameOfTheta2DotState;  //!< [-] Identifier for the thetaDot state data container
-    BSKLogger bskLogger;               //!< -- BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;  //!< -- (optional) motor torque input message
     std::vector<Message<HingedRigidBodyMsgPayload>*>
         dualHingedRigidBodyOutMsgs;  //!< -- state output message vector for all panels

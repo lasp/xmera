@@ -5,6 +5,7 @@
 #include "spinningBodyOneDOFStateEffector.h"
 
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
 #include <string>
@@ -34,7 +35,8 @@ void SpinningBodyOneDOFStateEffector::reset(uint64_t CurrentClock) {
     if (this->sHat_S.norm() > 0.01) {
         this->sHat_S.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Norm of sHat must be greater than 0. sHat may not have been set by the user.");
+        xmera::logging::get(this->modelTag)
+            ->error("Norm of sHat must be greater than 0. sHat may not have been set by the user.");
     }
 }
 

@@ -6,13 +6,14 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method is used to reset the module.
  @return void
  */
 void DragDynamicEffector::reset(uint64_t currentSimNanos) {
     if (!this->atmoDensInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("dragDynamicEffector.atmoDensInMsg was not linked.");
     }
 }
 

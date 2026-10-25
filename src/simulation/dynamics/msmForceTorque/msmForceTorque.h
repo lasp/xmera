@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/VoltMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 
 #include <Eigen/Dense>
@@ -49,7 +48,6 @@ public:
         eForceOutMsgs;                                            //!< vector of E-forces in inertial frame components
     std::vector<Message<ChargeMsmMsgPayload>*> chargeMsmOutMsgs;  //!< vector of spacecraft MSM charge values
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::vector<std::vector<double>> radiiList;            //!< vector of MSM sphere radii

@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
@@ -85,7 +84,6 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg; /**< planet spice ephemeris input message */
     SpicePlanetStateMsgPayload localPlanet; /**< [-]   Class storage of ephemeris info from scheduled portion */
 
-    BSKLogger bskLogger; /**< -- BSK Logging */
 
 private:
     Eigen::MatrixXd* r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
@@ -163,7 +161,6 @@ public:
 
     Message<SpicePlanetStateMsgPayload> centralBodyOutMsg; /**< central planet body state output message */
 
-    BSKLogger bskLogger; /**< -- BSK Logging */
 
 private:
     Eigen::MatrixXd* gravProperty;             /**< [-] g_N property for output */

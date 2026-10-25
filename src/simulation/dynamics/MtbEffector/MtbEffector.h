@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/MTBMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
@@ -39,7 +38,6 @@ public:
         mtbCmdInMsg;  //!< input msg for commanded mtb dipole array in the magnetic torque bar frame T
     ReadFunctor<MagneticFieldMsgPayload> magInMsg;         //!< input msg for magnetic field data in inertial frame N
     ReadFunctor<MTBArrayConfigMsgPayload> mtbParamsInMsg;  //!< input msg for layout of magnetic torque bars
-    BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 private:
     MTBCmdMsgPayload

@@ -5,6 +5,7 @@
 #include "spinningBodyTwoDOFStateEffector.h"
 
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
 #include <string>
@@ -43,13 +44,15 @@ void SpinningBodyTwoDOFStateEffector::reset(uint64_t CurrentClock) {
     if (this->s1Hat_S1.norm() > 0.01) {
         this->s1Hat_S1.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Norm of s1Hat must be greater than 0. s1Hat may not have been set by the user.");
+        xmera::logging::get(this->modelTag)
+            ->error("Norm of s1Hat must be greater than 0. s1Hat may not have been set by the user.");
     }
 
     if (this->s2Hat_S2.norm() > 0.01) {
         this->s2Hat_S2.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Norm of s2Hat must be greater than 0. s1Hat may not have been set by the user.");
+        xmera::logging::get(this->modelTag)
+            ->error("Norm of s2Hat must be greater than 0. s1Hat may not have been set by the user.");
     }
 }
 

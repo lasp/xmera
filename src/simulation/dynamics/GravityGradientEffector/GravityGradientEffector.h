@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/GravityGradientMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 
@@ -42,7 +41,6 @@ public:
     std::vector<Eigen::MatrixXd*> r_PN_N;    //!< [m] vector of inertial planet positions
     std::vector<Eigen::MatrixXd*> muPlanet;  //!< [m^3/s^-2] gravitational constant of planet
 
-    BSKLogger bskLogger;  //!< BSK Logging
 
 private:
     std::vector<std::string> planetPropertyNames;  //!< Names of planets we want to track

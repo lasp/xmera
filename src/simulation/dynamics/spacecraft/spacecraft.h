@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/SCMassPropsMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/TransRefMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
@@ -58,7 +57,6 @@ public:
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
     std::vector<StateEffector*> states;  //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;   //!< -- Vector of dynamic effectors attached to dynObject
-    BSKLogger bskLogger;                          //!< -- BSK Logging
     Message<SCStatesMsgPayload> scStateOutMsg;    //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg;  //!< spacecraft mass properties output message
 

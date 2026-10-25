@@ -6,7 +6,6 @@
 #define EXT_PULSED_TORQUE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 
@@ -31,7 +30,6 @@ public:
     Eigen::Vector3d pulsedTorqueExternalPntB_B;  //!< pulsed torque vector about point B, in B frame components
     int countOnPulse;                            //!< number of integration time steps to simulate a pulse
     int countOff;                                //!< number of integration time steps to have no pulses
-    BSKLogger bskLogger;                         //!< -- BSK Logging
 };
 
 #endif

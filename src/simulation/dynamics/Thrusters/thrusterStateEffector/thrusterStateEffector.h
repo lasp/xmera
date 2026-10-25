@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/THROutputMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
@@ -76,7 +75,6 @@ public:
     StateData* kappaState;                      //!< -- state manager of theta for hinged rigid body
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     // Mass flow rate
     double mDotTotal = 0.0;  //!< [kg/s] Current mass flow rate of thrusters

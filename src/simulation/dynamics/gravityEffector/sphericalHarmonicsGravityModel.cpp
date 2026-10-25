@@ -4,7 +4,7 @@
 
 #include "sphericalHarmonicsGravityModel.h"
 
-#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/logging.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 
@@ -76,7 +76,7 @@ Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(
 ) const {
     if (degree > this->maxDeg) {
         auto errorMsg = "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
-        if (bskLogger) { bskLogger->bskLog(BSK_ERROR, errorMsg); }
+        xmera::logging::get("gravity")->error(errorMsg);
         throw std::invalid_argument(errorMsg);
     }
 

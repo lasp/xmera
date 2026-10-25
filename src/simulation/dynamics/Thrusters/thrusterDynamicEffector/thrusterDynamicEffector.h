@@ -10,7 +10,6 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -62,7 +61,6 @@ public:
     StateData* hubOmega;                        //!< pointer to the hub angular velocity states
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;  //!< -- Message buffer for thruster data

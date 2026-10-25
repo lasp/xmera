@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/ClassicElementsMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/orbitalMotion.h>
 
 #include <vector>
@@ -43,8 +42,7 @@ public:
     Message<ClassicElementsMsgPayload> elemOutMsg;            //!< -- orbit element output message
 
 private:
-    bool inputsGood;      //!< -- flag indicating that inputs are good
-    BSKLogger bskLogger;  //!< -- BSK Logging
+    bool inputsGood;  //!< -- flag indicating that inputs are good
 };
 
 #endif

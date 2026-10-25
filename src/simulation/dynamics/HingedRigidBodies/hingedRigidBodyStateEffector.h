@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
@@ -42,7 +41,6 @@ public:
         hingedRigidBodyRefMsg;  //!< -- (optional) rigid body reference input message name
     Message<SCStatesMsgPayload> hingedRigidBodyConfigLogOutMsg;  //!< panel state config log message name
     HingedRigidBodyMsgPayload HRBoutputStates;                   //!< instance of messaging system message struct
-    BSKLogger bskLogger;                                         //!< -- BSK Logging
 
 private:
     double theta;            //!< [rad] hinged rigid body angle

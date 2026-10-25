@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/RWConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -74,7 +73,6 @@ public:
     std::string nameOfReactionWheelThetasState;  //!< class variable
     size_t numRW;                                //!< number of reaction wheels
     size_t numRWJitter;                          //!< number of RW with jitter
-    BSKLogger bskLogger;                         //!< -- BSK Logging
 
 private:
     RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings

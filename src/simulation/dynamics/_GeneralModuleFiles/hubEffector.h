@@ -5,7 +5,6 @@
 #ifndef HUB_EFFECTOR_H
 #define HUB_EFFECTOR_H
 
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
@@ -31,7 +30,6 @@ public:
     Eigen::Vector3d v_CN_NInit;          //!< [m/s Initial velocity of the spacecraft wrt base
     Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
     Eigen::Vector3d omega_BN_BInit;      //!< [r/s] Initial attitude rate of the spacecraf wrt base
-    BSKLogger bskLogger;                 //!< -- BSK Logging
 
 public:
     HubEffector();                                   //!< -- Contructor

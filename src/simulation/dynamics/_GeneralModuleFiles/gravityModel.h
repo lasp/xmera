@@ -5,13 +5,12 @@
 #ifndef GRAVITY_MODEL_H
 #define GRAVITY_MODEL_H
 
-#include <architecture/utilities/bskLogging.h>
-
 #include <stdint.h>
 
 #include <Eigen/Dense>
 #include <optional>
 #include <string>
+
 
 class GravBodyData;
 
@@ -70,7 +69,6 @@ public:
     virtual double computePotentialEnergy(Eigen::Vector3d const &positionWrtPlanet_N) const = 0;
 
 public:
-    BSKLogger* bskLogger; /*!< pointer to bsk logging instance */
 };
 
 #endif /* GRAVITY_MODEL_H */

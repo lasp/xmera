@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <iostream>
 
@@ -187,11 +188,11 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager &states) {
     for (auto const &thrusterConfig : this->thrusterData) {
         if (this->fuelMass < 0.0
             && (!thrusterConfig.thrBlowDownCoeff.empty() || !thrusterConfig.ispBlowDownCoeff.empty())) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "ThrusterDynamicEffector: blow down coefficients have been "
-                "specified, but no fuel tank is attached."
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "ThrusterDynamicEffector: blow down coefficients have been "
+                    "specified, but no fuel tank is attached."
+                );
         }
     }
 }

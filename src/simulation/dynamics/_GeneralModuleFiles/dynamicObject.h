@@ -6,7 +6,6 @@
 #define DYNAMICOBJECT_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
@@ -21,7 +20,6 @@ class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;     /**< Dynamics parameter manager for all effectors */
     StateVecIntegrator* integrator; /**< Integrator used to propagate state forward */
-    BSKLogger bskLogger;            /**< BSK Logging */
 
 public:
     DynamicObject() = default;

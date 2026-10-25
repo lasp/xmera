@@ -4,6 +4,8 @@
 
 #include "msmForceTorque.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -25,29 +27,28 @@ void MsmForceTorque::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
         if (!this->scStateInMsgs.at(c).isLinked()) {
-            bskLogger.bskLog(BSK_ERROR, "MsmForceTorque.scStateInMsgs[%d] was not linked.", c);
+            xmera::logging::get(this->modelTag)->error("MsmForceTorque.scStateInMsgs[{}] was not linked.", c);
         }
     }
 
     for (long unsigned int c = 0; c < this->voltInMsgs.size(); c++) {
         if (!this->voltInMsgs.at(c).isLinked()) {
-            bskLogger.bskLog(BSK_ERROR, "MsmForceTorque.voltInMsgs[%d] was not linked.", c);
+            xmera::logging::get(this->modelTag)->error("MsmForceTorque.voltInMsgs[{}] was not linked.", c);
         }
     }
 
     this->numSat = (uint32_t) this->scStateInMsgs.size();
     if (this->numSat < 2) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "MsmForceTorque must have 2 or more spacecraft components added. You added %lu.",
-            this->numSat
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("MsmForceTorque must have 2 or more spacecraft components added. You added {}.", this->numSat);
     }
 
     /* determine number of spheres being modeled */
     this->numSpheres = 0;
     for (long unsigned int c = 0; c < this->numSat; c++) { this->numSpheres += this->radiiList.at(c).size(); }
-    if (this->numSpheres == 0) { bskLogger.bskLog(BSK_ERROR, "MsmForceTorque does not have any spheres added?"); }
+    if (this->numSpheres == 0) {
+        xmera::logging::get(this->modelTag)->error("MsmForceTorque does not have any spheres added?");
+    }
 
     return;
 }
@@ -68,13 +69,13 @@ void MsmForceTorque::addSpacecraftToModel(
 
     /* store MSM sphere radii and location information */
     if (radii.size() != r_SB_B.size()) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "MsmForceTorque:addSpacecraftToModel() The vector of MSM radii and positions must have the "
-            "same size, they have sizes %lu and %lu.",
-            radii.size(),
-            r_SB_B.size()
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "MsmForceTorque:addSpacecraftToModel() The vector of MSM radii and positions must have the "
+                "same size, they have sizes {} and {}.",
+                radii.size(),
+                r_SB_B.size()
+            );
     }
     this->radiiList.push_back(radii);
     this->r_SB_BList.push_back(r_SB_B);
@@ -218,12 +219,12 @@ void MsmForceTorque::updateState(uint64_t currentSimNanos) {
                     if (r_ij > this->radiiList.at(c).at(j - i0)) {
                         force_N -= kc * q(j) * q(i) * r_ij_N / r_ij / r_ij / r_ij;
                     } else {
-                        bskLogger.bskLog(
-                            BSK_WARNING,
-                            "MsmForceTorque: spacecraft %lu, sphere %lu is too close to another sphere.",
-                            c,
-                            j - i0
-                        );
+                        xmera::logging::get(this->modelTag)
+                            ->warn(
+                                "MsmForceTorque: spacecraft {}, sphere {} is too close to another sphere.",
+                                c,
+                                j - i0
+                            );
                     }
                 }
             }

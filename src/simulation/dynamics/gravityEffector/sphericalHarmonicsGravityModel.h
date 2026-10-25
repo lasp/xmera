@@ -5,8 +5,6 @@
 #ifndef SH_GRAVITY_MODEL_H
 #define SH_GRAVITY_MODEL_H
 
-#include <architecture/utilities/bskLogging.h>
-
 #include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 #include <vector>

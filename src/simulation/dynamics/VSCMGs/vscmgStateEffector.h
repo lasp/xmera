@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/VSCMGCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/VSCMGConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VSCMGSpeedMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -75,7 +74,6 @@ public:
     std::string nameOfVSCMGGammaDotsState;         //!< class variable
     int numVSCMG;                                  //!< class variable
     int numVSCMGJitter;                            //!< class variable
-    BSKLogger bskLogger;                           //!< -- BSK Logging
 
 private:
     VSCMGArrayTorqueMsgPayload incomingCmdBuffer;  //!< -- One-time allocation for savings

@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/BoreAngleMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 
@@ -48,7 +47,6 @@ private:
     bool inputsGood = false;                //!< (-) Flag indicating that inputs were read correctly
     bool useCelestialHeading = false;  //!< (-) Flag indicating that the module should use the celestial body heading
     bool useInertialHeading = false;   //!< (-) Flag indicating that the module should use the inertial heading
-    BSKLogger bskLogger;               //!< -- BSK Logging
 };
 
 #endif
