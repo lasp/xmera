@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <vector>
@@ -48,7 +47,6 @@ public:
     double sensorSpecificHeat;   //!< [J/kg/K] Sensor specific heat
     double T_0;                  //!< [C] Initial temperature
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     TemperatureMsgPayload temperatureMsgBuffer;  //!< buffer of output message

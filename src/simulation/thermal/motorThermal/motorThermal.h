@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
 #include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Motor temperature module.  It simulates the heating and cooling of a motor based on ambient temperature, as
  * well as heat generated during spin-up or breaking. */
@@ -32,7 +31,6 @@ public:
     double ambientTemperature;                         //!< [Celsius] ambient temperature for heat dissipation
     double ambientThermalResistance;  //!< [W/Celsius] ambient thermal resistance to convert heat into temperature
     double motorHeatCapacity;         //!< [J/Celsius] motor heat caapcity to convert heat into temperature
-    BSKLogger bskLogger;              //!< -- BSK Logging
 
 private:
     TemperatureMsgPayload temperatureBuffer;  //!< temperature buffer for internal calculations

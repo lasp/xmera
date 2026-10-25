@@ -5,6 +5,7 @@
 #include "motorThermal.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <math.h>
 
@@ -28,39 +29,41 @@ MotorThermal::~MotorThermal() {
  */
 void MotorThermal::reset(uint64_t currentSimNanos) {
     // check if input message is linked
-    if (!this->rwStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "motorThermal.rwStateInMsg is not linked."); }
+    if (!this->rwStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("motorThermal.rwStateInMsg is not linked.");
+    }
 
     // if the current temperature is at or below absolute zero, it means either the temperature wasn't set properly or
     // some error occurred
     if (this->currentTemperature <= -273.15) {
-        bskLogger.bskLog(BSK_ERROR, "motorThermal: current temperature is at or below absolute zero.");
+        xmera::logging::get(this->modelTag)->error("motorThermal: current temperature is at or below absolute zero.");
     }
 
     // throw an error if the efficiency is not between 0.0 and 1.0
     if (this->efficiency <= 0.0 || this->efficiency >= 1.0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "motorThermal: efficiency is %f, must be a value greater than 0.0 and smaller than 1.0.",
-            this->efficiency
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "motorThermal: efficiency is {:f}, must be a value greater than 0.0 and smaller than 1.0.",
+                this->efficiency
+            );
     }
 
     // if the ambient heat capacity is at or below zero, it means either the value wasn't set properly
     if (this->ambientThermalResistance <= 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "motorThermal: current ambient thermal resistance is at or below zero, must be a positive "
-            "number. The value has either not been set, or has not been set properly."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "motorThermal: current ambient thermal resistance is at or below zero, must be a positive "
+                "number. The value has either not been set, or has not been set properly."
+            );
     }
 
     // if the motor heat capacity is at or below zero, it means either the value wasn't set properly
     if (this->motorHeatCapacity <= 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Current ambient heat capacity is at or below zero, must be a positive number. The value has "
-            "either not been set, or has not been set properly."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "Current ambient heat capacity is at or below zero, must be a positive number. The value has "
+                "either not been set, or has not been set properly."
+            );
     }
 
     // reset the previous time
