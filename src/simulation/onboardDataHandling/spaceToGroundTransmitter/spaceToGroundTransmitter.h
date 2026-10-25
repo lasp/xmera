@@ -6,7 +6,6 @@
 #define XMERA_SPACETOGROUNDTRANSMITTER_H
 
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 
@@ -31,7 +30,6 @@ public:
         groundLocationAccessInMsgs;  //!< vector of input message for ground location access
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgsBuffer;  //!< local copy of data storage messages
     uint64_t hasAccess;                                              //!< class variable
-    BSKLogger bskLogger;                                             //!< class variable
 
 private:
     double packetTransmitted;                                //!< Amount of packet downlinked (bytes)

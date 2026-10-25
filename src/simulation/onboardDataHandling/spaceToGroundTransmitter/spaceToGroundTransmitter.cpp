@@ -4,7 +4,7 @@
 
 #include "spaceToGroundTransmitter.h"
 
-#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/logging.h>
 
 #include <array>
 #include <iostream>
@@ -64,7 +64,7 @@ bool SpaceToGroundTransmitter::customReadMessages() {
             this->storageUnitMsgsBuffer.push_back(nodeMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
+        xmera::logging::get(this->modelTag)->info("Data storage has no data node messages to read.");
         dataRead = false;
     }
     if (this->groundLocationAccessInMsgs.size() > 0) {
@@ -76,7 +76,7 @@ bool SpaceToGroundTransmitter::customReadMessages() {
             this->groundLocationAccessMsgs.push_back(accessMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_INFORMATION, "SpaceToGroundTransmitter has no ground stations attached.");
+        xmera::logging::get(this->modelTag)->info("SpaceToGroundTransmitter has no ground stations attached.");
         dataRead = false;
     }
 

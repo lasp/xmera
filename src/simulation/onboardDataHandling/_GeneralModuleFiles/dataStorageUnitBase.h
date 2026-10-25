@@ -6,12 +6,12 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 #include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <cstring>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
+
 
 #ifndef XMERA_DATASTORAGEUNITBASE_H
     #define XMERA_DATASTORAGEUNITBASE_H
@@ -51,7 +51,6 @@ public:
     Message<DataStorageStatusMsgPayload>
         storageUnitDataOutMsg;  //!< Vector of message names to be written out by the storage unit
     int64_t storageCapacity;    //!< Storage capacity of the storage unit
-    BSKLogger bskLogger;        //!< logging variable
 
 protected:
     DataStorageStatusMsgPayload storageStatusMsg;       //!< class variable

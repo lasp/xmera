@@ -5,8 +5,6 @@
 #ifndef XMERA_SIMPLETRANSMITTER_H
 #define XMERA_SIMPLETRANSMITTER_H
 
-#include <architecture/utilities/bskLogging.h>
-
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 
 /*! @brief simple data transmitter class */
@@ -28,7 +26,6 @@ public:
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
         storageUnitInMsgs;                                     //!< Vector of data node input message names
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgs;  //!< local copies of input messages
-    BSKLogger bskLogger;                                       //!< class variable
 
 private:
     double packetTransmitted;  //!< Amount of packet downlinked (bytes)
