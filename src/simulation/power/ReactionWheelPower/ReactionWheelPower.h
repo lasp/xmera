@@ -7,7 +7,6 @@
 
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 
@@ -27,7 +26,6 @@ public:
     double elecToMechEfficiency;  //!< efficiency factor to convert electrical power to mechanical power
     double mechToElecEfficiency;  //!< efficiency factor to convert mechanical power to electrical power
     double basePowerNeed;         //!< [W] base electrical power required to operate RW, typically a positive value
-    BSKLogger bskLogger;          //!< -- BSK Logging
 
 private:
     RWConfigLogMsgPayload rwStatus;  //!< copy of the RW status message

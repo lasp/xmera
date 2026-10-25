@@ -5,7 +5,6 @@
 #ifndef XMERA_SIMPLEBATTERY_H
 #define XMERA_SIMPLEBATTERY_H
 
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <simulation/power/_GeneralModuleFiles/powerStorageBase.h>
@@ -22,7 +21,6 @@ private:
 
 public:
     double storageCapacity;  //!< [W-s] Battery capacity in Watt-seconds (Joules).
-    BSKLogger bskLogger;     //!< -- BSK Logging
 };
 
 #endif  // XMERA_SIMPLEBATTERY_H

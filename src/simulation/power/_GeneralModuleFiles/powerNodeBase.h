@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 #include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>
@@ -40,7 +39,6 @@ public:
     double nodePowerOut;                                  //!< [W] Power provided (+) or consumed (-).
     uint64_t
         powerStatus;  //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 protected:
     PowerNodeUsageMsgPayload nodePowerMsg;  //!< buffer of output message

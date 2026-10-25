@@ -83,7 +83,7 @@ def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue
 
 def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
     if not setRwMsg:
-        sim_model.setDefaultLogLevel(sim_model.BSK_ERROR)
+        sim_model.set_log_level("error")
 
     """Module Unit Test"""
     testFailCount = 0                       # zero unit test result counter

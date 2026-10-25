@@ -6,6 +6,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -31,18 +32,22 @@ SimpleSolarPanel::~SimpleSolarPanel() {
 void SimpleSolarPanel::customreset(uint64_t CurrentClock) {
     this->shadowFactor = 1.0;
 
-    if (this->panelArea < 0.0) { bskLogger.bskLog(BSK_ERROR, "The panelArea must be a positive value"); }
+    if (this->panelArea < 0.0) { xmera::logging::get(this->modelTag)->error("The panelArea must be a positive value"); }
     if (this->panelEfficiency < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The panelEfficiency variable must be a positive value");
+        xmera::logging::get(this->modelTag)->error("The panelEfficiency variable must be a positive value");
     }
     if (this->nHat_B.norm() > 0.1) {
         this->nHat_B.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
+        xmera::logging::get(this->modelTag)->error("The nHat_B must be set to a non-zero vector");
     }
     // check if required input messages are connected
-    if (!this->sunInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.sunInMsg was not linked."); }
-    if (!this->stateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.stateInMsg was not linked."); }
+    if (!this->sunInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("simpleSolarPanel.sunInMsg was not linked.");
+    }
+    if (!this->stateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("simpleSolarPanel.stateInMsg was not linked.");
+    }
 
     return;
 }

@@ -6,11 +6,11 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 #include <architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
+
 
 #ifndef XMERA_SIMPOWERSTORAGEBASE_H
     #define XMERA_SIMPOWERSTORAGEBASE_H
@@ -43,7 +43,6 @@ public:
         nodePowerUseInMsgs;                                //!< Vector of power node input message names
     Message<PowerStorageStatusMsgPayload> batPowerOutMsg;  //!< power storage status output message
     double storedCharge_Init;  //!< [W-s] Initial stored charge set by the user. Defaults to 0.
-    BSKLogger bskLogger;       //!< -- BSK Logging
 
 protected:
     PowerStorageStatusMsgPayload storageStatusMsg;       //!< class variable

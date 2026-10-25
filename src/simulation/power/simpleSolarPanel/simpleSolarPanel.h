@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/EclipseMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 
@@ -36,7 +35,6 @@ public:
     double panelArea;                                  //!< [m^2] Panel area in meters squared.
     double panelEfficiency;  //!< [W/W] Panel efficiency in converting solar energy to electrical energy.
     Eigen::Vector3d nHat_B;  //!< [-] Panel normal unit vector relative to the spacecraft body frame.
-    BSKLogger bskLogger;     //!< -- BSK Logging
 
 private:
     double projectedArea;      //!< [m^2] Area of the panel projected along the sun vector.

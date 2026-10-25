@@ -4,6 +4,8 @@
 
 #include "simpleBattery.h"
 
+#include <architecture/utilities/logging.h>
+
 /*! The constructor creates a SimpleBattery instance with zero stored charge */
 SimpleBattery::SimpleBattery() {
     this->storageCapacity = -1.0;
@@ -19,7 +21,7 @@ SimpleBattery::~SimpleBattery() {
  */
 void SimpleBattery::customreset(uint64_t CurrentClock) {
     if (this->storageCapacity <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The storageCapacity variable must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->error("The storageCapacity variable must be set to a positive value.");
     }
     return;
 }

@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! This method initializes some basic parameters for the module.
@@ -45,7 +46,8 @@ void PowerStorageBase::reset(uint64_t currentSimNanos) {
     if (this->storedCharge_Init >= 0.0) {
         this->storedCharge = this->storedCharge_Init;
     } else {
-        bskLogger.bskLog(BSK_ERROR, "The storedCharge_Init variable must be set to a non-negative value.");
+        xmera::logging::get(this->modelTag)
+            ->error("The storedCharge_Init variable must be set to a non-negative value.");
     }
 
     //! - call the custom environment module reset method
@@ -87,7 +89,7 @@ bool PowerStorageBase::readMessages() {
             this->nodeWattMsgs.push_back(nodeMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_WARNING, "Power storage has no power node messages to read.");
+        xmera::logging::get(this->modelTag)->warn("Power storage has no power node messages to read.");
         powerRead = false;
     }
 
