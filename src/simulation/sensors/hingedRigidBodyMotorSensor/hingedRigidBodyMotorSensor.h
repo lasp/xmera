@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/discretize.h>
 
 #include <stdint.h>
@@ -42,7 +41,6 @@ public:
     Message<HingedRigidBodyMsgPayload>
         hingedRigidBodyMotorSensorOutMsg;  //!< output message for sensed rigid body state
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::minstd_rand rGen;                  //!< -- Random number generator for model

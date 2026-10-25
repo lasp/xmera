@@ -18,6 +18,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <string.h>
@@ -366,7 +367,7 @@ void Camera::updateState(uint64_t currentSimNanos) {
         this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1) {
             if (!cv::imwrite(localPath, blurred)) {
-                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image");
+                xmera::logging::get(this->modelTag)->warn("camera: wasn't able to save the camera module image");
             }
         }
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
@@ -380,7 +381,7 @@ void Camera::updateState(uint64_t currentSimNanos) {
         this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1) {
             if (!cv::imwrite(localPath, blurred)) {
-                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image");
+                xmera::logging::get(this->modelTag)->warn("camera: wasn't able to save the camera module image");
             }
         }
         /*! If the permanent image buffer is not populated, it will be equal to null*/

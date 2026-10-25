@@ -5,6 +5,7 @@
 #include "simpleMassProps.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <iostream>
 
@@ -24,7 +25,7 @@ SimpleMassProps::~SimpleMassProps() {
 void SimpleMassProps::reset(uint64_t currentSimNanos) {
     // check if input message is linked
     if (!this->scMassPropsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "simpleMassProps.scMassPropsInMsg is not linked.");
+        xmera::logging::get(this->modelTag)->error("simpleMassProps.scMassPropsInMsg is not linked.");
     }
 
     // zero the incoming message buffer

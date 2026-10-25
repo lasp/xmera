@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -41,11 +42,11 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
  @return void */
 void Magnetometer::reset(uint64_t currentSimNanos) {
     if (!this->magInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magInMsg) is empty.");
+        xmera::logging::get(this->modelTag)->error("Magnetic field interface message name (magInMsg) is empty.");
     }
 
     if (!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Spacecraft state message name (stateInMsg) is empty.");
+        xmera::logging::get(this->modelTag)->error("Spacecraft state message name (stateInMsg) is empty.");
     }
 
     this->noiseModel.setUpperBounds(this->walkBounds);

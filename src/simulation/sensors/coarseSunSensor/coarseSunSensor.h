@@ -14,7 +14,6 @@
 #include <architecture/msgPayloadDef/EclipseMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 
 #include <Eigen/Dense>
@@ -94,7 +93,6 @@ public:
     double walkBounds;       //!< [-] Gauss Markov walk bounds
     double kPower;           //!< [-] Power factor for kelly curve
     int CSSGroupID = -1;     //!< [-] (optional) CSS group id identifier, -1 means it is not set and default is used
-    BSKLogger bskLogger;     //!< -- BSK Logging
 
 private:
     SpicePlanetStateMsgPayload sunData;     //!< [-] Unused for now, but including it for future

@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/gauss_markov.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
@@ -68,7 +69,9 @@ void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll) {
  */
 void ImuSensor::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("imuSensor.scStateInMsg was not linked.");
+    }
 
     this->AMatrixAccel.setIdentity();
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);

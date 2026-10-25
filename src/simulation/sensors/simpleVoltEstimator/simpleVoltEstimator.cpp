@@ -5,6 +5,7 @@
 #include "simpleVoltEstimator.h"
 
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 
 #include <cstring>
 #include <iostream>
@@ -33,7 +34,9 @@ SimpleVoltEstimator::~SimpleVoltEstimator() {
  */
 void SimpleVoltEstimator::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->voltInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "SimpleVoltEstimator.voltInMsg was not linked."); }
+    if (!this->voltInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("SimpleVoltEstimator.voltInMsg was not linked.");
+    }
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity();

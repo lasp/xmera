@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <math.h>
@@ -217,7 +216,6 @@ public:
                                                    //!< percent multipliers
     Eigen::Vector3d bgrPercent{Eigen::Vector3d::Zero()};  //!< (int) BGR color correction values as percent
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     uint64_t localcurrentSimNanos{};

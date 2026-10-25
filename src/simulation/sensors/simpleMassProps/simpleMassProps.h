@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/SCMassPropsMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief FSW mass properties converter module class */
 class SimpleMassProps : public SysModel {
@@ -27,7 +26,6 @@ public:
     ReadFunctor<SCMassPropsMsgPayload> scMassPropsInMsg;   //!< sc mass properties input msg
     Message<VehicleConfigMsgPayload> vehicleConfigOutMsg;  //!< vehicle configuration output msg
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     SCMassPropsMsgPayload scMassPropsMsgBuffer;      //! buffer for the mass properties message
