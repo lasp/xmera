@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <cmath>
@@ -16,10 +17,8 @@
 */
 void PrescribedLinearTranslation::reset(uint64_t callTime) {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
-        this->bskLogger->bskLog(
-            BSK_ERROR,
-            "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;

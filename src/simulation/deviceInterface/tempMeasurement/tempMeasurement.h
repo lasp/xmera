@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 
 #include <Eigen/Dense>
@@ -37,7 +36,6 @@ private:
 public:
     ReadFunctor<TemperatureMsgPayload> tempInMsg;  //!< True temperature measurement
     Message<TemperatureMsgPayload> tempOutMsg;     //!< Sensed temperature measurement
-    BSKLogger bskLogger;                           //!< -- BSK Logging
     TempFaultState_t faultState;                   //!< [-] Fault status variable
 
     double senBias{};         //!< [-] Sensor bias value

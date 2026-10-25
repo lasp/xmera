@@ -8,7 +8,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>
 #include <architecture/msgPayloadDef/StepperMotorMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <cstdint>
 #include <Eigen/Dense>
@@ -25,7 +24,6 @@ public:
     Message<PrescribedRotationMsgPayload>
         prescribedRotationOutMsg;  //!< Output msg for the hub-relative prescribed rotational states
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     Eigen::Vector3d computeSigma_FM(double theta);  //!< Method for computing the current spinning body MRP attitude

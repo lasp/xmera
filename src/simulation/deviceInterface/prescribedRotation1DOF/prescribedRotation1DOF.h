@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <cstdint>
 #include <Eigen/Dense>
@@ -43,7 +42,6 @@ public:
     Message<PrescribedRotationMsgPayload>
         prescribedRotationOutMsg;  //!< Output msg for the spinning body prescribed rotational states
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     /* Methods for computing the required rotational parameters */

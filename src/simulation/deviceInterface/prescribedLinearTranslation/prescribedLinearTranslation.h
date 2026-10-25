@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <cstdint>
 #include <Eigen/Dense>
@@ -48,7 +47,6 @@ public:
     Message<PrescribedTranslationMsgPayload>
         prescribedTranslationOutMsg;  //!< Output msg for the translational body prescribed states
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     /* Methods for computing the required translation parameters */

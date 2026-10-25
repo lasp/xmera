@@ -81,7 +81,7 @@ def test_prescribedRotation1DOF(show_plots,
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

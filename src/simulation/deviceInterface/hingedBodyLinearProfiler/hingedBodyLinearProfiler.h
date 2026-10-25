@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Linear deployment profiler for single hinged rigid body.
  */
@@ -29,7 +28,6 @@ public:
     Message<HingedRigidBodyMsgPayload>
         hingedRigidBodyReferenceOutMsg;  //!< -- output message for reference hinged rigid body state (theta, theta dot)
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     double deploymentSlope;  //!<  [rad/s] slope of deployment

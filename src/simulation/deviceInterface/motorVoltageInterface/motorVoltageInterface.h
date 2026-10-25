@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <Eigen/Dense>
@@ -40,7 +39,6 @@ public:
     Eigen::VectorXd voltage2TorqueGain;                  //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                         //!<        scale the output - like a constant gain error
     Eigen::VectorXd bias;                                //!< Nm     A bias to add to the torque output
-    BSKLogger bskLogger;                                 //!< -- BSK Logging
 
 private:
     RwMotorTorqueMsgPayload outputTorqueBuffer;   //!< [Nm] copy of module output buffer

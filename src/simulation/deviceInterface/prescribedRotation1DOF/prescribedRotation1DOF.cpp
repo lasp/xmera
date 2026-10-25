@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -17,7 +18,7 @@
 */
 void PrescribedRotation1DOF::reset(uint64_t callTime) {
     if (!this->spinningBodyInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;
