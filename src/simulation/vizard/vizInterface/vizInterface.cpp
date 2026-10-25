@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <google/protobuf/io/coded_stream.h>
@@ -64,14 +65,14 @@ void VizInterface::reset(uint64_t currentSimNanos) {
 
         std::string text;
         text = "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber;
-        bskLogger.bskLog(BSK_INFORMATION, text.c_str());
+        xmera::logging::get(this->modelTag)->info(text.c_str());
 
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);
         char buffer[4];
         zmq_recv(this->requester_socket, buffer, 4, 0);
         zmq_send(this->requester_socket, "PING", 4, 0);
-        bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
+        xmera::logging::get(this->modelTag)->info("Basilisk-Vizard connection made");
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
@@ -81,7 +82,7 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->scStateInMsgStatus.dataFresh = false;
             scIt->scStateInMsgStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "vizInterface: spacecraft msg not linked.");
+            xmera::logging::get(this->modelTag)->error("vizInterface: spacecraft msg not linked.");
         }
 
         /* Check CSS data input messages */
@@ -93,7 +94,7 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->cssInMessage.clear();
             for (size_t idx = 0; idx < (size_t) scIt->cssInMsgs.size(); idx++) {
                 if (!scIt->cssInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: CSS(%zu) msg not linked.", idx);
+                    xmera::logging::get(this->modelTag)->error("vizInterface: CSS({}) msg not linked.", idx);
                 }
                 scIt->cssConfLogInMsgStatus.push_back(cssStatus);
                 CSSConfigLogMsgPayload logMsg = {};
@@ -110,7 +111,7 @@ void VizInterface::reset(uint64_t currentSimNanos) {
             scIt->rwInMessage.clear();
             for (size_t idx = 0; idx < (size_t) scIt->rwInMsgs.size(); idx++) {
                 if (!scIt->rwInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: RW(%zu) msg not linked.", idx);
+                    xmera::logging::get(this->modelTag)->error("vizInterface: RW({}) msg not linked.", idx);
                 }
                 scIt->rwInMsgStatus.push_back(rwStatus);
                 RWConfigLogMsgPayload logMsg = {};
@@ -131,16 +132,17 @@ void VizInterface::reset(uint64_t currentSimNanos) {
                     THROutputMsgPayload logMsg;
                     scIt->thrOutputMessage.push_back(logMsg);
                 } else {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%d) msg requested but not found.", thrCounter);
+                    xmera::logging::get(this->modelTag)
+                        ->error("vizInterface: TH({}) msg requested but not found.", thrCounter);
                 }
             }
             if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
-                bskLogger.bskLog(
-                    BSK_ERROR,
-                    "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)",
-                    (int) scIt->thrInfo.size(),
-                    (int) scIt->thrInMsgs.size()
-                );
+                xmera::logging::get(this->modelTag)
+                    ->error(
+                        "vizInterface: thrInfo vector ({}) must be the same size as thrInMsgs ({})",
+                        (int) scIt->thrInfo.size(),
+                        (int) scIt->thrInMsgs.size()
+                    );
             }
         }
     }
@@ -365,11 +367,11 @@ void VizInterface::ReadBSKMessages() {
                             scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
                         }
                     } else {
-                        bskLogger.bskLog(
-                            BSK_ERROR,
-                            "vizInterface: the number of charged in MSM message and the number of msm "
-                            "vizInterface spheres must be the same."
-                        );
+                        xmera::logging::get(this->modelTag)
+                            ->error(
+                                "vizInterface: the number of charged in MSM message and the number of msm "
+                                "vizInterface spheres must be the same."
+                            );
                     }
                 }
             }
@@ -437,52 +439,54 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         // define the viz ambient light setting
         vizSettings->set_ambient(this->settings.ambient);
         if (this->settings.ambient > 8.0 || (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.",
-                this->settings.ambient
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard ambient light value must be within [0,8].  A value of {:f} was received.",
+                    this->settings.ambient
+                );
         }
 
         // define if osculating orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
         if (abs(this->settings.orbitLinesOn) > 2) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.",
-                this->settings.orbitLinesOn
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of {} was "
+                    "received.",
+                    this->settings.orbitLinesOn
+                );
         }
 
         // define if true orbit lines should be shown
         vizSettings->set_truetrajectorylineson(this->settings.trueTrajectoryLinesOn);
         if (abs(this->settings.trueTrajectoryLinesOn) > 2) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 or 2.  A "
-                "value of %d was received.",
-                this->settings.trueTrajectoryLinesOn
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 or 2.  A "
+                    "value of {} was received.",
+                    this->settings.trueTrajectoryLinesOn
+                );
         }
 
         // define if spacecraft axes should be shown
         vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
         if (abs(this->settings.spacecraftCSon) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.",
-                this->settings.spacecraftCSon
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of {} was "
+                    "received.",
+                    this->settings.spacecraftCSon
+                );
         }
 
         // define if planet axes should be shown
         vizSettings->set_planetcson(this->settings.planetCSon);
         if (abs(this->settings.planetCSon) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.",
-                this->settings.planetCSon
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of {} was received.",
+                    this->settings.planetCSon
+                );
         }
 
         // define the skyBox variable
@@ -515,77 +519,78 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         // define if camera boresight line should be shown
         vizSettings->set_viewcameraboresighthud(this->settings.viewCameraBoresightHUD);
         if (abs(this->settings.viewCameraBoresightHUD) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard viewCameraBoresightHUD flag must be either -1, 0 or 1.  A value "
-                "of %d was received.",
-                this->settings.viewCameraBoresightHUD
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard viewCameraBoresightHUD flag must be either -1, 0 or 1.  A value "
+                    "of {} was received.",
+                    this->settings.viewCameraBoresightHUD
+                );
         }
 
         // define if camera cone should be shown
         vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
         if (abs(this->settings.viewCameraConeHUD) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of "
-                "%d was received.",
-                this->settings.viewCameraConeHUD
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of "
+                    "{} was received.",
+                    this->settings.viewCameraConeHUD
+                );
         }
 
         // define if coordinate system labels should be shown
         vizSettings->set_showcslabels(this->settings.showCSLabels);
         if (abs(this->settings.showCSLabels) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.",
-                this->settings.showCSLabels
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of {} was "
+                    "received.",
+                    this->settings.showCSLabels
+                );
         }
 
         // define if celestial body labels should be shown
         vizSettings->set_showcelestialbodylabels(this->settings.showCelestialBodyLabels);
         if (abs(this->settings.showCelestialBodyLabels) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showCelestialBodyLabels flag must be either -1, 0 or 1.  A "
-                "value of %d was received.",
-                this->settings.showCelestialBodyLabels
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showCelestialBodyLabels flag must be either -1, 0 or 1.  A "
+                    "value of {} was received.",
+                    this->settings.showCelestialBodyLabels
+                );
         }
 
         // define if spacecraft labels should be shown
         vizSettings->set_showspacecraftlabels(this->settings.showSpacecraftLabels);
         if (abs(this->settings.showSpacecraftLabels) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value "
-                "of %d was received.",
-                this->settings.showSpacecraftLabels
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value "
+                    "of {} was received.",
+                    this->settings.showSpacecraftLabels
+                );
         }
 
         // define if camera labels should be shown
         vizSettings->set_showcameralabels(this->settings.showCameraLabels);
         if (abs(this->settings.showCameraLabels) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of %d "
-                "was received.",
-                this->settings.showCameraLabels
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of {} "
+                    "was received.",
+                    this->settings.showCameraLabels
+                );
         }
 
         // define the GUI scaling factor
         vizSettings->set_customguiscale(this->settings.customGUIScale);
         if (abs(this->settings.customGUIScale) > 3.0) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of "
-                "%d was received.",
-                this->settings.customGUIScale
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of "
+                    "{} was received.",
+                    this->settings.customGUIScale
+                );
         }
 
         // define default spacecraft sprite behavior
@@ -594,44 +599,45 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos) {
         // define if spacecraft should be shown as sprites
         vizSettings->set_showspacecraftassprites(this->settings.showSpacecraftAsSprites);
         if (abs(this->settings.showSpacecraftAsSprites) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showSpacecraftAsSprites flag must be either -1, 0 or 1.  A "
-                "value of %d was received.",
-                this->settings.showSpacecraftAsSprites
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showSpacecraftAsSprites flag must be either -1, 0 or 1.  A "
+                    "value of {} was received.",
+                    this->settings.showSpacecraftAsSprites
+                );
         }
 
         // define if celestial objects should be shown as sprites
         vizSettings->set_showcelestialbodiesassprites(this->settings.showCelestialBodiesAsSprites);
         if (abs(this->settings.showCelestialBodiesAsSprites) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A "
-                "value of %d was received.",
-                this->settings.showCelestialBodiesAsSprites
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A "
+                    "value of {} was received.",
+                    this->settings.showCelestialBodiesAsSprites
+                );
         }
 
         // define if the time should be shown using a 24h clock
         vizSettings->set_show24hrclock(this->settings.show24hrClock);
         if (abs(this->settings.show24hrClock) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.",
-                this->settings.show24hrClock
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of {} was "
+                    "received.",
+                    this->settings.show24hrClock
+                );
         }
 
         // define if the data frame rate should be shown
         vizSettings->set_showdataratedisplay(this->settings.showDataRateDisplay);
         if (abs(this->settings.showDataRateDisplay) > 1) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of "
-                "%d was received.",
-                this->settings.showDataRateDisplay
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of "
+                    "{} was received.",
+                    this->settings.showDataRateDisplay
+                );
         }
 
         // define the keyboard driven camera rates

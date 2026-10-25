@@ -14,7 +14,6 @@
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/simDefinitions.h>
 
 #include <zmq.h>
@@ -72,7 +71,6 @@ public:
     MsgCurrStatus epochMsgStatus;             //!< [-] ID of the epoch msg
     EpochMsgPayload epochMsgBuffer;           //!< [-] epoch msg data
 
-    BSKLogger bskLogger;  //!< [-] BSK Logging object
 
 private:
     // ZeroMQ State
