@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Core>
 
@@ -27,8 +26,6 @@ public:
     Message<CmdTorqueBodyMsgPayload> deltaHOutMsg = {};      //!< The name of the output message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;            //!< [] The name for the reaction wheel speeds message
     ReadFunctor<RWArrayConfigMsgPayload> rwConfigDataInMsg;  //!< [-] The name of the RWA configuration message
-
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     int initRequest = 1;  //!< [-] status flag of the momentum dumping management

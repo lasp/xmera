@@ -44,8 +44,6 @@ public:
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;   //!< (optional) RW availability input message
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< (optional) RW configuration parameter input message
     ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

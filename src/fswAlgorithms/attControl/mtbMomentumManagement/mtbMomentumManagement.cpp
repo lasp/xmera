@@ -5,6 +5,7 @@
 #include "mtbMomentumManagement.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/svd.h>
 
 #include <string.h>
@@ -20,19 +21,19 @@ void MtbMomentumManagement::reset(uint64_t callTime) {
      * Check if the required input messages are linked.
      */
     if (!this->rwParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
     if (!this->mtbParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.mtbParamsInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.mtbParamsInMsg is not connected.");
     }
     if (!this->tamSensorBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.tamSensorBodyInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.tamSensorBodyInMsg is not connected.");
     }
     if (!this->rwSpeedsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
     if (!this->rwMotorTorqueInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
     }
 
     /*! - Read the input configuration messages.*/

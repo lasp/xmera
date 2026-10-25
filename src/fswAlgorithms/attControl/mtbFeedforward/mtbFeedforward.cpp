@@ -5,6 +5,7 @@
 #include "mtbFeedforward.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <string.h>
 
@@ -19,16 +20,16 @@ void MtbFeedforward::reset(uint64_t callTime) {
      * Check if the required input messages are connected.
      */
     if (!this->dipoleRequestMtbInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.dipoleRequestMtbInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbFeedForward.dipoleRequestMtbInMsg is not connected.");
     }
     if (!this->vehControlInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.vehControlInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbFeedForward.vehControlInMsg is not connected.");
     }
     if (!this->tamSensorBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.tamSensorBodyInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbFeedForward.tamSensorBodyInMsg is not connected.");
     }
     if (!this->mtbArrayConfigParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
     }
 
     /*! - Read in the torque rod input configuration message. This gives us the transformation from the

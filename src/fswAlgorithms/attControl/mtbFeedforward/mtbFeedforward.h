@@ -37,7 +37,6 @@ public:
 
     /* Other. */
     MTBArrayConfigMsgPayload mtbArrayConfigParams;  //!< configuration for MTB layout
-    BSKLogger bskLogger = {};                       //!< BSK Logging
 };
 
 #endif

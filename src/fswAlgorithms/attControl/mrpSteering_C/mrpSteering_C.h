@@ -29,8 +29,6 @@ public:
     /* declare module IO interfaces */
     Message<RateCmdMsgPayload> rateCmdOutMsg;  //!< rate command output message
     ReadFunctor<AttGuidMsgPayload> guidInMsg;  //!< attitude guidance input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

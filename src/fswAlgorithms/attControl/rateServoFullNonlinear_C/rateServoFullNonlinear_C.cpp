@@ -10,6 +10,7 @@
 #include "rateServoFullNonlinear_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -32,21 +33,22 @@ void RateServoFullNonlinear_C::reset(uint64_t callTime) {
     /* make sure option msg connections are correctly done */
     if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR, "The rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            xmera::logging::get(this->modelTag)
+                ->error("The rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
     // check if essential messages are connected
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.guidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rateServoFullNonlinear.guidInMsg wasn't connected.");
     }
 
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
     }
 
     if (!this->rateSteeringInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
     }
 
     sc = this->vehConfigInMsg();

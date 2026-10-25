@@ -10,6 +10,7 @@
 #include "mrpPD_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <string.h>
@@ -22,11 +23,11 @@
 void MrpPD_C::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpPD_C.guidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("mrpPD_C.guidInMsg wasn't connected.");
     }
 
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpPD_C.vehConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("mrpPD_C.vehConfigInMsg wasn't connected.");
     }
 
     /*! - read in spacecraft configuration message */

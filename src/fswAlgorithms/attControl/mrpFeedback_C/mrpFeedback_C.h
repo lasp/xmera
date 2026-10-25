@@ -45,8 +45,6 @@ public:
         intFeedbackTorqueOutMsg;                          //!< commanded integral feedback control torque output message
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

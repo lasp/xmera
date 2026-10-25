@@ -32,8 +32,6 @@ public:
     /* declare module IO interfaces */
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;  //!< commanded torque input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Rate damp class */
 class RateDamp : public SysModel {

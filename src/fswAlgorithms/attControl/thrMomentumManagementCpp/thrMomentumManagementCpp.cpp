@@ -5,14 +5,15 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 void ThrMomentumManagementCpp::reset(uint64_t currentSimNanos) {
     // Check if the required input messages are included
     if (!this->rwConfigDataInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "thrMomentumManagementCpp.rwConfigDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumManagementCpp.rwConfigDataInMsg wasn't connected.");
     }
     if (!this->rwSpeedsInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "thrMomentumManagementCpp.rwSpeedsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumManagementCpp.rwSpeedsInMsg wasn't connected.");
     }
 
     // Read in the RW configuration message

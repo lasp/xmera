@@ -10,6 +10,7 @@
 #include "mrpFeedback_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -28,19 +29,17 @@ void MrpFeedback_C::reset(uint64_t callTime) {
     /* check that optional messages are correct connected */
     if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                "Error: the mrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected."
-            );
+            xmera::logging::get(this->modelTag)
+                ->error("the mrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
     // check if the required message has not been connected
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpFeedback.guidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("mrpFeedback.guidInMsg wasn't connected.");
     }
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: the mrpFeedback.vehConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("the mrpFeedback.vehConfigInMsg wasn't connected.");
     }
 
     /*! - zero and read in vehicle configuration message */
