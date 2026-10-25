@@ -12,6 +12,8 @@
 /* modify the path to reflect the new module names */
 #include "centerRadiusCNN.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <fstream>
 #include <opencv2/dnn/dnn.hpp>
 
@@ -35,7 +37,9 @@ CenterRadiusCNN::~CenterRadiusCNN() {
  */
 void CenterRadiusCNN::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "CenterRadiusCNN.imageInMsg wasn't connected."); }
+    if (!this->imageInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("CenterRadiusCNN.imageInMsg wasn't connected.");
+    }
 
     /*! - Read in the CNN */
     std::ifstream test(this->pathToNetwork);

@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <stdint.h>
@@ -40,7 +39,6 @@ public:
     /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t saveImages;    //!< [-] 1 to save images to file for debugging
     double pixelNoise[3];  //!< [-] Pixel Noise for the estimate
-    BSKLogger bskLogger;   //!< -- BSK Logging
 
 private:
     cv::dnn::Net positionNet2;  //!< Network for evaluation of centers

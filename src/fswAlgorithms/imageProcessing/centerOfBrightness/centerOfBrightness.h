@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/CenterOfBrightnessDiagnosticMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 #include <architecture/msgPayloadDef/RegionOfInterestMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -37,7 +36,6 @@ public:
     Message<OpNavCOBMsgPayload> opnavCOBOutMsg;  //!< The name of the OpNav center of brightness output message
     Message<CenterOfBrightnessDiagnosticMsgPayload> centerOfBrightnessDiagnosticOutMsg;
     ReadFunctor<RegionOfInterestMsgPayload> roiInMsg;  //!< Region of interest input message
-    BSKLogger bskLogger;                               //!< -- BSK Logging
 
 private:
     CenterOfBrightnessAlgorithm algorithm{};

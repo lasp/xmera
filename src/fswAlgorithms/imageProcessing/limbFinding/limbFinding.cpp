@@ -14,6 +14,8 @@
 /* modify the path to reflect the new module names */
 #include "limbFinding.h"
 
+#include <architecture/utilities/logging.h>
+
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 LimbFinding::LimbFinding() {
     this->filename = "";
@@ -37,7 +39,9 @@ LimbFinding::~LimbFinding() {
  */
 void LimbFinding::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "LimbFinding.imageInMsg wasn't connected."); }
+    if (!this->imageInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("LimbFinding.imageInMsg wasn't connected.");
+    }
 }
 
 /*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It

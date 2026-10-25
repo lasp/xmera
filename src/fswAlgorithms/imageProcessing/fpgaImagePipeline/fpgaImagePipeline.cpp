@@ -1,5 +1,7 @@
 #include "fpgaImagePipeline.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <algorithm>
 #include <cstring>
 #include <fstream>
@@ -257,11 +259,8 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
     if (!this->calibImageFile.empty()) {
         cv::Mat calibMat = cv::imread(this->calibImageFile, cv::IMREAD_ANYDEPTH | cv::IMREAD_GRAYSCALE);
         if (calibMat.empty()) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "FpgaImagePipeline: failed to load calibration image from '%s'",
-                this->calibImageFile.c_str()
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn("FpgaImagePipeline: failed to load calibration image from '{}'", this->calibImageFile);
         } else {
             uint32_t const cw = static_cast<uint32_t>(calibMat.cols);
             uint32_t const ch = static_cast<uint32_t>(calibMat.rows);
@@ -309,8 +308,8 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
     if (!this->imageFileName.empty()) {
         cv::Mat img = cv::imread(this->imageFileName, cv::IMREAD_ANYDEPTH | cv::IMREAD_GRAYSCALE);
         if (img.empty()) {
-            bskLogger
-                .bskLog(BSK_WARNING, "FpgaImagePipeline: failed to load image from '%s'", this->imageFileName.c_str());
+            xmera::logging::get(this->modelTag)
+                ->warn("FpgaImagePipeline: failed to load image from '{}'", this->imageFileName);
         }
 
         // Normalise to 16-bit so img.at<uint16_t> is always valid.
@@ -328,15 +327,15 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
         // If dimensions differ from allocated buffers, resize everything
         if (auto const fileHeight = static_cast<uint32_t>(img.rows);
             fileWidth != this->imageWidth || fileHeight != this->imageHeight) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "FpgaImagePipeline: image file dimensions %ux%u differ from "
-                "configured %ux%u; re-allocating buffers",
-                fileWidth,
-                fileHeight,
-                this->imageWidth,
-                this->imageHeight
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "FpgaImagePipeline: image file dimensions {}x{} differ from "
+                    "configured {}x{}; re-allocating buffers",
+                    fileWidth,
+                    fileHeight,
+                    this->imageWidth,
+                    this->imageHeight
+                );
             this->imageWidth = fileWidth;
             this->imageHeight = fileHeight;
             this->allocateBuffers();
@@ -365,7 +364,7 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
             std::vector<uint8_t> const buf(bytes, bytes + imgMsg.imageBufferLength);
             cv::Mat decoded = cv::imdecode(buf, cv::IMREAD_COLOR);
             if (decoded.empty()) {
-                bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: PNG decode failed");
+                xmera::logging::get(this->modelTag)->warn("FpgaImagePipeline: PNG decode failed");
                 return imageSourceIsConfigured;
             }
             cv::Mat gray;
@@ -377,14 +376,14 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
             auto const msgWidth = static_cast<uint32_t>(gray16.cols);
             auto const msgHeight = static_cast<uint32_t>(gray16.rows);
             if (msgWidth != this->imageWidth || msgHeight != this->imageHeight) {
-                bskLogger.bskLog(
-                    BSK_WARNING,
-                    "FpgaImagePipeline: PNG dimensions %ux%u differ from configured %ux%u; re-allocating",
-                    msgWidth,
-                    msgHeight,
-                    this->imageWidth,
-                    this->imageHeight
-                );
+                xmera::logging::get(this->modelTag)
+                    ->warn(
+                        "FpgaImagePipeline: PNG dimensions {}x{} differ from configured {}x{}; re-allocating",
+                        msgWidth,
+                        msgHeight,
+                        this->imageWidth,
+                        this->imageHeight
+                    );
                 this->imageWidth = msgWidth;
                 this->imageHeight = msgHeight;
                 this->allocateBuffers();
@@ -404,7 +403,8 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
         timeTagOut = imgMsg.timeTag;
         imageSourceIsConfigured = true;
     } else {
-        bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: no image source (set imageFileName or link imageInMsg)");
+        xmera::logging::get(this->modelTag)
+            ->warn("FpgaImagePipeline: no image source (set imageFileName or link imageInMsg)");
     }
     return imageSourceIsConfigured;
 }

@@ -8,7 +8,6 @@
 #include <architecture/msgPayloadDef/FpgaThreshImageMsgPayload.h>
 #include <architecture/msgPayloadDef/RegionOfInterestMsgPayload.h>
 #include <architecture/msgPayloadDef/RegionsIdentifiedMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <opencv2/imgcodecs.hpp>
@@ -65,7 +64,6 @@ public:
     ReadFunctor<FpgaThreshImageMsgPayload> threshImageInMsg;       //!< Optional: threshold image for visualization
     Message<RegionsIdentifiedMsgPayload> regionsIdentifiedOutMsg;  //!< Pruned candidates as RegionsIdentifiedMsg
 
-    BSKLogger bskLogger = {};
 
 private:
     // Build the BGR background image from the threshold msg (preferred) or the 1-D sums (fallback).

@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <stdint.h>
@@ -48,7 +47,6 @@ public:
     double noiseSF;           //!< [-] Scale Factor for noise control
     int32_t expectedCircles;  //!< [-] Number of expected circles to be found
     int32_t saveImages;       //!< [-] 1 to save images to file for debugging
-    BSKLogger bskLogger;      //!< -- BSK Logging
 };
 
 #endif

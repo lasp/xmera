@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
@@ -73,8 +72,6 @@ public:
     /*! OpenCV specific arguments needed for masking */
     int32_t thresholdMask = 20;
     int32_t limbMask = 20;
-
-    BSKLogger bskLogger;
 };
 
 #endif

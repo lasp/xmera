@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/FpgaRawImageMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaRowColSumMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaThreshImageMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <cstdint>
 #include <string>
@@ -96,7 +95,6 @@ public:
     Message<FpgaBinGridMsgPayload> binGridOutMsg;          //!< Position and count of every ROI region
     Message<FpgaPipelineConfigMsgPayload> configOutMsg;    //!< Ancillary config snapshot
 
-    BSKLogger bskLogger = {};
 
 private:
     // --- Configuration state ---

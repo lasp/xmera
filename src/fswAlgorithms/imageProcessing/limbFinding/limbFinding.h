@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <stdint.h>
@@ -42,8 +41,6 @@ public:
     int32_t cannyThreshLow;   //!< [-] Second Threshold for Canny detection
     int32_t saveImages;       //!< [-] 1 to save images to file for debugging
     int32_t limbNumThresh;    //!< [-] Threshold for when a limb is detected
-
-    BSKLogger bskLogger;  //!< -- BSK Logging
 };
 
 #endif

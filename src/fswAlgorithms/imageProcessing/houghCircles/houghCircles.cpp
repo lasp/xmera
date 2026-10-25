@@ -13,6 +13,8 @@
 /* modify the path to reflect the new module names */
 #include "houghCircles.h"
 
+#include <architecture/utilities/logging.h>
+
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 HoughCircles::HoughCircles() {
     this->filename = "";
@@ -42,7 +44,9 @@ HoughCircles::~HoughCircles() {
  */
 void HoughCircles::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "HoughCircles.imageInMsg wasn't connected."); }
+    if (!this->imageInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("HoughCircles.imageInMsg wasn't connected.");
+    }
 }
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle
@@ -79,7 +83,7 @@ void HoughCircles::updateState(uint64_t currentSimNanos) {
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1) {
             if (!cv::imwrite(this->saveDir, imageCV)) {
-                bskLogger.bskLog(BSK_WARNING, "houghCircles: wasn't able to save images.");
+                xmera::logging::get(this->modelTag)->warn("houghCircles: wasn't able to save images.");
             }
         }
     } else {
