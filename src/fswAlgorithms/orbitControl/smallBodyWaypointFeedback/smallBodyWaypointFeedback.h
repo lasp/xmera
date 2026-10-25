@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/orbitalMotion.h>
 
@@ -36,7 +35,6 @@ public:
 
     Message<CmdForceBodyMsgPayload> forceOutMsg;  //!< force command output
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double C_SRP;                //!< SRP scaling coefficient
     double P_0;                  //!< SRP at 1 AU

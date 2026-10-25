@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
 #include <architecture/msgPayloadDef/LambertSolutionMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 
 #include <array>
@@ -30,7 +29,6 @@ public:
     Message<LambertSolutionMsgPayload> lambertSolutionOutMsg;        //!< lambert solution output message
     Message<LambertPerformanceMsgPayload> lambertPerformanceOutMsg;  //!< lambert performance output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     //!< [deg] minimum angle between position vectors such that they are not considered too aligned.
     double alignmentThreshold = 1.0;

@@ -4,6 +4,7 @@
 #include "lambertValidator.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
 
@@ -28,24 +29,22 @@ LambertValidator::~LambertValidator() = default;
 void LambertValidator::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.navTransInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertValidator.navTransInMsg was not linked.");
     }
     if (!this->lambertProblemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.lambertProblemInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertValidator.lambertProblemInMsg was not linked.");
     }
     if (!this->lambertSolutionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.lambertSolutionInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertValidator.lambertSolutionInMsg was not linked.");
     }
     if (!this->lambertPerformanceInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.lambertPerformanceInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertValidator.lambertPerformanceInMsg was not linked.");
     }
 
     // check that the provided input module parameters are valid
     if (this->finalTime - this->maneuverTime < 0.0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "lambertValidator: Maneuver start time maneuverTime must be before final time finalTime."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("lambertValidator: Maneuver start time maneuverTime must be before final time finalTime.");
     }
 }
 
@@ -112,12 +111,13 @@ void LambertValidator::readMessages() {
 
     // check if input parameters are valid
     if (lambertProblemInMsgBuffer.mu <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: mu must be positive.");
+        xmera::logging::get(this->modelTag)->error("lambertSolver: mu must be positive.");
     } else {
         this->mu = lambertProblemInMsgBuffer.mu;
     }
     if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator: current time must be before maneuver time maneuverTime.");
+        xmera::logging::get(this->modelTag)
+            ->error("lambertValidator: current time must be before maneuver time maneuverTime.");
     } else {
         this->time = navTransInMsgBuffer.timeTag;
     }
@@ -143,11 +143,11 @@ void LambertValidator::readMessages() {
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIterSol2;
         this->errXLambert = lambertPerformanceInMsgBuffer.errXSol2;
     } else {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
-            "Lambert solution should be used must be either 1 or 2."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
+                "Lambert solution should be used must be either 1 or 2."
+            );
     }
 }
 

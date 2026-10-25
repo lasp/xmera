@@ -4,6 +4,7 @@
 #include "lambertPlanner.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <array>
 #include <cmath>
@@ -24,16 +25,14 @@ LambertPlanner::~LambertPlanner() = default;
 void LambertPlanner::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner.navTransInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertPlanner.navTransInMsg was not linked.");
     }
 
     // check that the provided input module parameters are valid
-    if (this->mu < 0.0) { bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive."); }
+    if (this->mu < 0.0) { xmera::logging::get(this->modelTag)->error("lambertPlanner: mu must be positive."); }
     if (this->finalTime - this->maneuverTime < 0.0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
     }
 }
 
@@ -92,7 +91,8 @@ void LambertPlanner::readMessages() {
     NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
 
     if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner: current time must be before maneuver time maneuverTime.");
+        xmera::logging::get(this->modelTag)
+            ->error("lambertPlanner: current time must be before maneuver time maneuverTime.");
     } else {
         this->time = navTransInMsgBuffer.timeTag;
     }

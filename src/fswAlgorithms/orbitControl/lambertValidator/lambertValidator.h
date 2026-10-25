@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/LambertValidatorMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 
 #define NUM_INITIALSTATES 27  // number of initial states
@@ -36,7 +35,6 @@ public:
     Message<DvBurnCmdMsgPayload> dvBurnCmdOutMsg;                       //!< Delta-V burn command message
     Message<LambertValidatorMsgPayload> lambertValidatorOutMsg;         //!< Lambert Validator results message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double lambertSolutionSpecifier = 1;  //!< [-] which Lambert solution (1 or 2), if applicable, should be used
     double finalTime{};                   //!< [s] time at which target position should be reached

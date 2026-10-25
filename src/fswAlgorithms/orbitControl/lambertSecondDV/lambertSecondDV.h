@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/DvBurnCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/LambertSolutionMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 
 /*! @brief This module computes the second Delta-V maneuver for the Lambert problem
@@ -27,7 +26,6 @@ public:
     ReadFunctor<DesiredVelocityMsgPayload> desiredVelocityInMsg;  //!< desired velocity input message
     Message<DvBurnCmdMsgPayload> dvBurnCmdOutMsg;                 //!< Delta-V burn command message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double lambertSolutionSpecifier = 1;  //!< [-] which Lambert solution (1 or 2), if applicable, should be used
 

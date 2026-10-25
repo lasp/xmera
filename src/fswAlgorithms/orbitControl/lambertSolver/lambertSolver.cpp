@@ -4,6 +4,7 @@
 #include "lambertSolver.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <cmath>
 
@@ -21,7 +22,7 @@ LambertSolver::~LambertSolver() = default;
 void LambertSolver::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver.lambertProblemInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertSolver.lambertProblemInMsg was not linked.");
     }
 }
 
@@ -58,17 +59,17 @@ void LambertSolver::readMessages() {
 
     // check if input parameters are valid
     if (lambertProblemInMsgBuffer.mu <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: mu must be positive.");
+        xmera::logging::get(this->modelTag)->error("lambertSolver: mu must be positive.");
     } else {
         this->mu = lambertProblemInMsgBuffer.mu;
     }
     if (lambertProblemInMsgBuffer.transferTime <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: transferTime must be positive.");
+        xmera::logging::get(this->modelTag)->error("lambertSolver: transferTime must be positive.");
     } else {
         this->transferTime = lambertProblemInMsgBuffer.transferTime;
     }
     if (lambertProblemInMsgBuffer.numRevolutions < 0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: numberOfRevolutions must be zero or positive.");
+        xmera::logging::get(this->modelTag)->error("lambertSolver: numberOfRevolutions must be zero or positive.");
     } else {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }
@@ -148,12 +149,12 @@ void LambertSolver::problemGeometry() {
     // check alignment of the two position vectors
     double sinTheta = i_r1.cross(i_r2).norm();
     if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI / 180.)) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
-            "them is smaller than the angle alignmentThreshold (default: 1.0 degrees). "
-            "They might not define a plane, so no solution is returned."
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
+                "them is smaller than the angle alignmentThreshold (default: 1.0 degrees). "
+                "They might not define a plane, so no solution is returned."
+            );
         this->noSolution = true;
     }
     // orbit normal direction
@@ -317,10 +318,8 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
         if (T < Tmin) {
             // if T < Tmin, no multi-revolution solution exists for the given time of flight T
             this->multiRevSolution = false;
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "lambertSolver: no multi-revolution solution exists for the given time of flight."
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn("lambertSolver: no multi-revolution solution exists for the given time of flight.");
             std::array<double, 2> x0 = {0.0, 0.0};
             return x0;
         }
@@ -402,10 +401,8 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T) {
         if (T < Tmin) {
             // if T < Tmin, no multi-revolution solution exists for the given time of flight T
             this->multiRevSolution = false;
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "lambertSolver: no multi-revolution solution exists for the given time of flight."
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn("lambertSolver: no multi-revolution solution exists for the given time of flight.");
             std::array<double, 2> x0 = {0.0, 0.0};
             return x0;
         }

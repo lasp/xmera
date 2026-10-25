@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 
 #include <vector>
@@ -30,7 +29,6 @@ public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;           //!< translational navigation input message
     Message<LambertProblemMsgPayload> lambertProblemOutMsg;  //!< lambert problem output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     Eigen::Vector3d r_TN_N;  //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
     double finalTime{};      //!< [s] time at which target position should be reached
