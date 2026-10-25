@@ -173,7 +173,6 @@ class SimBaseClass:
         self.indexParsed = False
         self.simulationInitialized = False
         self.simulationFinished = False
-        self.bskLogger = sim_model.BSKLogger()
         self.showProgressBar = False
         self.allModules = set()
 
@@ -293,16 +292,8 @@ class SimBaseClass:
                 Task.TaskData.addModel(NewModel, ModelPriority)
                 self.allModels.append((NewModel, ModelData, Task) )
                 if ModelData is not None:
-                    try:
-                        ModelData.bskLogger = self.bskLogger
-                    except:
-                        pass
                     Task.TaskModels.append(ModelData)
                 else:
-                    try:
-                        NewModel.bskLogger = self.bskLogger
-                    except:
-                        pass
                     Task.TaskModels.append(NewModel)
                 return
         raise ValueError(f"Could not find a Task with name: {TaskName}")

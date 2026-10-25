@@ -83,6 +83,10 @@ namespace std {
     void set_log_sink(std::string const& spec) {
         xmera::logging::setSink(xmera::logging::parseSink(spec));
     }
+
+    void _log(std::string const& name, std::string const& level, std::string const& message) {
+        xmera::logging::get(name)->log(xmera::logging::parseLevel(level), message);
+    }
 %}
 
 %pythoncode %{
@@ -96,6 +100,11 @@ def set_log_level(level, name=None):
         _setGlobalLogLevel(level)
     else:
         _setNamedLogLevel(name, level)
+
+
+def log(level, message, name=""):
+    """Write a message at a level (trace, debug, info, warning, error or critical) to the logger with this name."""
+    _log(name, level, message)
 %}
 
 %attribute_readonly(SimModel, std::vector<SysProcess*> const&,
@@ -132,7 +141,10 @@ class SuperInitChecker(type):
         return rv
 
 class SysModel(_SysModel, metaclass=SuperInitChecker):
-    bskLogger: BSKLogger = None
+
+    def log(self, level, message):
+        """Write a message at a level to the logger named after the modelTag of this module."""
+        log(level, message, self.modelTag)
 %}
 
 

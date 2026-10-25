@@ -71,9 +71,8 @@ class PythonVariableLogger(sim_model.SysModel):
                 try:
                     val = logging_function(currentSimNanos)
                 except Exception as ex:
-                    self.bskLogger.bskLog(sim_model.BSK_ERROR,
-                                        f"Error while logging '{variable_name}'"
-                                        f" in logger '{self.modelTag}': {ex}")
+                    self.log("error", f"Error while logging '{variable_name}'"
+                                      f" in logger '{self.modelTag}': {ex}")
                     val = None
                 val = np.array(val).squeeze()
                 self._variables[variable_name].append(val)

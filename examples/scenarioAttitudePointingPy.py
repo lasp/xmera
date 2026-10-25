@@ -337,15 +337,13 @@ class PythonMRPPD(sim_model.SysModel):
 
         self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, currentSimNanos, self.moduleID)
 
-        # All Python SysModels have self.bskLogger available
-        # The logger level flags (i.e. BSK_INFORMATION) may be
-        # accessed from sim_model
+        # All Python SysModels can write log messages with self.log(level, message)
         if False:
             """Sample Python module method"""
-            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"Time: {currentSimNanos * 1.0E-9} s")
-            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
-            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
-            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
+            self.log("info", f"Time: {currentSimNanos * 1.0E-9} s")
+            self.log("info", f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
+            self.log("info", f"sigma_BR: {guidMsgBuffer.sigma_BR}")
+            self.log("info", f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
 
         return
 
