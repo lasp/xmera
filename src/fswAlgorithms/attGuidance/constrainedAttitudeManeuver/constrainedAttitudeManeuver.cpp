@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -177,16 +178,12 @@ void ConstrainedAttitudeManeuver::reset(uint64_t currentSimNanos) {
     Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->boresights);
     Node goalNode = Node(this->sigma_BN_goal, this->constraints, this->boresights);
     if (!startNode.isFree) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "ConstraintAttitudeManeuver: the initial attitude of the S/C is not constraint-compliant."
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn("ConstraintAttitudeManeuver: the initial attitude of the S/C is not constraint-compliant.");
     }
     if (!goalNode.isFree) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant."
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn("ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant.");
     }
     GenerateGrid(startNode, goalNode);
     if (this->costFcnType == 0) {
@@ -194,7 +191,7 @@ void ConstrainedAttitudeManeuver::reset(uint64_t currentSimNanos) {
     } else if (this->costFcnType == 1) {
         effortBasedAStar();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: costFcnType has not been specified.");
+        xmera::logging::get(this->modelTag)->error("ConstraintAttitudeManeuver: costFcnType has not been specified.");
     }
     pathHandle();
     spline();
@@ -261,10 +258,8 @@ void ConstrainedAttitudeManeuver::ReadInputs() {
         this->constraints.keepIn = true;
     }
     if (!this->keepOutCelBodyInMsg.isWritten() && !this->keepInCelBodyInMsg.isWritten()) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n"
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn("ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n");
     }
 }
 
@@ -719,7 +714,7 @@ void ConstrainedAttitudeManeuver::spline() {
     } else if (this->BSplineType == 1) {
         approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);  // review
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
+        xmera::logging::get(this->modelTag)->error("ConstraintAttitudeManeuver: BSplineType has not been specified.");
     }
 }
 

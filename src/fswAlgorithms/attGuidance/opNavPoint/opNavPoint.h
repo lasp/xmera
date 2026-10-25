@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -39,7 +38,6 @@ public:
     double opNavAxisSpinRate;   /*!< -- r/s Desired constant spin rate about opNav vector */
 
     AttGuidMsgPayload attGuidanceOutBuffer; /*!< -- The output data that we compute*/
-    BSKLogger bskLogger = {};               //!< BSK Logging
 };
 
 #endif

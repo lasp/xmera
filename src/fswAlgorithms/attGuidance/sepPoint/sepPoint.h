@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/BodyHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/InertialHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <fswAlgorithms/attGuidance/_GeneralModuleFiles/constrainedAxisPointingLibrary.h>
 
@@ -37,7 +36,6 @@ private:
     uint64_t T2NanoSeconds;  //!< callTime two update steps prior
     double sigma_RN_1[3];    //!< reference attitude one update step prior
     double sigma_RN_2[3];    //!< reference attitude two update steps prior
-    BSKLogger bskLogger;     //!< BSK Logging
 };
 
 #endif

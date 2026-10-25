@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -41,8 +40,6 @@ public:
 
     /* Output attitude reference data to send */
     AttRefMsgPayload attRefOut;  //!< (-) copy of output reference frame message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

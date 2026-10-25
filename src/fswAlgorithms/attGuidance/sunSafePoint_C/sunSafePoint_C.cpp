@@ -5,6 +5,7 @@
 #include "sunSafePoint_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
 
@@ -20,24 +21,21 @@ void SunSafePoint_C::reset(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->sunDirectionInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunSafePoint_C.sunDirectionInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("sunSafePoint_C.sunDirectionInMsg wasn't connected.");
     }
     if (!this->imuInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunSafePoint_C.imuInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("sunSafePoint_C.imuInMsg wasn't connected.");
     }
 
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(this->sHatBdyCmd) < 0.1) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(
-            info,
-            sizeof(info),
-            "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-            this->sHatBdyCmd[0],
-            this->sHatBdyCmd[1],
-            this->sHatBdyCmd[2]
-        );
-        this->bskLogger.bskLog(BSK_ERROR, info);
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "The module vector sHatBdyCmd is not setup as a unit vector [{:f}, {:f} {:f}]",
+                this->sHatBdyCmd[0],
+                this->sHatBdyCmd[1],
+                this->sHatBdyCmd[2]
+            );
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(this->sHatBdyCmd, this->sHatBdyCmd); /* ensure that this vector is a unit vector */

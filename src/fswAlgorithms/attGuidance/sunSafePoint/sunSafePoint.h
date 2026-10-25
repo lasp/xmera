@@ -10,7 +10,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -46,7 +45,6 @@ public:
     ReadFunctor<NavAttMsgPayload> sunDirectionInMsg;  //!< Sun attitude guidance input message
     Message<AttGuidMsgPayload> attGuidanceOutMsg;     //!< Attitude guidance output message
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     SunSafePointAlgorithm algorithm;  //!< Algorithm for sunSafePoint guidance logic (BSK-agnostic)

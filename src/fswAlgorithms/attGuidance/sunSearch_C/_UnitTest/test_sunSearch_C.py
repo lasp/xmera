@@ -55,7 +55,7 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

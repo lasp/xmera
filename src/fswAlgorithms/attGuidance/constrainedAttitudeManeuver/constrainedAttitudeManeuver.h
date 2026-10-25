@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/BSpline.h>
 
 #include <fstream>
@@ -124,7 +123,6 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;   //!< Celestial body state msg - keep in direction
     Message<AttRefMsgPayload> attRefOutMsg;                       //!< Attitude reference output message
 
-    BSKLogger bskLogger;  //!< BSK Logging
 
 private:
     SCStatesMsgPayload scStateMsgBuffer;

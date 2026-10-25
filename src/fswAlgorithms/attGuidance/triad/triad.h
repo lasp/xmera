@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/InertialHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -36,7 +35,6 @@ public:
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;              //!< input ephemeris msg
     Message<AttRefMsgPayload> attRefOutMsg;                       //!< output attitude reference message
 
-    BSKLogger bskLogger{};                            //!< BSK Logging
     void setA1Hat_B(Eigen::Vector3d const &a1Hat_B);  //!< Setter for a1Hat_B variable
     Eigen::Vector3d const getA1Hat_B() const;         //!< Getter for a1Hat_B variable
 

@@ -16,6 +16,7 @@
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 void RasterManager::reset(uint64_t callTime) {
     this->mnvrActive = 0;
@@ -37,20 +38,17 @@ void RasterManager::updateState(uint64_t callTime) {
         this->mnvrActive = 0;
         this->scanSelector += 1;
 
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(
-            info,
-            sizeof(info),
-            "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ",
-            this->scanSelector,
-            this->attOutSet.state[0],
-            this->attOutSet.state[1],
-            this->attOutSet.state[2],
-            this->attOutSet.rate[0],
-            this->attOutSet.rate[1],
-            this->attOutSet.rate[2]
-        );
-        this->bskLogger.bskLog(BSK_INFORMATION, info);
+        xmera::logging::get(this->modelTag)
+            ->info(
+                "Raster: {}. AngleSet = [{:f}, {:f}, {:f}], RateSet = [{:f}, {:f}, {:f}] ",
+                this->scanSelector,
+                this->attOutSet.state[0],
+                this->attOutSet.state[1],
+                this->attOutSet.state[2],
+                this->attOutSet.rate[0],
+                this->attOutSet.rate[1],
+                this->attOutSet.rate[2]
+            );
     }
 
     this->attStateOutMsg.write(this->attOutSet, this->moduleID, callTime);

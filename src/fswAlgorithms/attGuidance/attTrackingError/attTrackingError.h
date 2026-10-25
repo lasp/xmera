@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -32,7 +31,6 @@ public:
     Message<AttGuidMsgPayload> attGuidOutMsg;   //!< Output attitude guidance message
     ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< Input msg measured attitude
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< Input msg of reference attitude
-    BSKLogger bskLogger = {};                   //!< BSK Logging
 
 private:
     AttTrackingErrorAlgorithm algorithm;

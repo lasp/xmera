@@ -5,6 +5,7 @@
 #include "sepPoint.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 double const epsilon = 1e-12;  // module tolerance for zero
@@ -13,10 +14,12 @@ double const epsilon = 1e-12;  // module tolerance for zero
  @return void
  */
 void SepPoint::reset(uint64_t currentSimNanos) {
-    if (!this->attNavInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected."); }
-    if (!this->bodyHeadingInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".bodyHeadingInMsg wasn't connected."); }
+    if (!this->attNavInMsg.isLinked()) { xmera::logging::get(this->modelTag)->error(".attNavInMsg wasn't connected."); }
+    if (!this->bodyHeadingInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error(".bodyHeadingInMsg wasn't connected.");
+    }
     if (!this->inertialHeadingInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".inertialHeadingInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error(".inertialHeadingInMsg wasn't connected.");
     }
     this->callCount = 0;
 }

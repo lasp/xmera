@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <fstream>
 #include <iostream>
@@ -30,7 +29,6 @@ public:
                              //!< frame; defaulted to false
     Message<AttRefMsgPayload> attRefOutMsg;  //!< attitude reference output msg
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     std::ifstream* fileHandle;  //!< pointer to the file that is to be read

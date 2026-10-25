@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -44,8 +43,6 @@ public:
     ReadFunctor<NavTransMsgPayload> scTargetInMsg;     //!< input msg with inertial target spacecraft position states
     Message<AttGuidMsgPayload> attGuidOutMsg;          //!< attitude guidance output message
     Message<AttRefMsgPayload> attRefOutMsg;            //!< attitude reference output message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

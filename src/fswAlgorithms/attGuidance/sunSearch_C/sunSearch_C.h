@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 struct SlewProperties {
     // user-requested properties
@@ -45,7 +44,6 @@ private:
     double slewMaxTorque[3];      //!< [Nm] maximum deliverable torque along each principal body axis
     double principleInertias[3];  //!< [kg m^2] inertias about the three principal axes
     uint64_t resetTime;           //!< time at which reset is called
-    BSKLogger bskLogger;          //!< BSK Logging
 
     void computeKinematicProperties(int const index);
     void computeReferenceMotion(uint64_t const currentSimNanos, int const index, double* omega_RN, double* domega_RN);

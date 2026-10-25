@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/AttStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -45,8 +44,6 @@ public:
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
     ReadFunctor<AttStateMsgPayload>
         desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

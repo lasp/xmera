@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -31,7 +30,6 @@ public:
     double sunAxisSpinRate; /*!< r/s Desired constant spin rate about sun heading vector */
 
     AttGuidMsgPayload attGuidanceOutBuffer; /*!< -- The output data that we compute*/
-    BSKLogger bskLogger = {};               //!< BSK Logging
 };
 
 #endif

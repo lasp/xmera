@@ -15,6 +15,7 @@
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/orbitalMotion.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -25,7 +26,7 @@
 void VelocityPoint::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->transNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: velocityPoint.transNavInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("velocityPoint.transNavInMsg wasn't connected.");
     }
     this->planetMsgIsLinked = this->celBodyInMsg.isLinked();
 }

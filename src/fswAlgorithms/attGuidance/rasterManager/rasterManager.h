@@ -8,9 +8,9 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
+
 
 #define MAX_RASTER_SET 36
 
@@ -35,7 +35,6 @@ public:
 
     /* Output attitude reference data to send */
     AttStateMsgPayload attOutSet;  //!< output message copy
-    BSKLogger bskLogger = {};      //!< BSK Logging
 };
 
 #endif

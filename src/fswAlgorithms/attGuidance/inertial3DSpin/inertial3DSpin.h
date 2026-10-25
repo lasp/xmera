@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -29,7 +28,6 @@ public:
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< (optional) reference attitude input message
 
     AttRefMsgPayload attRefOutBuffer;  //!< [-] structure for the output data
-    BSKLogger bskLogger = {};          //!< BSK Logging
 };
 
 #endif

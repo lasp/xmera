@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Core>
 
@@ -26,7 +25,6 @@ public:
     ReadFunctor<EphemerisMsgPayload> celBodyInMsg;  //!< The name of the celestial body message
     Message<AttRefMsgPayload> attRefOutMsg;         //!< The name of the output message
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     int planetMsgIsLinked;  //!< flag if the planet message is linked

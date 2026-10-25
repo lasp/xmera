@@ -5,6 +5,7 @@
 #include "locationPointing.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
@@ -20,24 +21,22 @@
 void LocationPointing::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->scAttInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: locationPointing.scAttInMsg was not connected.");
+        xmera::logging::get(this->modelTag)->error("locationPointing.scAttInMsg was not connected.");
     }
     if (!this->scTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: locationPointing.scTransInMsg was not connected.");
+        xmera::logging::get(this->modelTag)->error("locationPointing.scTransInMsg was not connected.");
     }
     int numInMsgs = this->locationInMsg.isLinked() + this->celBodyInMsg.isLinked() + this->scTargetInMsg.isLinked();
 
     if (numInMsgs == 0) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "Error: In the locationPointing module no target messages were not connected."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("In the locationPointing module no target messages were not connected.");
     } else if (numInMsgs > 1) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "Error: In the locationPointing module multiple target messages were connected. Defaulting to either "
-            "ground location, planet location or spacecraft location, in that order."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "In the locationPointing module multiple target messages were connected. Defaulting to either "
+                "ground location, planet location or spacecraft location, in that order."
+            );
     }
 
     this->init = 1;
@@ -47,16 +46,13 @@ void LocationPointing::reset(uint64_t callTime) {
 
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(this->pHat_B) < 0.1) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(
-            info,
-            sizeof(info),
-            "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
-            this->pHat_B[0],
-            this->pHat_B[1],
-            this->pHat_B[2]
-        );
-        this->bskLogger.bskLog(BSK_ERROR, info);
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "locationPoint: vector pHat_B is not setup as a unit vector [{:f}, {:f} {:f}]",
+                this->pHat_B[0],
+                this->pHat_B[1],
+                this->pHat_B[2]
+            );
     } else {
         double v1[3];
         v3Set(1., 0., 0., v1);

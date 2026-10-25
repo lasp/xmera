@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/InertialHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -57,8 +56,6 @@ public:
     ReadFunctor<NavTransMsgPayload> transNavInMsg;                //!< input msg measured position
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;              //!< input ephemeris msg
     Message<AttRefMsgPayload> attRefOutMsg;                       //!< output attitude reference message
-
-    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

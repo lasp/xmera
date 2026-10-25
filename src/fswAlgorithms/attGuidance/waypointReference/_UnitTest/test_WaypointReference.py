@@ -84,7 +84,7 @@ def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame,
 
 def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accuracy):
 
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

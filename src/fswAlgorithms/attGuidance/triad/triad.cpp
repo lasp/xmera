@@ -6,6 +6,7 @@
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
 #include <math.h>
@@ -34,7 +35,9 @@ double SPE_angle(Eigen::Vector3d const &v1, Eigen::Vector3d const &v2) {
  @param callTime [ns] time the method is called
 */
 void Triad::reset(uint64_t callTime) {
-    if (!this->attNavInMsg.isLinked()) { this->bskLogger.bskLog(BSK_ERROR, " triad.attNavInMsg wasn't connected."); }
+    if (!this->attNavInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("triad.attNavInMsg wasn't connected.");
+    }
 
     // check how the input body heading is provided
     if (this->bodyHeadingInMsg.isLinked()) {
@@ -42,25 +45,24 @@ void Triad::reset(uint64_t callTime) {
     } else if (this->h1Hat_B.norm() > epsilon) {
         this->bodyAxisInput = BodyAxisInput::inputBodyHeadingParameter;
     } else {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            " triad.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("triad.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
     }
 
     // check how the input inertial heading is provided
     if (this->inertialHeadingInMsg.isLinked()) {
         this->inertialAxisInput = InertialAxisInput::inputInertialHeadingMsg;
         if (this->ephemerisInMsg.isLinked()) {
-            this->bskLogger.bskLog(
-                BSK_WARNING,
-                " both triad.inertialHeadingInMsg and triad.ephemerisInMsg were linked. Inertial "
-                "heading is computed from triad.inertialHeadingInMsg"
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "both triad.inertialHeadingInMsg and triad.ephemerisInMsg were linked. Inertial "
+                    "heading is computed from triad.inertialHeadingInMsg"
+                );
         }
     } else if (this->ephemerisInMsg.isLinked()) {
         if (!this->transNavInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR, " triad.ephemerisInMsg was specified but triad.transNavInMsg was not.");
+            xmera::logging::get(this->modelTag)
+                ->error("triad.ephemerisInMsg was specified but triad.transNavInMsg was not.");
         } else {
             this->inertialAxisInput = InertialAxisInput::inputEphemerisMsg;
         }
@@ -68,11 +70,11 @@ void Triad::reset(uint64_t callTime) {
         if (this->hHat_N.norm() > epsilon) {
             this->inertialAxisInput = InertialAxisInput::inputInertialHeadingParameter;
         } else {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                " neither triad.inertialHeadingInMsg nor triad.ephemerisInMsg were "
-                "connected and no inertial heading h_N was specified."
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "neither triad.inertialHeadingInMsg nor triad.ephemerisInMsg were "
+                    "connected and no inertial heading h_N was specified."
+                );
         }
     }
 }
@@ -125,7 +127,8 @@ void Triad::updateState(uint64_t callTime) {
     rHat_SB_N = BN.transpose() * rHat_SB_B;
 
     if (double SPE = SPE_angle(rHat_SB_N, hReqHat_N); std::abs(SPE) < 0.5) {
-        this->bskLogger.bskLog(BSK_ERROR, " sun and earth reference vectors are parallel, Triad can not be used");
+        xmera::logging::get(this->modelTag)
+            ->error("sun and earth reference vectors are parallel, Triad can not be used");
     }
 
     Eigen::Matrix3d BD;
