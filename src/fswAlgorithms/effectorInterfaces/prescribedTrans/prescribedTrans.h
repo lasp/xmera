@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -45,8 +44,6 @@ public:
         linearTranslationRigidBodyInMsg;  //!< Input message for the reference states
     Message<PrescribedTranslationMsgPayload>
         prescribedTranslationOutMsg;  //!< Output message for the prescribed translational states
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

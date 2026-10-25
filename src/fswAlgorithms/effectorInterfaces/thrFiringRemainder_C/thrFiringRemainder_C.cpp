@@ -4,14 +4,15 @@
 #include "thrFiringRemainder_C.h"
 
 #include "thrFiringRemainderAlgorithm_C.h"
+#include <architecture/utilities/logging.h>
 
 void ThrFiringRemainder_C::reset(uint64_t const callTime) {
     // check if the required input messages are included
     if (!this->thrConfInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrFiringRemainder.thrConfInMsg wasn't connected.");
     }
     if (!this->thrForceInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringRemainder.thrForceInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrFiringRemainder.thrForceInMsg wasn't connected.");
     }
 
     /*! - read in the support messages */

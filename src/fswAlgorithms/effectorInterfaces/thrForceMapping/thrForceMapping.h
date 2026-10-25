@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -46,7 +45,6 @@ public:
     ReadFunctor<THRArrayConfigMsgPayload> thrConfigInMsg;   //!< The name of the thruster cluster Input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;    //!< The name of the Input message
 
-    BSKLogger bskLogger = {};  //!< BSK Logging
 
 private:
     ThrForceMappingAlgorithm algorithm;  //!< Algorithm for thrForceMapping logic (BSK-agnostic)

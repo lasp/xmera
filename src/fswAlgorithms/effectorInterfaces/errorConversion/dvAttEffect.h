@@ -10,7 +10,6 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -39,7 +38,6 @@ public:
 
     uint32_t numThrGroups;                         /*!< - Count on the number of thrusters groups available*/
     ThrustGroupData thrGroups[MAX_NUM_THR_GROUPS]; /*!< - Thruster grouping container*/
-    BSKLogger bskLogger = {};                      //!< BSK Logging
 };
 
 #endif

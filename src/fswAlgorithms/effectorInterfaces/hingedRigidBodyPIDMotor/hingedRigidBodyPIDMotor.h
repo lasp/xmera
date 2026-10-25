@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -35,8 +34,6 @@ public:
         hingedRigidBodyRefInMsg;  //!< output msg containing spinning body target angle and angle rate
     Message<ArrayMotorTorqueMsgPayload>
         motorTorqueOutMsg;  //!< output msg containing the motor torque to the array drive
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

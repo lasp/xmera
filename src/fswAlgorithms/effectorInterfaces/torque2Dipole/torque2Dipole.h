@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -31,7 +30,6 @@ public:
         dipoleRequestOutMsg;  //!< [A-m2] output message containing dipole request in the Body frame
 
     /* Other. */
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -5,6 +5,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -30,10 +31,10 @@ double const epsilon = 1e-12;  // module tolerance for zero
 */
 void ThrusterPlatformReference::reset(uint64_t callTime) {
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrusterPlatformReference.vehConfigInMsg wasn't connected.");
     }
     if (!this->thrusterConfigFInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformReference.thrusterConfigFInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrusterPlatformReference.thrusterConfigFInMsg wasn't connected.");
     }
     if (this->rwConfigDataInMsg.isLinked() && this->rwSpeedsInMsg.isLinked()) {
         this->momentumDumping = Yes;

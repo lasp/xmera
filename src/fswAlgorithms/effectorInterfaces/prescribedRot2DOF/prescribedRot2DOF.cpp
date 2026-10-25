@@ -7,6 +7,7 @@
 
 /* Import other required files. */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -21,22 +22,24 @@
 void PrescribedRot2DOF::reset(uint64_t callTime) {
     // Check if the required input messages are linked */
     if (!this->spinningBodyRef1InMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");
     }
 
     if (!this->spinningBodyRef2InMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.spinningBodyRef2InMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("prescribedRot2DOF.spinningBodyRef2InMsg wasn't connected.");
     }
 
     // Check that the user-configurable variables are set
-    if (this->phiDDotMax < 0) { this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.phiDDotMax wasn't set."); }
+    if (this->phiDDotMax < 0) {
+        xmera::logging::get(this->modelTag)->error("prescribedRot2DOF.phiDDotMax wasn't set.");
+    }
 
     if (v3Norm(this->rotAxis1_M) < 1e-6) {
-        this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.rotAxis1_M wasn't set.");
+        xmera::logging::get(this->modelTag)->error("prescribedRot2DOF.rotAxis1_M wasn't set.");
     }
 
     if (v3Norm(this->rotAxis2_F1) < 1e-6) {
-        this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.rotAxis2_F1 wasn't set.");
+        xmera::logging::get(this->modelTag)->error("prescribedRot2DOF.rotAxis2_F1 wasn't set.");
     }
 
     // Store the initial time */

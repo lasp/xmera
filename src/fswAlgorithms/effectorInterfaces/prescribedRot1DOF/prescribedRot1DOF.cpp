@@ -7,6 +7,7 @@
 
 /* Other required files to import */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -20,7 +21,7 @@
 void PrescribedRot1DOF::reset(uint64_t callTime) {
     // Check if the required input message is linked
     if (!this->spinningBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: prescribedRot1DOF.spinningBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("prescribedRot1DOF.spinningBodyInMsg wasn't connected.");
     }
 
     // Set the initial time

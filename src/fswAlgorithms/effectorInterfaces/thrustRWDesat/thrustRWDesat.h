@@ -12,7 +12,6 @@
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -40,8 +39,6 @@ public:
     double totalAccumFiring;              /*!< (s) The total thruster duration we've commanded*/
     double DMThresh;                      /*!< (r/s) The point at which to stop decrementing momentum*/
     uint64_t previousFiring;              /*!< (ns) Time that the last firing command was given*/
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

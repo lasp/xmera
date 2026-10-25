@@ -67,7 +67,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
 
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

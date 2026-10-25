@@ -13,7 +13,6 @@
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -42,8 +41,6 @@ public:
 
     RWArrayConfigMsgPayload
         rwConfigParams; /*!< [-] struct to store message containing RW config parameters in body B frame */
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

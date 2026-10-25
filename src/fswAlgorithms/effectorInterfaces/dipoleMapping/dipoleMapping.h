@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -38,7 +37,6 @@ public:
     /* Other. */
     MTBArrayConfigMsgPayload
         mtbArrayConfigParams;  //!< configuration parameters for all the torque bars used on the vehicle
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -10,7 +10,6 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
 
 #include <stdint.h>
@@ -24,8 +23,6 @@ public:
 
     ThrustGroupData thrData;                                 /*!< Collection of thruster configuration data*/
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueBodyInMsg; /*!< -- The name of the Input message*/
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

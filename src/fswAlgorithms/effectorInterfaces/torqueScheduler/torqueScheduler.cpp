@@ -4,6 +4,7 @@
 
 #include "torqueScheduler.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -13,10 +14,10 @@
 */
 void TorqueScheduler::reset(uint64_t callTime) {
     if (!this->motorTorque1InMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "torqueScheduler.motorTorque1InMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("torqueScheduler.motorTorque1InMsg wasn't connected.");
     }
     if (!this->motorTorque2InMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "torqueScheduler.motorTorque2InMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("torqueScheduler.motorTorque2InMsg wasn't connected.");
     }
 
     this->t0 = callTime;
@@ -71,7 +72,8 @@ void TorqueScheduler::updateState(uint64_t callTime) {
         effectorLockOut.effectorLockFlag[1] = 1;
         break;
 
-    default: this->bskLogger.bskLog(BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
+    default:
+        xmera::logging::get(this->modelTag)->error("torqueScheduler.lockFlag has to be an integer between 0 and 3.");
     }
 
     /* write output messages */

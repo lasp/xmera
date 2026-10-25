@@ -10,6 +10,7 @@
 #include "thrMomentumDumping.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <string.h>
@@ -30,13 +31,13 @@ void ThrMomentumDumping::reset(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->thrusterConfInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrMomentumDumping.thrusterConfInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumDumping.thrusterConfInMsg wasn't connected.");
     }
     if (!this->deltaHInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrMomentumDumping.deltaHInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumDumping.deltaHInMsg wasn't connected.");
     }
     if (!this->thrusterImpulseInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrMomentumDumping.thrusterImpulseInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumDumping.thrusterImpulseInMsg wasn't connected.");
     }
 
     /*! - read in number of thrusters installed and maximum thrust values */
@@ -62,11 +63,11 @@ void ThrMomentumDumping::reset(uint64_t callTime) {
 
     /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
     if (this->maxCounterValue < 1) {
-        this->bskLogger.bskLog(BSK_WARNING, "The maxCounterValue flag must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->warn("The maxCounterValue flag must be set to a positive value.");
     }
     /*! - perform sanity check that the module maxCounterValue value is set to a correct value */
     if (this->maxCounterValue < this->maxNumOfDtFiringTimes) {
-        this->bskLogger.bskLog(BSK_ERROR, "The maxCounterValue must be greater than maxNumOfDtFiringTimes.");
+        xmera::logging::get(this->modelTag)->error("The maxCounterValue must be greater than maxNumOfDtFiringTimes.");
     }
 }
 

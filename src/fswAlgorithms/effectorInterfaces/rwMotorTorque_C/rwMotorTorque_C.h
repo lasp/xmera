@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -34,8 +33,6 @@ public:
     ReadFunctor<CmdTorqueBodyMsgPayload> vehControlIn2Msg;  //!<  optional vehicle control input message
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;     //!<  RW Array input message
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

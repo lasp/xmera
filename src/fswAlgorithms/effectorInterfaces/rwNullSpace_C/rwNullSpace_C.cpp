@@ -5,6 +5,7 @@
 #include "rwNullSpace_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any
@@ -22,13 +23,13 @@ void RwNullSpace_C::reset(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->rwConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.rwConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwNullSpace.rwConfigInMsg wasn't connected.");
     }
     if (!this->rwMotorTorqueInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.rwMotorTorqueInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwNullSpace.rwMotorTorqueInMsg wasn't connected.");
     }
     if (!this->rwSpeedsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.rwSpeedsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwNullSpace.rwSpeedsInMsg wasn't connected.");
     }
 
     /* read in the RW spin axis headings */
@@ -37,7 +38,7 @@ void RwNullSpace_C::reset(uint64_t callTime) {
     /* create the 3xN [Gs] RW spin axis projection matrix */
     this->numWheels = (uint32_t) localRWData.numRW;
     if (this->numWheels > RW_EFF_CNT) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.numWheels is larger that max effector count.");
+        xmera::logging::get(this->modelTag)->error("rwNullSpace.numWheels is larger that max effector count.");
     }
     for (uint32_t i = 0; i < this->numWheels; i = i + 1) {
         for (int j = 0; j < 3; j = j + 1) {

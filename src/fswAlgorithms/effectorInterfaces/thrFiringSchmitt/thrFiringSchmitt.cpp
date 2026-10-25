@@ -4,6 +4,8 @@
 
 #include "thrFiringSchmitt.h"
 
+#include <architecture/utilities/logging.h>
+
 ThrFiringSchmitt::ThrFiringSchmitt() {
     this->algorithm = ThrFiringSchmittAlgorithm();
 }
@@ -16,10 +18,10 @@ ThrFiringSchmitt::ThrFiringSchmitt() {
 void ThrFiringSchmitt::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->thrConfInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrFiringSchmitt.thrConfInMsg wasn't connected.");
     }
     if (!this->thrForceInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringSchmitt.thrForceInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrFiringSchmitt.thrForceInMsg wasn't connected.");
     }
 
     this->algorithm.reset(callTime, this->thrConfInMsg());

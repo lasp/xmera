@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -39,7 +38,6 @@ public:
     double a;             //!< Parabolic constant for the first half of the maneuver
     double b;             //!< Parabolic constant for the second half of the maneuver
 
-    BSKLogger bskLogger = {};  //!< BSK Logging
 
     /* Messages */
     ReadFunctor<HingedRigidBodyMsgPayload>

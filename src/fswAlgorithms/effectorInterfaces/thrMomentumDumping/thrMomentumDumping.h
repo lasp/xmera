@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -42,8 +41,6 @@ public:
     ReadFunctor<THRArrayCmdForceMsgPayload> thrusterImpulseInMsg;  //!< desired thruster impulse input message name
     ReadFunctor<THRArrayConfigMsgPayload> thrusterConfInMsg;  //!< The name of the thruster configuration Input message
     ReadFunctor<CmdTorqueBodyMsgPayload> deltaHInMsg;  //!< The name of the requested momentum change input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

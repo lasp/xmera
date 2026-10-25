@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -33,7 +32,6 @@ public:
     ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg;  //!< The name of the Input message
     Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;      //!< The name of the output message, onTimeOutMsg
     ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;     //!< The name of the thruster cluster Input message
-    BSKLogger bskLogger = {};                               //!< BSK Logging
 
 private:
     ThrFiringRemainderInternalState algorithmState{};

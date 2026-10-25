@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -35,8 +34,6 @@ public:
     ReadFunctor<THRArrayConfigMsgPayload> thrConfigInMsg;   //!< thruster cluster configuration input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;    //!< vehicle config input message
     Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;  //!< thruster force command output message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
