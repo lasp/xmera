@@ -39,7 +39,7 @@ files = fnmatch.filter(os.listdir(path + '/../../docs/source/code-samples'), "*.
 @pytest.mark.scenarioTest
 def test_scenarioBskPrinciples(show_plots, bskScript):
 
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     # import the bskSim script to be tested
