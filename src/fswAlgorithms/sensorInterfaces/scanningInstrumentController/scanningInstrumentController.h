@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -32,8 +31,6 @@ public:
     ReadFunctor<AttGuidMsgPayload> attGuidInMsg;            //!< Attitude guidance input message
     ReadFunctor<DeviceStatusMsgPayload> deviceStatusInMsg;  //!< Device status input message
     Message<DeviceCmdMsgPayload> deviceCmdOutMsg;           //!< Device status output message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

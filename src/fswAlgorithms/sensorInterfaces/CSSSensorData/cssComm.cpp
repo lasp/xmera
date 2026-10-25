@@ -5,6 +5,7 @@
 #include "cssComm.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -17,32 +18,29 @@
 void CSSComm::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->sensorListInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: cssComm.sensorListInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("cssComm.sensorListInMsg wasn't connected.");
     }
 
     /*! - Check to make sure that number of sensors is less than the max and warn if none are set*/
     if (this->numSensors > MAX_NUM_CSS_SENSORS) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(
-            info,
-            sizeof(info),
-            "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to "
-            "the max.",
-            this->numSensors,
-            MAX_NUM_CSS_SENSORS
-        );
-        this->bskLogger.bskLog(BSK_WARNING, info);
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "The configured number of CSS sensors exceeds the maximum, {} > {}! Changing the number of sensors to "
+                "the max.",
+                this->numSensors,
+                MAX_NUM_CSS_SENSORS
+            );
         this->numSensors = MAX_NUM_CSS_SENSORS;
     } else if (this->numSensors == 0) {
-        this->bskLogger.bskLog(BSK_WARNING, "There are zero CSS configured!");
+        xmera::logging::get(this->modelTag)->warn("There are zero CSS configured!");
     }
 
     if (this->maxSensorValue == 0) {
-        this->bskLogger.bskLog(
-            BSK_WARNING,
-            "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, "
-            "inducing faux saturation!"
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, "
+                "inducing faux saturation!"
+            );
     }
 
     return;

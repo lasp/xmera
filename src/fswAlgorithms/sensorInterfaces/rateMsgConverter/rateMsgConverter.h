@@ -5,7 +5,6 @@
 #ifndef _RATE_IMU_TO_NAV_CONVERTER_H_
 #define _RATE_IMU_TO_NAV_CONVERTER_H_
 
-#include "architecture/utilities/bskLogging.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/IMUSensorBodyMsgPayload.h>
@@ -22,8 +21,6 @@ public:
     /* declare module IO interfaces */
     Message<NavAttMsgPayload> navRateOutMsg;            //!< attitude output message*/
     ReadFunctor<IMUSensorBodyMsgPayload> imuRateInMsg;  //!< attitude Input message*/
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

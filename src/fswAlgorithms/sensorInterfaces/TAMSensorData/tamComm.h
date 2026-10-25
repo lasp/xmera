@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/TAMSensorMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! module configuration message definition */
 class TamComm : public SysModel {
@@ -22,7 +21,6 @@ public:
     Message<TAMSensorBodyMsgPayload> tamOutMsg;  //!< [-] TAM interface output message
 
     TAMSensorBodyMsgPayload tamLocalOutput;  //!< [-] buffer of TAM output data structure
-    BSKLogger bskLogger{};                   //!< BSK Logging
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "miruLowPassFilterConverter.h"
 
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method checks the input message to ensure it is linked.
  @return void
@@ -8,7 +9,7 @@
 */
 void MiruLowPassFilterConverter::reset(uint64_t callTime) {
     if (!this->imuAccelDataInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "miruLowPassFilterConverter.imuAccelDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("miruLowPassFilterConverter.imuAccelDataInMsg wasn't connected.");
     }
 }
 

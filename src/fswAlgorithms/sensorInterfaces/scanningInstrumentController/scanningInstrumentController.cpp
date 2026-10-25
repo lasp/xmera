@@ -5,6 +5,7 @@
 #include "scanningInstrumentController.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method checks if required input messages (accessInMsg and attGuidInMsg) are connected.
  @return void
@@ -15,10 +16,10 @@
 void ScanningInstrumentController::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->accessInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: scanningInstrumentController.accessInMsg was not connected.");
+        xmera::logging::get(this->modelTag)->error("scanningInstrumentController.accessInMsg was not connected.");
     }
     if (!this->attGuidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: scanningInstrumentController.attGuidInMsg was not connected.");
+        xmera::logging::get(this->modelTag)->error("scanningInstrumentController.attGuidInMsg was not connected.");
     }
 }
 

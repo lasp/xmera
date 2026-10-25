@@ -5,6 +5,7 @@
 #include "stComm.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -15,7 +16,7 @@
 void StComm::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->stSensorInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: stComm.stSensorInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("stComm.stSensorInMsg wasn't connected.");
     }
 }
 

@@ -5,7 +5,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AccDataMsgPayload.h>
 #include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/signalProcessing.h>
 
@@ -24,7 +23,6 @@ public:
     ReadFunctor<AccDataMsgPayload> imuAccelDataInMsg;  //!< Input msg for the imu data
     Message<IMUSensorMsgPayload> imuSensorOutMsg;      //!< Output msg for the imu data
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
 private:
     double cutOffFrequency = 15.0 / (2 * M_PI);  //!< Low pass filter parameter
