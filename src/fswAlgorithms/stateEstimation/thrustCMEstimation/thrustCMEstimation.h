@@ -15,7 +15,6 @@
 #include <architecture/msgPayloadDef/CMEstDataMsgPayload.h>
 #include <architecture/msgPayloadDef/THRConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 
@@ -50,8 +49,6 @@ private:
     Eigen::Vector3d r_CB_est;  //!< CM location estimate
 
     bool cmKnowledge;  //!< boolean to assess if vehConfigInMsg is connected
-
-    BSKLogger bskLogger{};  //!< -- BSK Logging
 };
 
 #endif
