@@ -17,8 +17,6 @@ public:
     double CoM_B[3];                                  /*!< [m] Center of mass of spacecraft in body*/
     double massSC;                                    /*!< [kg] Spacecraft mass */
     Message<VehicleConfigMsgPayload> vecConfigOutMsg; /*!< [-] Name of the output properties message*/
-
-    BSKLogger* bskLogger;  //!< BSK Logging
 };
 
 #endif  // VEHICLECONFIGDATACPP_H
