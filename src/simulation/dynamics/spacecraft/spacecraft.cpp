@@ -193,7 +193,7 @@ void Spacecraft::initializeDynamics() {
     this->cDot_B = this->dynManager.createProperty("centerOfMassDotSC", initCDot_B);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
 
-    // - Register the gravity properties with the dynManager, 'erbody wants g_N!
+    // - Register the gravity properties with the dynManager
     this->gravField.registerProperties(this->dynManager);
 
     // - Register the hub states
