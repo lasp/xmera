@@ -7,6 +7,7 @@ import inspect
 import os
 
 import numpy
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -235,6 +236,74 @@ def test_hinged_rigid_body_gravity(show_plots):
                                  numpy.array(final_orb_energy),
                                  rtol=accuracy,
                                  err_msg="Hinged Rigid Body integrated test failed gravity orbital energy unit test")
+
+
+@pytest.mark.xfail(strict=True, reason="Gravity cancellation in the back-substitution leaves round-off")
+def test_hinged_rigid_body_gravity_invariance(show_plots):
+    """A spacecraft at rest in free fall must stay at rest: uniform gravity must not
+    rotate the hub or swing the panels."""
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_proc = unit_test_sim.CreateNewProcess("TestProcess")
+    test_proc.addTask(unit_test_sim.CreateNewTask("unitTask", macros.sec2nano(1.0)))
+
+    sc_object = spacecraft.Spacecraft()
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    unit_test_sim.AddModelToTask("unitTask", sc_object)
+
+    panels = []
+    for r_HB_B, dcm_HB in [([[0.5], [0.0], [1.0]], [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]),
+                           ([[-0.5], [0.0], [1.0]], [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])]:
+        panel = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+        panel.mass = 100.0
+        panel.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+        panel.d = 1.5
+        panel.k = 100.0
+        panel.r_HB_B = r_HB_B
+        panel.dcm_HB = dcm_HB
+        sc_object.addStateEffector(panel)
+        unit_test_sim.AddModelToTask("unitTask", panel)
+        panels.append(panel)
+
+    earth_grav_body = gravityEffector.GravBodyData()
+    earth_grav_body.planetName = "earth_planet_data"
+    earth_grav_body.mu = 0.3986004415E+15  # meters!
+    earth_grav_body.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_grav_body])
+
+    sc_log = sc_object.scStateOutMsg.recorder()
+    panel_logs = [panel.hingedRigidBodyOutMsg.recorder() for panel in panels]
+    for log in [sc_log] + panel_logs:
+        unit_test_sim.AddModelToTask("unitTask", log)
+
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1000.0))
+    unit_test_sim.ExecuteSimulation()
+
+    times = sc_log.times() * macros.NANO2SEC
+    states = {
+        "sigma_BN": sc_log.sigma_BN,
+        "omega_BN_B": sc_log.omega_BN_B,
+        "theta": numpy.column_stack([log.theta for log in panel_logs]),
+        "thetaDot": numpy.column_stack([log.thetaDot for log in panel_logs]),
+    }
+
+    plt.close("all")
+    fig, axes = plt.subplots(4, 1, sharex=True, figsize=(8, 8))
+    for ax, (name, values) in zip(axes, states.items()):
+        ax.plot(times, values)
+        ax.set_ylabel(name)
+    axes[-1].set_xlabel("time (s)")
+    fig.tight_layout()
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    for name, values in states.items():
+        numpy.testing.assert_array_equal(values, numpy.zeros_like(values), err_msg=name)
 
 
 def test_hinged_rigid_body_no_gravity(show_plots):
@@ -1717,6 +1786,7 @@ class BoxAndWingParameters:
 
 if __name__ == "__main__":
     # test_hinged_rigid_body_gravity(True)
+    # test_hinged_rigid_body_gravity_invariance(True)
     # test_hinged_rigid_body_no_gravity(True)
     # test_hinged_rigid_body_no_gravity_damping(True)
     # test_hinged_rigid_body_theta_ss(True)

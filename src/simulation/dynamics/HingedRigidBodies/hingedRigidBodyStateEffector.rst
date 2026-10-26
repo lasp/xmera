@@ -67,6 +67,8 @@ Module Testing
 ^^^^^^^^^^^^^^
 The integrated tests has six scenarios it is testing. The first three are: one with gravity and no damping, one without gravity and without damping, and one without gravity with damping. These first three tests are verifying energy and momentum conservation. In the first two cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. In the third case orbital momentum, orbital energy, and rotational momentum should be conserved. This integrated test validates for all three scenarios that all of these parameters are conserved. The fourth scenario is verifying that the steady state deflection while a constant force is being applied matches the back of the envelope (BOE) calculation. The fifth scenario applies a constant force and removes the force and the test verifies that the frequency and amplitude match the BOE calculations. And the sixth scenario verifies that Xmera gives identical results to a planar Lagrangian dynamical system created independently.
 
+A separate test verifies gravity invariance: a spacecraft with two panels, at rest in free fall under uniform gravity, must stay at rest. The hub attitude, hub rate, and panel angles and rates must stay exactly zero.
+
 The document :download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Xmera-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
 contains a more detailed discussion of the testing, as well as the expected results.
 
