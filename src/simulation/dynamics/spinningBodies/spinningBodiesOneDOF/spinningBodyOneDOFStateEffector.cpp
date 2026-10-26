@@ -69,7 +69,7 @@ void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates() {
     this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
 }
 
-/*! This method allows the SB state effector to have access to the hub states and gravity*/
+/*! This method allows the SB state effector to have access to the hub states */
 void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager &statesIn) {
     // - Get access to the hub's states needed for dynamic coupling
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");

@@ -26,7 +26,6 @@ void VSCMGStateEffector::linkInStates(DynParamManager &statesIn) {
     //! - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }

@@ -61,9 +61,9 @@ void HingedRigidBodyStateEffector::prependSpacecraftNameToStates() {
     return;
 }
 
-/*! This method allows the HRB state effector to have access to the hub states and gravity*/
+/*! This method allows the HRB state effector to have access to the hub states */
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
-    // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
+    // - Get access to the hub states and spacecraft properties needed for dynamic coupling
     std::string tmpMsgName;
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
     this->c_B = statesIn.getPropertyReference(tmpMsgName);

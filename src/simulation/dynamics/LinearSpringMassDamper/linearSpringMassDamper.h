@@ -42,7 +42,6 @@ private:
     Eigen::Matrix3d rPrimeTilde_PcB_B;  //!< [m/s] Tilde matrix of rPrime_PcB_B
     Eigen::Vector3d aRho;               //!< -- Term needed for back-sub method
     Eigen::Vector3d bRho;               //!< -- Term needed for back-sub method
-    Eigen::MatrixXd* g_N;               //!< [m/s^2] Gravitational acceleration in N frame components
     StateData* rhoState;                //!< -- state data for spring mass damper displacement from equilibrium
     Eigen::MatrixXd* c_B;               //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd* cPrime_B;          //!< [m/s] Body time derivative of vector c_B in B frame components

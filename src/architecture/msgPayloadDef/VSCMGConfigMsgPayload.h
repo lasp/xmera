@@ -99,9 +99,6 @@ typedef struct
     Eigen::Vector3d p;       //!< module variable
     Eigen::Vector3d q;       //!< module variable
     double s;                //!< module variable
-
-    double gravityTorqueWheel_s;   //!< module variable
-    double gravityTorqueGimbal_g;  //!< module variable
 } VSCMGConfigMsgPayload;
 
 #endif

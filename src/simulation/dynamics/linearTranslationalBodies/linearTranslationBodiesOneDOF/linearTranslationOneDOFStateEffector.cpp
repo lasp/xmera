@@ -49,7 +49,6 @@ void linearTranslationOneDOFStateEffector::setC(double c) {
 void linearTranslationOneDOFStateEffector::linkInStates(DynParamManager &statesIn) {
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->g_N = statesIn.getPropertyReference("g_N");
 }
 
 void linearTranslationOneDOFStateEffector::registerStates(DynParamManager &states) {

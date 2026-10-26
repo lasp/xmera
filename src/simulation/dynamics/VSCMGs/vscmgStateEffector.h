@@ -60,7 +60,6 @@ public:
 
 public:
     std::vector<VSCMGConfigMsgPayload> VSCMGData;  //!< -- VSCMG data structure
-    Eigen::MatrixXd* g_N;                          //!< [m/s^2] Gravitational acceleration in N frame components
 
     ReadFunctor<VSCMGArrayTorqueMsgPayload> cmdsInMsg;          //!< -- motor torque command input message
     Message<VSCMGSpeedMsgPayload> speedOutMsg;                  //!< -- VSCMG speed output message
