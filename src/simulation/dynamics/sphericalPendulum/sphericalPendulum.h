@@ -53,7 +53,6 @@ private:
     double cPhi;             //!< -- Term needed for back-sub method
     double cTheta;           //!< -- Term needed for back-sub method
 
-    Eigen::MatrixXd* g_N;      //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::Vector3d l_B;       //!< [m] vector from the center of the tank to the spherical pendulum pendulum in B frame
     Eigen::Vector3d lPrime_B;  //!< [m/s] derivative of l respect to B frame
     Eigen::Vector3d lPrime_P0;  //!< [m/s] derivative of l in P0 frame

@@ -30,12 +30,11 @@ void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     return;
 }
 
-/*! This method allows the HRB state effector to have access to the hub states and gravity*/
+/*! This method allows the HRB state effector to have access to the hub states */
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
-    // - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling and gravity
+    // - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }

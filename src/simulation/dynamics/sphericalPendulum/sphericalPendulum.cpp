@@ -35,15 +35,12 @@ SphericalPendulum::SphericalPendulum() {
     this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->moduleID);
 }
 
-/*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states */
+/*! Method for spherical pendulum to access the states that it needs. It needs the hub states */
 void SphericalPendulum::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hub states
 
     this->omegaState = statesIn.getStateObject("hubOmega");
     this->sigmaState = statesIn.getStateObject("hubSigma");
-
-    // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }

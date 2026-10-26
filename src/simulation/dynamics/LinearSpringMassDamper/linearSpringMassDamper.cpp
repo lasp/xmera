@@ -22,14 +22,11 @@ LinearSpringMassDamper::LinearSpringMassDamper() {
     this->nameOfMassState = "linearSpringMassDamperMass" + std::to_string(this->moduleID);
 }
 
-/*! Method for spring mass damper particle to access the states that it needs. It needs gravity and the hub states */
+/*! Method for spring mass damper particle to access the states that it needs. It needs the hub states */
 void LinearSpringMassDamper::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hub states
     this->omegaState = statesIn.getStateObject("hubOmega");
     this->sigmaState = statesIn.getStateObject("hubSigma");
-
-    // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     // - Grab access to c_B and cPrime_B
     this->c_B = statesIn.getPropertyReference("centerOfMassSC");

@@ -81,7 +81,6 @@ private:
     StateData* hubOmega;     //!< class variable
     StateData* OmegasState;  //!< class variable
     StateData* thetasState;  //!< class variable
-    Eigen::MatrixXd* g_N;    //!< [m/s^2] Gravitational acceleration in N frame components
 };
 
 #endif /* STATE_EFFECTOR_H */

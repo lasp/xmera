@@ -76,8 +76,6 @@ void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates() {
 
 void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
-
     this->sigma_BNState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
     this->omega_BN_BState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
