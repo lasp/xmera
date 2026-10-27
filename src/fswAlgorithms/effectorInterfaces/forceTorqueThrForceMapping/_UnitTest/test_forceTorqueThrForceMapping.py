@@ -66,7 +66,7 @@ date_number = float(date_string)
 date_rounded = int(round(date_number + datetime.now().hour/24))
 np.random.seed(date_rounded)
 
-num_thr_rand = np.random.randint(1, messaging.MAX_EFF_CNT)
+num_thr_rand = np.random.randint(1, messaging.MAX_EFF_CNT + 1)
 rcs_location_data_rand = np.round(np.random.randn(num_thr_rand, 3), 3).tolist()
 randomized_directions = np.round(np.random.randn(num_thr_rand, 3), 3)
 rcs_direction_data_rand = (randomized_directions / np.linalg.norm(randomized_directions, axis=1)[:, None]).tolist()
