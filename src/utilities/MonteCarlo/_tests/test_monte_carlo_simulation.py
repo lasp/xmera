@@ -270,3 +270,52 @@ def test_resume_executes_the_runs_that_an_interruption_lost(mc_data_directory, m
     assert failures == []
     np.testing.assert_allclose(after.to_numpy(), before.to_numpy())
     assert all(loaded._run_file_is_complete(index) for index in range(NUMBER_OF_RUNS))
+
+
+def _read_array_message(controller):
+    from xmera.utilities.MonteCarlo import ArrayArchive
+
+    return ArrayArchive.read(controller.results_dir, retained_message_name + "." + var2)
+
+
+@pytest.mark.slowtest
+def test_npy_archive_batch_without_run_files(mc_data_directory, monte_carlo_simulation):
+    monte_carlo_simulation.set_archive_format("npy")
+    monte_carlo_simulation.set_save_run_files(False)
+    assert monte_carlo_simulation.execute_simulations() == []
+
+    time_ns, runs, values = _read_array_message(monte_carlo_simulation)
+    assert list(runs) == list(range(NUMBER_OF_RUNS))
+    assert values.shape == (NUMBER_OF_RUNS, 3, len(time_ns))
+    assert not any(name.startswith("run") for name in os.listdir(monte_carlo_simulation.results_dir))
+
+    # Callbacks read each run back from the archive
+    data = monte_carlo_simulation.get_retained_data(1)
+    np.testing.assert_array_equal(data["messages"][retained_message_name + "." + var2][:, 1:], values[1].T)
+    monte_carlo_simulation.execute_callbacks()
+
+
+@pytest.mark.slowtest
+def test_npy_archive_resume_adds_runs_and_redoes_a_lost_one(mc_data_directory, monte_carlo_simulation):
+    from xmera.utilities.MonteCarlo import ArrayArchive
+
+    monte_carlo_simulation.set_archive_format("npy")
+    monte_carlo_simulation.set_save_run_files(False)
+    monte_carlo_simulation.execute_simulations()
+    _, _, before = _read_array_message(monte_carlo_simulation)
+    before = np.array(before)
+
+    # Run 1 lost its row in one item, as an interruption during its write would leave it
+    results = monte_carlo_simulation.results_dir
+    directory = ArrayArchive.item_directory(results, retained_message_name + "." + var2)
+    runs = np.load(os.path.join(directory, ArrayArchive.RUNS))
+    runs[1] = -1
+    np.save(os.path.join(directory, ArrayArchive.RUNS), runs)
+
+    loaded = Controller.load(monte_carlo_simulation.mc_run_dir)
+    assert loaded.resume_simulations(NUMBER_OF_RUNS + 2) == []
+    _, runs, after = _read_array_message(loaded)
+    assert list(runs) == list(range(NUMBER_OF_RUNS + 2))
+    np.testing.assert_allclose(after[:NUMBER_OF_RUNS], before)
+    assert not np.allclose(after[NUMBER_OF_RUNS], after[0])
+    assert loaded.resume_simulations() == []
