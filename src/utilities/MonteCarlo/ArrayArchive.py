@@ -53,14 +53,15 @@ def _save_atomic(path, array):
 class Item:
     """One item of an archive, opened for writing runs into it."""
 
-    def __init__(self, directory):
+    def __init__(self, directory, rows=1):
         self.directory = directory
+        self.target_rows = rows
         self.values = np.load(os.path.join(directory, VALUES), mmap_mode="r+")
         self.time_ns = np.load(os.path.join(directory, TIMES))
         self.runs = np.load(os.path.join(directory, RUNS))
 
     @classmethod
-    def create(cls, directory, bucket, time_ns, components, dtype, rows):
+    def create(cls, directory, bucket, time_ns, components, dtype, rows, target_rows=None):
         os.makedirs(directory, exist_ok=True)
         np.lib.format.open_memmap(
             os.path.join(directory, VALUES), mode="w+", dtype=dtype, shape=(rows, components, len(time_ns))
@@ -69,11 +70,11 @@ class Item:
         _save_atomic(os.path.join(directory, RUNS), np.full(rows, -1, dtype=np.int64))
         with open(os.path.join(directory, META), "w") as meta:
             json.dump({"bucket": bucket}, meta)
-        return cls(directory)
+        return cls(directory, target_rows or rows)
 
     def _row(self, run_index):
         """The row of a run: its own row if it is there already, else row run_index if free, else the first free
-        row. The archive grows when it has no free row."""
+        row. With no free row, the item grows to the batch's number of runs, or doubles beyond that."""
         existing = np.flatnonzero(self.runs == run_index)
         if existing.size:
             return int(existing[0])
@@ -82,7 +83,8 @@ class Item:
         free = np.flatnonzero(self.runs == -1)
         if free.size:
             return int(free[0])
-        self._resize(rows=max(run_index + 1, 2 * len(self.runs)), time_ns=self.time_ns)
+        rows = self.target_rows if self.target_rows > len(self.runs) else 2 * len(self.runs)
+        self._resize(rows=max(run_index + 1, rows), time_ns=self.time_ns)
         return self._row(run_index)
 
     def _resize(self, rows, time_ns):
@@ -168,8 +170,8 @@ def write_run(results_dir, data, run_index, dtype=np.float64, rows=1, items=None
             if name not in items:
                 directory = item_directory(results_dir, name)
                 items[name] = (
-                    Item(directory) if is_item(directory)
-                    else Item.create(directory, bucket, time_ns, values.shape[1], dtype, max(rows, run_index + 1))
+                    Item(directory, rows) if is_item(directory)
+                    else Item.create(directory, bucket, time_ns, values.shape[1], dtype, max(rows, run_index + 1), rows)
                 )
             items[name].write(run_index, time_ns, values.astype(dtype, copy=False))
     return items

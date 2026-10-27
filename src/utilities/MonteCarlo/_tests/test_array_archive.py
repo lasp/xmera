@@ -117,3 +117,11 @@ def test_retained_data_gives_back_a_run_as_the_retention_policy_did(tmp_path):
 def test_controller_rejects_an_unknown_archive_format():
     with pytest.raises(ValueError):
         Controller().set_archive_format("csv")
+
+
+def test_a_resumed_batch_grows_its_items_to_the_new_number_of_runs(tmp_path):
+    run_writer(tmp_path, [(i, run_data(i)) for i in range(8)], rows=8)
+    run_writer(tmp_path, [(i, run_data(i)) for i in (8, 9)], rows=10)
+    directory = ArrayArchive.item_directory(tmp_path, "msg.var")
+    assert np.load(f"{directory}/{ArrayArchive.VALUES}", mmap_mode="r").shape[0] == 10
+    assert list(ArrayArchive.read(tmp_path, "msg.var")[1]) == list(range(10))
