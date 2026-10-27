@@ -83,14 +83,12 @@ public:
      * @param[in,out] backSubContr Back-substitution contributions that the effector adds to
      * @param sigma_BN [-] MRP attitude of body frame B relative to inertial frame N
      * @param omega_BN_B [rad/s] Angular velocity of frame B relative to frame N, in B frame components
-     * @param g_N [m/s^2] Gravitational acceleration, in N frame components
      */
     virtual void updateContributions(
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     ) {}
 
     /*! @brief Adds the energy and the momentum contributions of the effector.

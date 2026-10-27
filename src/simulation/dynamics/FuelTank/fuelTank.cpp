@@ -116,8 +116,7 @@ void FuelTank::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     Eigen::Vector3d r_TB_BLocal;
     Eigen::Vector3d rPrime_TB_BLocal;

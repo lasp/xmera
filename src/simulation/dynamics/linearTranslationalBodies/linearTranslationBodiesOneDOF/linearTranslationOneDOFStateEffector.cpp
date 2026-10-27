@@ -136,8 +136,7 @@ void linearTranslationOneDOFStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     Eigen::MRPd sigmaLocal_BN;
     sigmaLocal_BN = sigma_BN;

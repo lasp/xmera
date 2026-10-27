@@ -66,8 +66,7 @@ public:
         double callTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     ) override;  //!< Method for computing the effector's backsubstitution contributions
     void updateEffectorMassProps(
         double callTime
