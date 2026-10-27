@@ -45,7 +45,9 @@ def setupFilterData(filterObject):
 
 @pytest.mark.parametrize("function", ["sunline_utilities_test"
                                       , "checkStatePropSunLine"
-                                      , "checkStateUpdateSunLine"
+                                      , pytest.param("checkStateUpdateSunLine", marks=pytest.mark.skipif(
+                                          messaging.MAX_NUM_CSS_SENSORS < 8,
+                                          reason="MAX_NUM_CSS_SENSORS is less than the 8 sensors this case uses"))
                                       ])
 def test_all_sunline_kf(show_plots, function):
     """Module Unit Test"""

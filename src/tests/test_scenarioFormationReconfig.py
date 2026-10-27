@@ -16,6 +16,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../../examples')
 import scenarioFormationReconfig
+from xmera.architecture import messaging
+
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 2, reason="MAX_EFF_CNT is less than the 2 thrusters this test uses"
+)
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

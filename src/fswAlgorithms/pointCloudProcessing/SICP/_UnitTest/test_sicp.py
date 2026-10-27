@@ -16,6 +16,12 @@ bskName = 'xmera'
 splitPath = path.split(bskName)
 
 from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+
+pytestmark = [
+    pytest.mark.skipif(messaging.MAX_SICP_POINTS < 4223, reason="MAX_SICP_POINTS is less than the 4223 points this test uses"),
+    pytest.mark.skipif(messaging.MAX_SICP_ITERATIONS < 100, reason="MAX_SICP_ITERATIONS is less than the 100 iterations this test uses"),
+]
 
 @pytest.mark.parametrize("mrp, scale, translations" ,[
     ([0.01, -0.005, 0.1], 0.92, [0.02, 0.01, 0.05]),
@@ -73,7 +79,7 @@ def pythonTest():
     data_file = pickle.load(file1)
     file1.close()
 
-    data = np.zeros([5000, 3])
+    data = np.zeros([messaging.MAX_SICP_POINTS, messaging.SICP_POINT_DIM])
     reference = np.zeros(np.shape(data))
     reference_file = np.zeros(np.shape(data_file))
     for j in range(len(data_file[:,0])):
@@ -112,7 +118,7 @@ def sicpTest(show_plots, mrp, scale, translations):
     data_file = pickle.load(file1)
     file1.close()
 
-    data = np.zeros([5000, 3])
+    data = np.zeros([messaging.MAX_SICP_POINTS, messaging.SICP_POINT_DIM])
     reference = np.zeros(np.shape(data))
     reference_file = np.zeros(np.shape(data_file))
     for j in range(len(data_file[:,0])):

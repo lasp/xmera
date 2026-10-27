@@ -16,6 +16,11 @@ from xmera.fswAlgorithms import dipoleMapping  # import the module that is to be
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 from xmera.utilities import unitTestSupport  # general support file with common unit test functions
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 3, reason="MAX_EFF_CNT is less than the 3 torque bars this test uses"
+)
 
 accuracy = 1E-12
 

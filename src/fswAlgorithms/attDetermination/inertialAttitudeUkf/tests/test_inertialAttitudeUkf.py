@@ -13,6 +13,10 @@ from xmera.utilities import SimulationBaseClass, macros
 from xmera.utilities import RigidBodyKinematics as rbk
 from scipy.stats import chi2
 
+pytestmark = pytest.mark.skipif(
+    messaging.RW_EFF_CNT < 4, reason="RW_EFF_CNT is less than the 4 wheels this test uses"
+)
+
 starOnly = inertialAttitudeUkf.AttitudeFilterMethod_AttitudeOnly
 gyroWhenDazzled = inertialAttitudeUkf.AttitudeFilterMethod_RateMeasurementsWhenNoStars
 allMeasurements = inertialAttitudeUkf.AttitudeFilterMethod_AllMeasurements
