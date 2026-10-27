@@ -15,6 +15,6 @@
 
 %include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 %include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
-%include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>

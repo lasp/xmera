@@ -23,6 +23,6 @@ STRUCTASLIST(STMessage)
 %include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-%include <architecture/msgPayloadDef/AccDataMsgPayload.h>
-%include <architecture/msgPayloadDef/AccPktDataMsgPayload.h>
+%import <architecture/msgPayloadDef/AccDataMsgPayload.h>
+%import <architecture/msgPayloadDef/AccPktDataMsgPayload.h>
 %include <architecture/msgPayloadDef/NavAttMsgPayload.h>

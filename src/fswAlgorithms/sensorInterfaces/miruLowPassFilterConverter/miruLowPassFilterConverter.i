@@ -9,5 +9,5 @@
 %include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "miruLowPassFilterConverter.h"
 
-%include <architecture/msgPayloadDef/AccDataMsgPayload.h>
+%import <architecture/msgPayloadDef/AccDataMsgPayload.h>
 %include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>

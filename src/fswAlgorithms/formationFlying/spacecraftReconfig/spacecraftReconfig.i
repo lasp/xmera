@@ -13,8 +13,8 @@
 %include "spacecraftReconfig.h"
 
 %include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-%include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 %include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-%include <architecture/msgPayloadDef/ReconfigBurnArrayInfoMsgPayload.h>
+%import <architecture/msgPayloadDef/ReconfigBurnArrayInfoMsgPayload.h>

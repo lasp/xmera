@@ -30,4 +30,4 @@ EIGEN_MAT_WRAP(SimpleNavErrorVector, 159)
 
 %include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 
-%include <architecture/msgPayloadDef/AccDataMsgPayload.h>
+%import <architecture/msgPayloadDef/AccDataMsgPayload.h>

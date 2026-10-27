@@ -14,4 +14,4 @@
 
 %include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 %include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-%include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
+%import <architecture/msgPayloadDef/RWConstellationMsgPayload.h>

@@ -16,5 +16,5 @@ EIGEN_MAT_WRAP(Vector36d, 157)
 
 %include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 %include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-%include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>

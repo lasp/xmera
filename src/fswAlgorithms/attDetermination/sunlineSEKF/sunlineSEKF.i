@@ -16,4 +16,4 @@
 %include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 %include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
 %include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
-%include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/CSSConfigMsgPayload.h>

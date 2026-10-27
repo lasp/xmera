@@ -12,8 +12,8 @@
 %include "sunlineSRuKF.h"
 
 %include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-%include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
-%include <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+%import <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
 %include <architecture/msgPayloadDef/FilterMsgPayload.h>
 %include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
