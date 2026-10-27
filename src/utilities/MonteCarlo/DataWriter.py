@@ -106,26 +106,80 @@ class DataWriter(mp.Process):
 
             logger.info(f"Finished logging dataframes from run {str(mc_sim_index)}")
 
-        # Sort by the MultiIndex (first by run number then by variable component)
         logger.info("Starting to concatenate dataframes")
         for file_path in self._data_files:
-            # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
-            all_data = []
-            with open(file_path, 'rb') as pkl:
-                try:
-                    while True:
-                        all_data.extend(pickle.load(pkl))
-                except EOFError:
-                    pass
-            all_data = pd.concat(all_data, axis=1)
-            new_mult_ind = pd.MultiIndex.from_product([list(range(all_data.columns.min()[0], all_data.columns.max()[0]+1)),
-                                                         list(range(all_data.columns.min()[1], all_data.columns.max()[1]+1))],
-                                                         names=["runNum", "varIdx"])
-            #all_data = all_data.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
-            all_data = all_data.reindex(columns=new_mult_ind)
-            all_data.index.name = 'time[ns]'
-            all_data.to_pickle(file_path)
+            self.finalize(file_path)
         logger.info("Finished concatenating dataframes")
+
+    @staticmethod
+    def read_frames(file_path):
+        """Yield the frames of one data file, one at a time.
+
+        A file that the writer has not finalized holds one ``[df]`` pickle for each run. A finalized
+        file holds one frame for all runs. If the writer stopped in the middle of a pickle, the
+        incomplete pickle at the end of the file is dropped.
+        """
+        with open(file_path, "rb") as pkl:
+            while True:
+                try:
+                    item = pickle.load(pkl)
+                except EOFError:
+                    return
+                except Exception as e:
+                    logger.warning(f"Dropping the incomplete end of {file_path} ({type(e).__name__})")
+                    return
+                if isinstance(item, pd.DataFrame):
+                    yield item
+                else:
+                    yield from item
+
+    @staticmethod
+    def is_finalized(file_path):
+        """True if the file holds one frame, as the writer leaves it after the shutdown sentinel."""
+        with open(file_path, "rb") as pkl:
+            try:
+                return isinstance(pickle.load(pkl), pd.DataFrame)
+            except Exception:
+                return False
+
+    @classmethod
+    def finalize(cls, file_path):
+        """Combine the frames of one data file into one frame with one column for each (runNum, varIdx).
+
+        A run that is missing between the lowest and the highest run index gets NaN columns.
+        """
+        all_data = pd.concat(list(cls.read_frames(file_path)), axis=1)
+        new_mult_ind = pd.MultiIndex.from_product([list(range(all_data.columns.min()[0], all_data.columns.max()[0]+1)),
+                                                     list(range(all_data.columns.min()[1], all_data.columns.max()[1]+1))],
+                                                     names=["runNum", "varIdx"])
+        all_data = all_data.reindex(columns=new_mult_ind)
+        all_data.index.name = 'time[ns]'
+        all_data.to_pickle(file_path)
+
+    @classmethod
+    def runs_in(cls, file_path):
+        """The run indexes that have columns in one data file, including the NaN columns of a finalized file."""
+        runs = set()
+        for frame in cls.read_frames(file_path):
+            runs.update(int(run) for run in frame.columns.get_level_values(0))
+        return runs
+
+    @classmethod
+    def keep_runs(cls, file_path, runs):
+        """Rewrite one data file as an unfinalized stream that holds only the given runs, each one time.
+
+        After this, the writer can append more runs to the file and finalize it as usual.
+        """
+        kept = set()
+        temporary_path = file_path + ".partial"
+        with open(temporary_path, "wb") as out:
+            for frame in cls.read_frames(file_path):
+                run_level = frame.columns.get_level_values(0)
+                selected = frame.loc[:, run_level.isin(runs - kept)]
+                if selected.shape[1]:
+                    kept.update(int(run) for run in selected.columns.get_level_values(0))
+                    pickle.dump([selected], out)
+        os.replace(temporary_path, file_path)
 
     def set_log_dir(self, log_dir):
         self._log_dir = log_dir

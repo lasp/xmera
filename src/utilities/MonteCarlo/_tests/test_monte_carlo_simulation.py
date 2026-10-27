@@ -218,3 +218,55 @@ def test_data_is_retained(mc_data_directory, monte_carlo_simulation_no_dispersio
 
     assert "variables" in retained_data, "Retained data should retain variables"
     assert retained_variable_name + ".GetTicker()" in retained_data["variables"], "Retained variables should exist"
+
+
+def _read_retained_message(controller):
+    import pandas as pd
+    return pd.read_pickle(os.path.join(controller.results_dir, retained_message_name + "." + var2 + ".data"))
+
+
+@pytest.mark.slowtest
+def test_resume_adds_runs_with_new_initial_conditions(mc_data_directory, monte_carlo_simulation):
+    monte_carlo_simulation.execute_simulations()
+    before = _read_retained_message(monte_carlo_simulation)
+
+    loaded = Controller.load(monte_carlo_simulation.mc_run_dir)
+    failures = loaded.resume_simulations(NUMBER_OF_RUNS + 2)
+    after = _read_retained_message(loaded)
+
+    assert failures == []
+    assert sorted(set(after.columns.get_level_values(0))) == list(range(NUMBER_OF_RUNS + 2))
+    np.testing.assert_array_equal(after.loc[:, before.columns].to_numpy(), before.to_numpy())
+    assert not np.allclose(after[NUMBER_OF_RUNS].to_numpy(), after[0].to_numpy())
+    assert Controller.load(loaded.mc_run_dir).num_simulation_runs == NUMBER_OF_RUNS + 2
+    assert loaded.resume_simulations() == []
+
+
+@pytest.mark.slowtest
+def test_resume_executes_the_runs_that_an_interruption_lost(mc_data_directory, monte_carlo_simulation):
+    import pickle
+
+    from xmera.utilities.MonteCarlo.DataWriter import DataWriter
+
+    monte_carlo_simulation.execute_simulations()
+    before = _read_retained_message(monte_carlo_simulation)
+
+    # The state of a batch that stopped during run 2: run 1 has no run file, the run file of run 2 is
+    # incomplete, and each data file is an unfinalized stream that ends in an incomplete pickle.
+    results = monte_carlo_simulation.results_dir
+    os.remove(os.path.join(results, "run1.data"))
+    run2 = os.path.join(results, "run2.data")
+    os.truncate(run2, os.path.getsize(run2) // 2)
+    for file_path in Controller.load(monte_carlo_simulation.mc_run_dir)._data_files():
+        DataWriter.keep_runs(file_path, {0, 1, 2})
+        partial = pickle.dumps([before])
+        with open(file_path, "ab") as pkl:
+            pkl.write(partial[: len(partial) // 2])
+
+    loaded = Controller.load(monte_carlo_simulation.mc_run_dir)
+    failures = loaded.resume_simulations()
+    after = _read_retained_message(loaded)
+
+    assert failures == []
+    np.testing.assert_allclose(after.to_numpy(), before.to_numpy())
+    assert all(loaded._run_file_is_complete(index) for index in range(NUMBER_OF_RUNS))
