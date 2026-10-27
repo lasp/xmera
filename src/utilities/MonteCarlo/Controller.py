@@ -7,6 +7,7 @@ import dataclasses
 import multiprocessing.queues
 import os
 import random
+import re
 import shutil
 import traceback
 import warnings
@@ -197,16 +198,21 @@ class Controller:
     @staticmethod
     def load(run_directory: str):
         """
-        Load a completed Monte Carlo batch.
+        Load a Monte Carlo batch. The run directory can move after the batch executes.
         :param run_directory: The path to the directory that contains the archived Monte Carlo file MonteCarlo.data
         :type run_directory: str
         """
-        filename = os.path.abspath(run_directory) + "/MonteCarlo.data"
+        run_directory = os.path.abspath(run_directory)
+        filename = os.path.join(run_directory, "MonteCarlo.data")
 
         with gzip.open(filename) as pickled_data:
             data = pickle.load(pickled_data)
             logger.debug(f"Loading monte carlo at {filename}")
-            return data
+        data._archive_dir = os.path.dirname(run_directory)
+        data._mc_run_dir = run_directory
+        data._ic_directory = os.path.join(run_directory, "initial_conditions")
+        data._results_dir = os.path.join(run_directory, "results")
+        return data
 
     def set_execution_function(self, execution_function):
         """
@@ -760,6 +766,79 @@ class Controller:
 
         self._save_failed_indexes(failures)
         return failures
+
+    def resume_simulations(self, num_runs: Optional[int] = None) -> list[FailureRecord]:
+        """
+        Execute the runs of a loaded batch that have no data, or add runs to the batch.
+
+        Use this method on a controller from :meth:`load`. A run is complete if each data file has its
+        columns and its ``run<index>.data`` file is complete. A run in ``failures.json`` stays failed.
+        The method executes each other run with an index below ``num_runs``, then finalizes the data files.
+        The seeds of a run come from its index. Thus a resumed run is the same as the run that the
+        interruption stopped, and each new index gives a new run.
+
+        :param num_runs: The number of runs in the batch after this call. The default is the number of
+            runs of the batch. The value cannot be smaller than that number.
+        :type num_runs: int
+        :return: failures: A list of :class:`FailureRecord` for each failed run of the batch, from before and from this call.
+        :rtype: list[FailureRecord]
+        """
+        if num_runs is None:
+            num_runs = self.num_simulation_runs
+        if num_runs < self.num_simulation_runs:
+            raise ValueError(f"The batch has {self.num_simulation_runs} runs, resume_simulations cannot reduce it to {num_runs}")
+        if not self._retention_policies:
+            raise ValueError("resume_simulations needs a retention policy, a batch without one has no record of its complete runs")
+
+        old_failures = self._load_failures()
+        failed = {f.run_index for f in old_failures}
+        data_files = self._data_files()
+        complete = set.intersection(*(DataWriter.runs_in(f) for f in data_files)) if data_files else set()
+        complete = {index for index in complete if self._run_file_is_complete(index)}
+        remaining = [index for index in range(num_runs) if index not in complete and index not in failed]
+        if not remaining and all(DataWriter.is_finalized(f) for f in data_files):
+            return old_failures
+
+        logger.info(f"Keeping {len(complete)} complete runs, executing {len(remaining)} runs")
+        for file_path in data_files:
+            DataWriter.keep_runs(file_path, complete)
+        self.num_simulation_runs = num_runs
+        self._save_monte_carlo_controller()
+
+        failures = []
+        if remaining:
+            with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
+                failures = self._drive_jobs(self.generate_sims(remaining), len(remaining), runner.queue)
+        for file_path in self._data_files():
+            if not DataWriter.is_finalized(file_path):
+                DataWriter.finalize(file_path)
+
+        failures = old_failures + failures
+        self._save_failed_indexes(failures)
+        return failures
+
+    def _data_files(self) -> list[str]:
+        """The per-variable data files of the batch, not the ``run<index>.data`` files."""
+        files = glob.glob(os.path.join(self._results_dir, "*.data"))
+        return sorted(f for f in files if not re.fullmatch(r"run\d+\.data", os.path.basename(f)))
+
+    def _run_file_is_complete(self, index: int) -> bool:
+        """True if ``run<index>.data`` exists and decompresses to its end."""
+        try:
+            with gzip.open(self._make_results_directory_file_name(index)) as run_file:
+                while run_file.read(1 << 24):
+                    pass
+            return True
+        except (OSError, EOFError):
+            return False
+
+    def _load_failures(self) -> list[FailureRecord]:
+        """The failures that ``failures.json`` of the batch records."""
+        path = os.path.join(self._mc_run_dir, "failures.json")
+        if not os.path.exists(path):
+            return []
+        with open(path) as fail_json:
+            return [FailureRecord(**record) for record in json.load(fail_json)]
 
 
 class SimulationExecutor:

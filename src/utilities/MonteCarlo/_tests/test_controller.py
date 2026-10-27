@@ -66,7 +66,7 @@ class _Job:
 class _FailingPool:
     """Replaces mp.Pool. It reports the first job as a success, then raises an unexpected error."""
 
-    def __init__(self, num_processes):
+    def __init__(self, num_processes, **kwargs):
         pass
 
     def imap_unordered(self, function, jobs):
