@@ -17,9 +17,10 @@ class _RecordingJobRunner:
 
     instances = []
 
-    def __init__(self, results_dir, var_cast=None):
+    def __init__(self, results_dir, var_cast=None, archive_format="pickle", rows=1):
         self.results_dir = results_dir
         self.var_cast = var_cast
+        self.archive_format = archive_format
         self.queue = None
         _RecordingJobRunner.instances.append(self)
 
