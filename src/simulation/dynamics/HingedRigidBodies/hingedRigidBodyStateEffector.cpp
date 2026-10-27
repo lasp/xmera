@@ -146,8 +146,7 @@ void HingedRigidBodyStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     // - Define omega_BN_S
     this->omegaLoc_PN_P = omega_BN_B;

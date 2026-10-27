@@ -179,14 +179,12 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double callTime) {
  @param sigma_BN Current B frame attitude with respect to the inertial frame
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components
- @param g_N [m/s^2] Gravitational acceleration in N frame components
 */
 void PrescribedMotionStateEffector::updateContributions(
     double callTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     // Compute dcm_BN
     this->sigma_BN = sigma_BN;

@@ -58,8 +58,7 @@ public:
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     ) override;  //!< -- Method for back-substitution contributions
     void computeDerivatives(
         double integTime,

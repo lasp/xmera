@@ -351,8 +351,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
             integTimeSeconds,
             this->backSubContributions,
             this->hubSigma->getState(),
-            this->hubOmega_BN_B->getState(),
-            gLocal_N
+            this->hubOmega_BN_B->getState()
         );
         this->hub.hubBackSubMatrices.matrixA += this->backSubContributions.matrixA;
         this->hub.hubBackSubMatrices.matrixB += this->backSubContributions.matrixB;
