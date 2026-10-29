@@ -239,8 +239,9 @@ void CoarseSunSensor::computeTrueOutput() {
     // Also apply shadow factor. Basically, correct the intensity of the light.
     this->trueValue *= this->sunVisibilityFactor.shadowFactor;
 
-    // Adding albedo value (if defined by the user)
-    if (this->albedoValue > 0.0) { this->trueValue += this->albedoValue; }
+    // Adding albedo value (if defined by the user). It is a ratio to the solar flux at the sensor, so it takes the
+    // sun distance factor as the direct signal does, but not the shadow factor: albedo reaches an eclipsed sensor.
+    if (this->albedoValue > 0.0) { this->trueValue += this->albedoValue * this->sunDistanceFactor; }
 }
 
 /*! This method takes the true observed cosine value and converts

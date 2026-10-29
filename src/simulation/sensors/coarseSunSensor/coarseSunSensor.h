@@ -71,7 +71,7 @@ public:
     Eigen::Vector3d mHat_B;     //!< [-] css unit direction vector 2 in body frame components
     Eigen::Vector3d nHat_B;     //!< [-] css unit direction vector 3 in body frame components
     Eigen::Vector3d sHat_B;     //!< [-] unit vector to sun in B
-    double albedoValue = -1.0;  //!< [-] albedo irradiance measurement
+    double albedoValue = -1.0;  //!< [-] albedo flux as a ratio to the solar flux at the sensor
     double scaleFactor;         //!< [-] scale factor applied to sensor (common + individual multipliers)
     double pastValue;           //!< [-] measurement from last update (used only for faults)
     double trueValue;           //!< [-] solar irradiance measurement without perturbations

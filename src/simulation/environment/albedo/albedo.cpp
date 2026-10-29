@@ -648,14 +648,8 @@ void Albedo::computeAlbedo(
             }
         }
         //! - The sunlit area seen by the instrument fov
-        auto num1 = new double[IIdx];
-        auto num2 = new double[IIdx];
-        for (int i = 0; i < IIdx; i++) {
-            num1[i] = albLon1[i];
-            num2[i] = albLat1[i];
-        }
-        this->albLon = cArrayToEigenMatrixX(num1, 1, IIdx);
-        this->albLat = cArrayToEigenMatrixX(num2, 1, IIdx);
+        this->albLon = cArrayToEigenMatrixX(albLon1.data(), 1, IIdx);
+        this->albLat = cArrayToEigenMatrixX(albLat1.data(), 1, IIdx);
         //! - Total albedo flux ratio [-]
         auto albedoAtInstrumentMax = alb_Imax;
         auto albedoAtInstrument = alb_I;
