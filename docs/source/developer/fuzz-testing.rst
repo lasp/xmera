@@ -241,8 +241,12 @@ Add a guarded block to the module's ``tests/CMakeLists.txt``:
 
 - Guard the whole block with ``if(XMERA_ENABLE_FUZZTESTS)``, so the default build
   does not change.
-- Call ``fuzztest_setup_fuzzing_flags()`` before ``add_executable``. It adds the
-  instrumentation flags to the targets that follow it.
+- Call ``fuzztest_setup_fuzzing_flags()`` in the fuzz test directory, before
+  ``add_executable``. It adds the instrumentation flags to ``CMAKE_CXX_FLAGS``, thus
+  they apply to all targets in that directory. Do not call it at a higher level.
+  Refer to `No seed input coverage registered`_.
+- Compile the code under test into the fuzz executable, or keep it header-only. Code
+  in a shared library such as ``Xmera::Core`` does not have the instrumentation.
 - Link ``fuzztest::fuzztest`` and ``fuzztest::fuzztest_gtest_main``, not
   ``GTest::gtest_main``.
 - Apply the labels with ``xmera_label_discovered_tests``, which needs the
@@ -412,6 +416,23 @@ and the second label never becomes a label.
 this. It writes a small CMake file into ``TEST_INCLUDE_FILES``, so the labels are
 applied when ``ctest`` runs, which is after ``gtest_discover_tests`` has found the
 test names.
+
+No seed input coverage registered
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In fuzzing mode a test stops at setup with::
+
+   Warning: __sanitizer_cov_8bit_counters_init was called multiple times with different arguments.
+   Check failed: !corpus_.empty() No seed input coverage registered.
+
+FuzzTest records the coverage counters of only the first instrumented dynamic shared
+object (DSO) that registers them. A shared library registers its counters before the
+executable does. If the fuzz executable links a shared library that has the
+instrumentation, for example ``Xmera::Core``, FuzzTest monitors that library. FuzzTest
+then receives no coverage from the fuzz test.
+
+The usual cause is a call to ``fuzztest_setup_fuzzing_flags()`` at a level that
+includes the shared library. Call it only in the fuzz test directory.
 
 Unit tests appear under the ``fuzz`` label
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
