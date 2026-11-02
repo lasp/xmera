@@ -34,6 +34,13 @@ if(XMERA_ENABLE_FUZZTESTS)
   # does. Thus FuzzTest monitors xmera_core and receives no coverage from the fuzz test.
   # The fuzzer then stops with "No seed input coverage registered". Each fuzz test
   # directory calls the macro itself.
+  #
+  # FuzzTest calls the macro in its own scope. Thus abseil and GoogleTest have the
+  # instrumentation. Each test executable links GoogleTest. Thus each executable must link
+  # the sanitizer runtime. The runtime also supplies the coverage callbacks.
+  if(FUZZTEST_FUZZING_MODE)
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fsanitize=address")
+  endif()
 endif()
 
 find_package(GTest REQUIRED)
