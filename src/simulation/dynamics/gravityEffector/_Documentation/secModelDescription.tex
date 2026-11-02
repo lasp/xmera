@@ -21,7 +21,7 @@ In the relative formulation, the acceleration of the spacecraft is calculated \t
 
 where $C$ is the central body. In this case, other accelerations of the central body (due to solar radiation pressure, for instance) are ignored.  For relative dynamics, the Basilisk dynamics integrator uses only \textit{relative} acceleration to calculate \textit{relative} position and velocity. The gravity module then accounts for this and modifies the spacecraft position and velocity by the central body's position and velocity after each timestep.
 
-The above relative formulation leads to some questions regarding the accuracy of the dynamics integration. First, if acceleration due to gravity is being handled in a relative form, but accelerations due to external foces are handled absolutely, does Basilisk always produce the correct absolute position and velocity? Second, if dynamic state effectors such as hinged rigid bodies are using the gravitational acceleration that the spacecraft receives from the gravity module, are their states being integrated correctly?
+The above relative formulation leads to some questions regarding the accuracy of the dynamics integration. First, if acceleration due to gravity is being handled in a relative form, but accelerations due to external foces are handled absolutely, does Basilisk always produce the correct absolute position and velocity? Second, are the states of dynamic state effectors such as hinged rigid bodies integrated correctly?
 
 Absolute accelerations (i.e. due to thrust) being integrated alongside the relative gravitational acceleration is handled easily due to the linearity of integration. In the absolute dynamics formulation there is:
 
@@ -51,7 +51,7 @@ Once that is done, it is clear that the absolute position can be found by simply
 \end{equation}
 This is how absolute position and velocity are found in Basilisk when using a relative dynamics formulation: the relative dynamics are integrated and the position and velocity of the central body are added afterward. The position and velocity of the central body are not integrated by Basilisk, but found from Spice.
 
-Dynamic state effectors connected to the spacecraft hub can use the relative gravitational acceleration in their calculation for much the same reason. Effector positions and velocities are always integrated relative to the spacecraft. In fact, the absolute position and velocity of an effector is rarely, if ever, calculated or used. This is explains why a hinged body experiencing a relative acceleration does not quickly fall behind the spacecraft which is known to be moving along a course experiencing absolute gravitational acceleration. Additionally, because the effector is "pulled along" with the spacecraft when the spacecraft position is modified by the central body position, the effector sees the effect of absolute gravitational acceleration as well.
+Dynamic state effectors do not use the gravitational acceleration: it is evaluated at the spacecraft center of mass, so it accelerates the hub and every effector equally, and the spacecraft adds it only to the hub's translational acceleration. Effector positions and velocities are always integrated relative to the spacecraft. In fact, the absolute position and velocity of an effector is rarely, if ever, calculated or used. This explains why a hinged body does not fall behind the spacecraft which is known to be moving along a course experiencing absolute gravitational acceleration. Additionally, because the effector is "pulled along" with the spacecraft when the spacecraft position is modified by the central body position, the effector sees the effect of absolute gravitational acceleration as well.
 
 For intricacies related to using absolute vs relative dynamics, see the user manual at the end of this document.
 
@@ -144,7 +144,7 @@ Since $P_l[x] = P_{l,0}[x]$ the potential can be written in a more compact way
 U(\mathbf{\bar r}) = \frac{\mu}{r} \sum_{l=0}^\infty \sum_{m=0}^l \bigg(\frac{R_{\text{ref}}}{r}\bigg)^l P_{l,m}[\sin(\phi)] \big[C_{l,m} \cos(m \lambda) + S_{l,m} \sin(m \lambda)\big]
 \end{equation}
 
-Some coefficients have a very interesting interpretation. 
+Some coefficients have a very interesting interpretation.
 \begin{align}
 	C_{0,0} &= 1\\
 	S_{l,0} &= 0 \quad \forall l \geq 0\\
@@ -383,9 +383,9 @@ U(\bar{\mathbf{r}})=- \frac{1}{2}G\sigma\sum_{f\in\text{faces}}\left(\mathbf{r}_
 \end{equation}
 
  The vector $\mathbf{r}_f$ extends from the evaluation point to any vertex on the face. The variable $\mathbf{n}_f$ is the outward-pointing normal vector of face $f$. The term $\omega_f$ is the signed solid angle subtended by the face $f$ when viewed from the evalution point. The variable $\mathbf{r}_e$ is a vector from the evaluation point to the initial vertex of edge $e$. The vector $\mathbf{n}_e$ is the normal of the edge lying on the face plane. The term $L_e$ corresponds to the potential of a 1D wire.
- 
+
  Note that in Werner and Scheeres\cite{werner1996}, the double summation term of \eqref{eq:polyhedral_potential} was simplified to a single summation over all polyhedron's edges. Although that reduction is convenient for mathematical compactness, retaining the double summation simplifies the algorithmic implementation (so that there is no need to check for common edges between adjacent faces).
- 
+
  In order to provide consistency with other gravity models, the density $\sigma$ is computed based on the polyhedron shape and the input gravity parameter $\mu$. The volume of a trisurface polyhedron is
  \begin{equation}
  V = \frac{1}{6}\sum_{f\in\text{faces}}|(\mathbf{r}^{f}_1\times\mathbf{r}^{f}_2)\cdot \mathbf{r}^{f}_3|,

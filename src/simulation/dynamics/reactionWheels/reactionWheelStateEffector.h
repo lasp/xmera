@@ -6,47 +6,53 @@
 #define REACTIONWHEELSTATEEFFECTOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/macroDefinitions.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
-#include <Eigen/Dense>
-
+#include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
 #include <architecture/msgPayloadDef/RWConfigMsgPayload.h>
-#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
-
-#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
-
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+
+#include <Eigen/Dense>
 
 /*! @brief reaction wheel state effector class */
-class ReactionWheelStateEffector : public SysModel, public StateEffector {
-   public:
+class ReactionWheelStateEffector
+    : public SysModel
+    , public StateEffector {
+public:
     ReactionWheelStateEffector();
     ~ReactionWheelStateEffector();
-    void registerStates(DynParamManager& states);
-    void linkInStates(DynParamManager& states);
+    void registerStates(DynParamManager &states);
+    void linkInStates(DynParamManager &states);
     void writeOutputStateMessages(uint64_t integTimeNanos);
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN);
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    );
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Energy and momentum calculations
     void reset(uint64_t currentSimNanos);
     void addReactionWheel(RWConfigMsgPayload* NewRW);
     void updateState(uint64_t currentSimNanos);
@@ -54,7 +60,7 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
     void ReadInputs();
     void ConfigureRWRequests(double CurrentTime);
 
-   public:
+public:
     std::vector<RWConfigMsgPayload*> ReactionWheelData;  //!< -- RW information
 
     ReadFunctor<RwMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
@@ -69,16 +75,14 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
     size_t numRWJitter;                          //!< number of RW with jitter
     BSKLogger bskLogger;                         //!< -- BSK Logging
 
-   private:
+private:
     RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                        //!< -- Time for previous valid thruster firing
 
     StateData* hubSigma;     //!< class variable
     StateData* hubOmega;     //!< class variable
-    StateData* hubVelocity;  //!< class variable
     StateData* OmegasState;  //!< class variable
     StateData* thetasState;  //!< class variable
-    Eigen::MatrixXd* g_N;    //!< [m/s^2] Gravitational acceleration in N frame components
 };
 
 #endif /* STATE_EFFECTOR_H */

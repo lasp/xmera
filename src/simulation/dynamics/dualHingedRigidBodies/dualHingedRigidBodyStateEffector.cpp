@@ -76,13 +76,10 @@ void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates() {
 
 void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
-
     this->sigma_BNState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
     this->omega_BN_BState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
 
     return;
 }
@@ -185,30 +182,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
-    Eigen::MRPd sigmaPNLocal;
-    Eigen::Matrix3d dcmPN;                /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcmNP;                /* direction cosine matrix from B to N */
-    Eigen::Vector3d gravityTorquePntH1_P; /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gravityTorquePntH2_P; /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gLocal_N;             /* gravitational acceleration in N frame */
-    Eigen::Vector3d g_P;                  /* gravitational acceleration in B frame */
-    gLocal_N = *this->g_N;
-
-    // - Find dcmBN
-    sigmaPNLocal = (Eigen::Vector3d) this->sigma_BNState->getState();
-    dcmNP = sigmaPNLocal.toRotationMatrix();
-    dcmPN = dcmNP.transpose();
-    // - Map gravity to body frame
-    g_P = dcmPN * gLocal_N;
-
-    // - Define gravity terms
-    Eigen::Vector3d gravTorquePan1PntH1 = -this->d1 * this->sHat11_P.cross(this->mass1 * g_P);
-    Eigen::Vector3d gravForcePan2 = this->mass2 * g_P;
-    Eigen::Vector3d gravTorquePan2PntH2 = -this->d2 * this->sHat21_P.cross(this->mass2 * g_P);
-
     // - Define omegaBN_S
     this->omega_PNLoc_P = this->omega_BN_BState->getState();
     this->omega_PN_S1 = this->dcm_S1P * this->omega_PNLoc_P;
@@ -216,9 +191,6 @@ void DualHingedRigidBodyStateEffector::updateContributions(
     // - Define omegaTildeBNLoc_B
     this->omegaTildePNLoc_P = eigenTilde(this->omega_PNLoc_P);
     // - Define matrices needed for back substitution
-    // gravityTorquePntH1_B = -this->d1*this->sHat11_B.cross(this->mass1*g_B); //Need to review these equations and
-    // implement them - SJKC gravityTorquePntH2_B = -this->d2*this->sHat21_B.cross(this->mass2*g_B); //Need to review
-    // these equations and implement them - SJKC
     this->matrixADHRB(0, 0) = this->IPntS1_S1(1, 1) + this->mass1 * this->d1 * this->d1
                             + this->mass2 * this->l1 * this->l1
                             + this->mass2 * this->l1 * this->d2 * this->sHat13_P.transpose() * (this->sHat23_P);
@@ -241,7 +213,6 @@ void DualHingedRigidBodyStateEffector::updateContributions(
     this->vectorVDHRB(0) =
         -(this->IPntS1_S1(0, 0) - this->IPntS1_S1(2, 2)) * this->omega_PN_S1(2) * this->omega_PN_S1(0) + this->u1
         - this->k1 * this->theta1 - this->c1 * this->theta1Dot + this->k2 * this->theta2 + this->c2 * this->theta2Dot
-        + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1 * this->sHat13_P.dot(gravForcePan2)
         - this->mass1 * this->d1 * this->sHat13_P.transpose()
               * (2 * this->omegaTildePNLoc_P * this->rPrimeS1P_P
                  + this->omegaTildePNLoc_P * this->omegaTildePNLoc_P * this->r_S1P_P)
@@ -254,7 +225,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(
 
     this->vectorVDHRB(1) =
         -(this->IPntS2_S2(0, 0) - this->IPntS2_S2(2, 2)) * this->omega_PN_S2(2) * this->omega_PN_S2(0) + this->u2
-        - this->k2 * this->theta2 - this->c2 * this->theta2Dot + this->sHat22_P.dot(gravTorquePan2PntH2)
+        - this->k2 * this->theta2 - this->c2 * this->theta2Dot
         - this->mass2 * this->d2 * this->sHat23_P.transpose()
               * (2 * this->omegaTildePNLoc_P * this->rPrimeS2P_P
                  + this->omegaTildePNLoc_P * this->omegaTildePNLoc_P * this->r_S2P_P
@@ -321,7 +292,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(
 
 void DualHingedRigidBodyStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -336,9 +307,9 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(
     Eigen::Vector3d omegaDotBNLoc_B;  /* time derivative of omegaBN in B frame */
 
     // Grab necessarry values from manager (these have been previously computed in hubEffector)
-    rDDotBNLoc_N = this->v_BN_NState->getStateDeriv();
+    rDDotBNLoc_N = rDDotNonGrav_BN_N;
     sigmaBNLocal = (Eigen::Vector3d) this->sigma_BNState->getState();
-    omegaDotBNLoc_B = this->omega_BN_BState->getStateDeriv();
+    omegaDotBNLoc_B = omegaDot_BN_B;
     dcmNB = sigmaBNLocal.toRotationMatrix();
     dcmBN = dcmNB.transpose();
     rDDotBNLoc_B = dcmBN * rDDotBNLoc_N;

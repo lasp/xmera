@@ -6,27 +6,27 @@
 #define SPACECRAFT_PLUS_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
-#include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
-#include <stdint.h>
-#include <vector>
-
+#include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/SCMassPropsMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/TransRefMsgPayload.h>
-
-#include <simulation/dynamics/_GeneralModuleFiles/hubEffector.h>
-#include <architecture/messaging/messaging.h>
 #include <architecture/utilities/bskLogging.h>
+
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/hubEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
+#include <stdint.h>
+
+#include <vector>
 
 /*! @brief spacecraft dynamic effector */
 class Spacecraft : public DynamicObject {
-   public:
+public:
     uint64_t simTimePrevious;                       //!< -- Previous simulation time
     std::string sysTimePropertyName;                //!< -- Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg;      //!< -- (optional) reference attitude input message name
@@ -62,7 +62,7 @@ class Spacecraft : public DynamicObject {
     Message<SCStatesMsgPayload> scStateOutMsg;    //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg;  //!< spacecraft mass properties output message
 
-   public:
+public:
     Spacecraft();               //!< -- Constructor
     ~Spacecraft();              //!< -- Destructor
     void initializeDynamics();  //!< -- This method initializes all of the dynamics and variables for the s/c
@@ -70,25 +70,27 @@ class Spacecraft : public DynamicObject {
     void updateSCMassProps(double time);      //!< -- This method computes the total mass properties of the s/c
     void calcForceTorqueFromStateEffectors(
         double time,
-        Eigen::Vector3d omega_BN_B);  //!< -- This method computes the force and torque from the stateEffectors
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- This method computes the force and torque from the stateEffectors
     void reset(uint64_t currentSimNanos);
     void writeOutputStateMessages(uint64_t clockTime);  //!< -- Method to write all of the class output messages
     void updateState(uint64_t currentSimNanos);         //!< -- Runtime hook back into Basilisk arch
-    void linkInStates(DynParamManager& statesIn);       //!< Method to get access to the hub's states
-    void equationsOfMotion(double integTimeSeconds,
-                           double timeStep);  //!< -- This method computes the equations of motion for the whole system
+    void linkInStates(DynParamManager &statesIn);       //!< Method to get access to the hub's states
+    void equationsOfMotion(
+        double integTimeSeconds,
+        double timeStep
+    );  //!< -- This method computes the equations of motion for the whole system
     void addStateEffector(StateEffector* newSateEffector);         //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector* newDynamicEffector);  //!< -- Attaches a dynamicEffector
     void preIntegration(double callTime) final;                    //!< -- method to perform pre-integration steps
     void postIntegration(double callTime) final;                   //!< -- method to perform post-integration steps
 
-   private:
-    StateData* hubR_N;           //!< -- State data accesss to inertial position for the hub
-    StateData* hubV_N;           //!< -- State data access to inertial velocity for the hub
-    StateData* hubOmega_BN_B;    //!< -- State data access to the attitude rate of the hub
-    StateData* hubSigma;         //!< -- State data access to sigmaBN for the hub
-    StateData* hubGravVelocity;  //!< -- State data access to the gravity-accumulated DV on the Body frame
-    StateData* BcGravVelocity;   //!< -- State data access to the gravity-accumulated DV on point Bc
+private:
+    StateData* hubR_N;              //!< -- State data accesss to inertial position for the hub
+    StateData* hubV_N;              //!< -- State data access to inertial velocity for the hub
+    StateData* hubOmega_BN_B;       //!< -- State data access to the attitude rate of the hub
+    StateData* hubSigma;            //!< -- State data access to sigmaBN for the hub
+    StateData* hubNonGravVelocity;  //!< -- State data access to the non-gravitational DV of point B over a step
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
@@ -99,12 +101,12 @@ class Spacecraft : public DynamicObject {
     Eigen::MatrixXd* cPrime_B;        //!< [m/s] Body time derivative of c_B
     Eigen::MatrixXd* cDot_B;          //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd* ISCPntBPrime_B;  //!< [kg m^2/s] Body time derivative of ISCPntB_B
-    Eigen::MatrixXd* g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd* sysTime;         //!< [s] System time
 
     Eigen::Vector3d oldOmega_BN_B;  //!< [r/s] prior angular rate of B wrt N in the Body frame
+    Eigen::Vector3d oldRDot_CB_N;   //!< [m/s] prior inertial velocity of point C wrt point B in N frame components
 
-   private:
+private:
     void readOptionalRefMsg();  //!< -- Read the optional attitude or translational reference input message and set the
                                 //!< reference states
 };

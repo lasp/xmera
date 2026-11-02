@@ -35,16 +35,12 @@ SphericalPendulum::SphericalPendulum() {
     this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->moduleID);
 }
 
-/*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states */
+/*! Method for spherical pendulum to access the states that it needs. It needs the hub states */
 void SphericalPendulum::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hub states
 
     this->omegaState = statesIn.getStateObject("hubOmega");
     this->sigmaState = statesIn.getStateObject("hubSigma");
-    this->velocityState = statesIn.getStateObject("hubVelocity");
-
-    // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }
@@ -172,17 +168,8 @@ void SphericalPendulum::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
-    // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_BN;
-    Eigen::Matrix3d dcm_BN;
-    Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
-    dcm_NB = sigmaLocal_BN.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
-
     Eigen::Matrix3d dTilde;
     Eigen::Matrix3d lTilde;
     dTilde = eigenTilde(this->d);
@@ -195,13 +182,8 @@ void SphericalPendulum::updateContributions(
     this->bPhi = this->pHat_03.transpose() * lTilde * (lTilde + dTilde)
                / (this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta));
 
-    // - Map gravity to body frame
-    Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_B;
-    gLocal_N = *this->g_N;
-    g_B = dcm_BN * gLocal_N;
     Eigen::Vector3d L_T;
-    L_T = this->l_B.cross(this->massFSP * g_B) - dcm_B_P0 * this->D * this->lPrime_P0;
+    L_T = -dcm_B_P0 * this->D * this->lPrime_P0;
 
     // - Define cPhi
     Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
@@ -324,7 +306,7 @@ void SphericalPendulum::updateContributions(
  derived using the back-sub method */
 void SphericalPendulum::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -341,8 +323,8 @@ void SphericalPendulum::computeDerivatives(
     // - Compute lDDot
     Eigen::MatrixXd phi_conv(1, 1);
     Eigen::MatrixXd theta_conv(1, 1);
-    Eigen::Vector3d omegaDot_BN_B_local = this->omegaState->getStateDeriv();
-    Eigen::Vector3d rDDot_BN_N_local = this->velocityState->getStateDeriv();
+    Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
+    Eigen::Vector3d rDDot_BN_N_local = rDDotNonGrav_BN_N;
     Eigen::Vector3d rDDot_BN_B_local = dcm_BN * rDDot_BN_N_local;
     phi_conv(0, 0) = this->aPhi.dot(rDDot_BN_B_local) + this->bPhi.dot(omegaDot_BN_B_local) + this->cPhi;
     this->phiDotState->setDerivative(phi_conv);

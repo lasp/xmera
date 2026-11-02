@@ -133,13 +133,11 @@ void GravityEffector::writeOutputMessages(uint64_t currentSimNanos) {
 void GravityEffector::prependSpacecraftNameToStates() {
     this->inertialPositionPropName = this->nameOfSpacecraftAttachedTo + this->inertialPositionPropName;
     this->inertialVelocityPropName = this->nameOfSpacecraftAttachedTo + this->inertialVelocityPropName;
-    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + this->vehicleGravityPropName;
 }
 
 void GravityEffector::registerProperties(DynParamManager &statesIn) {
     static Eigen::Vector3d const zeroVector3d = Eigen::Vector3d::Zero();
 
-    this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, zeroVector3d);
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, zeroVector3d);
     this->inertialVelocityProperty = statesIn.createProperty(this->inertialVelocityPropName, zeroVector3d);
 
@@ -152,7 +150,7 @@ void GravityEffector::linkInStates(DynParamManager &statesIn) {
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
 }
 
-void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N) {
+Eigen::Vector3d GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N) {
     uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
     Eigen::Vector3d r_cN_N = Eigen::Vector3d::Zero();  // position of s/c CoM wrt N
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero();  // inertial position of central body if there is one. Big C is
@@ -192,7 +190,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
         (*(body->muPlanet))(0, 0) = body->mu;
     }
 
-    *this->gravProperty = rDotDot_cF_N;
+    return rDotDot_cF_N;
 }
 
 void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N) {

@@ -33,8 +33,7 @@ public:
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     );  //!< -- Back-sub contributions
     void updateEnergyMomContributions(
         double integTime,
@@ -44,7 +43,7 @@ public:
     );  //!< -- Energy and momentum calculations
     void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     );  //!< -- Method for each stateEffector to calculate derivatives
@@ -134,10 +133,8 @@ private:
     Eigen::Vector3d omega_SN_S[2];              //!< [rad/s] inertial panel frame angular velocity vector
     StateData* sigma_BNState;                   //!< Hub/Inertial attitude represented by MRP
     StateData* omega_BN_BState;                 //!< Hub/Inertial angular velocity vector in B frame components
-    StateData* v_BN_NState;                     //!< Hub/Inertial velocity vector in inertial frame components
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    Eigen::MatrixXd* g_N;                       //!< [m/s^2] Gravitational acceleration in N frame components
 };
 
 #endif /* DUAL_STATE_EFFECTOR_H */
