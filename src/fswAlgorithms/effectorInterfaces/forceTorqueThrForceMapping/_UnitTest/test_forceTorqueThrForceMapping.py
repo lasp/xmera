@@ -66,12 +66,15 @@ date_number = float(date_string)
 date_rounded = int(round(date_number + datetime.now().hour/24))
 np.random.seed(date_rounded)
 
-num_thr_rand = np.random.randint(1, messaging.MAX_EFF_CNT)
+num_thr_rand = np.random.randint(1, messaging.MAX_EFF_CNT + 1)
 rcs_location_data_rand = np.round(np.random.randn(num_thr_rand, 3), 3).tolist()
 randomized_directions = np.round(np.random.randn(num_thr_rand, 3), 3)
 rcs_direction_data_rand = (randomized_directions / np.linalg.norm(randomized_directions, axis=1)[:, None]).tolist()
 torque_rand = np.random.rand(3)
 force_rand = np.random.rand(3)
+
+skip_below_8_thrusters = pytest.mark.skipif(
+    messaging.MAX_EFF_CNT < 8, reason="MAX_EFF_CNT is less than the 8 thrusters this case uses")
 
 r"""
 Test 1: Ensures that the forceTorqueThrForce module can compute a valid solution for cases where there is a direction
@@ -85,10 +88,16 @@ Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution
 """
 
 @pytest.mark.parametrize("rcs_location, rcs_direction, requested_torque, requested_force, torque_in_msg_flag",
-                         [(rcs_location_data_1, rcs_direction_data_1, [0.4, 0.2, 0.4], [0.9, 1.1, 0.], True),
-                          (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], True),
-                          (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], False),
-                          (rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.], True),
+                         [pytest.param(rcs_location_data_1, rcs_direction_data_1, [0.4, 0.2, 0.4], [0.9, 1.1, 0.], True,
+                                       marks=skip_below_8_thrusters),
+                          pytest.param(rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], True,
+                                       marks=skip_below_8_thrusters),
+                          pytest.param(rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], False,
+                                       marks=skip_below_8_thrusters),
+                          pytest.param(rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.], True,
+                                       marks=pytest.mark.skipif(
+                                           messaging.MAX_EFF_CNT < 12,
+                                           reason="MAX_EFF_CNT is less than the 12 thrusters this case uses")),
                           (rcs_location_data_rand, rcs_direction_data_rand, torque_rand, force_rand, True)])
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
