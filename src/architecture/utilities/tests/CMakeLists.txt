@@ -54,10 +54,6 @@ add_executable(test_eigenSupport test_eigenSupport.cpp)
 target_link_libraries(test_eigenSupport GTest::gtest_main Xmera::Core ArchitectureUtilities)
 target_include_directories(test_eigenSupport PRIVATE "${CMAKE_SOURCE_DIR}")
 
-if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xcode")
-    set(CMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
-endif()
-
 gtest_discover_tests(test_discretize)
 gtest_discover_tests(test_gaussMarkov)
 gtest_discover_tests(test_orbitalMotion)
