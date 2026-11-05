@@ -116,6 +116,8 @@ private:
     std::vector<uint16_t> colSumBuf;   //!< Above-threshold count per column
     std::vector<uint16_t> calibImage;  //!< Loaded calibration image (empty if not loaded)
 
+    void allocateBuffers();  //!< Size all internal buffers to the current image dimensions
+
     // --- Pipeline stage methods ---
     bool loadImage(uint64_t callTime, uint64_t &timeTagOut);
     void applyCalibration();

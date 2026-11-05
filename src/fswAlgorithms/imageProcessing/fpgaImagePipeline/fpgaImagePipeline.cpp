@@ -167,6 +167,19 @@ uint16_t FpgaImagePipeline::getColSum(uint32_t const col) const {
 }
 
 // ---------------------------------------------------------------------------
+// allocateBuffers()
+// ---------------------------------------------------------------------------
+
+void FpgaImagePipeline::allocateBuffers() {
+    size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+    this->rawBuf.assign(n, 0);
+    this->blurBuf.assign(n, 0);
+    this->threshBuf.assign((n + 7) / 8, 0);
+    this->rowSumBuf.assign(this->imageHeight, 0);
+    this->colSumBuf.assign(this->imageWidth, 0);
+}
+
+// ---------------------------------------------------------------------------
 // reset()
 // ---------------------------------------------------------------------------
 
@@ -181,14 +194,8 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
         throw std::invalid_argument("FpgaImagePipeline: roiRegionSize must be 64, 128, or 256");
     }
 
+    this->allocateBuffers();
     size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-    size_t const threshBytes = (n + 7) / 8;
-
-    this->rawBuf.assign(n, 0);
-    this->blurBuf.assign(n, 0);
-    this->threshBuf.assign(threshBytes, 0);
-    this->rowSumBuf.assign(this->imageHeight, 0);
-    this->colSumBuf.assign(this->imageWidth, 0);
 
     // Load calibration image if configured
     this->calibImage.clear();
@@ -277,12 +284,7 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
             );
             this->imageWidth = fileWidth;
             this->imageHeight = fileHeight;
-            size_t const newN = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-            this->rawBuf.assign(newN, 0);
-            this->blurBuf.assign(newN, 0);
-            this->threshBuf.assign((newN + 7) / 8, 0);
-            this->rowSumBuf.assign(this->imageHeight, 0);
-            this->colSumBuf.assign(this->imageWidth, 0);
+            this->allocateBuffers();
         }
 
         for (uint32_t r = 0; r < this->imageHeight; r++) {
@@ -330,12 +332,7 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
                 );
                 this->imageWidth = msgWidth;
                 this->imageHeight = msgHeight;
-                size_t const newN = static_cast<size_t>(msgWidth) * msgHeight;
-                this->rawBuf.assign(newN, 0);
-                this->blurBuf.assign(newN, 0);
-                this->threshBuf.assign((newN + 7) / 8, 0);
-                this->rowSumBuf.assign(msgHeight, 0);
-                this->colSumBuf.assign(msgWidth, 0);
+                this->allocateBuffers();
             }
             for (uint32_t r = 0; r < this->imageHeight; ++r) {
                 for (uint32_t c = 0; c < this->imageWidth; ++c) {
