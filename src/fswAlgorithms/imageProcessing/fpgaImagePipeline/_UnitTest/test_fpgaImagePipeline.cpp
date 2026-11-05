@@ -209,6 +209,24 @@ TEST(FpgaImagePipeline, partialEdgeRegionIsBinnedAndRanked) {
     expectConsistentOutputs(harness, config);
 }
 
+//! All 12 regions of a dark 200x150 image have a count of 0. The ranking then gives the first 8 regions
+//! in row-major order.
+TEST(FpgaImagePipeline, equalCountsRankByRegionIndex) {
+    PipelineConfig const config{200, 150, 5, 100, 64};
+    std::vector<uint16_t> image = uniformImage(config.width, config.height, 0);
+    PipelineHarness harness;
+    harness.run(config, image);
+
+    FpgaBinsMsgPayload const roi = harness.roiOut();
+    ASSERT_EQ(roi.numValidRegions, 8u);
+    for (uint32_t k = 0; k < 8; ++k) {
+        EXPECT_EQ(roi.topBins[k].row, k / 4) << "rank " << k;
+        EXPECT_EQ(roi.topBins[k].col, k % 4) << "rank " << k;
+        EXPECT_EQ(roi.topBins[k].count, 0u) << "rank " << k;
+    }
+    expectConsistentOutputs(harness, config);
+}
+
 //! An image larger than the fixed row/col message arrays is rejected at reset.
 TEST(FpgaImagePipeline, imageLargerThanMessageCapacityIsRejected) {
     FpgaImagePipeline wide;

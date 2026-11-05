@@ -318,7 +318,8 @@ The message does not contain the size of each region. The receiver calculates th
 
 ``roiOutMsg`` gives the 8 regions with the highest counts, from the highest count to the lowest
 count. If the grid has fewer than 8 regions, ``numValidRegions`` gives the number of entries that
-contain a region.
+contain a region. If two regions have the same count, the region with the lower row-major index
+has the higher rank.
 
 
 Message Connection Descriptions

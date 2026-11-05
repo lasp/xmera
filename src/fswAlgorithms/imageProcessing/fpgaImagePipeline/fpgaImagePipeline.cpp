@@ -589,8 +589,12 @@ void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload &roi) {
     std::vector<uint32_t> indices(numRegions);
     std::iota(indices.begin(), indices.end(), 0);
     uint32_t const topCount = (numRegions < FPGA_ROI_TOP_COUNT) ? numRegions : FPGA_ROI_TOP_COUNT;
+    // Regions with equal counts rank by row-major index, lowest index first.
     std::ranges::partial_sort(indices, indices.begin() + topCount, [&regions](uint32_t a, uint32_t b) {
-        return regions[a].litPixelCount > regions[b].litPixelCount;
+        uint32_t const countA = regions[a].litPixelCount;
+        uint32_t const countB = regions[b].litPixelCount;
+        if (countA != countB) { return countA > countB; }
+        return a < b;
     });
 
     roi.regionSize = rSize;
