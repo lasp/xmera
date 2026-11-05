@@ -16,9 +16,11 @@ Pipeline stages:
    zero (no zero-padding or partial sums).
 3. **Binary threshold** — pixels above ``threshold`` are set to 1, others to 0, packed MSB-first
    into bytes (``ceil(width*height/8)`` bytes total).
-4. **Row/column sums** — counts of above-threshold pixels accumulated per row and per column.
-5. **ROI ranking** — the image is divided into square regions of ``roiRegionSize`` pixels per side;
-   the top 8 regions by above-threshold pixel count are reported.
+4. **Row/column sums** — for each row and each column, the module counts the above-threshold pixels
+   and adds their blurred values into a 32-bit intensity sum.
+5. **ROI bin grid and ranking** — the module divides the image into square regions of
+   ``roiRegionSize`` pixels per side and counts the above-threshold pixels in each region.
+   The module sends the full grid of counts and the 8 regions with the highest counts.
 
 Overall data flow::
 
@@ -29,6 +31,8 @@ Overall data flow::
     └──────────┘     └─────────────┘     └──────────┘     └───────────┘     └─────────┘
                            │                   │                 │                │
                      rawImageOutMsg    blurredImageOutMsg  threshImageOutMsg  rowColSumOutMsg
+
+    ROI ──▶ binGridOutMsg (all regions), roiOutMsg (top 8)
 
 
 Stage 2: Separable Box Blur
@@ -272,6 +276,51 @@ Manual spot-check — ``blurBuf_`` at (3, 7), kernel at rows 1-5, cols 5-9::
     275 >> 1 = 137  (matches blurBuf_[3][7] above)
 
 
+Stage 4: Row and Column Sums
+----------------------------
+
+For each pixel whose threshold bit is set, the module adds 1 to the count of its row and to the
+count of its column. The module also adds the blurred value of the pixel to the intensity sum of
+its row and to the intensity sum of its column.
+
+The counts are ``uint16_t`` values. The intensity sums are ``uint32_t`` values, the same as the
+32-bit accumulators in the FPGA. For all kernel sizes, the maximum blurred value is ``51187``
+(kernel size 5: ``25 * 4095 >> 1``). Thus the maximum sum of a 4096-pixel row is approximately
+``2.1e8``. This value is less than ``2^32``, and the sums cannot overflow.
+
+The sum of all row counts is equal to the sum of all column counts. The sum of all row intensities
+is equal to the sum of all column intensities.
+
+``rowColSumOutMsg`` contains fixed arrays of ``FPGA_ROW_COL_MAX_ROWS`` (3000) rows and
+``FPGA_ROW_COL_MAX_COLS`` (4096) columns. Only the first ``numRows`` row entries and the first
+``numCols`` column entries are valid. If the image is larger than these limits, ``reset()`` stops
+with an error.
+
+
+Stage 5: ROI Bin Grid and Ranking
+---------------------------------
+
+The grid has ``ceil(imageHeight / roiRegionSize)`` rows and ``ceil(imageWidth / roiRegionSize)``
+columns of regions. If the image size is not a multiple of ``roiRegionSize``, the regions in the
+last row and in the last column are smaller than the other regions. These edge regions are
+part of the grid and part of the ranking.
+
+For example, a 4096 x 3000 image with ``roiRegionSize = 64`` has a grid of 47 x 64 regions.
+The regions in the last row have 56 pixel rows (``3000 - 46 * 64``).
+
+``binGridOutMsg`` contains a fixed array of ``FPGA_BIN_GRID_MAX_REGIONS`` (3008) regions. The first
+``numRegions`` entries are valid, in row-major order. Each region gives the column ``x`` and the
+row ``y`` of its top-left pixel, and ``litPixelCount``. ``litPixelCount`` is the number of pixels
+in the region that are above the threshold.
+
+The message does not contain the size of each region. The receiver calculates the width as
+``min(regionSize, imageWidth - x)`` and the height as ``min(regionSize, imageHeight - y)``.
+
+``roiOutMsg`` gives the 8 regions with the highest counts, from the highest count to the lowest
+count. If the grid has fewer than 8 regions, ``numValidRegions`` gives the number of entries that
+contain a region.
+
+
 Message Connection Descriptions
 --------------------------------
 
@@ -297,10 +346,15 @@ Message Connection Descriptions
       - 1-bit packed binary threshold result; ``imagePointer`` points to the module's internal buffer.
     * - rowColSumOutMsg
       - :ref:`FpgaRowColSumMsgPayload`
-      - Per-row and per-column above-threshold pixel counts.
+      - Per-row and per-column above-threshold pixel counts (``uint16_t``) and sums of
+        above-threshold blurred values (``uint32_t``), in fixed arrays.
     * - roiOutMsg
       - :ref:`FpgaBinsMsgPayload`
       - Top-8 ROI regions sorted descending by above-threshold pixel count.
+    * - binGridOutMsg
+      - :ref:`FpgaBinGridMsgPayload`
+      - Fixed array of all ROI regions, the smaller edge regions included. Each region gives its
+        top-left pixel and number of above-threshold pixels.
     * - configOutMsg
       - :ref:`FpgaPipelineConfigMsgPayload`
       - Snapshot of the active pipeline configuration.
@@ -354,6 +408,8 @@ User Guide
     # Access internal pixel values directly (for testing)
     pixel = pipe.getRawPixel(row * width + col)
     above = pipe.getThreshBit(row * width + col)
+    rowIntensity = pipe.getRowIntensity(row)
+    binCount = pipe.getBinCount(regionRow, regionCol)
 
 Note: internal buffer accessors are available for testing only and expose raw pointers
 that are valid only for the lifetime of the module.
