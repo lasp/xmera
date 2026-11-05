@@ -46,6 +46,11 @@ endif()
 find_package(GTest REQUIRED)
 enable_testing()
 
+# PRE_TEST finds the tests when ctest runs, not when the build links them. Thus the build does
+# not start the test executables. On macOS, the first start of a new executable can wait for a
+# system security check, and a build-time discovery step can then go past its timeout.
+set(CMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
+
 # Give each test found by gtest_discover_tests more than one CTest label.
 #
 # The PROPERTIES option of gtest_discover_tests cannot do this. It sends the properties
