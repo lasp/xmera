@@ -4,6 +4,7 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/FpgaBinGridMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaBinsMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaPipelineConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaRawImageMsgPayload.h>
@@ -25,7 +26,7 @@
  *    2. Separable box blur
  *    3. Binary threshold (1-bit packing)
  *    4. Row/column above-threshold counts and intensity sums
- *    5. Region-of-interest (ROI) ranking (top 8)
+ *    5. Region-of-interest (ROI) bin grid and ranking (top 8)
  */
 class FpgaImagePipeline : public SysModel {
 public:
@@ -80,6 +81,9 @@ public:
     uint16_t getColSum(uint32_t col) const;
     uint32_t getRowIntensity(uint32_t row) const;  //!< Sum of blurred values above threshold in a row
     uint32_t getColIntensity(uint32_t col) const;  //!< Sum of blurred values above threshold in a column
+    uint32_t getNumRegionRows() const;             //!< Number of ROI region rows, partial bottom region included
+    uint32_t getNumRegionCols() const;             //!< Number of ROI region columns, partial right region included
+    uint32_t getBinCount(uint32_t regionRow, uint32_t regionCol) const;  //!< Above-threshold count in a region
 
     // --- Message interfaces ---
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< Optional: linked to camera emulator
@@ -89,6 +93,7 @@ public:
     Message<FpgaThreshImageMsgPayload> threshImageOutMsg;  //!< Binary threshold result
     Message<FpgaRowColSumMsgPayload> rowColSumOutMsg;      //!< Row/col accumulators
     Message<FpgaBinsMsgPayload> roiOutMsg;                 //!< Top-8 ROI regions
+    Message<FpgaBinGridMsgPayload> binGridOutMsg;          //!< Position and count of every ROI region
     Message<FpgaPipelineConfigMsgPayload> configOutMsg;    //!< Ancillary config snapshot
 
     BSKLogger bskLogger = {};
@@ -118,7 +123,10 @@ private:
     std::vector<uint16_t> colSumBuf;        //!< Above-threshold count per column
     std::vector<uint32_t> rowIntensityBuf;  //!< Sum of blurred values above threshold per row
     std::vector<uint32_t> colIntensityBuf;  //!< Sum of blurred values above threshold per column
+    std::vector<FpgaBinRegion> regionBuf;   //!< Position and above-threshold count per ROI region, row-major
     std::vector<uint16_t> calibImage;       //!< Loaded calibration image (empty if not loaded)
+    uint32_t numRegionRows{0};              //!< = ceil(imageHeight / roiRegionSize)
+    uint32_t numRegionCols{0};              //!< = ceil(imageWidth / roiRegionSize)
 
     void allocateBuffers();  //!< Size all internal buffers to the current image dimensions
 
@@ -127,7 +135,7 @@ private:
     void applyCalibration();
     void applyBlurAndThreshold();
     void computeRowColSums();
-    void computeRoi(FpgaBinsMsgPayload &roi) const;
+    void computeRoi(FpgaBinsMsgPayload &roi);
     void publishOutputs(uint64_t callTime, uint64_t imageTimeTag, FpgaBinsMsgPayload &roi);
     void saveDataToDisk(uint64_t timeTagNs, FpgaBinsMsgPayload const &roi);
 
