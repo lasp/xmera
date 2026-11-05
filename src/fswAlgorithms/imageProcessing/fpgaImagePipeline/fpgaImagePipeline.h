@@ -24,7 +24,7 @@
  *    1. Pixel calibration pre-processing
  *    2. Separable box blur
  *    3. Binary threshold (1-bit packing)
- *    4. Row/column above-threshold sums
+ *    4. Row/column above-threshold counts and intensity sums
  *    5. Region-of-interest (ROI) ranking (top 8)
  */
 class FpgaImagePipeline : public SysModel {
@@ -78,6 +78,8 @@ public:
     bool getThreshBit(uint32_t idx) const;
     uint16_t getRowSum(uint32_t row) const;
     uint16_t getColSum(uint32_t col) const;
+    uint32_t getRowIntensity(uint32_t row) const;  //!< Sum of blurred values above threshold in a row
+    uint32_t getColIntensity(uint32_t col) const;  //!< Sum of blurred values above threshold in a column
 
     // --- Message interfaces ---
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< Optional: linked to camera emulator
@@ -109,12 +111,14 @@ private:
     std::string saveDir{};
 
     // --- Internal buffers (allocated in reset()) ---
-    std::vector<uint16_t> rawBuf;      //!< Calibration-preprocessed pixels (12-bit in uint16)
-    std::vector<uint16_t> blurBuf;     //!< Final blurred pixels (16-bit, divided)
-    std::vector<uint8_t> threshBuf;    //!< 1-bit packed threshold image
-    std::vector<uint16_t> rowSumBuf;   //!< Above-threshold count per row
-    std::vector<uint16_t> colSumBuf;   //!< Above-threshold count per column
-    std::vector<uint16_t> calibImage;  //!< Loaded calibration image (empty if not loaded)
+    std::vector<uint16_t> rawBuf;           //!< Calibration-preprocessed pixels (12-bit in uint16)
+    std::vector<uint16_t> blurBuf;          //!< Final blurred pixels (16-bit, divided)
+    std::vector<uint8_t> threshBuf;         //!< 1-bit packed threshold image
+    std::vector<uint16_t> rowSumBuf;        //!< Above-threshold count per row
+    std::vector<uint16_t> colSumBuf;        //!< Above-threshold count per column
+    std::vector<uint32_t> rowIntensityBuf;  //!< Sum of blurred values above threshold per row
+    std::vector<uint32_t> colIntensityBuf;  //!< Sum of blurred values above threshold per column
+    std::vector<uint16_t> calibImage;       //!< Loaded calibration image (empty if not loaded)
 
     void allocateBuffers();  //!< Size all internal buffers to the current image dimensions
 

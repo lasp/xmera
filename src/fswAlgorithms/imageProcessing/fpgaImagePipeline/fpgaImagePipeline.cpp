@@ -166,6 +166,16 @@ uint16_t FpgaImagePipeline::getColSum(uint32_t const col) const {
     return this->colSumBuf[col];
 }
 
+uint32_t FpgaImagePipeline::getRowIntensity(uint32_t const row) const {
+    if (row >= this->rowIntensityBuf.size()) { throw std::out_of_range("getRowIntensity: index out of range"); }
+    return this->rowIntensityBuf[row];
+}
+
+uint32_t FpgaImagePipeline::getColIntensity(uint32_t const col) const {
+    if (col >= this->colIntensityBuf.size()) { throw std::out_of_range("getColIntensity: index out of range"); }
+    return this->colIntensityBuf[col];
+}
+
 // ---------------------------------------------------------------------------
 // allocateBuffers()
 // ---------------------------------------------------------------------------
@@ -177,6 +187,8 @@ void FpgaImagePipeline::allocateBuffers() {
     this->threshBuf.assign((n + 7) / 8, 0);
     this->rowSumBuf.assign(this->imageHeight, 0);
     this->colSumBuf.assign(this->imageWidth, 0);
+    this->rowIntensityBuf.assign(this->imageHeight, 0);
+    this->colIntensityBuf.assign(this->imageWidth, 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -490,6 +502,8 @@ void FpgaImagePipeline::applyBlurAndThreshold() {
 void FpgaImagePipeline::computeRowColSums() {
     std::ranges::fill(this->rowSumBuf, uint16_t{0});
     std::ranges::fill(this->colSumBuf, uint16_t{0});
+    std::ranges::fill(this->rowIntensityBuf, uint32_t{0});
+    std::ranges::fill(this->colIntensityBuf, uint32_t{0});
 
     uint32_t const W = this->imageWidth;
     uint32_t const H = this->imageHeight;
@@ -501,6 +515,8 @@ void FpgaImagePipeline::computeRowColSums() {
             if ((this->threshBuf[byteIdx] >> bitIdx) & 0x01) {
                 this->rowSumBuf[r]++;
                 this->colSumBuf[c]++;
+                this->rowIntensityBuf[r] += this->blurBuf[idx];
+                this->colIntensityBuf[c] += this->blurBuf[idx];
             }
         }
     }
@@ -600,6 +616,8 @@ void FpgaImagePipeline::publishOutputs(uint64_t const callTime, uint64_t const i
     rcMsg.numCols = W;
     std::ranges::copy(this->rowSumBuf, rcMsg.rowSums);
     std::ranges::copy(this->colSumBuf, rcMsg.colSums);
+    std::ranges::copy(this->rowIntensityBuf, rcMsg.rowIntensities);
+    std::ranges::copy(this->colIntensityBuf, rcMsg.colIntensities);
     rowColSumOutMsg.write(rcMsg, moduleID, callTime);
 
     // ROI
