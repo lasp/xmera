@@ -720,15 +720,31 @@ void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, FpgaBinsMsgPayload co
     // row_sums.csv
     {
         std::ofstream f(prefix + "row_sums.csv");
-        f << "row,count\n";
-        for (uint32_t r = 0; r < H; r++) { f << r << "," << this->rowSumBuf[r] << "\n"; }
+        f << "row,count,intensity\n";
+        for (uint32_t r = 0; r < H; r++) {
+            f << r << "," << this->rowSumBuf[r] << "," << this->rowIntensityBuf[r] << "\n";
+        }
     }
 
     // col_sums.csv
     {
         std::ofstream f(prefix + "col_sums.csv");
-        f << "col,count\n";
-        for (uint32_t c = 0; c < W; c++) { f << c << "," << this->colSumBuf[c] << "\n"; }
+        f << "col,count,intensity\n";
+        for (uint32_t c = 0; c < W; c++) {
+            f << c << "," << this->colSumBuf[c] << "," << this->colIntensityBuf[c] << "\n";
+        }
+    }
+
+    // bin_grid.csv
+    {
+        std::ofstream f(prefix + "bin_grid.csv");
+        f << "region_row,region_col,x,y,count\n";
+        for (uint32_t r = 0; r < this->numRegionRows; r++) {
+            for (uint32_t c = 0; c < this->numRegionCols; c++) {
+                FpgaBinRegion const &region = this->regionBuf[static_cast<size_t>(r) * this->numRegionCols + c];
+                f << r << "," << c << "," << region.x << "," << region.y << "," << region.litPixelCount << "\n";
+            }
+        }
     }
 
     // roi.csv

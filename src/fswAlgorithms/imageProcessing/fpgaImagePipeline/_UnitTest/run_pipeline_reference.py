@@ -8,8 +8,9 @@ Outputs written to ``data/``:
     raw_calibrated.tiff     — calibration-preprocessed image (uint16)
     blurred.tiff            — box-blurred image (uint16)
     threshold.png           — binary threshold image (uint8, 0 or 255)
-    row_sums.csv            — above-threshold pixel count per row
-    col_sums.csv            — above-threshold pixel count per column
+    row_sums.csv            — above-threshold pixel count and blurred intensity sum per row
+    col_sums.csv            — above-threshold pixel count and blurred intensity sum per column
+    bin_grid.csv            — above-threshold pixel count of every ROI region
     roi.csv                 — top ROI regions (rank, row, col, count)
 
 Usage examples::
@@ -121,6 +122,19 @@ def _extract_col_sums(mod, W):
     return [mod.getColSum(c) for c in range(W)]
 
 
+def _extract_row_intensities(mod, H):
+    return [mod.getRowIntensity(r) for r in range(H)]
+
+
+def _extract_col_intensities(mod, W):
+    return [mod.getColIntensity(c) for c in range(W)]
+
+
+def _extract_bin_grid(mod):
+    return [[mod.getBinCount(r, c) for c in range(mod.getNumRegionCols())]
+            for r in range(mod.getNumRegionRows())]
+
+
 def _extract_roi(log_roi_out_msg):
     numRegions = log_roi_out_msg.numValidRegions[0]
     topBins_data = log_roi_out_msg.topBins[0]  # keys: "topBins[k].row" etc.
@@ -147,12 +161,21 @@ def _save_png(arr, path):
     cv2.imwrite(path, arr)
 
 
-def _save_csv_vector(values, header, path):
+def _save_csv_sums(counts, intensities, header, path):
     with open(path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([header, "count"])
-        for i, v in enumerate(values):
-            writer.writerow([i, v])
+        writer.writerow([header, "count", "intensity"])
+        for i, (count, intensity) in enumerate(zip(counts, intensities)):
+            writer.writerow([i, count, intensity])
+
+
+def _save_bin_grid_csv(grid, path):
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["region_row", "region_col", "count"])
+        for r, row in enumerate(grid):
+            for c, count in enumerate(row):
+                writer.writerow([r, c, count])
 
 
 def _save_roi_csv(regions, region_size, path):
@@ -324,14 +347,18 @@ def main():
     thresh = _extract_thresh(mod, W, H)
     row_sums = _extract_row_sums(mod, H)
     col_sums = _extract_col_sums(mod, W)
+    row_intensities = _extract_row_intensities(mod, H)
+    col_intensities = _extract_col_intensities(mod, W)
+    bin_grid = _extract_bin_grid(mod)
     region_size, roi_regions = _extract_roi(log_roi_out_msg)
 
     # --- Save ---
     _save_tiff(raw,    os.path.join(_DATA_DIR, "raw_calibrated.tiff"))
     _save_tiff(blur,   os.path.join(_DATA_DIR, "blurred.tiff"))
     _save_png(thresh,  os.path.join(_DATA_DIR, "threshold.png"))
-    _save_csv_vector(row_sums, "row",    os.path.join(_DATA_DIR, "row_sums.csv"))
-    _save_csv_vector(col_sums, "col",    os.path.join(_DATA_DIR, "col_sums.csv"))
+    _save_csv_sums(row_sums, row_intensities, "row", os.path.join(_DATA_DIR, "row_sums.csv"))
+    _save_csv_sums(col_sums, col_intensities, "col", os.path.join(_DATA_DIR, "col_sums.csv"))
+    _save_bin_grid_csv(bin_grid, os.path.join(_DATA_DIR, "bin_grid.csv"))
     _save_roi_csv(roi_regions, region_size, os.path.join(_DATA_DIR, "roi.csv"))
     _save_roi_overlay_tiff(blur, roi_regions, region_size, os.path.join(_DATA_DIR, "roi_overlay.tiff"))
 
@@ -347,7 +374,7 @@ def main():
               f"  count={top['count']}")
     print(f"\nProducts saved to {_DATA_DIR}/")
     for name in ("raw_calibrated.tiff", "blurred.tiff", "threshold.png",
-                 "row_sums.csv", "col_sums.csv", "roi.csv"):
+                 "row_sums.csv", "col_sums.csv", "bin_grid.csv", "roi.csv"):
         print(f"  {name}")
     print(f"  roi_overlay.tiff")
 
