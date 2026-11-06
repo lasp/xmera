@@ -194,6 +194,14 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
         throw std::invalid_argument("FpgaImagePipeline: roiRegionSize must be 64, 128, or 256");
     }
 
+    // Validate image size against the fixed message capacities
+    if (this->imageWidth == 0 || this->imageWidth > FPGA_ROW_COL_MAX_COLS) {
+        throw std::invalid_argument("FpgaImagePipeline: imageWidth must be 1 to FPGA_ROW_COL_MAX_COLS");
+    }
+    if (this->imageHeight == 0 || this->imageHeight > FPGA_ROW_COL_MAX_ROWS) {
+        throw std::invalid_argument("FpgaImagePipeline: imageHeight must be 1 to FPGA_ROW_COL_MAX_ROWS");
+    }
+
     this->allocateBuffers();
     size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
 
@@ -590,10 +598,8 @@ void FpgaImagePipeline::publishOutputs(uint64_t const callTime, uint64_t const i
     rcMsg.timeTag = imageTimeTag;
     rcMsg.numRows = H;
     rcMsg.numCols = W;
-    rcMsg.rowSumPointer = this->rowSumBuf.data();
-    rcMsg.colSumPointer = this->colSumBuf.data();
-    rcMsg.rowSumBufferLength = static_cast<int32_t>(H * sizeof(uint16_t));
-    rcMsg.colSumBufferLength = static_cast<int32_t>(W * sizeof(uint16_t));
+    std::ranges::copy(this->rowSumBuf, rcMsg.rowSums);
+    std::ranges::copy(this->colSumBuf, rcMsg.colSums);
     rowColSumOutMsg.write(rcMsg, moduleID, callTime);
 
     // ROI

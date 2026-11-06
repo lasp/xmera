@@ -36,10 +36,7 @@ void RegionsOfInterestPrune::updateState(uint64_t callTime) {
     if (!this->rowColSumInMsg.isLinked()) { return; }
 
     FpgaRowColSumMsgPayload const rcMsg = this->rowColSumInMsg();
-    auto const* rowSums = static_cast<uint16_t const*>(rcMsg.rowSumPointer);
-    auto const* colSums = static_cast<uint16_t const*>(rcMsg.colSumPointer);
-
-    RoiCandidates const candidates = this->algorithm.update(rowSums, rcMsg.numRows, colSums, rcMsg.numCols);
+    RoiCandidates const candidates = this->algorithm.update(rcMsg.rowSums, rcMsg.numRows, rcMsg.colSums, rcMsg.numCols);
 
     this->lastRegionsOutput = {};
     this->numPublished = std::min(candidates.numCandidates, static_cast<uint32_t>(MAX_NUMBER_REGIONS));
@@ -89,9 +86,8 @@ cv::Mat RegionsOfInterestPrune::buildBackground(FpgaRowColSumMsgPayload const &r
     }
 
     // Fallback: synthesize from 1-D sums.
-    auto const* rowSums = static_cast<uint16_t const*>(rcMsg.rowSumPointer);
-    auto const* colSums = static_cast<uint16_t const*>(rcMsg.colSumPointer);
-    if (!rowSums || !colSums) { return {}; }
+    uint16_t const* rowSums = rcMsg.rowSums;
+    uint16_t const* colSums = rcMsg.colSums;
 
     uint32_t maxVal = 0;
     for (int r = 0; r < H; ++r) { maxVal = std::max(maxVal, static_cast<uint32_t>(rowSums[r])); }
