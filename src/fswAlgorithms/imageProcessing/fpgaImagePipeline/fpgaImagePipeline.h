@@ -4,9 +4,9 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/FpgaBinsMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaPipelineConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaRawImageMsgPayload.h>
-#include <architecture/msgPayloadDef/FpgaBinsMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaRowColSumMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaThreshImageMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
@@ -28,7 +28,7 @@
  *    5. Region-of-interest (ROI) ranking (top 8)
  */
 class FpgaImagePipeline : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -63,13 +63,13 @@ class FpgaImagePipeline : public SysModel {
     void setCalibEnabled(bool e);
     bool getCalibEnabled() const;
 
-    void setCalibImageFile(const std::string& path);
-    void setImageFileName(const std::string& path);  //!< Load image from disk each updateState()
+    void setCalibImageFile(std::string const &path);
+    void setImageFileName(std::string const &path);  //!< Load image from disk each updateState()
 
     void setSaveImages(bool save);
     bool getSaveImages() const;
 
-    void setSaveDir(const std::string& dir);
+    void setSaveDir(std::string const &dir);
     std::string getSaveDir() const;
 
     // --- Internal buffer accessors (for testing/verification) ---
@@ -91,10 +91,10 @@ class FpgaImagePipeline : public SysModel {
 
     BSKLogger bskLogger = {};
 
-   private:
+private:
     // --- Configuration state ---
-    uint32_t imageWidth{4096};
-    uint32_t imageHeight{3000};
+    uint32_t imageWidth{4'096};
+    uint32_t imageHeight{3'000};
     uint8_t kernelSize{5};
     uint16_t threshold{0};
     uint32_t roiRegionSize{64};
@@ -117,13 +117,13 @@ class FpgaImagePipeline : public SysModel {
     std::vector<uint16_t> calibImage;  //!< Loaded calibration image (empty if not loaded)
 
     // --- Pipeline stage methods ---
-    bool loadImage(uint64_t callTime, uint64_t& timeTagOut);
+    bool loadImage(uint64_t callTime, uint64_t &timeTagOut);
     void applyCalibration();
     void applyBlurAndThreshold();
     void computeRowColSums();
-    void computeRoi(FpgaBinsMsgPayload& roi) const;
-    void publishOutputs(uint64_t callTime, uint64_t imageTimeTag, FpgaBinsMsgPayload& roi);
-    void saveDataToDisk(uint64_t timeTagNs, const FpgaBinsMsgPayload& roi);
+    void computeRoi(FpgaBinsMsgPayload &roi) const;
+    void publishOutputs(uint64_t callTime, uint64_t imageTimeTag, FpgaBinsMsgPayload &roi);
+    void saveDataToDisk(uint64_t timeTagNs, FpgaBinsMsgPayload const &roi);
 
     // --- Helpers ---
     static uint16_t clamp12(int32_t v);
