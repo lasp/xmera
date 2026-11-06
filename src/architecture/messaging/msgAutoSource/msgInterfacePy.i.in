@@ -29,6 +29,7 @@
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 ARRAYINTASLIST(FSWdeviceAvailability)
+ARRAYINTASLIST(unsigned short)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
@@ -36,6 +37,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 STRUCTASLIST(THRConfigMsgPayload)
 STRUCTASLIST(ReconfigBurnInfoMsgPayload)
 STRUCTASLIST(FpgaRoiEntry)
+STRUCTASLIST(FpgaBinRegion)
 
 %include <architecture/messaging/messaging.h>
 %include <architecture/_GeneralModuleFiles/sys_model.h>

@@ -16,4 +16,5 @@
 %include <architecture/msgPayloadDef/FpgaRowColSumMsgPayload.h>
 STRUCTASLIST(FpgaRoiEntry)
 %include <architecture/msgPayloadDef/FpgaBinsMsgPayload.h>
+%include <architecture/msgPayloadDef/FpgaBinGridMsgPayload.h>
 %include <architecture/msgPayloadDef/FpgaPipelineConfigMsgPayload.h>

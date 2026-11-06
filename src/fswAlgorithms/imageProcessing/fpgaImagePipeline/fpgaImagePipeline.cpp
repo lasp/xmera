@@ -8,6 +8,12 @@
 #include <opencv2/imgproc.hpp>
 #include <stdexcept>
 
+// The largest image with the smallest region size (64 px) must fit in the bin grid message.
+static_assert(
+    ((FPGA_ROW_COL_MAX_COLS + 63) / 64) * ((FPGA_ROW_COL_MAX_ROWS + 63) / 64) <= FPGA_BIN_GRID_MAX_REGIONS,
+    "FPGA_BIN_GRID_MAX_REGIONS is too small for the maximum image size"
+);
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -166,6 +172,60 @@ uint16_t FpgaImagePipeline::getColSum(uint32_t const col) const {
     return this->colSumBuf[col];
 }
 
+uint32_t FpgaImagePipeline::getRowIntensity(uint32_t const row) const {
+    if (row >= this->rowIntensityBuf.size()) { throw std::out_of_range("getRowIntensity: index out of range"); }
+    return this->rowIntensityBuf[row];
+}
+
+uint32_t FpgaImagePipeline::getColIntensity(uint32_t const col) const {
+    if (col >= this->colIntensityBuf.size()) { throw std::out_of_range("getColIntensity: index out of range"); }
+    return this->colIntensityBuf[col];
+}
+
+uint32_t FpgaImagePipeline::getNumRegionRows() const {
+    return this->numRegionRows;
+}
+
+uint32_t FpgaImagePipeline::getNumRegionCols() const {
+    return this->numRegionCols;
+}
+
+uint32_t FpgaImagePipeline::getBinCount(uint32_t const regionRow, uint32_t const regionCol) const {
+    if (regionRow >= this->numRegionRows || regionCol >= this->numRegionCols) {
+        throw std::out_of_range("getBinCount: index out of range");
+    }
+    return this->regionBuf[static_cast<size_t>(regionRow) * this->numRegionCols + regionCol].litPixelCount;
+}
+
+// ---------------------------------------------------------------------------
+// allocateBuffers()
+// ---------------------------------------------------------------------------
+
+void FpgaImagePipeline::allocateBuffers() {
+    size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+    this->rawBuf.assign(n, 0);
+    this->blurBuf.assign(n, 0);
+    this->threshBuf.assign((n + 7) / 8, 0);
+    this->rowSumBuf.assign(this->imageHeight, 0);
+    this->colSumBuf.assign(this->imageWidth, 0);
+    this->rowIntensityBuf.assign(this->imageHeight, 0);
+    this->colIntensityBuf.assign(this->imageWidth, 0);
+
+    this->numRegionRows = (this->imageHeight + this->roiRegionSize - 1) / this->roiRegionSize;
+    this->numRegionCols = (this->imageWidth + this->roiRegionSize - 1) / this->roiRegionSize;
+    uint32_t const rSize = this->roiRegionSize;
+    this->regionBuf.clear();
+    this->regionBuf.reserve(static_cast<size_t>(this->numRegionRows) * this->numRegionCols);
+    for (uint32_t r = 0; r < this->numRegionRows; r++) {
+        for (uint32_t c = 0; c < this->numRegionCols; c++) {
+            FpgaBinRegion region{};
+            region.x = c * rSize;
+            region.y = r * rSize;
+            this->regionBuf.push_back(region);
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // reset()
 // ---------------------------------------------------------------------------
@@ -181,14 +241,16 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
         throw std::invalid_argument("FpgaImagePipeline: roiRegionSize must be 64, 128, or 256");
     }
 
-    size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-    size_t const threshBytes = (n + 7) / 8;
+    // Validate image size against the fixed message capacities
+    if (this->imageWidth == 0 || this->imageWidth > FPGA_ROW_COL_MAX_COLS) {
+        throw std::invalid_argument("FpgaImagePipeline: imageWidth must be 1 to FPGA_ROW_COL_MAX_COLS");
+    }
+    if (this->imageHeight == 0 || this->imageHeight > FPGA_ROW_COL_MAX_ROWS) {
+        throw std::invalid_argument("FpgaImagePipeline: imageHeight must be 1 to FPGA_ROW_COL_MAX_ROWS");
+    }
 
-    this->rawBuf.assign(n, 0);
-    this->blurBuf.assign(n, 0);
-    this->threshBuf.assign(threshBytes, 0);
-    this->rowSumBuf.assign(this->imageHeight, 0);
-    this->colSumBuf.assign(this->imageWidth, 0);
+    this->allocateBuffers();
+    size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
 
     // Load calibration image if configured
     this->calibImage.clear();
@@ -277,12 +339,7 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
             );
             this->imageWidth = fileWidth;
             this->imageHeight = fileHeight;
-            size_t const newN = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-            this->rawBuf.assign(newN, 0);
-            this->blurBuf.assign(newN, 0);
-            this->threshBuf.assign((newN + 7) / 8, 0);
-            this->rowSumBuf.assign(this->imageHeight, 0);
-            this->colSumBuf.assign(this->imageWidth, 0);
+            this->allocateBuffers();
         }
 
         for (uint32_t r = 0; r < this->imageHeight; r++) {
@@ -330,12 +387,7 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
                 );
                 this->imageWidth = msgWidth;
                 this->imageHeight = msgHeight;
-                size_t const newN = static_cast<size_t>(msgWidth) * msgHeight;
-                this->rawBuf.assign(newN, 0);
-                this->blurBuf.assign(newN, 0);
-                this->threshBuf.assign((newN + 7) / 8, 0);
-                this->rowSumBuf.assign(msgHeight, 0);
-                this->colSumBuf.assign(msgWidth, 0);
+                this->allocateBuffers();
             }
             for (uint32_t r = 0; r < this->imageHeight; ++r) {
                 for (uint32_t c = 0; c < this->imageWidth; ++c) {
@@ -485,6 +537,8 @@ void FpgaImagePipeline::applyBlurAndThreshold() {
 void FpgaImagePipeline::computeRowColSums() {
     std::ranges::fill(this->rowSumBuf, uint16_t{0});
     std::ranges::fill(this->colSumBuf, uint16_t{0});
+    std::ranges::fill(this->rowIntensityBuf, uint32_t{0});
+    std::ranges::fill(this->colIntensityBuf, uint32_t{0});
 
     uint32_t const W = this->imageWidth;
     uint32_t const H = this->imageHeight;
@@ -496,6 +550,8 @@ void FpgaImagePipeline::computeRowColSums() {
             if ((this->threshBuf[byteIdx] >> bitIdx) & 0x01) {
                 this->rowSumBuf[r]++;
                 this->colSumBuf[c]++;
+                this->rowIntensityBuf[r] += this->blurBuf[idx];
+                this->colIntensityBuf[c] += this->blurBuf[idx];
             }
         }
     }
@@ -505,26 +561,26 @@ void FpgaImagePipeline::computeRowColSums() {
 // computeRoi()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload &roi) const {
+void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload &roi) {
     uint32_t const W = this->imageWidth;
     uint32_t const H = this->imageHeight;
     uint32_t const rSize = this->roiRegionSize;
+    uint32_t const numRegionCols = this->numRegionCols;
+    uint32_t const numRegions = this->numRegionRows * numRegionCols;
 
-    uint32_t const numRegionCols = W / rSize;
-    uint32_t const numRegionRows = H / rSize;
-    uint32_t const numRegions = numRegionCols * numRegionRows;
+    std::vector<FpgaBinRegion> &regions = this->regionBuf;
+    for (FpgaBinRegion &region : regions) { region.litPixelCount = 0; }
 
-    std::vector<uint32_t> regionCounts(numRegions, 0);
-
-    for (uint32_t r = 0; r < numRegionRows * rSize; r++) {
-        for (uint32_t c = 0; c < numRegionCols * rSize; c++) {
+    // Partial regions at the right and bottom edges are included.
+    for (uint32_t r = 0; r < H; r++) {
+        for (uint32_t c = 0; c < W; c++) {
             size_t const idx = static_cast<size_t>(r) * W + c;
             auto const byteIdx = static_cast<uint32_t>(idx / 8);
             auto const bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
             if (((this->threshBuf[byteIdx] >> bitIdx) & 0x01) != 0) {
                 uint32_t const regionRow = r / rSize;
                 uint32_t const regionCol = c / rSize;
-                regionCounts[regionRow * numRegionCols + regionCol]++;
+                regions[regionRow * numRegionCols + regionCol].litPixelCount++;
             }
         }
     }
@@ -533,8 +589,12 @@ void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload &roi) const {
     std::vector<uint32_t> indices(numRegions);
     std::iota(indices.begin(), indices.end(), 0);
     uint32_t const topCount = (numRegions < FPGA_ROI_TOP_COUNT) ? numRegions : FPGA_ROI_TOP_COUNT;
-    std::ranges::partial_sort(indices, indices.begin() + topCount, [&regionCounts](uint32_t a, uint32_t b) {
-        return regionCounts[a] > regionCounts[b];
+    // Regions with equal counts rank by row-major index, lowest index first.
+    std::ranges::partial_sort(indices, indices.begin() + topCount, [&regions](uint32_t a, uint32_t b) {
+        uint32_t const countA = regions[a].litPixelCount;
+        uint32_t const countB = regions[b].litPixelCount;
+        if (countA != countB) { return countA > countB; }
+        return a < b;
     });
 
     roi.regionSize = rSize;
@@ -544,7 +604,7 @@ void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload &roi) const {
             uint32_t const idx = indices[k];
             roi.topBins[k].row = static_cast<uint16_t>(idx / numRegionCols);
             roi.topBins[k].col = static_cast<uint16_t>(idx % numRegionCols);
-            roi.topBins[k].count = regionCounts[idx];
+            roi.topBins[k].count = regions[idx].litPixelCount;
         } else {
             roi.topBins[k] = FpgaRoiEntry{};
         }
@@ -593,15 +653,25 @@ void FpgaImagePipeline::publishOutputs(uint64_t const callTime, uint64_t const i
     rcMsg.timeTag = imageTimeTag;
     rcMsg.numRows = H;
     rcMsg.numCols = W;
-    rcMsg.rowSumPointer = this->rowSumBuf.data();
-    rcMsg.colSumPointer = this->colSumBuf.data();
-    rcMsg.rowSumBufferLength = static_cast<int32_t>(H * sizeof(uint16_t));
-    rcMsg.colSumBufferLength = static_cast<int32_t>(W * sizeof(uint16_t));
+    std::ranges::copy(this->rowSumBuf, rcMsg.rowSums);
+    std::ranges::copy(this->colSumBuf, rcMsg.colSums);
+    std::ranges::copy(this->rowIntensityBuf, rcMsg.rowIntensities);
+    std::ranges::copy(this->colIntensityBuf, rcMsg.colIntensities);
     rowColSumOutMsg.write(rcMsg, moduleID, callTime);
 
     // ROI
     roi.timeTag = imageTimeTag;
     roiOutMsg.write(roi, moduleID, callTime);
+
+    // ROI bin grid
+    FpgaBinGridMsgPayload gridMsg{};
+    gridMsg.timeTag = imageTimeTag;
+    gridMsg.regionSize = this->roiRegionSize;
+    gridMsg.numRegionRows = this->numRegionRows;
+    gridMsg.numRegionCols = this->numRegionCols;
+    gridMsg.numRegions = static_cast<uint32_t>(this->regionBuf.size());
+    std::ranges::copy(this->regionBuf, gridMsg.regions);
+    binGridOutMsg.write(gridMsg, moduleID, callTime);
 
     // Config snapshot
     FpgaPipelineConfigMsgPayload cfgMsg{};
@@ -654,15 +724,31 @@ void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, FpgaBinsMsgPayload co
     // row_sums.csv
     {
         std::ofstream f(prefix + "row_sums.csv");
-        f << "row,count\n";
-        for (uint32_t r = 0; r < H; r++) { f << r << "," << this->rowSumBuf[r] << "\n"; }
+        f << "row,count,intensity\n";
+        for (uint32_t r = 0; r < H; r++) {
+            f << r << "," << this->rowSumBuf[r] << "," << this->rowIntensityBuf[r] << "\n";
+        }
     }
 
     // col_sums.csv
     {
         std::ofstream f(prefix + "col_sums.csv");
-        f << "col,count\n";
-        for (uint32_t c = 0; c < W; c++) { f << c << "," << this->colSumBuf[c] << "\n"; }
+        f << "col,count,intensity\n";
+        for (uint32_t c = 0; c < W; c++) {
+            f << c << "," << this->colSumBuf[c] << "," << this->colIntensityBuf[c] << "\n";
+        }
+    }
+
+    // bin_grid.csv
+    {
+        std::ofstream f(prefix + "bin_grid.csv");
+        f << "region_row,region_col,x,y,count\n";
+        for (uint32_t r = 0; r < this->numRegionRows; r++) {
+            for (uint32_t c = 0; c < this->numRegionCols; c++) {
+                FpgaBinRegion const &region = this->regionBuf[static_cast<size_t>(r) * this->numRegionCols + c];
+                f << r << "," << c << "," << region.x << "," << region.y << "," << region.litPixelCount << "\n";
+            }
+        }
     }
 
     // roi.csv

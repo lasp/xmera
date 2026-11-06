@@ -20,3 +20,5 @@ target_link_libraries("${module}" PRIVATE
 target_link_options("${module}" PRIVATE
   "$<$<PLATFORM_ID:Darwin>:-Wl,-no_warn_duplicate_libraries>"
 )
+
+add_subdirectory(_UnitTest)
