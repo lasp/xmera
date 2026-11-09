@@ -7,18 +7,17 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
-#include <vector>
-
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <Eigen/Dense>
+#include <vector>
 
 /*! @brief RW voltage interface class */
 class MotorVoltageInterface : public SysModel {
-   public:
+public:
     MotorVoltageInterface();
     ~MotorVoltageInterface();
 
@@ -34,7 +33,7 @@ class MotorVoltageInterface : public SysModel {
     void setBiases(Eigen::VectorXd biases);  //!< --     Takes in an array of biases to set for rws and sets them,
                                              //!< leaving blanks up to MAX_EFF_COUNT
 
-   public:
+public:
     ReadFunctor<RwMotorVoltageMsgPayload>
         motorVoltageInMsg;                               //!< --     Message that contains motor voltage input states
     Message<RwMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< --     Output Message for motor torques
@@ -43,7 +42,7 @@ class MotorVoltageInterface : public SysModel {
     Eigen::VectorXd bias;                                //!< Nm     A bias to add to the torque output
     BSKLogger bskLogger;                                 //!< -- BSK Logging
 
-   private:
+private:
     RwMotorTorqueMsgPayload outputTorqueBuffer;   //!< [Nm] copy of module output buffer
     uint64_t prevTime;                            //!< -- Previous simulation time observed
     RwMotorVoltageMsgPayload inputVoltageBuffer;  //!< [V] One-time allocation for time savings

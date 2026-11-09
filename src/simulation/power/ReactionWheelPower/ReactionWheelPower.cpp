@@ -3,6 +3,7 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "ReactionWheelPower.h"
+
 #include <math.h>
 
 /*! Constructor
@@ -14,16 +15,20 @@ ReactionWheelPower::ReactionWheelPower() {
     return;
 }
 
-ReactionWheelPower::~ReactionWheelPower() { return; }
+ReactionWheelPower::~ReactionWheelPower() {
+    return;
+}
 
 /*! This method is used to reset the module. Here variables are checked for correct values.
  @return void
  */
 void ReactionWheelPower::customreset(uint64_t currentSimNanos) {
     if (this->elecToMechEfficiency <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "PowerRW: elecToMechEfficiency is %f, must a strictly positive value.",
-                         this->elecToMechEfficiency);
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "PowerRW: elecToMechEfficiency is %f, must a strictly positive value.",
+            this->elecToMechEfficiency
+        );
     }
     return;
 }
@@ -45,9 +50,7 @@ bool ReactionWheelPower::customReadMessages() {
         rwRead = rwRead && tmpStatusRead;
     }
 
-    if (!rwRead) {
-        bskLogger.bskLog(BSK_WARNING, "PowerRW unable to read RW status message.");
-    }
+    if (!rwRead) { bskLogger.bskLog(BSK_WARNING, "PowerRW unable to read RW status message."); }
 
     return (rwRead);
 }

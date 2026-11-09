@@ -6,19 +6,18 @@
 #define ORB_ELEM_CONVERT_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ClassicElementsMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/orbitalMotion.h>
 
+#include <vector>
+
 /*! @brief orbit element converter module class */
 class OrbElemConvert : public SysModel {
-   public:
+public:
     OrbElemConvert();
     ~OrbElemConvert();
 
@@ -29,7 +28,7 @@ class OrbElemConvert : public SysModel {
     void Cartesian2Elements();
     void ReadInputs();
 
-   public:
+public:
     double r_N[3];                                            //!< m  Current position vector (inertial)
     double v_N[3];                                            //!< m/s Current velocity vector (inertial)
     double mu;                                                //!< -- Current grav param (inertial)
@@ -43,7 +42,7 @@ class OrbElemConvert : public SysModel {
     Message<SpicePlanetStateMsgPayload> spiceStateOutMsg;     //!< -- spice state input message
     Message<ClassicElementsMsgPayload> elemOutMsg;            //!< -- orbit element output message
 
-   private:
+private:
     bool inputsGood;      //!< -- flag indicating that inputs are good
     BSKLogger bskLogger;  //!< -- BSK Logging
 };

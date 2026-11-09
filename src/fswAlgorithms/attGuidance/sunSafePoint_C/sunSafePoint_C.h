@@ -9,13 +9,13 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the sun-safe attitude guidance routine.*/
 class SunSafePoint_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     Message<AttGuidMsgPayload> attGuidanceOutMsg;    /*!< The name of the output message*/

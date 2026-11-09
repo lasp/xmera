@@ -2,10 +2,11 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <cstdint>
-
 #include "simpleStorageUnit.h"
+
 #include <architecture/utilities/bskLogging.h>
+
+#include <cstdint>
 
 /*! The constructor creates a SimpleStorageUnit instance with zero stored data
  @return void
@@ -19,7 +20,9 @@ SimpleStorageUnit::SimpleStorageUnit() {
 /*! Destructor
  @return void
  */
-SimpleStorageUnit::~SimpleStorageUnit() { return; }
+SimpleStorageUnit::~SimpleStorageUnit() {
+    return;
+}
 
 /*! Custom reset function
  @param currentClock
@@ -44,8 +47,8 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime) {
     for (it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
         if (storedData.size() == 0) {
             this->storedData.push_back({{'S', 'T', 'O', 'R', 'E', 'D', ' ', 'D', 'A', 'T', 'A'}, 0});
-        } else if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) < this->storageCapacity) ||
-                   (it->baudRate <= 0)) {
+        } else if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) < this->storageCapacity)
+                   || (it->baudRate <= 0)) {
             //! - Only perform the operation if it will not result in less than 0 data
             if ((this->storedData[0].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
                 this->storedData[0].dataInstanceSum += round(it->baudRate * this->currentTimestep);

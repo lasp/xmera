@@ -5,7 +5,6 @@
 #define THR_FIRING_REMAINDER_C_
 
 #include "thrFiringRemainderAlgorithm_C.h"
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
@@ -17,7 +16,7 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 class ThrFiringRemainder_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -36,7 +35,7 @@ class ThrFiringRemainder_C : public SysModel {
     ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;     //!< The name of the thruster cluster Input message
     BSKLogger bskLogger = {};                               //!< BSK Logging
 
-   private:
+private:
     ThrFiringRemainderInternalState algorithmState{};
 };
 

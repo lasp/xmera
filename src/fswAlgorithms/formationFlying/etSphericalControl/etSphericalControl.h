@@ -5,6 +5,7 @@
 #ifndef _ET_SPHERICAL_CONTROL_H_
 #define _ET_SPHERICAL_CONTROL_H_
 
+#include "architecture/utilities/bskLogging.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
@@ -12,23 +13,24 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <stdint.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class EtSphericalControl : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    void calcRelativeMotionControl(NavTransMsgPayload servicerTransInMsgBuffer,
-                                   NavTransMsgPayload debrisTransInMsgBuffer,
-                                   NavAttMsgPayload servicerAttInMsgBuffer,
-                                   VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
-                                   VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
-                                   CmdForceInertialMsgPayload eForceInMsgBuffer,
-                                   CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
-                                   CmdForceBodyMsgPayload* forceBodyOutMsgBuffer);
+    void calcRelativeMotionControl(
+        NavTransMsgPayload servicerTransInMsgBuffer,
+        NavTransMsgPayload debrisTransInMsgBuffer,
+        NavAttMsgPayload servicerAttInMsgBuffer,
+        VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
+        VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
+        CmdForceInertialMsgPayload eForceInMsgBuffer,
+        CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
+        CmdForceBodyMsgPayload* forceBodyOutMsgBuffer
+    );
     // declare module IO interfaces
     ReadFunctor<NavTransMsgPayload> servicerTransInMsg;  //!< servicer orbit input message
     ReadFunctor<NavTransMsgPayload> debrisTransInMsg;    //!< debris orbit input message

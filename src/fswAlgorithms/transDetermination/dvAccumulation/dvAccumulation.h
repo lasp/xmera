@@ -14,7 +14,7 @@
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 class DVAccumulation : public SysModel {
-   public:
+public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 

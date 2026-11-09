@@ -11,11 +11,12 @@
 #include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class MtbFeedforward : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

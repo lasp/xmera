@@ -12,12 +12,13 @@
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief This module maps thruster forces for arbitrary forces and torques
  */
 class ForceTorqueThrForceMapping_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     /* declare module public variables */

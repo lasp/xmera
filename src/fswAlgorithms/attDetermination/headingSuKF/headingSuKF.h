@@ -12,13 +12,13 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the SuKF heading module data */
 class HeadingSuKF : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

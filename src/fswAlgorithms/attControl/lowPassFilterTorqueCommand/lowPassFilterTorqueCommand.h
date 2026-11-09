@@ -8,13 +8,14 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+
 #include <stdint.h>
 
 #define NUM_LPF 2 /*            number of states to track, including current state */
 
 /*! @brief module configuration message. */
 class LowPassFilterTorqueCommand : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

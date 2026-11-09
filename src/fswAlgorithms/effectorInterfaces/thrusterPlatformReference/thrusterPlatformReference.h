@@ -14,13 +14,14 @@
 #include <architecture/msgPayloadDef/THRConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 enum momentumDumping { Yes = 0, No = 1 };
 
 /*! @brief Top level structure for the sub-module routines. */
 class ThrusterPlatformReference : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

@@ -8,16 +8,16 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
-#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
-
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 #include <stdlib.h>
 
 /*! @brief The configuration structure for the rwNullSpace module.  */
 class RwNullSpace_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     ReadFunctor<RwMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< [-] The name of the Input message

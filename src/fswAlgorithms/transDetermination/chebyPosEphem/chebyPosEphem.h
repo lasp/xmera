@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 
 #define MAX_CHEB_COEFF 40
@@ -31,7 +30,7 @@ typedef struct {
            fit system. e
 */
 class ChebyPosEphem : public SysModel {
-   public:
+public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 

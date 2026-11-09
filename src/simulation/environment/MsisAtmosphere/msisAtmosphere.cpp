@@ -3,9 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "msisAtmosphere.h"
+
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/geodeticConversion.h>
-#include <architecture/_GeneralModuleFiles/sys_model.h>
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -19,18 +20,14 @@ MsisAtmosphere::MsisAtmosphere() {
     this->f107A = 0.0;
     this->f107 = 0.0;
     this->ap = 0.0;
-    for (int apInd = 0; apInd < 7; ++apInd) {
-        this->aph.a[apInd] = 0.0;
-    }
+    for (int apInd = 0; apInd < 7; ++apInd) { this->aph.a[apInd] = 0.0; }
     this->msisInput.ap_a = &this->aph;
     this->updateInputParams();
 
     this->msisFlags.switches[0] =
         1;  //! NRLMSISE-00 should output in kg/m^3 for consistency with other atmospheric modules.
     //! Set default settings for NRLMSISE-00; we're using all the settings by default
-    for (int switchInd = 1; switchInd < 24; ++switchInd) {
-        this->msisFlags.switches[switchInd] = 1;
-    }
+    for (int switchInd = 1; switchInd < 24; ++switchInd) { this->msisFlags.switches[switchInd] = 1; }
 
     // Set other required interface values
     for (int c = 0; c < 23; c++) {
@@ -71,7 +68,9 @@ MsisAtmosphere::MsisAtmosphere() {
 /*! Destructor.
  @return void
  */
-MsisAtmosphere::~MsisAtmosphere() { return; }
+MsisAtmosphere::~MsisAtmosphere() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @return void
@@ -130,9 +129,7 @@ bool MsisAtmosphere::customReadMessages() {
         }
     }
 
-    if (failCount > 0) {
-        swRead = false;
-    }
+    if (failCount > 0) { swRead = false; }
     return (swRead);
 }
 
@@ -160,16 +157,12 @@ void MsisAtmosphere::updateSwIndices() {
 
     uint64_t mth;
     double tmp_avg = 0.0;
-    for (mth = 5; mth < 13; mth++) {
-        tmp_avg = tmp_avg + this->swDataList[mth].dataValue;
-    }
+    for (mth = 5; mth < 13; mth++) { tmp_avg = tmp_avg + this->swDataList[mth].dataValue; }
     this->aph.a[5] = tmp_avg / 8.0;
 
     uint64_t nth;
     tmp_avg = 0.0;
-    for (nth = 13; nth < 21; nth++) {
-        tmp_avg = tmp_avg + this->swDataList[nth].dataValue;
-    }
+    for (nth = 13; nth < 21; nth++) { tmp_avg = tmp_avg + this->swDataList[nth].dataValue; }
     this->aph.a[6] = tmp_avg / 8.0;
 
     this->f107A = this->swDataList[21].dataValue;
@@ -189,11 +182,11 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double cu
     //! Update time.
     struct tm localDateTime;  // []       date/time structure
     localDateTime = this->epochDateTime;
-    localDateTime.tm_sec += (int)currentTime;  // sets the current seconds
+    localDateTime.tm_sec += (int) currentTime;  // sets the current seconds
     mktime(&localDateTime);
-    this->msisInput.year = localDateTime.tm_year + 1900;
+    this->msisInput.year = localDateTime.tm_year + 1'900;
     this->msisInput.doy = localDateTime.tm_yday + 1;  // Jan 1 is the 1st day of year, not 0th
-    double fracSecond = currentTime - (int)currentTime;
+    double fracSecond = currentTime - (int) currentTime;
     this->msisInput.sec =
         localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
 

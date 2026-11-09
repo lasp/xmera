@@ -9,11 +9,12 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
+
 #include <stdint.h>
 
 /*! module configuration message definition */
 class PrvSteering : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

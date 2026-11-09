@@ -11,11 +11,12 @@
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/THRConfigMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class ThrusterPlatformState : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

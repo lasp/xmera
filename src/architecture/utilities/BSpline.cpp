@@ -3,12 +3,17 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "BSpline.h"
+
 #include <architecture/utilities/eigenSupport.h>
+
 #include <math.h>
+
 #include <iostream>
 
 /*! This constructor initializes an Input structure for BSpline interpolation */
-InputDataSet::InputDataSet() { return; }
+InputDataSet::InputDataSet() {
+    return;
+}
 
 /*! The constructor requires 3 N-dimensional vectors containing the coordinates of the waypoints */
 InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::VectorXd X3) {
@@ -23,9 +28,9 @@ InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::Vector
     this->AvgXDot_flag = false;
     this->W_flag = false;
 
-    uint64_t N1 = (uint64_t)X1.size();
-    uint64_t N2 = (uint64_t)X2.size();
-    uint64_t N3 = (uint64_t)X3.size();
+    uint64_t N1 = (uint64_t) X1.size();
+    uint64_t N2 = (uint64_t) X2.size();
+    uint64_t N3 = (uint64_t) X3.size();
 
     if ((N1 != N2) || (N1 != N3) || (N2 != N3)) {
         std::cout
@@ -36,7 +41,9 @@ InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::Vector
 }
 
 /*! Generic destructor */
-InputDataSet::~InputDataSet() { return; }
+InputDataSet::~InputDataSet() {
+    return;
+}
 
 /*! Set the first derivative of the starting point (optional) */
 void InputDataSet::setXDot_0(Eigen::Vector3d XDot_0) {
@@ -90,20 +97,24 @@ void InputDataSet::setW(Eigen::VectorXd W) {
 }
 
 /*! This constructor initializes an Output structure for BSpline interpolation */
-OutputDataSet::OutputDataSet() { return; }
+OutputDataSet::OutputDataSet() {
+    return;
+}
 
 /*! Generic destructor */
-OutputDataSet::~OutputDataSet() { return; }
+OutputDataSet::~OutputDataSet() {
+    return;
+}
 
 /*! This method returns x, xDot and xDDot at the desired input time T */
 void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[3]) {
-    int N = (int)this->T.size() - 1;
+    int N = (int) this->T.size() - 1;
     double Ttot = this->T[N];
 
     // if T < Ttot calculalte the values
     if (T <= Ttot) {
         double t = T / Ttot;
-        int Q = (int)this->C1.size();
+        int Q = (int) this->C1.size();
         Eigen::VectorXd NN(Q), NN1(Q), NN2(Q);
         basisFunction(t, this->U, Q, this->P, &NN[0], &NN1[0], &NN2[0]);
         x[0] = NN.dot(this->C1);
@@ -133,100 +144,66 @@ void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[
 /*! This method returns single coordinates of x, xDot and xDDot at the desired input time T. */
 /*! It is designed to be accessible from Python */
 double OutputDataSet::getStates(double T, int derivative, int index) {
-    int N = (int)this->T.size() - 1;
+    int N = (int) this->T.size() - 1;
     double Ttot = this->T[N];
 
     // if T < Ttot calculalte the values
     if (T <= Ttot) {
         double t = T / Ttot;
-        int Q = (int)this->C1.size();
+        int Q = (int) this->C1.size();
         Eigen::VectorXd NN(Q), NN1(Q), NN2(Q);
         basisFunction(t, this->U, Q, this->P, &NN[0], &NN1[0], &NN2[0]);
 
         switch (derivative) {
-            case 0:
-                switch (index) {
-                    case 0:
-                        return NN.dot(this->C1);
-                    case 1:
-                        return NN.dot(this->C2);
-                    case 2:
-                        return NN.dot(this->C3);
-                    default:
-                        std::cout << "Error in Output.getStates: invalid index \n";
-                        return 1000;
-                }
-            case 1:
-                switch (index) {
-                    case 0:
-                        return NN1.dot(this->C1) / Ttot;
-                    case 1:
-                        return NN1.dot(this->C2) / Ttot;
-                    case 2:
-                        return NN1.dot(this->C3) / Ttot;
-                    default:
-                        std::cout << "Error in Output.getStates: invalid index \n";
-                        return 1000;
-                }
-            case 2:
-                switch (index) {
-                    case 0:
-                        return NN2.dot(this->C1) / pow(Ttot, 2);
-                    case 1:
-                        return NN2.dot(this->C2) / pow(Ttot, 2);
-                    case 2:
-                        return NN2.dot(this->C3) / pow(Ttot, 2);
-                    default:
-                        std::cout << "Error in Output.getStates: invalid index \n";
-                        return 1000;
-                }
-            default:
-                std::cout << "Error in Output.getStates: invalid derivative \n";
-                return 1000;
+        case 0:
+            switch (index) {
+            case 0: return NN.dot(this->C1);
+            case 1: return NN.dot(this->C2);
+            case 2: return NN.dot(this->C3);
+            default: std::cout << "Error in Output.getStates: invalid index \n"; return 1'000;
+            }
+        case 1:
+            switch (index) {
+            case 0: return NN1.dot(this->C1) / Ttot;
+            case 1: return NN1.dot(this->C2) / Ttot;
+            case 2: return NN1.dot(this->C3) / Ttot;
+            default: std::cout << "Error in Output.getStates: invalid index \n"; return 1'000;
+            }
+        case 2:
+            switch (index) {
+            case 0: return NN2.dot(this->C1) / pow(Ttot, 2);
+            case 1: return NN2.dot(this->C2) / pow(Ttot, 2);
+            case 2: return NN2.dot(this->C3) / pow(Ttot, 2);
+            default: std::cout << "Error in Output.getStates: invalid index \n"; return 1'000;
+            }
+        default: std::cout << "Error in Output.getStates: invalid derivative \n"; return 1'000;
         }
     }
     // if t > Ttot return final value with zero derivatives
     else {
         switch (derivative) {
-            case 0:
-                switch (index) {
-                    case 0:
-                        return this->X1[N];
-                    case 1:
-                        return this->X2[N];
-                    case 2:
-                        return this->X3[N];
-                    default:
-                        std::cout << "Error in Output.getStates: invalid index \n";
-                        return 1000;
-                }
-            case 1:
-                switch (index) {
-                    case 0:
-                        return 0;
-                    case 1:
-                        return 0;
-                    case 2:
-                        return 0;
-                    default:
-                        std::cout << "Error in Output.getStates: invalid index \n";
-                        return 1000;
-                }
-            case 2:
-                switch (index) {
-                    case 0:
-                        return 0;
-                    case 1:
-                        return 0;
-                    case 2:
-                        return 0;
-                    default:
-                        std::cout << "Error in Output.getStates: invalid index \n";
-                        return 1000;
-                }
-            default:
-                std::cout << "Error in Output.getStates: invalid derivative \n";
-                return 1000;
+        case 0:
+            switch (index) {
+            case 0: return this->X1[N];
+            case 1: return this->X2[N];
+            case 2: return this->X3[N];
+            default: std::cout << "Error in Output.getStates: invalid index \n"; return 1'000;
+            }
+        case 1:
+            switch (index) {
+            case 0: return 0;
+            case 1: return 0;
+            case 2: return 0;
+            default: std::cout << "Error in Output.getStates: invalid index \n"; return 1'000;
+            }
+        case 2:
+            switch (index) {
+            case 0: return 0;
+            case 1: return 0;
+            case 2: return 0;
+            default: std::cout << "Error in Output.getStates: invalid index \n"; return 1'000;
+            }
+        default: std::cout << "Error in Output.getStates: invalid derivative \n"; return 1'000;
         }
     }
 }
@@ -237,7 +214,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
     Output->P = P;
 
     // N = number of waypoints - 1
-    int N = (int)Input.X1.size() - 1;
+    int N = (int) Input.X1.size() - 1;
 
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on
     // average
@@ -248,40 +225,29 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
     } else {
         T[0] = 0;
         for (int n = 1; n < N + 1; n++) {
-            T[n] = T[n - 1] + pow((pow(Input.X1[n] - Input.X1[n - 1], 2) + pow(Input.X2[n] - Input.X2[n - 1], 2) +
-                                   pow(Input.X3[n] - Input.X3[n - 1], 2)),
-                                  0.5);
+            T[n] = T[n - 1]
+                 + pow((pow(Input.X1[n] - Input.X1[n - 1], 2) + pow(Input.X2[n] - Input.X2[n - 1], 2)
+                        + pow(Input.X3[n] - Input.X3[n - 1], 2)),
+                       0.5);
             S += T[n] - T[n - 1];
         }
     }
     if (Input.AvgXDot_flag == true) {
-        for (int n = 0; n < N + 1; n++) {
-            T[n] = T[n] / T[N] * S / Input.AvgXDot;
-        }
+        for (int n = 0; n < N + 1; n++) { T[n] = T[n] / T[N] * S / Input.AvgXDot; }
     }
 
     double Ttot = T[N];
 
     // build uk vector: normalized waypoint time tags
     Eigen::VectorXd uk(N + 1);
-    for (int n = 0; n < N + 1; n++) {
-        uk[n] = T[n] / Ttot;
-    }
+    for (int n = 0; n < N + 1; n++) { uk[n] = T[n] / Ttot; }
 
     // K = number of endpoint derivatives
     int K = 0;
-    if (Input.XDot_0_flag == true) {
-        K += 1;
-    }
-    if (Input.XDot_N_flag == true) {
-        K += 1;
-    }
-    if (Input.XDDot_0_flag == true) {
-        K += 1;
-    }
-    if (Input.XDDot_N_flag == true) {
-        K += 1;
-    }
+    if (Input.XDot_0_flag == true) { K += 1; }
+    if (Input.XDot_N_flag == true) { K += 1; }
+    if (Input.XDDot_0_flag == true) { K += 1; }
+    if (Input.XDDot_N_flag == true) { K += 1; }
 
     // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
     if (P > N + K) {
@@ -294,9 +260,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
     // build knot vector U of size M + 1
     Eigen::VectorXd U(M + 1);
     double u;
-    for (int p = 0; p < P + 1; p++) {
-        U[p] = 0;
-    }
+    for (int p = 0; p < P + 1; p++) { U[p] = 0; }
     for (int j = 0; j < M - 2 * P - 1; j++) {
         u = 0.0;
         for (int i = j; i < j + P; i++) {
@@ -308,9 +272,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
             U[P + j + 1] = u;
         }
     }
-    for (int p = 0; p < P + 1; p++) {
-        U[M - P + p] = 1;
-    }
+    for (int p = 0; p < P + 1; p++) { U[M - P + p] = 1; }
 
     // build stiffness matrix A of size (N+K+1)x(N+K+1)
     Eigen::MatrixXd A(N + K + 1, N + K + 1);
@@ -318,9 +280,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
     Eigen::VectorXd Q1(N + K + 1), Q2(N + K + 1), Q3(N + K + 1);
     // populate A with zeros
     for (int n = 0; n < N + K + 1; n++) {
-        for (int m = 0; m < N + K + 1; m++) {
-            A(n, m) = 0;
-        }
+        for (int m = 0; m < N + K + 1; m++) { A(n, m) = 0; }
     }
     int n = -1;
     // constrain first derivative at starting point
@@ -350,9 +310,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet* Output) {
     for (n = n0; n < N + n0 + 1; n++) {
         m += 1;
         basisFunction(uk[m], U, N + K + 1, P, &NN[0], &NN1[0], &NN2[0]);
-        for (int b = 0; b < N + K + 1; b++) {
-            A(n, b) = NN[b];
-        }
+        for (int b = 0; b < N + K + 1; b++) { A(n, b) = NN[b]; }
         Q1[n] = Input.X1[m];
         Q2[n] = Input.X2[m];
         Q3[n] = Input.X3[m];
@@ -426,7 +384,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet* Outpu
     Output->P = P;
 
     // N = number of waypoints - 1
-    int N = (int)Input.X1.size() - 1;
+    int N = (int) Input.X1.size() - 1;
 
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on
     // average
@@ -437,25 +395,22 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet* Outpu
     } else {
         T[0] = 0;
         for (int n = 1; n < N + 1; n++) {
-            T[n] = T[n - 1] + pow((pow(Input.X1[n] - Input.X1[n - 1], 2) + pow(Input.X2[n] - Input.X2[n - 1], 2) +
-                                   pow(Input.X3[n] - Input.X3[n - 1], 2)),
-                                  0.5);
+            T[n] = T[n - 1]
+                 + pow((pow(Input.X1[n] - Input.X1[n - 1], 2) + pow(Input.X2[n] - Input.X2[n - 1], 2)
+                        + pow(Input.X3[n] - Input.X3[n - 1], 2)),
+                       0.5);
             S += T[n] - T[n - 1];
         }
     }
     if (Input.AvgXDot_flag == true) {
-        for (int n = 0; n < N + 1; n++) {
-            T[n] = T[n] / T[N] * S / Input.AvgXDot;
-        }
+        for (int n = 0; n < N + 1; n++) { T[n] = T[n] / T[N] * S / Input.AvgXDot; }
     }
 
     double Ttot = T[N];
 
     // build uk vector: normalized waypoint time tags
     Eigen::VectorXd uk(N + 1);
-    for (int n = 0; n < N + 1; n++) {
-        uk[n] = T[n] / Ttot;
-    }
+    for (int n = 0; n < N + 1; n++) { uk[n] = T[n] / Ttot; }
 
     // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
     if (P > Q) {
@@ -467,33 +422,21 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet* Outpu
     Eigen::VectorXd U(Q + P + 2);
     double d, alpha;
     int i;
-    d = ((double)(N + 1)) / ((double)abs(Q - P + 1));
-    for (int p = 0; p < P + 1; p++) {
-        U[p] = 0;
-    }
+    d = ((double) (N + 1)) / ((double) abs(Q - P + 1));
+    for (int p = 0; p < P + 1; p++) { U[p] = 0; }
     for (int j = 1; j < Q - P + 1; j++) {
         i = int(j * d);
         alpha = j * d - i;
         U[P + j] = (1 - alpha) * uk[i - 1] + alpha * uk[i];
     }
-    for (int p = 0; p < P + 1; p++) {
-        U[Q + p + 1] = 1;
-    }
+    for (int p = 0; p < P + 1; p++) { U[Q + p + 1] = 1; }
 
     // K = number of endpoint derivatives
     int K = 0;
-    if (Input.XDot_0_flag == true) {
-        K += 1;
-    }
-    if (Input.XDot_N_flag == true) {
-        K += 1;
-    }
-    if (Input.XDDot_0_flag == true) {
-        K += 1;
-    }
-    if (Input.XDDot_N_flag == true) {
-        K += 1;
-    }
+    if (Input.XDot_0_flag == true) { K += 1; }
+    if (Input.XDot_N_flag == true) { K += 1; }
+    if (Input.XDDot_0_flag == true) { K += 1; }
+    if (Input.XDDot_N_flag == true) { K += 1; }
 
     // build stiffness matrix MD of size (K+2)x(K+2)
     Eigen::MatrixXd MD(K + 2, K + 2);
@@ -501,9 +444,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet* Outpu
     Eigen::VectorXd T1(K + 2), T2(K + 2), T3(K + 2);
     // populate MD with zeros
     for (int n = 0; n < K + 2; n++) {
-        for (int m = 0; m < K + 2; m++) {
-            MD(n, m) = 0;
-        }
+        for (int m = 0; m < K + 2; m++) { MD(n, m) = 0; }
     }
     Eigen::VectorXd NN(Q + 1), NN1(Q + 1), NN2(Q + 1);
     basisFunction(uk[0], U, Q + 1, P, &NN[0], &NN1[0], &NN2[0]);
@@ -597,15 +538,9 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet* Outpu
     for (int n = 0; n < N - 1; n++) {
         basisFunction(uk[1 + n], U, Q + 1, P, &NN[0], &NN1[0], &NN2[0]);
         int k = 1;
-        if (Input.XDot_0_flag == true) {
-            k += 1;
-        }
-        if (Input.XDDot_0_flag == true) {
-            k += 1;
-        }
-        for (int b = 0; b < Q - K - 1; b++) {
-            ND(n, b) = NN[k + b];
-        }
+        if (Input.XDot_0_flag == true) { k += 1; }
+        if (Input.XDDot_0_flag == true) { k += 1; }
+        for (int b = 0; b < Q - K - 1; b++) { ND(n, b) = NN[k + b]; }
     }
 
     // populate weight matrix W
@@ -730,13 +665,9 @@ void basisFunction(double t, Eigen::VectorXd U, int I, int P, double* NN, double
     }
     /* zero order */
     for (int i = 0; i < I; i++) {
-        if ((t >= U(i)) && (t < U(i + 1))) {
-            N(i, 0) = 1;
-        }
+        if ((t >= U(i)) && (t < U(i + 1))) { N(i, 0) = 1; }
     }
-    if (abs(t - 1.0) < 1e-5) {
-        N(I - 1, 0) = 1;
-    }
+    if (abs(t - 1.0) < 1e-5) { N(I - 1, 0) = 1; }
     /* higher order - De Boor formula */
     for (int p = 1; p < P + 1; p++) {
         for (int i = 0; i < I; i++) {

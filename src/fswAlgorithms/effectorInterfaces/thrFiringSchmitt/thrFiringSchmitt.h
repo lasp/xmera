@@ -5,8 +5,7 @@
 #ifndef XMERA_THRFIRINGSCHMITT_H
 #define XMERA_THRFIRINGSCHMITT_H
 
-#include <cstdint>
-
+#include "thrFiringSchmittAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
@@ -14,10 +13,11 @@
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include "thrFiringSchmittAlgorithm.h"
+
+#include <cstdint>
 
 class ThrFiringSchmitt : public SysModel {
-   public:
+public:
     ThrFiringSchmitt();
 
     void reset(uint64_t callTime) override;
@@ -38,7 +38,7 @@ class ThrFiringSchmitt : public SysModel {
 
     BSKLogger bskLogger = {};  //!< BSK Logging
 
-   private:
+private:
     ThrFiringSchmittAlgorithm algorithm;
 };
 

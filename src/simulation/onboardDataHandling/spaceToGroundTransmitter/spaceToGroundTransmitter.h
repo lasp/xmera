@@ -6,23 +6,23 @@
 #define XMERA_SPACETOGROUNDTRANSMITTER_H
 
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
-#include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
-
 #include <architecture/utilities/bskLogging.h>
+
+#include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 
 /*! @brief space to ground data transmitter class */
 class SpaceToGroundTransmitter : public DataNodeBase {
-   public:
+public:
     SpaceToGroundTransmitter();
     ~SpaceToGroundTransmitter();
     void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
     void addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg);
 
-   private:
+private:
     void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
     bool customReadMessages();
 
-   public:
+public:
     double packetSize;  //!< Size of packet to downklink (bytes)
     int numBuffers;     //!< Number of buffers the transmitter can access
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
@@ -33,7 +33,7 @@ class SpaceToGroundTransmitter : public DataNodeBase {
     uint64_t hasAccess;                                              //!< class variable
     BSKLogger bskLogger;                                             //!< class variable
 
-   private:
+private:
     double packetTransmitted;                                //!< Amount of packet downlinked (bytes)
     double currentTimestep;                                  //!< Current timestep tracked for data packet integration
     double previousTime;                                     //!< Previous timestep tracked for data packet integration

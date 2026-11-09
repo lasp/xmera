@@ -7,33 +7,34 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
-
 #include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+
 /*! @brief external force and torque dynamic efector class */
-class ExtForceTorque : public SysModel, public DynamicEffector {
-   public:
+class ExtForceTorque
+    : public SysModel
+    , public DynamicEffector {
+public:
     ExtForceTorque();
     ~ExtForceTorque();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);       //!< class method
-    void linkInStates(DynParamManager& statesIn);     //!< class method
+    void linkInStates(DynParamManager &statesIn);     //!< class method
     void writeOutputMessages(uint64_t currentClock);  //!< class method
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep);
 
-   private:
+private:
     CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
     CmdForceInertialMsgPayload incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
     CmdForceBodyMsgPayload incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
 
-   public:
+public:
     Eigen::Vector3d extForce_N;       //!< [N]  external force in inertial  frame components
     Eigen::Vector3d extForce_B;       //!< [N]  external force in body frame components
     Eigen::Vector3d extTorquePntB_B;  //!< [Nm] external torque in body frame components

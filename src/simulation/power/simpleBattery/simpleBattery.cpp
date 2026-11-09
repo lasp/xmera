@@ -11,7 +11,9 @@ SimpleBattery::SimpleBattery() {
     return;
 }
 
-SimpleBattery::~SimpleBattery() { return; }
+SimpleBattery::~SimpleBattery() {
+    return;
+}
 
 /*! custom reset function.
  */
@@ -30,13 +32,9 @@ void SimpleBattery::customreset(uint64_t CurrentClock) {
 void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg) {
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
 
-    if (this->storedCharge > this->storageCapacity) {
-        this->storedCharge = this->storageCapacity;
-    }
+    if (this->storedCharge > this->storageCapacity) { this->storedCharge = this->storageCapacity; }
 
-    if (this->storedCharge < 0) {
-        this->storedCharge = 0;
-    }
+    if (this->storedCharge < 0) { this->storedCharge = 0; }
 
     msg->storageCapacity = this->storageCapacity;
     msg->storageLevel = this->storedCharge;

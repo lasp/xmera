@@ -19,20 +19,20 @@
  * acceleration perturbing the spacecraft motion, using an unscented Kalman filter (UKF)
  */
 class SmallBodyNavUKF : public SysModel {
-   public:
+public:
     SmallBodyNavUKF();
 
     void reset(uint64_t currentSimNanos);        //!< Resets module
     void updateState(uint64_t currentSimNanos);  //!< Updates state
 
-   private:
+private:
     void readMessages();                           //!< Reads input messages
     void writeMessages(uint64_t currentSimNanos);  //!< Writes output messages
     void processUT(uint64_t currentSimNanos);      //!< Process unscented transform
     void measurementUT();                          //!< Measurements unscented transform
     void kalmanUpdate();                           //!< Computes the state and covariance update
 
-   public:
+public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;            //!< Translational nav input message
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;  //!< Small body ephemeris input message
     Message<SmallBodyNavUKFMsgPayload>
@@ -53,7 +53,7 @@ class SmallBodyNavUKF : public SysModel {
     Eigen::Matrix3d dcm_AN;      //!< Small body dcm
     Eigen::Vector3d omega_AN_A;  //!< Small body angular velocity
 
-   private:
+private:
     NavTransMsgPayload navTransInMsgBuffer;            //!< Message buffer for input translational nav message
     EphemerisMsgPayload asteroidEphemerisInMsgBuffer;  //!< Message buffer for asteroid ephemeris
 

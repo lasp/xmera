@@ -9,12 +9,11 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/STAttMsgPayload.h>
 #include <architecture/msgPayloadDef/STSensorMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 
 /*! @brief Module configuration message.  */
 class StComm : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

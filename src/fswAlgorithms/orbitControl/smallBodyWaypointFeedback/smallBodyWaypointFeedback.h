@@ -19,7 +19,7 @@
  * a small body. The waypoints are defined in the Hill frame of the body.
  */
 class SmallBodyWaypointFeedback : public SysModel {
-   public:
+public:
     SmallBodyWaypointFeedback();
 
     void reset(uint64_t currentSimNanos);
@@ -28,7 +28,7 @@ class SmallBodyWaypointFeedback : public SysModel {
     void computeControl(uint64_t currentSimNanos);
     void writeMessages(uint64_t currentSimNanos);
 
-   public:
+public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;            //!< translational navigation input message
     ReadFunctor<NavAttMsgPayload> navAttInMsg;                //!< attitude navigation input message
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;  //!< asteroid ephemeris input message
@@ -51,7 +51,7 @@ class SmallBodyWaypointFeedback : public SysModel {
     Eigen::Matrix3d K1;      //!< Position gain
     Eigen::Matrix3d K2;      //!< Velocity gain
 
-   private:
+private:
     NavTransMsgPayload navTransInMsgBuffer;            //!< local copy of message buffer
     NavAttMsgPayload navAttInMsgBuffer;                //!< local copy of message buffer
     EphemerisMsgPayload asteroidEphemerisInMsgBuffer;  //!< local copy of message buffer

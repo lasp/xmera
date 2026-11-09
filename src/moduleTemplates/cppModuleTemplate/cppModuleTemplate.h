@@ -12,14 +12,14 @@
 
 /*! @brief basic Basilisk C++ module class */
 class CppModuleTemplate : public SysModel {
-   public:
+public:
     CppModuleTemplate();
     ~CppModuleTemplate();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-   public:
+public:
     double dummy;         //!< [units] sample module variable declaration
     double dumVector[3];  //!< [units] sample vector variable
 

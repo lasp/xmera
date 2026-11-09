@@ -22,7 +22,7 @@
     creates the Delta-V burn command message
  */
 class LambertValidator : public SysModel {
-   public:
+public:
     LambertValidator();
     ~LambertValidator();
 
@@ -50,7 +50,7 @@ class LambertValidator : public SysModel {
         1e-3;  //!< [m/s] tolerance on difference between DeltaV solutions between time steps
     bool ignoreConstraintViolations = false;  //!< override flag to write DV message despite constraint violations
 
-   private:
+private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
     std::array<Eigen::VectorXd, NUM_INITIALSTATES> getInitialStates();
@@ -58,14 +58,17 @@ class LambertValidator : public SysModel {
     void checkConstraintViolations(std::vector<double> t, std::vector<Eigen::VectorXd> X);
     bool checkPerformance() const;
     std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
-        const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+        std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &EOM,
         std::array<double, 2> interval,
-        const Eigen::VectorXd& X0,
-        double dt);
-    Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                        const Eigen::VectorXd& X0,
-                        double t0,
-                        double dt);
+        Eigen::VectorXd const &X0,
+        double dt
+    );
+    Eigen::VectorXd RK4(
+        std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &ODEfunction,
+        Eigen::VectorXd const &X0,
+        double t0,
+        double dt
+    );
 
     double time{};        //!< [s] Current vehicle time-tag associated with measurements
     Eigen::Vector3d r_N;  //!< [m] Current inertial spacecraft position vector in inertial frame N components

@@ -21,14 +21,14 @@
  * attitude rate of the body wrt. the inertial frame
  */
 class SmallBodyNavEKF : public SysModel {
-   public:
+public:
     SmallBodyNavEKF();
 
     void reset(uint64_t currentSimNanos);                                    //!< Resets module
     void updateState(uint64_t currentSimNanos);                              //!< Updates state
     void addThrusterToFilter(Message<THROutputMsgPayload>* tmpThrusterMsg);  //!< Adds thruster message
 
-   private:
+private:
     void readMessages(uint64_t currentSimNanos);        //!< Reads input messages
     void writeMessages(uint64_t currentSimNanos);       //!< Writes output messages
     void predict(uint64_t currentSimNanos);             //!< Prediction step of Kalman filter
@@ -37,10 +37,12 @@ class SmallBodyNavEKF : public SysModel {
     void checkMRPSwitching();                           //!< Checks the MRPs for switching
     void computeDynamicsMatrix(Eigen::VectorXd x_hat);  //!< Computes the new dynamics matrix, A_k
     void measurementUpdate();                           //!< Computes the measurement update for the EKF
-    void computeEquationsOfMotion(Eigen::VectorXd x_hat,
-                                  Eigen::MatrixXd Phi);  //!< Computes the EOMs of the state and state transition matrix
+    void computeEquationsOfMotion(
+        Eigen::VectorXd x_hat,
+        Eigen::MatrixXd Phi
+    );  //!< Computes the EOMs of the state and state transition matrix
 
-   public:
+public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;                 //!< Translational nav input message
     ReadFunctor<NavAttMsgPayload> navAttInMsg;                     //!< Attitude nav input message
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;       //!< Small body ephemeris input message
@@ -65,7 +67,7 @@ class SmallBodyNavEKF : public SysModel {
     Eigen::VectorXd x_hat_k;  //!< Current state estimate
     Eigen::MatrixXd P_k;      //!< Current estimation error covariance
 
-   private:
+private:
     NavTransMsgPayload navTransInMsgBuffer;                //!< Message buffer for input translational nav message
     NavAttMsgPayload navAttInMsgBuffer;                    //!< Message buffer for input attitude nav message
     EphemerisMsgPayload asteroidEphemerisInMsgBuffer;      //!< Message buffer for asteroid ephemeris

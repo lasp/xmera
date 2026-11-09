@@ -9,12 +9,11 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/IMUSensorBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 
 /*! @brief module configuration message */
 class ImuComm : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

@@ -12,13 +12,13 @@
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief module configuration message */
 class ThrustRWDesat : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;          /*!< (-) The name of the input RW speeds message*/

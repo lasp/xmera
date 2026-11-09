@@ -13,7 +13,7 @@
 
 /*! @brief FSW mass properties converter module class */
 class SimpleMassProps : public SysModel {
-   public:
+public:
     SimpleMassProps();
     ~SimpleMassProps();
 
@@ -23,13 +23,13 @@ class SimpleMassProps : public SysModel {
     void computeMassProperties();
     void updateState(uint64_t currentSimNanos);
 
-   public:
+public:
     ReadFunctor<SCMassPropsMsgPayload> scMassPropsInMsg;   //!< sc mass properties input msg
     Message<VehicleConfigMsgPayload> vehicleConfigOutMsg;  //!< vehicle configuration output msg
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     SCMassPropsMsgPayload scMassPropsMsgBuffer;      //! buffer for the mass properties message
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;  //! buffer for the vehicle configuration message
 };

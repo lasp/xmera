@@ -15,14 +15,14 @@
    rigid body angle drives a simple PD control law.
  */
 class HingedRigidBodyMotor : public SysModel {
-   public:
+public:
     HingedRigidBodyMotor();
     ~HingedRigidBodyMotor();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-   public:
+public:
     double K;  //!< gain on theta
     double P;  //!< gain on theta dot
 

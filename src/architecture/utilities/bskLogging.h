@@ -22,27 +22,28 @@ void printDefaultLogLevel();
 /// \cond DO_NOT_DOCUMENT
 
 #ifdef __cplusplus
-#include <map>
-#include <string>
+    #include <map>
+    #include <string>
 
 void setDefaultLogLevel(logLevel_t logLevel);
 logLevel_t getDefaultLogLevel();
 
 /*! BSK logging class */
 class BSKLogger final {
-   public:
+public:
     BSKLogger();
     BSKLogger(logLevel_t logLevel);
     void setLogLevel(logLevel_t logLevel);
     void printLogLevel();
     int getLogLevel();
-    void bskLog(logLevel_t targetLevel, const char* info, ...);
+    void bskLog(logLevel_t targetLevel, char const* info, ...);
 
     // Provides a mapping from log level enum to str
-   public:
-    static std::map<int, const char*> logLevelMap;
 
-   private:
+public:
+    static std::map<int, char const*> logLevelMap;
+
+private:
     logLevel_t _logLevel;
 };
 
@@ -51,16 +52,16 @@ typedef struct BSKLogger BSKLogger;
 #endif
 
 #ifdef __cplusplus
-#define EXTERN extern "C"
+    #define EXTERN extern "C"
 #else
-#define EXTERN
+    #define EXTERN
 #endif
 
 EXTERN BSKLogger* _BSKLogger(void);
 EXTERN void _BSKLogger_d(BSKLogger*);
 EXTERN void _printLogLevel(BSKLogger*);
 EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
-EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
+EXTERN void _bskLog(BSKLogger*, logLevel_t, char const*);
 
 /// \endcond
 

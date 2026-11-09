@@ -5,22 +5,22 @@
 #define VIS_ODOMETRY_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
-
-#include <architecture/messaging/messaging.h>
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <vector>
 
 /*! @brief Odometry module which reads key-point pairs and outputs a spacecraft direction of motion
  */
 class VisualOdometry : public SysModel {
-   public:
+public:
     VisualOdometry();
     ~VisualOdometry();
 
@@ -38,13 +38,13 @@ class VisualOdometry : public SysModel {
     double deltaKsi_tilde = 0.25;
     int m_max = 10;
 
-   private:
+private:
     bool readMessages();
     void writeMessages(Eigen::Vector3d sPrime, Eigen::Matrix3d covar, uint64_t currentSimNanos);
     void computeX();
-    void computeRinv(Eigen::Vector3d& sPrime);
+    void computeRinv(Eigen::Vector3d &sPrime);
     void computeHTH();
-    Eigen::Vector3d svdLastColumn(Eigen::Matrix3d& A) const;
+    Eigen::Vector3d svdLastColumn(Eigen::Matrix3d &A) const;
     void computeKsis(int i);
     void computeGammas(int i);
     void computeSampsonPartials(int i);

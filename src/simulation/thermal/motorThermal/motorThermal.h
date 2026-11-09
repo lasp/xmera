@@ -14,7 +14,7 @@
 /*! @brief Motor temperature module.  It simulates the heating and cooling of a motor based on ambient temperature, as
  * well as heat generated during spin-up or breaking. */
 class MotorThermal : public SysModel {
-   public:
+public:
     MotorThermal();
     ~MotorThermal();
 
@@ -24,7 +24,7 @@ class MotorThermal : public SysModel {
     void writeOutputMessages(uint64_t CurrentClock);
     void computeTemperature(uint64_t currentSimNanos);
 
-   public:
+public:
     Message<TemperatureMsgPayload> temperatureOutMsg;  //!< [Celsius] temperature output message
     ReadFunctor<RWConfigLogMsgPayload> rwStateInMsg;   //!< reaction wheel state input message
     double efficiency;                                 //!< efficiency factor to convert power into mechanical power
@@ -34,7 +34,7 @@ class MotorThermal : public SysModel {
     double motorHeatCapacity;         //!< [J/Celsius] motor heat caapcity to convert heat into temperature
     BSKLogger bskLogger;              //!< -- BSK Logging
 
-   private:
+private:
     TemperatureMsgPayload temperatureBuffer;  //!< temperature buffer for internal calculations
     RWConfigLogMsgPayload rwStateBuffer;      //!< reaction wheel state buffer
 

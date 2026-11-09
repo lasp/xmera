@@ -9,14 +9,15 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class RwConfig : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
+
     void updateState(uint64_t callTime) override { /* Not Implemented */ }
 
     /* declare module IO interfaces */

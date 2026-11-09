@@ -5,24 +5,25 @@
 #ifndef EXPONENTIAL_ATMOSPHERE_H
 #define EXPONENTIAL_ATMOSPHERE_H
 
-#include <Eigen/Dense>
-#include <vector>
-#include <string>
 #include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
-#include <architecture/utilities/bskLogging.h>
+
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
 
 /*! @brief exponential atmosphere model */
 class ExponentialAtmosphere : public AtmosphereBase {
-   public:
+public:
     ExponentialAtmosphere();
     ~ExponentialAtmosphere();
 
-   private:
+private:
     void evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime);
 
-   public:
+public:
     double baseDensity;        //!< [kg/m^3] Density at h=0
     double scaleHeight;        //!< [m] Exponential characteristic height
     double localTemp = 293.0;  //!< [K] Local atmospheric temperature; set to be constant.

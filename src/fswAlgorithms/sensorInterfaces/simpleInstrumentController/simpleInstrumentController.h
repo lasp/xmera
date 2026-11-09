@@ -12,11 +12,12 @@
 #include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class SimpleInstrumentController : public SysModel {
-   public:
+public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 

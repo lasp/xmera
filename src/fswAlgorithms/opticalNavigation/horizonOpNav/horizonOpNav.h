@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
-
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/linearAlgebra.h>
@@ -20,7 +19,7 @@
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
 class HorizonOpNav : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

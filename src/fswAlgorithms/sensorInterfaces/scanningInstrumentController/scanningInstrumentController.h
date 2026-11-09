@@ -12,12 +12,13 @@
 #include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Module to perform continuous instrument control
  */
 class ScanningInstrumentController : public SysModel {
-   public:
+public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 

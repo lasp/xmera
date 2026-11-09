@@ -5,31 +5,30 @@
 #ifndef FORMATION_BARYCENTER_H
 #define FORMATION_BARYCENTER_H
 
-#include <vector>
-
-#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
+#include <vector>
 
 /*! @brief This module computes the barycenter of a swarm of satellites, either using cartesian coordinates or orbital
  * elements.
  */
 class FormationBarycenter : public SysModel {
-   public:
+public:
     FormationBarycenter();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
     void ReadInputMessages();
-    void addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
-                              Message<VehicleConfigMsgPayload>* tmpScPayloadMsg);
+    void
+    addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg, Message<VehicleConfigMsgPayload>* tmpScPayloadMsg);
     void computeBaricenter();
     void WriteOutputMessage(uint64_t CurrentClock);
 
-   public:
+public:
     std::vector<ReadFunctor<NavTransMsgPayload>> scNavInMsgs;           //!< spacecraft navigation input msg
     std::vector<ReadFunctor<VehicleConfigMsgPayload>> scPayloadInMsgs;  //!< spacecraft payload input msg
 
@@ -40,7 +39,7 @@ class FormationBarycenter : public SysModel {
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     std::vector<NavTransMsgPayload> scNavBuffer;           //!< buffer of spacecraft navigation info
     std::vector<VehicleConfigMsgPayload> scPayloadBuffer;  //!< buffer of spacecraft payload
 

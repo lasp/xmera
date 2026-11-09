@@ -5,13 +5,13 @@
 #ifndef _DV_ATT_EFFECT_H_
 #define _DV_ATT_EFFECT_H_
 
+#include "../_GeneralModuleFiles/thrustGroupData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-
 #include "architecture/utilities/bskLogging.h"
-#include "../_GeneralModuleFiles/thrustGroupData.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -23,14 +23,16 @@ typedef struct {
     uint32_t thrustIndex; /*!< -  The actual thruster index associated with on-time*/
 } effPairs;
 
-void computeSingleThrustBlock(ThrustGroupData* thrData,
-                              uint64_t callTime,
-                              CmdTorqueBodyMsgPayload* contrReq,
-                              int64_t moduleID);
+void computeSingleThrustBlock(
+    ThrustGroupData* thrData,
+    uint64_t callTime,
+    CmdTorqueBodyMsgPayload* contrReq,
+    int64_t moduleID
+);
 
 /*! @brief module configuration message */
 class DvAttEffect : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueBodyInMsg; /*!< - The name of the Input message*/

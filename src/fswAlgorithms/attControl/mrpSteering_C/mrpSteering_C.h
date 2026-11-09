@@ -9,11 +9,12 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
+
 #include <stdint.h>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 class MrpSteering_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

@@ -6,29 +6,29 @@
 #define MAGNETIC_FIELD_BASE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <time.h>
-#include <Eigen/Dense>
-#include <string>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
+#include <time.h>
+
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
 
 /*! @brief magnetic field base class */
 class MagneticFieldBase : public SysModel {
-   public:
+public:
     MagneticFieldBase();
     ~MagneticFieldBase();
     void reset(uint64_t currentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
     void updateState(uint64_t currentSimNanos);
 
-   protected:
+protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void updateLocalMagField(double currentTime);
@@ -39,7 +39,7 @@ class MagneticFieldBase : public SysModel {
     virtual bool customReadMessages();
     virtual void customSetEpochFromVariable();
 
-   public:
+public:
     std::vector<ReadFunctor<SCStatesMsgPayload>>
         scStateInMsgs;  //!< Vector of the spacecraft position/velocity input message
     std::vector<Message<MagneticFieldMsgPayload>*>
@@ -54,7 +54,7 @@ class MagneticFieldBase : public SysModel {
     double planetRadius;  //!< [m]      Radius of the planet
     BSKLogger bskLogger;  //!< -- BSK Logging
 
-   protected:
+protected:
     Eigen::Vector3d r_BP_N;  //!< [m] sc position vector relative to planet in inertial N frame components
     Eigen::Vector3d r_BP_P;  //!< [m] sc position vector relative to planet in planet-fixed frame components
     double orbitRadius;      //!< [m] sc orbit radius about planet

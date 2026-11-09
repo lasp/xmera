@@ -9,13 +9,13 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the spacecraft pointing module.*/
 class SpacecraftPointing : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     Message<AttRefMsgPayload> attReferenceOutMsg;        /*!< The name of the output message */

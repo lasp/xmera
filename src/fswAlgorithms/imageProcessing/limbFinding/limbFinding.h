@@ -5,31 +5,31 @@
 #ifndef _IMAGE_LIMB_FIND_H_
 #define _IMAGE_LIMB_FIND_H_
 
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+
+#include <stdint.h>
+
+#include <Eigen/Dense>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/opencv.hpp>
-#include <stdint.h>
-#include <Eigen/Dense>
-
-#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
-#include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
-#include <architecture/utilities/eigenMRP.h>
 
 /*! @brief visual limb finding module */
 class LimbFinding : public SysModel {
-   public:
+public:
     LimbFinding();
     ~LimbFinding();
 
     void updateState(uint64_t currentSimNanos);
     void reset(uint64_t currentSimNanos);
 
-   public:
+public:
     std::string filename;                           //!< Filename for module to read an image directly
     Message<OpNavLimbMsgPayload> opnavLimbOutMsg;   //!< The name of the Limb output message
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message

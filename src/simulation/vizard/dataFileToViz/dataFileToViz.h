@@ -5,18 +5,19 @@
 #ifndef VIZ_DATAFILETOVIZ_H
 #define VIZ_DATAFILETOVIZ_H
 
-#include <vector>
-#include <iostream>
-#include <fstream>
+#include "../_GeneralModuleFiles/vizStructures.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
-#include "../_GeneralModuleFiles/vizStructures.h"
+
 #include <Eigen/Dense>
+#include <fstream>
+#include <iostream>
+#include <vector>
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 class DataFileToViz : public SysModel {
-   public:
+public:
     DataFileToViz();
     ~DataFileToViz();
     void reset(uint64_t currentSimNanos);
@@ -32,12 +33,12 @@ class DataFileToViz : public SysModel {
     void setNumOfSatellites(int numSat);
     void appendNumOfRWs(int numRW);
 
-   private:
+private:
     void pullVector(std::istringstream* iss, double*);
     void pullVector4(std::istringstream* iss, double*);
     double pullScalar(std::istringstream* iss);
 
-   public:
+public:
     std::string dataFileName;  //!< Name of the simulation data file
 
     std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs;  //!< vector of spacecraft state messages
@@ -55,7 +56,7 @@ class DataFileToViz : public SysModel {
 
     BSKLogger bskLogger;  //!< [-] BSK Logging object
 
-   private:
+private:
     std::vector<std::vector<int>>
         numThrPerCluster;      //!< vector containing list of numbers of thruster per cluster per spacecraft
     std::ifstream fileHandle;  //!< file handle to the simulation data input file

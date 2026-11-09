@@ -6,17 +6,16 @@
 #define EPHEMERIS_CONVERTER_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+
+#include <vector>
 
 /*! @brief ephemeric converter class */
 class EphemerisConverter : public SysModel {
-   public:
+public:
     EphemerisConverter();
     ~EphemerisConverter();
 
@@ -27,12 +26,13 @@ class EphemerisConverter : public SysModel {
     void writeOutputMessages(uint64_t Clock);
     void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload>* msg);
 
-   public:
+public:
     std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs;           //!< vector of planet ephemeris output messages
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;  //!< vector of planet spice state input messages
 
     BSKLogger bskLogger;  //!< -- BSK Logging
-   private:
+
+private:
     std::vector<EphemerisMsgPayload> ephemOutBuffers;        //!< output message buffers
     std::vector<SpicePlanetStateMsgPayload> spiceInBuffers;  //!< spice input message copies
 };

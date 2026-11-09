@@ -10,7 +10,7 @@
 #include <architecture/utilities/macroDefinitions.h>
 
 class VehicleConfigData : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
 
     double ISCPntB_B[9];                              /*!< [kg m^2] Spacecraft Inertia */

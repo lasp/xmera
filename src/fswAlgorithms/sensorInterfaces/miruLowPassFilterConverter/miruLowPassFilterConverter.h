@@ -1,8 +1,6 @@
 #ifndef _MIRULOWPASSFILTERCONVERTER_
 #define _MIRULOWPASSFILTERCONVERTER_
 
-#include <Eigen/Core>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AccDataMsgPayload.h>
@@ -11,9 +9,11 @@
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/signalProcessing.h>
 
+#include <Eigen/Core>
+
 /*! @brief Convert AccDataMsgPayload to IMUSensorMsgPayload Class */
 class MiruLowPassFilterConverter : public SysModel {
-   public:
+public:
     MiruLowPassFilterConverter() = default;   //!< Constructor
     ~MiruLowPassFilterConverter() = default;  //!< Destructor
 
@@ -26,7 +26,7 @@ class MiruLowPassFilterConverter : public SysModel {
 
     BSKLogger* bskLogger;  //!< BSK Logging
 
-   private:
+private:
     double cutOffFrequency = 15.0 / (2 * M_PI);  //!< Low pass filter parameter
     double hStep = 0.5;                          //!< Low pass filter parameter
 };

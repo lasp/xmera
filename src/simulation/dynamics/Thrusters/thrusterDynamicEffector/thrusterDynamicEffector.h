@@ -6,36 +6,38 @@
 #define THRUSTER_DYNAMIC_EFFECTOR_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
+
 #include <Eigen/Dense>
 #include <vector>
 
 /*! @brief thruster dynamic effector class */
-class ThrusterDynamicEffector : public SysModel, public DynamicEffector {
-   public:
+class ThrusterDynamicEffector
+    : public SysModel
+    , public DynamicEffector {
+public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
-    void linkInStates(DynParamManager& states);
+    void linkInStates(DynParamManager &states);
     void computeForceTorque(double integTime, double timeStep);
     void computeStateContribution(double integTime);
     void reset(uint64_t currentSimNanos);
     void addThruster(THRSimConfig* newThruster);  //! Add a new thruster to the thruster set
     void addThruster(
         THRSimConfig* newThruster,
-        Message<SCStatesMsgPayload>* bodyStateMsg);  //!< -- (overloaded) Add a new thruster to the thruster set connect
-                                                     //!< to a body different than the hub
+        Message<SCStatesMsgPayload>* bodyStateMsg
+    );  //!< -- (overloaded) Add a new thruster to the thruster set connect
+        //!< to a body different than the hub
     void updateState(uint64_t currentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
@@ -45,7 +47,7 @@ class ThrusterDynamicEffector : public SysModel, public DynamicEffector {
     void UpdateThrusterProperties();
     void computeBlowDownDecay(THRSimConfig* CurrentThruster);
 
-   public:
+public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;          //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
 
@@ -62,7 +64,7 @@ class ThrusterDynamicEffector : public SysModel, public DynamicEffector {
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     std::vector<THROutputMsgPayload> thrusterOutBuffer;  //!< -- Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;       //!< -- One-time allocation for savings
 

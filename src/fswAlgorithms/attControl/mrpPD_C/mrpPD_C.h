@@ -10,11 +10,12 @@
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+
 #include <stdint.h>
 
 /*! @brief Module configuration message definition. */
 class MrpPD_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

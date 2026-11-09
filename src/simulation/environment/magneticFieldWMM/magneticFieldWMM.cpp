@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "magneticFieldWMM.h"
+
 #include "EGM9615.h"
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -23,9 +24,7 @@ MagneticFieldWMM::MagneticFieldWMM() {
  @return void
  */
 MagneticFieldWMM::~MagneticFieldWMM() {
-    if (this->magneticModels[0] != nullptr) {
-        cleanupEarthMagFieldModel();
-    }
+    if (this->magneticModels[0] != nullptr) { cleanupEarthMagFieldModel(); }
 }
 
 /*! Custom reset() method.  This loads the WMM coefficient file and gets the model setup.
@@ -69,27 +68,27 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm* g
     char Error[255];
     calendar.DecimalYear = this->epochDateFractionalYear;
     MAG_YearToDate(&calendar);
-    gregorian->tm_year = calendar.Year - 1900;
+    gregorian->tm_year = calendar.Year - 1'900;
     gregorian->tm_mon = calendar.Month - 1;
     gregorian->tm_mday = calendar.Day;
 
     //! - Find the unused remained of the fractional year and add to the gregorian calendar
     //! - determine number of days in this year
     double daysInYear = 365;
-    if ((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0) daysInYear = 366;
+    if ((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0) { daysInYear = 366; }
 
     //! - determine missing hours
     MAG_DateToYear(&calendar, Error);
     double diff = this->epochDateFractionalYear - calendar.DecimalYear;
-    this->epochDateTime.tm_hour = (int)round(diff * (24. * daysInYear));
+    this->epochDateTime.tm_hour = (int) round(diff * (24. * daysInYear));
     diff -= this->epochDateTime.tm_hour / (24. * daysInYear);
 
     //! - determine missing minutes
-    this->epochDateTime.tm_min = (int)round(diff * (24. * 60 * daysInYear));
+    this->epochDateTime.tm_min = (int) round(diff * (24. * 60 * daysInYear));
     diff -= this->epochDateTime.tm_min / (24. * 60 * daysInYear);
 
     //! - determine missing seconds
-    this->epochDateTime.tm_sec = (int)round(diff * (24. * 60 * 60 * daysInYear));
+    this->epochDateTime.tm_sec = (int) round(diff * (24. * 60 * 60 * daysInYear));
 
     //! - ensure that daylight saving flag is off
     this->epochDateTime.tm_isdst = 0;
@@ -109,10 +108,10 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime) {
     MAGtype_Date calendar;
     char Error_Message[255];
     localDateTime = this->epochDateTime;
-    localDateTime.tm_sec += (int)round(currentTime);  // sets the current seconds
+    localDateTime.tm_sec += (int) round(currentTime);  // sets the current seconds
     mktime(&localDateTime);
 
-    calendar.Year = localDateTime.tm_year + 1900;
+    calendar.Year = localDateTime.tm_year + 1'900;
     calendar.Month = localDateTime.tm_mon + 1;
     calendar.Day = localDateTime.tm_mday;
     if (!MAG_DateToYear(&calendar, Error_Message)) {
@@ -121,7 +120,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime) {
 
     //! - determine number of days in this year
     double daysInYear = 365;
-    if ((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0) daysInYear = 366;
+    if ((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0) { daysInYear = 366; }
 
     decimalYear = calendar.DecimalYear;
     decimalYear += localDateTime.tm_hour / (24. * daysInYear);
@@ -220,15 +219,11 @@ void MagneticFieldWMM::initializeWmm() {
         return;
     }
 
-    if (nMax < magneticModels[0]->nMax) {
-        nMax = magneticModels[0]->nMax;
-    }
+    if (nMax < magneticModels[0]->nMax) { nMax = magneticModels[0]->nMax; }
     nTerms = ((nMax + 1) * (nMax + 2) / 2);
     /* For storing the time modified WMM Model parameters */
     this->timedMagneticModel = MAG_AllocateModelMemory(nTerms);
-    if (this->magneticModels[0] == nullptr || this->timedMagneticModel == nullptr) {
-        MAG_Error(2);
-    }
+    if (this->magneticModels[0] == nullptr || this->timedMagneticModel == nullptr) { MAG_Error(2); }
     /* Set default values and constants */
     MAG_SetDefaults(&this->ellip, &this->geoid);
 

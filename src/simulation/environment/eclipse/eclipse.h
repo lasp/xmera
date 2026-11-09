@@ -17,7 +17,7 @@
 
 /*! @brief eclipse model class */
 class Eclipse : public SysModel {
-   public:
+public:
     Eclipse();
     ~Eclipse();
 
@@ -27,7 +27,7 @@ class Eclipse : public SysModel {
     void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg);
 
-   public:
+public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;  //!< sun ephemeris input message name
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>
         planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are
@@ -38,7 +38,7 @@ class Eclipse : public SysModel {
     BSKLogger bskLogger;                                          //!< BSK Logging
     double rEqCustom;                                             //!< [m] Custom radius
 
-   private:
+private:
     std::vector<float> planetRadii;  //!< [m] A vector of planet radii ordered by the sequence in which planet names are
                                      //!< added to the module
     std::vector<SCStatesMsgPayload> scStateBuffer;         //!< buffer of the spacecraft state input messages
@@ -46,7 +46,7 @@ class Eclipse : public SysModel {
     SpicePlanetStateMsgPayload sunInMsgState;              //!< copy of sun input msg
     std::vector<double> eclipseShadowFactors;              //!< vector of shadow factor output values
 
-   private:
+private:
     void readInputMessages();
     double computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
     double getPlanetEquatorialRadius(std::string planetSpiceName);

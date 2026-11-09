@@ -11,13 +11,14 @@
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 enum attitudeFrame { referenceFrame = 0, bodyFrame = 1 };
 
 /*! @brief Top level structure for the sub-module routines. */
 class SolarArrayReference : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

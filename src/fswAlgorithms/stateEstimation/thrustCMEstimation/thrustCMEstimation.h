@@ -11,19 +11,21 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
-#include <architecture/msgPayloadDef/CMEstDataMsgPayload.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/CMEstDataMsgPayload.h>
 #include <architecture/msgPayloadDef/THRConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <math.h>
 #include <string.h>
+
 #include <array>
 
 class ThrustCMEstimation : public SysModel {
-   public:
+public:
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
@@ -41,7 +43,7 @@ class ThrustCMEstimation : public SysModel {
     Eigen::Vector3d P0;      //!< initial CM state covariance
     Eigen::Vector3d R0;      //!< measurement noise covariance
 
-   private:
+private:
     Eigen::Matrix3d I;         //!< identity matrix
     Eigen::Matrix3d P;         //!< state covariance
     Eigen::Matrix3d R;         //!< measurement noise covariance

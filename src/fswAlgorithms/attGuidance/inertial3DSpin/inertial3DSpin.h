@@ -5,17 +5,17 @@
 #ifndef _INERTIAL3D_SPIN_
 #define _INERTIAL3D_SPIN_
 
-#include <architecture/utilities/bskLogging.h>
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+
+#include <stdint.h>
 
 /*!@brief module configuration structure definition.
  */
 class Inertial3DSpin : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void computeReference_inertial3DSpin(double omega_R0N_N[3], double domega_R0N_N[3], double dt);

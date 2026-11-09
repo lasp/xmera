@@ -6,16 +6,15 @@
 #define MSIS_ATMOSPHERE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/msgPayloadDef/SwDataMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+
+#include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
 #include <time.h>
+
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
-
-#include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
-
-#include <architecture/msgPayloadDef/SwDataMsgPayload.h>
-
-#include <architecture/utilities/bskLogging.h>
 
 extern "C" {
 #include "nrlmsise-00.h"
@@ -23,11 +22,11 @@ extern "C" {
 
 /*! @brief MSIS athomsphere model */
 class MsisAtmosphere : public AtmosphereBase {
-   public:
+public:
     MsisAtmosphere();
     ~MsisAtmosphere();
 
-   private:
+private:
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
     void customreset(uint64_t CurrentClock);
@@ -37,12 +36,12 @@ class MsisAtmosphere : public AtmosphereBase {
     void evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime);
     void customSetEpochFromVariable();
 
-   public:
+public:
     std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs;  //!< Vector of space weather input message names
     int epochDoy;                                             //!< [day] Day-of-Year at epoch
     BSKLogger bskLogger;                                      //!< -- BSK Logging
 
-   private:
+private:
     Eigen::Vector3d currentLLA;  //!< [-] Container for local Latitude, Longitude, Altitude geodetic position; units are
                                  //!< rad and km respectively.
     std::vector<SwDataMsgPayload> swDataList;  //!< Vector of space weather messages

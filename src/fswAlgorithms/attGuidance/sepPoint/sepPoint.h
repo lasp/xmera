@@ -12,11 +12,12 @@
 #include <architecture/msgPayloadDef/InertialHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <fswAlgorithms/attGuidance/_GeneralModuleFiles/constrainedAxisPointingLibrary.h>
 
 /*! @brief A class to perform EMA SEP pointing */
 class SepPoint : public SysModel {
-   public:
+public:
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
@@ -30,7 +31,7 @@ class SepPoint : public SysModel {
     ReadFunctor<InertialHeadingMsgPayload> inertialHeadingInMsg;  //!< input inertial heading msg
     Message<AttRefMsgPayload> attRefOutMsg;                       //!< Attitude reference output message
 
-   private:
+private:
     int callCount;           //!< count variable used in the finite difference logic
     uint64_t T1NanoSeconds;  //!< callTime one update step prior
     uint64_t T2NanoSeconds;  //!< callTime two update steps prior

@@ -5,23 +5,22 @@
 #ifndef _IMAGE_PROC_COB_H_
 #define _IMAGE_PROC_COB_H_
 
-#include <architecture/messaging/messaging.h>
-#include <stdint.h>
-#include <memory>
-
-#include <architecture/msgPayloadDef/RegionOfInterestMsgPayload.h>
-#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
-#include <architecture/msgPayloadDef/CenterOfBrightnessDiagnosticMsgPayload.h>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
-
 #include "centerOfBrightnessAlgorithm.h"
 #include "imageReader/imageReaderInterface.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CenterOfBrightnessDiagnosticMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+#include <architecture/msgPayloadDef/RegionOfInterestMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+
+#include <stdint.h>
+
+#include <memory>
 
 /*! @brief visual object tracking using center of brightness detection */
 class CenterOfBrightness : public SysModel {
-   public:
+public:
     explicit CenterOfBrightness(std::shared_ptr<ImageReaderInterface> imageReaderInstance);
     ~CenterOfBrightness() override;
 
@@ -40,7 +39,7 @@ class CenterOfBrightness : public SysModel {
     ReadFunctor<RegionOfInterestMsgPayload> roiInMsg;  //!< Region of interest input message
     BSKLogger bskLogger;                               //!< -- BSK Logging
 
-   private:
+private:
     CenterOfBrightnessAlgorithm algorithm{};
     std::shared_ptr<ImageReaderInterface> imageReader;  //!< shared ownership with Python/SWIG
     int32_t cameraID{};

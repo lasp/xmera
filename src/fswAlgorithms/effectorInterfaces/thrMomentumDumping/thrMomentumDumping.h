@@ -5,8 +5,6 @@
 #ifndef _THR_MOMENTUM_DUMPING_H_
 #define _THR_MOMENTUM_DUMPING_H_
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
@@ -15,10 +13,12 @@
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 
+#include <stdint.h>
+
 /*! @brief thruster force momentum dumping module configuration message
  */
 class ThrMomentumDumping : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     /* declare module private variables */
