@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/safeMath.h>
 
 Eclipse::Eclipse() {
@@ -24,21 +25,19 @@ Eclipse::~Eclipse() {
  */
 void Eclipse::reset(uint64_t CurrenSimNanos) {
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
+        xmera::logging::get(this->modelTag)->error("Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
 
     if (this->positionInMsgs.size() == 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft."
+            );
     }
 
     if (this->planetInMsgs.size() == 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet.");
     }
 }
 
@@ -257,13 +256,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName) {
         return REQ_NEPTUNE * 1000.0;
     } else if (planetSpiceName == "custom") {
         if (rEqCustom <= 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "Eclipse: Invalid rEqCustom set.");
+            xmera::logging::get(this->modelTag)->error("Eclipse: Invalid rEqCustom set.");
             return 1.0;
         } else {
             return rEqCustom;
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
+        xmera::logging::get(this->modelTag)->error("Eclipse: unrecognized planetSpiceName.");
         return 1.0;
     }
 }

@@ -6,19 +6,17 @@
 #define THR_FIRING_REMAINDER
 
 #include "thrFiringRemainderAlgorithm.h"
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class ThrFiringRemainder : public SysModel {
-   public:
+public:
     ThrFiringRemainder() = default;   //!< Constructor
     ~ThrFiringRemainder() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
@@ -37,9 +35,8 @@ class ThrFiringRemainder : public SysModel {
     ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg;  //!< The name of the Input message
     Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;      //!< The name of the output message, onTimeOutMsg
     ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;     //!< The name of the thruster cluster Input message
-    BSKLogger bskLogger = {};                               //!< BSK Logging
 
-   private:
+private:
     ThrFiringRemainderAlgorithm algorithm{};
 };
 

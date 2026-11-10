@@ -6,32 +6,30 @@
 #define XMERA_SENSORTHERMAL_H
 
 #include <architecture/messaging/messaging.h>
-#include <Eigen/Dense>
-#include <vector>
-
 #include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 #include <architecture/msgPayloadDef/EclipseMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <Eigen/Dense>
+#include <vector>
 
 /*! @brief sensor thermal class */
 class SensorThermal : public SysModel {
-   public:
+public:
     SensorThermal();
     ~SensorThermal();
     void reset(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);
 
-   private:
+private:
     void evaluateThermalModel(uint64_t CurrentSimSeconds);
     void computeSunData();
     void writeMessages(uint64_t CurrentClock);
     void readMessages();
 
-   public:
+public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;       //!< [-] sun data input message
     ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg;  //!< optional sensor power status input message
     ReadFunctor<SCStatesMsgPayload> stateInMsg;             //!< [-] spacecraft state input message
@@ -49,9 +47,8 @@ class SensorThermal : public SysModel {
     double sensorSpecificHeat;   //!< [J/kg/K] Sensor specific heat
     double T_0;                  //!< [C] Initial temperature
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     TemperatureMsgPayload temperatureMsgBuffer;  //!< buffer of output message
     double projectedArea;                        //!< [m^2] Area of the sensor projected along the sun vector.
     SpicePlanetStateMsgPayload sunData;          //!< [-] sun message input buffer

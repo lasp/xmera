@@ -9,6 +9,7 @@
 
 #include "mrpRotation_C.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
@@ -22,7 +23,7 @@
 void MrpRotation_C::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpRotation.attRefInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("mrpRotation.attRefInMsg wasn't connected.");
     }
 
     this->priorTime = 0;

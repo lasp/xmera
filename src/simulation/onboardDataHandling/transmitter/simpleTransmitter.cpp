@@ -4,7 +4,7 @@
 
 #include "simpleTransmitter.h"
 
-#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/logging.h>
 
 #include <array>
 
@@ -50,7 +50,7 @@ bool SimpleTransmitter::customReadMessages() {
             this->storageUnitMsgs.push_back(nodeMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
+        xmera::logging::get(this->modelTag)->info("Data storage has no data node messages to read.");
         dataRead = false;
     }
 

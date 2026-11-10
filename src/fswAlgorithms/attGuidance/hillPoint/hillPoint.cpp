@@ -13,6 +13,7 @@
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 static void computeHillPointingReference(
@@ -79,7 +80,7 @@ static void computeHillPointingReference(
 void HillPoint::reset(uint64_t callTime) {
     // check if the required input message is included
     if (!this->transNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: hillPoint.transNavInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("hillPoint.transNavInMsg wasn't connected.");
     }
     this->planetMsgIsLinked = this->celBodyInMsg.isLinked();
 }

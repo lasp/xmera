@@ -5,8 +5,6 @@
 #ifndef MRP_FEEDBACK_CONTROL_C_H
 #define MRP_FEEDBACK_CONTROL_C_H
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
@@ -16,9 +14,11 @@
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
+#include <stdint.h>
+
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class MrpFeedback_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -45,8 +45,6 @@ class MrpFeedback_C : public SysModel {
         intFeedbackTorqueOutMsg;                          //!< commanded integral feedback control torque output message
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

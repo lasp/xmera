@@ -5,6 +5,7 @@
 #include "cssWlsEst.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/safeMath.h>
 
@@ -21,19 +22,19 @@ void computeWlsResiduals(double* cssMeas, CSSConfigMsgPayload* cssConfig, double
 void CssWlsEst::reset(uint64_t callTime) {
     // check that required messages have been included
     if (!this->cssConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: cssWIsEst.cssConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("cssWIsEst.cssConfigInMsg wasn't connected.");
     }
     if (!this->cssDataInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: cssWIsEst.cssDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("cssWIsEst.cssDataInMsg wasn't connected.");
     }
 
     this->cssConfigInBuffer = this->cssConfigInMsg();
     if (this->cssConfigInBuffer.nCSS > MAX_NUM_CSS_SENSORS) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
-            "MAX_NUM_CSS_SENSORS value."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
+                "MAX_NUM_CSS_SENSORS value."
+            );
     }
 
     this->priorSignalAvailable = 0;

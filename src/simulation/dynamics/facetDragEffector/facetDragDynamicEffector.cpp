@@ -7,6 +7,7 @@
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 FacetDragDynamicEffector::FacetDragDynamicEffector() {
     this->v_B.fill(0.0);
@@ -16,7 +17,7 @@ FacetDragDynamicEffector::FacetDragDynamicEffector() {
 void FacetDragDynamicEffector::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "facetDragDynamicEffector.atmoDensInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("facetDragDynamicEffector.atmoDensInMsg was not linked.");
     }
 }
 

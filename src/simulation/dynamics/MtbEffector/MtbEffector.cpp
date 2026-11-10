@@ -7,6 +7,7 @@
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -22,9 +23,15 @@ void MtbEffector::reset(uint64_t currentSimNanos) {
     /*
      * Check that required input messages are connected.
      */
-    if (!this->mtbCmdInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbCmdInMsg was not linked."); }
-    if (!this->magInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "MtbEffector.magInMsg was not linked."); }
-    if (!this->mtbParamsInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbParamsInMsg was not linked."); }
+    if (!this->mtbCmdInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("MtbEffector.mtbCmdInMsg was not linked.");
+    }
+    if (!this->magInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("MtbEffector.magInMsg was not linked.");
+    }
+    if (!this->mtbParamsInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("MtbEffector.mtbParamsInMsg was not linked.");
+    }
 
     /*
      * Zero the effector output forces and torques.

@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
 
@@ -45,10 +46,12 @@ GroundMapping::~GroundMapping() {
 */
 void GroundMapping::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("GroundMapping.scStateInMsg was not linked.");
+    }
 
     // check that the direction of the camera is provided
-    if (this->nHat_B.isZero()) { bskLogger.bskLog(BSK_ERROR, "GroundMapping.nHat_B vector not set."); }
+    if (this->nHat_B.isZero()) { xmera::logging::get(this->modelTag)->error("GroundMapping.nHat_B vector not set."); }
 }
 
 /*! Read module messages

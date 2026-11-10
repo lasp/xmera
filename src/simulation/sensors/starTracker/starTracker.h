@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/STSensorMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -42,7 +41,6 @@ public:
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< Sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;      //!< Sensor output state message
 
-    BSKLogger bskLogger;  //!< BSK Logging
 
 private:
     uint64_t sensorTimeTag = 0;  //!< [ns] Current time tag for sensor out

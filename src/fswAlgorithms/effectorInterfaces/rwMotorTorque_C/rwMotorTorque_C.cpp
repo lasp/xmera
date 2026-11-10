@@ -9,6 +9,7 @@
 #include "rwMotorTorque_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -28,12 +29,12 @@ void RwMotorTorque_C::reset(uint64_t callTime) {
         if (v3Norm(pAxis) > 0.0) { this->numControlAxes += 1; }
     }
     if (this->numControlAxes == 0) {
-        this->bskLogger.bskLog(BSK_INFORMATION, "rwMotorTorque() is not setup to control any axes!");
+        xmera::logging::get(this->modelTag)->info("rwMotorTorque() is not setup to control any axes!");
     }
 
     // check if the required input messages are included
     if (!this->rwParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwMotorTorque.rwParamsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwMotorTorque.rwParamsInMsg wasn't connected.");
     }
 
     /*! - Read static RW config data message and store it in module variables */
@@ -69,7 +70,7 @@ void RwMotorTorque_C::updateState(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->vehControlInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwMotorTorque.vehControlInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwMotorTorque.vehControlInMsg wasn't connected.");
     }
 
     /*! - Read the input messages */

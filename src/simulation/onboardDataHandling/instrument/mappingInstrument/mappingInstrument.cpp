@@ -4,6 +4,8 @@
 
 #include "mappingInstrument.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <string.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -22,7 +24,7 @@ MappingInstrument::~MappingInstrument() {
 void MappingInstrument::reset(uint64_t currentSimNanos) {
     // check that the baud rate is set
     if (this->nodeBaudRate < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is not set to a positive value.");
+        xmera::logging::get(this->modelTag)->error("MappingInstrument.nodeBaudRate is not set to a positive value.");
     }
 
     return;

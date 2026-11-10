@@ -3,6 +3,8 @@
 
 #include "opticalFlow.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <fstream>
 
 OpticalFlow::OpticalFlow() = default;
@@ -16,9 +18,13 @@ OpticalFlow::~OpticalFlow() = default;
  */
 void OpticalFlow::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "opticalFlow.imageInMsg wasn't connected."); }
+    if (!this->imageInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("opticalFlow.imageInMsg wasn't connected.");
+    }
     // check that the required message has not been connected
-    if (!this->ephemerisMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "opticalFlow.ephemerisMsg wasn't connected."); }
+    if (!this->ephemerisMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("opticalFlow.ephemerisMsg wasn't connected.");
+    }
 }
 
 /*! This method reads the images and follows the following high level logic:

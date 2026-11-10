@@ -60,7 +60,7 @@ except ImportError:
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
 def test_opnavBskScenarios(show_plots):
-    sim_model.setDefaultLogLevel(sim_model.BSK_SILENT)
+    sim_model.set_log_level("off")
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

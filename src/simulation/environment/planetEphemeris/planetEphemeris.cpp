@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -42,12 +43,12 @@ void PlanetEphemeris::reset(uint64_t CurrenSimNanos) {
 
     /*! - do sanity checks that the vector arrays for planet names and ephemeris have the same length */
     if (this->planetElements.size() != this->planetNames.size()) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Only %lu planet element sets provided, but %lu plane names are present.",
-            this->planetElements.size(),
-            this->planetNames.size()
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "Only {} planet element sets provided, but {} plane names are present.",
+                this->planetElements.size(),
+                this->planetNames.size()
+            );
     }
 
     /*! - See if planet orientation information is set */
@@ -62,45 +63,45 @@ void PlanetEphemeris::reset(uint64_t CurrenSimNanos) {
     if (computeAttitudeFlag) {
         /*! - check that the right number of planet local sideral time angles are provided */
         if (this->lst0.size() != this->planetNames.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Only %lu planet initial principal rotation angles provided, but %lu planet names are present.",
-                this->lst0.size(),
-                this->planetNames.size()
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "Only {} planet initial principal rotation angles provided, but {} planet names are present.",
+                    this->lst0.size(),
+                    this->planetNames.size()
+                );
             this->computeAttitudeFlag = 0;
         }
 
         /*! - check that the right number of planet polar axis right ascension angles are provided */
         if (this->rightAscension.size() != this->planetNames.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Only %lu planet right ascension angles provided, but %lu planet names are present.",
-                this->rightAscension.size(),
-                this->planetNames.size()
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "Only {} planet right ascension angles provided, but {} planet names are present.",
+                    this->rightAscension.size(),
+                    this->planetNames.size()
+                );
             this->computeAttitudeFlag = 0;
         }
 
         /*! - check that the right number of planet polar axis declination angles are provided */
         if (this->declination.size() != this->planetNames.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Only %lu planet declination angles provided, but %lu planet names are present.",
-                this->declination.size(),
-                this->planetNames.size()
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "Only {} planet declination angles provided, but {} planet names are present.",
+                    this->declination.size(),
+                    this->planetNames.size()
+                );
             this->computeAttitudeFlag = 0;
         }
 
         /*! - check that the right number of planet polar rotation rates are provided */
         if (this->rotRate.size() != this->planetNames.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Only %lu planet rotation rates provided, but %lu planet names are present.",
-                this->rotRate.size(),
-                this->planetNames.size()
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "Only {} planet rotation rates provided, but {} planet names are present.",
+                    this->rotRate.size(),
+                    this->planetNames.size()
+                );
             this->computeAttitudeFlag = 0;
         }
     }

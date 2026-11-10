@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -47,7 +48,7 @@ double const epsilon = 1e-12;  // module tolerance for zero
 */
 void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
     if (!this->attNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
     }
 
     // check how the input body heading is provided
@@ -56,29 +57,29 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
     } else if (v3Norm(this->h1Hat_BInput) > epsilon) {
         this->bodyAxisInput = inputBodyHeadingParameter;
     } else {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified."
+            );
     }
 
     // check how the input inertial heading is provided
     if (this->inertialHeadingInMsg.isLinked()) {
         this->inertialAxisInput = inputInertialHeadingMsg;
         if (this->ephemerisInMsg.isLinked()) {
-            this->bskLogger.bskLog(
-                BSK_WARNING,
-                " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were "
-                "linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg"
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn(
+                    "both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were "
+                    "linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg"
+                );
         }
     } else if (this->ephemerisInMsg.isLinked()) {
         if (!this->transNavInMsg.isLinked()) {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                " oneAxisSolarArrayPoint.ephemerisInMsg was specified but "
-                "oneAxisSolarArrayPoint.transNavInMsg was not."
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "oneAxisSolarArrayPoint.ephemerisInMsg was specified but "
+                    "oneAxisSolarArrayPoint.transNavInMsg was not."
+                );
         } else {
             this->inertialAxisInput = inputEphemerisMsg;
         }
@@ -86,11 +87,11 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
         if (v3Norm(this->hHat_NInput) > epsilon) {
             this->inertialAxisInput = inputInertialHeadingParameter;
         } else {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg were "
-                "connected and no inertial heading h_N was specified."
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor "
+                    "oneAxisSolarArrayPoint.ephemerisInMsg were connected and no inertial heading h_N was specified."
+                );
         }
     }
 }

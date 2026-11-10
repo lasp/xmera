@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/ArrayMotorForceMsgPayload.h>
 #include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
@@ -120,7 +119,6 @@ public:
         return dcm_FB;
     }
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     double mass = 1.0;                      //!< [kg] mass of effector

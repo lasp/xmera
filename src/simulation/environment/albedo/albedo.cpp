@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/geodeticConversion.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/safeMath.h>
 
 #include <fstream>
@@ -83,12 +84,12 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (configMsg.fov < 0.0) {
         this->fovs.push_back(this->fov_default);
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s half field of view angle "
-            "(fov), the default value is used.",
-            (int) this->albOutMsgs.size() - 1
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Albedo Module (addInstrumentConfig): For the instrument ({})'s half field of view angle "
+                "(fov), the default value is used.",
+                (int) this->albOutMsgs.size() - 1
+            );
     } else {
         this->fovs.push_back(configMsg.fov);
     }
@@ -101,12 +102,12 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
         this->nHat_Bs.push_back(configMsg.nHat_B / configMsg.nHat_B.norm());
     } else {
         this->nHat_Bs.push_back(nHat_B_default);
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s unit normal vector (nHat_B), "
-            "the default vector is used.",
-            this->albOutMsgs.size() - 1
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Albedo Module (addInstrumentConfig): For the instrument ({})'s unit normal vector (nHat_B), "
+                "the default vector is used.",
+                this->albOutMsgs.size() - 1
+            );
     }
     return;
 }
@@ -123,12 +124,12 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (fov < 0.0) {
         this->fovs.push_back(this->fov_default);
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "Albedo Module (addInstrumentConfig): Instrument (%lu)'s half field of view angle (fov) "
-            "cannot be negative, the default value is used instead.",
-            this->albOutMsgs.size() - 1
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Albedo Module (addInstrumentConfig): Instrument ({})'s half field of view angle (fov) "
+                "cannot be negative, the default value is used instead.",
+                this->albOutMsgs.size() - 1
+            );
     } else {
         this->fovs.push_back(fov);
     }
@@ -141,12 +142,12 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
         this->nHat_Bs.push_back(nHat_B / nHat_B.norm());
     } else {
         this->nHat_Bs.push_back(nHat_B_default);
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "Albedo Module (addInstrumentConfig): Instrument (%lu)'s unit normal vector (nHat_B) cannot "
-            "be composed of all zeros, the default vector is used instead.",
-            this->albOutMsgs.size() - 1
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Albedo Module (addInstrumentConfig): Instrument ({})'s unit normal vector (nHat_B) cannot "
+                "be composed of all zeros, the default vector is used instead.",
+                this->albOutMsgs.size() - 1
+            );
     }
 
     return;
@@ -250,17 +251,20 @@ void Albedo::updateState(uint64_t currentSimNanos) {
  */
 void Albedo::reset(uint64_t currentSimNanos) {
     if (this->modelNames.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Albedo model was not set.");
+        xmera::logging::get(this->modelTag)->error("Albedo Module (Reset): Albedo model was not set.");
         return;
     }
     if (this->planetInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Planet message vector (planetInMsgs) is empty.");
+        xmera::logging::get(this->modelTag)
+            ->error("Albedo Module (Reset): Planet message vector (planetInMsgs) is empty.");
     }
     if (!this->sunPositionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Sun message (sunPositionInMsg) is not linked.");
+        xmera::logging::get(this->modelTag)
+            ->error("Albedo Module (Reset): Sun message (sunPositionInMsg) is not linked.");
     }
     if (!this->spacecraftStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Spacecraft message (spacecraftStateInMsg) is not linked.");
+        xmera::logging::get(this->modelTag)
+            ->error("Albedo Module (Reset): Spacecraft message (spacecraftStateInMsg) is not linked.");
     }
 
     int idx = 0;
@@ -349,11 +353,12 @@ void Albedo::getPlanetRadius(std::string planetSpiceName) {
         this->REQ_planets.push_back(REQ_NEPTUNE * 1000.0);  // [m]
         this->RP_planets.push_back(-1.0);                   // [m]
     } else {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Albedo Module (getPlanetRadius): The planet's radius cannot be obtained. The planet (%s) is not found.",
-            planetSpiceName.c_str()
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "Albedo Module (getPlanetRadius): The planet's radius cannot be obtained. The planet ({}) is not "
+                "found.",
+                planetSpiceName
+            );
     }
     return;
 }
@@ -391,11 +396,12 @@ double Albedo::getAlbedoAverage(std::string planetSpiceName) {
         ALB_avg = 0.31;
         return ALB_avg;
     } else {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).",
-            planetSpiceName.c_str()
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet "
+                "({}).",
+                planetSpiceName
+            );
         return 0.;
     }
 }
@@ -427,28 +433,27 @@ void Albedo::evaluateAlbedoModel(int idx) {
         //! - Albedo model based on data
         //! - Check that required module variables are set
         if (fileName == "") {
-            bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Albedo fileName was not set.");
+            xmera::logging::get(this->modelTag)
+                ->error("Albedo Module (evaluateAlbedoModel): Albedo fileName was not set.");
         } else {
             this->readFile = true;
         }
         fileName = dataPath + "/" + fileName;
     } else {
-        bskLogger
-            .bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Check the model name (%s).", modelName.c_str());
+        xmera::logging::get(this->modelTag)
+            ->error("Albedo Module (evaluateAlbedoModel): Check the model name ({}).", modelName);
     }
     //! - Read the albedo coefficient file if the model requires
     if (this->readFile) {
         //! - Check that required module variables are set
         if (dataPath == "") {
-            bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Albedo data path was not set.");
+            xmera::logging::get(this->modelTag)
+                ->error("Albedo Module (evaluateAlbedoModel): Albedo data path was not set.");
         }
         std::ifstream input(fileName);
         if (!input) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s",
-                fileName.c_str()
-            );
+            xmera::logging::get(this->modelTag)
+                ->error("Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file {}", fileName);
             // return to avoid reading/attempting to process the invalid file below
             return;
         }
@@ -469,11 +474,11 @@ void Albedo::evaluateAlbedoModel(int idx) {
         numLon = (int) array[0].size();
         //! - Compare if the numLat/numLon are not zero
         if (!numLat || !numLon) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Albedo Module (evaluateAlbedoModel): There has been an error in reading albedo data from (%s).",
-                fileName.c_str()
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "Albedo Module (evaluateAlbedoModel): There has been an error in reading albedo data from ({}).",
+                    fileName
+                );
         }
         //! - Define the albedo array based on the number of grid points
         this->ALB[idx] = std::vector<std::vector<double>>(numLat, std::vector<double>(numLon, 0.0));
@@ -566,12 +571,12 @@ void Albedo::computeAlbedo(
     /* Return zeross if the rate of the instrument's altitude
     to the planet's radius exceeds the specified limit */
     if (this->altitudeRateLimit >= 0 && alti_I / RA_planet > this->altitudeRateLimit) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "Albedo Module (computeAlbedo): The rate (altitude to planet's radii) limit is exceeded for "
-            "the planet (%s) and albedo set to zero.",
-            planetMsg.PlanetName
-        );
+        xmera::logging::get(this->modelTag)
+            ->warn(
+                "Albedo Module (computeAlbedo): The rate (altitude to planet's radii) limit is exceeded for "
+                "the planet ({}) and albedo set to zero.",
+                planetMsg.PlanetName
+            );
         outData[0] = 0.0;
         outData[1] = 0.0;
         outData[2] = 0.0;

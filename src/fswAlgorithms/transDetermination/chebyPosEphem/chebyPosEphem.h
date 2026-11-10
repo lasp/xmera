@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
@@ -31,7 +30,7 @@ typedef struct {
            fit system. e
 */
 class ChebyPosEphem : public SysModel {
-   public:
+public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 
@@ -42,8 +41,6 @@ class ChebyPosEphem : public SysModel {
     uint32_t coeffSelector; /*!< [-] Index in the ephArray that we are currently using*/
 
     EphemerisMsgPayload outputState; /*!< [-] The local storage of the outgoing message data*/
-
-    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

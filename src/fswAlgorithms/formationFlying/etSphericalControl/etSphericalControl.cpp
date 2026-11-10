@@ -5,6 +5,7 @@
 #include "etSphericalControl.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -20,39 +21,38 @@
 void EtSphericalControl::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->servicerTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: etSphericalControl.servicerTransInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("etSphericalControl.servicerTransInMsg wasn't connected.");
     }
     if (!this->debrisTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: etSphericalControl.debrisTransInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("etSphericalControl.debrisTransInMsg wasn't connected.");
     }
     if (!this->servicerAttInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: etSphericalControl.servicerAttInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("etSphericalControl.servicerAttInMsg wasn't connected.");
     }
     if (!this->servicerVehicleConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: etSphericalControl.servicerVehicleConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("etSphericalControl.servicerVehicleConfigInMsg wasn't connected.");
     }
     if (!this->debrisVehicleConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: etSphericalControl.debrisVehicleConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("etSphericalControl.debrisVehicleConfigInMsg wasn't connected.");
     }
     if (!this->eForceInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: etSphericalControl.eForceInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("etSphericalControl.eForceInMsg wasn't connected.");
     }
     // check if input parameters are valid
 
     // L_r must be a positive value
     if (this->L_r <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in etSphericalControl: L_r must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->error("Error in etSphericalControl: L_r must be set to a positive value.");
     }
 
     // m_T and m_D must be positive and non-zero
     if (this->servicerVehicleConfigInMsg().massSC <= 0.0) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "Error in etSphericalControl: servicer mass must be set to a positive value."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("Error in etSphericalControl: servicer mass must be set to a positive value.");
     }
     if (this->debrisVehicleConfigInMsg().massSC <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in etSphericalControl: debris mass must be set to a positive value.");
+        xmera::logging::get(this->modelTag)
+            ->error("Error in etSphericalControl: debris mass must be set to a positive value.");
     }
     // [K] and [P] must be positive definite matrices
     double EigenValuesK[3];
@@ -62,10 +62,12 @@ void EtSphericalControl::reset(uint64_t callTime) {
     v3Scale(-1., EigenValuesK, EigenValuesK);
     v3Scale(-1., EigenValuesP, EigenValuesP);
     if (vMax(EigenValuesK, 3) > 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in etSphericalControl: K must be a positive definite 3 by 3 matrix.");
+        xmera::logging::get(this->modelTag)
+            ->error("Error in etSphericalControl: K must be a positive definite 3 by 3 matrix.");
     }
     if (vMax(EigenValuesP, 3) > 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in etSphericalControl: P must be a positive definite 3 by 3 matrix.");
+        xmera::logging::get(this->modelTag)
+            ->error("Error in etSphericalControl: P must be a positive definite 3 by 3 matrix.");
     }
 
     return;

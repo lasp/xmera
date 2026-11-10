@@ -15,6 +15,7 @@
 #include <architecture/msgPayloadDef/STAttMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <architecture/utilities/signalCondition.h>
+
 #include <stdint.h>
 
 #define MAX_ST_VEH_COUNT 4
@@ -36,7 +37,7 @@ typedef struct {
  Used to estimate the spacecraft's inertial attitude. Measurements are StarTracker data and gyro data.
  */
 class InertialUKF : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -106,8 +107,6 @@ class InertialUKF : public SysModel {
     LowPassFilterData gyroFilt[3];            //!< [-] Low-pass filters for input gyro data
 
     STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void Read_STMessages(InertialUKF* configData);

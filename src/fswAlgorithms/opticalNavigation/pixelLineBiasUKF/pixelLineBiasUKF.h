@@ -5,8 +5,6 @@
 #ifndef _PIXLINE_UKF_H_
 #define _PIXLINE_UKF_H_
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
@@ -15,13 +13,13 @@
 #include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
 #include <architecture/msgPayloadDef/PixelLineFilterMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <stdint.h>
 
 /*! @brief Top level structure for the relative OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */
 class PixelLineBiasUKF : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -86,8 +84,6 @@ class PixelLineBiasUKF : public SysModel {
     OpNavCirclesMsgPayload circlesInBuffer;  //!< [-] ST sensor data read in from message bus
     CameraConfigMsgPayload cameraSpecs;      //!< [-] Camera specs for nav
     NavAttMsgPayload attInfo;                //!< [-] Att info for frame transformation
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

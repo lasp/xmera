@@ -11,7 +11,8 @@
       "default-features": false,
       "features": [ "dnn", "highgui", "jpeg", "png", "tiff", "webp"]
     },
-    "protobuf"
+    "protobuf",
+    "spdlog"
   ],
   "overrides": [
     {
@@ -25,6 +26,14 @@
     {
       "name": "abseil",
       "version": "20260107.1"
+    },
+    {
+      "name": "fmt",
+      "version": "11.2.0"
+    },
+    {
+      "name": "spdlog",
+      "version": "1.15.3"
     }
   ]
 }

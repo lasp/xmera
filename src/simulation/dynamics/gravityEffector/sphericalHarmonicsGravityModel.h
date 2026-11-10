@@ -5,7 +5,6 @@
 #ifndef SH_GRAVITY_MODEL_H
 #define SH_GRAVITY_MODEL_H
 
-#include <architecture/utilities/bskLogging.h>
 #include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 #include <vector>
@@ -14,7 +13,7 @@
  * The Spherical Harmonics gravity model
  */
 class SphericalHarmonicsGravityModel : public GravityModel {
-   public:
+public:
     /** Initialize all parameters necessary for the computation of gravity.
      *
      * The attributes `muBody`and `radEquator` must be set separately.
@@ -31,7 +30,7 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      * Will return an error message (string) if `cBar` or `sBar` were not set.
      * Otherwise, returns an empty optional.
      */
-    std::optional<std::string> initializeParameters(const GravBodyData&) override;
+    std::optional<std::string> initializeParameters(GravBodyData const &) override;
 
     /** Returns the gravity acceleration at a position around this body.
      *
@@ -39,7 +38,7 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      * Likewise, the resulting acceleration should be given in the
      * body-fixed reference frame.
      */
-    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const override;
+    Eigen::Vector3d computeField(Eigen::Vector3d const &position_planetFixed) const override;
 
     /** Returns the gravity acceleration at a position around this body.
      *
@@ -54,9 +53,8 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      * If include_zero_degree is false the degree that corresponds to the spherical
      * term (point-mass) of the gravity is ignored.
      */
-    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed,
-                                 size_t degree,
-                                 bool include_zero_degree) const;
+    Eigen::Vector3d
+    computeField(Eigen::Vector3d const &position_planetFixed, size_t degree, bool include_zero_degree) const;
 
     /** Returns the gravitational potential energy at a position around this body.
      *
@@ -66,9 +64,9 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      * The position is given relative to the body and in the inertial
      * reference frame.
      */
-    double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
+    double computePotentialEnergy(Eigen::Vector3d const &positionWrtPlanet_N) const override;
 
-   public:
+public:
     double radEquator = 0; /**< [m] Reference radius for the planet */
     double muBody = 0;     /**< [m^3/s^2] Gravitation parameter for the planet */
 
@@ -86,7 +84,7 @@ class SphericalHarmonicsGravityModel : public GravityModel {
     /** The normalized "S" spherical harmonics coefficients */
     std::vector<std::vector<double>> sBar;
 
-   private:
+private:
     /**
      * The following parameters are used internally to compute the gravity.
      *

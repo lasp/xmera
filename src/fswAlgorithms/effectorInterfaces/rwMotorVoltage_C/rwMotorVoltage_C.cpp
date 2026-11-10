@@ -10,6 +10,7 @@
 #include "rwMotorVoltage_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <string.h>
@@ -22,7 +23,7 @@
 void RwMotorVoltage_C::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->rwParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwMotorVoltage.rwParamsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwMotorVoltage.rwParamsInMsg wasn't connected.");
     }
 
     /*! - Read static RW config data message and store it in module variables*/
@@ -50,7 +51,7 @@ void RwMotorVoltage_C::updateState(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->torqueInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwMotorVoltage.torqueInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rwMotorVoltage.torqueInMsg wasn't connected.");
     }
 
     torqueCmd = this->torqueInMsg();

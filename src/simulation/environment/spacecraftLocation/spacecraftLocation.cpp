@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/safeMath.h>
 
 /*! @brief Creates an instance of the SpacecraftLocation class
@@ -38,18 +39,18 @@ SpacecraftLocation::~SpacecraftLocation() {
 /*! Resets the internal position to the specified initial position.*/
 void SpacecraftLocation::reset(uint64_t currentSimNanos) {
     if (this->scStateInMsgs.size() == 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`"
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     if (!this->primaryScStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation module must have `primaryScStateInMsg` connected.");
+        xmera::logging::get(this->modelTag)
+            ->error("SpacecraftLocation module must have `primaryScStateInMsg` connected.");
     }
 
     if (this->rEquator < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation rEquator must be set to the planet equatorial radius");
+        xmera::logging::get(this->modelTag)
+            ->error("SpacecraftLocation rEquator must be set to the planet equatorial radius");
     }
     /* if the polar radius is not specified, then it is set equal to the equatorial radius */
     if (this->rEquator > 0.0 && this->rPolar < 0.0) { this->rPolar = rEquator; }
@@ -57,7 +58,7 @@ void SpacecraftLocation::reset(uint64_t currentSimNanos) {
 
     if (this->aHat_B.norm() > 0.1) {
         if (this->theta < 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set theta if you specify aHat_B");
+            xmera::logging::get(this->modelTag)->error("SpacecraftLocation must set theta if you specify aHat_B");
         }
         this->aHat_B.normalize();
     }
@@ -101,7 +102,7 @@ bool SpacecraftLocation::ReadMessages() {
             this->scStatesBuffer.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Spacecraft location has no other spacecraft to track.");
+        xmera::logging::get(this->modelTag)->error("Spacecraft location has no other spacecraft to track.");
         scRead = false;
     }
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and

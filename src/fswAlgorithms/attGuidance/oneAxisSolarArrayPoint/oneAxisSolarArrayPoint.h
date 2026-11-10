@@ -5,8 +5,6 @@
 #ifndef _ONE_AXIS_SOLAR_ARRAY_POINT_
 #define _ONE_AXIS_SOLAR_ARRAY_POINT_
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
@@ -15,7 +13,8 @@
 #include <architecture/msgPayloadDef/InertialHeadingMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
+
+#include <stdint.h>
 
 typedef enum celestialBody { notSun = 0, Sun = 1 } CelestialBody;
 
@@ -33,7 +32,7 @@ typedef enum refFrameSolution { determinate = 0, indeterminate = 1 } RefFrameSol
 
 /*! @brief Top level structure for the sub-module routines. */
 class OneAxisSolarArrayPoint : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -57,8 +56,6 @@ class OneAxisSolarArrayPoint : public SysModel {
     ReadFunctor<NavTransMsgPayload> transNavInMsg;                //!< input msg measured position
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;              //!< input ephemeris msg
     Message<AttRefMsgPayload> attRefOutMsg;                       //!< output attitude reference message
-
-    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

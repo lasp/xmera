@@ -5,6 +5,7 @@
 #include "spacecraftReconfig.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
@@ -24,16 +25,16 @@ static int CompareTime(void const* n1, void const* n2);
 void SpacecraftReconfig::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->chiefTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("spacecraftReconfig.chiefTransInMsg wasn't connected.");
     }
     if (!this->deputyTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: spacecraftReconfig.deputyTransInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("spacecraftReconfig.deputyTransInMsg wasn't connected.");
     }
     if (!this->thrustConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("spacecraftReconfig.thrustConfigInMsg wasn't connected.");
     }
     if (!this->vehicleConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: spacecraftReconfig.vehicleConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("spacecraftReconfig.vehicleConfigInMsg wasn't connected.");
     }
 
     // zero the burn info buffer

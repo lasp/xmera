@@ -12,13 +12,12 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief module configuration message definition
  */
 class OpNavPoint : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     Message<AttGuidMsgPayload> attGuidanceOutMsg;           /*!< The name of the output message*/
@@ -39,7 +38,6 @@ class OpNavPoint : public SysModel {
     double opNavAxisSpinRate;   /*!< -- r/s Desired constant spin rate about opNav vector */
 
     AttGuidMsgPayload attGuidanceOutBuffer; /*!< -- The output data that we compute*/
-    BSKLogger bskLogger = {};               //!< BSK Logging
 };
 
 #endif

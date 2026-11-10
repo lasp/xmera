@@ -5,6 +5,7 @@
 #include "simpleInstrumentController.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <stdio.h>
 
@@ -16,10 +17,10 @@
 void SimpleInstrumentController::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->locationAccessInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("simpleInstrumentController.locationAccessInMsg wasn't connected.");
     }
     if (!this->attGuidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: simpleInstrumentController.attGuidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("simpleInstrumentController.attGuidInMsg wasn't connected.");
     }
 
     // reset the imaged variable to zero

@@ -36,7 +36,7 @@ def messaging_unit_tests():
 def test_cpp_msg_subscription_check():
     # Check whether python-wrapped C++ messages are properly checked for subscription
 
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -102,7 +102,7 @@ def test_cpp_msg_subscription_check():
 def test_c_msg_subscription_check():
     # Check whether python-wrapped C++ messages are properly checked for subscription
 
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -160,7 +160,7 @@ def test_c_msg_subscription_check():
 
 def test_c_2_cpp_msg_subscription_check():
 
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -229,7 +229,7 @@ def test_c_2_cpp_msg_subscription_check():
 
 
 def test_cpp_2_c_msg_subscription_check():
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 

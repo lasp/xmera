@@ -5,26 +5,26 @@
 #ifndef MRP_ROTATION_C
 #define MRP_ROTATION_C
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/AttStateMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class MrpRotation_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
-    void computeMRPRotationReference(double sigma_R0N[3],
-                                     double omega_R0N_N[3],
-                                     double domega_R0N_N[3],
-                                     AttRefMsgPayload* attRefOut);
+    void computeMRPRotationReference(
+        double sigma_R0N[3],
+        double omega_R0N_N[3],
+        double domega_R0N_N[3],
+        AttRefMsgPayload* attRefOut
+    );
     /* Declare module public variables */
     double mrpSet[3];       //!< [-] current MRP attitude coordinate set with respect to the input reference
     double omega_RR0_R[3];  //!< [rad/s] angular velocity vector relative to input reference
@@ -41,8 +41,6 @@ class MrpRotation_C : public SysModel {
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
     ReadFunctor<AttStateMsgPayload>
         desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

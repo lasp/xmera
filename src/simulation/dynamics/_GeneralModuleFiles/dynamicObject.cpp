@@ -3,9 +3,11 @@
 
 #include "dynamicObject.h"
 
+#include <architecture/utilities/logging.h>
+
 void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator) {
     if (!newIntegrator) {
-        bskLogger.bskLog(BSK_ERROR, "New integrator cannot be a null pointer");
+        xmera::logging::get(this->modelTag)->error("New integrator cannot be a null pointer");
         return;
     }
 

@@ -6,6 +6,7 @@
 #include "hingedRigidBodyPIDMotor.h"
 
 /* Support files */
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -15,10 +16,10 @@
 */
 void HingedRigidBodyPIDMotor::reset(uint64_t callTime) {
     if (!this->hingedRigidBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
     }
     if (!this->hingedRigidBodyRefInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyRefInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("solarArrayAngle.hingedRigidBodyRefInMsg wasn't connected.");
     }
 
     /*! initialize module parameters to compute integral error via trapezoid integration */

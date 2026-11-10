@@ -4,6 +4,7 @@
 
 #include "hingedBodyLinearProfiler.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <iostream>
@@ -28,7 +29,8 @@ void HingedBodyLinearProfiler::reset(uint64_t currentSimNanos) {
     if (this->endTime - this->startTime > 0) {
         this->deploymentSlope = (this->endTheta - this->startTheta) / ((this->endTime - this->startTime) * NANO2SEC);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Delta between end time and start time of deployment must exist and be positive.");
+        xmera::logging::get(this->modelTag)
+            ->error("Delta between end time and start time of deployment must exist and be positive.");
     }
 }
 

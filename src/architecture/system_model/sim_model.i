@@ -65,7 +65,50 @@ namespace std {
 %include "sys_model_task.h"
 %include "sys_process.h"
 %include "sim_model.h"
-%include "architecture/utilities/bskLogging.h"
+
+%{
+   #include "architecture/utilities/logging.h"
+%}
+
+%inline %{
+    void _setGlobalLogLevel(std::string const& level) {
+        xmera::logging::setLevel(xmera::logging::parseLevel(level));
+    }
+
+    void _setNamedLogLevel(std::string const& name, std::string const& level) {
+        xmera::logging::setLevel(name, xmera::logging::parseLevel(level));
+    }
+
+    void reset_log_levels() {
+        xmera::logging::resetLevels();
+    }
+
+    void set_log_sink(std::string const& spec) {
+        xmera::logging::setSink(xmera::logging::parseSink(spec));
+    }
+
+    void _log(std::string const& name, std::string const& level, std::string const& message) {
+        xmera::logging::get(name)->log(xmera::logging::parseLevel(level), message);
+    }
+%}
+
+%pythoncode %{
+def set_log_level(level, name=None):
+    """Set the log level: trace, debug, info, warning, error, critical or off.
+
+    If name is None, the level applies to all loggers that do not have a level set by name.
+    Otherwise it applies to the logger with this name, usually a module modelTag.
+    """
+    if name is None:
+        _setGlobalLogLevel(level)
+    else:
+        _setNamedLogLevel(name, level)
+
+
+def log(level, message, name=""):
+    """Write a message at a level (trace, debug, info, warning, error or critical) to the logger with this name."""
+    _log(name, level, message)
+%}
 
 %attribute_readonly(SimModel, std::vector<SysProcess*> const&,
     processList,
@@ -101,7 +144,10 @@ class SuperInitChecker(type):
         return rv
 
 class SysModel(_SysModel, metaclass=SuperInitChecker):
-    bskLogger: BSKLogger = None
+
+    def log(self, level, message):
+        """Write a message at a level to the logger named after the modelTag of this module."""
+        log(level, message, self.modelTag)
 %}
 
 

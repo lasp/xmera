@@ -7,6 +7,7 @@
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
@@ -27,7 +28,9 @@ StarTracker::~StarTracker() {
  @return void */
 void StarTracker::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("starTracker.scStateInMsg was not linked.");
+    }
 
     int numStates = 3;
 
@@ -35,11 +38,11 @@ void StarTracker::reset(uint64_t currentSimNanos) {
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if (this->PMatrix.size() != numStates * numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
+        xmera::logging::get(this->modelTag)->error("Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
     if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds is not size 3. Quitting");
+        xmera::logging::get(this->modelTag)->error("Your walkbounds is not size 3. Quitting");
         return;
     }
     this->errorModel.setNoiseMatrix(this->PMatrix);

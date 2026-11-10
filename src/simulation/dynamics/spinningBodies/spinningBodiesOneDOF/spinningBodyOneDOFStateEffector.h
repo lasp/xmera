@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
@@ -79,7 +78,6 @@ public:
     void prependSpacecraftNameToStates() override;  //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();       //!< Method for computing the SB's states
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     double u = 0.0;            //!< [N-m] optional motor torque

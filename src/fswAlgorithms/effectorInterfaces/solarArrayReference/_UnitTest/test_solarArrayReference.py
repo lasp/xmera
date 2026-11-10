@@ -109,7 +109,7 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

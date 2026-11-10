@@ -9,13 +9,13 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
+
 #include <stdbool.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class PrescribedTrans : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -44,8 +44,6 @@ class PrescribedTrans : public SysModel {
         linearTranslationRigidBodyInMsg;  //!< Input message for the reference states
     Message<PrescribedTranslationMsgPayload>
         prescribedTranslationOutMsg;  //!< Output message for the prescribed translational states
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/geodeticConversion.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/safeMath.h>
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
@@ -47,7 +48,9 @@ GroundLocation::~GroundLocation() {
 void GroundLocation::reset(uint64_t currentSimNanos) {
     this->r_LP_P = this->r_LP_P_Init;
 
-    if (this->planetRadius < 0) { bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set."); }
+    if (this->planetRadius < 0) {
+        xmera::logging::get(this->modelTag)->error("GroundLocation module must have planetRadius set.");
+    }
 }
 
 /*! Specifies the ground location from planet-centered latitude, longitude, altitude position.
@@ -111,7 +114,7 @@ bool GroundLocation::ReadMessages() {
             this->scStatesBuffer.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Ground location has no spacecraft to track.");
+        xmera::logging::get(this->modelTag)->error("Ground location has no spacecraft to track.");
         scRead = false;
     }
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and

@@ -4,6 +4,8 @@
 
 #include "motorVoltageInterface.h"
 
+#include <architecture/utilities/logging.h>
+
 /*! This is the constructor for the motor voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
 MotorVoltageInterface::MotorVoltageInterface() {
@@ -27,7 +29,7 @@ MotorVoltageInterface::~MotorVoltageInterface() {
  */
 void MotorVoltageInterface::reset(uint64_t CurrenSimNanos) {
     if (!this->motorVoltageInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_WARNING, "motorVoltageInterface.motorVoltageInMsg is not linked.");
+        xmera::logging::get(this->modelTag)->warn("motorVoltageInterface.motorVoltageInMsg is not linked.");
         return;
     }
 }

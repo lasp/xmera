@@ -1,5 +1,7 @@
 #include "regionsOfInterestPrune.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <string>
 
 // ---------------------------------------------------------------------------
@@ -26,7 +28,7 @@ static RegionOfInterestMsgPayload regionAt(RegionsIdentifiedMsgPayload const &ms
 
 void RegionsOfInterestPrune::reset(uint64_t /*callTime*/) {
     if (!this->rowColSumInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_WARNING, "RegionsOfInterestPrune: rowColSumInMsg is not linked");
+        xmera::logging::get(this->modelTag)->warn("RegionsOfInterestPrune: rowColSumInMsg is not linked");
     }
     this->numPublished = 0;
     this->lastRegionsOutput = {};

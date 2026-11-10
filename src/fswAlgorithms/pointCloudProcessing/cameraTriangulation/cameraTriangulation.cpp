@@ -3,6 +3,8 @@
 
 #include "cameraTriangulation.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -19,13 +21,13 @@ CameraTriangulation::~CameraTriangulation() = default;
 void CameraTriangulation::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->pointCloudInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "cameraTriangulation.pointCloudInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("cameraTriangulation.pointCloudInMsg was not linked.");
     }
     if (!this->keyPointsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "cameraTriangulation.keyPointsInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("cameraTriangulation.keyPointsInMsg was not linked.");
     }
     if (!this->cameraConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "cameraTriangulation.cameraConfigInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("cameraTriangulation.cameraConfigInMsg was not linked.");
     }
 
     this->Ru = pow(this->uncertaintyImageMeasurement, 2) * Eigen::Matrix2d::Identity();
@@ -122,30 +124,30 @@ void CameraTriangulation::readMessages() {
     if (cameraIDkeyPoints == cameraIDconfig) {
         this->cameraID = cameraIDkeyPoints;
     } else if (this->validInputs) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "cameraTriangulation: camera IDs from keyPointsInMsg and "
-            "cameraConfigInMsg are different, but should be equal."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "cameraTriangulation: camera IDs from keyPointsInMsg and "
+                "cameraConfigInMsg are different, but should be equal."
+            );
         this->validInputs = false;
     }
     if (timeTagPointCloud == timeTagKeyPoints) {
         this->timeTag = timeTagPointCloud;
     } else if (this->validInputs) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "cameraTriangulation: time tags from pointCloudInMsg and "
-            "keyPointsInMsg (timeTag_secondImage) are different, but should be equal."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "cameraTriangulation: time tags from pointCloudInMsg and "
+                "keyPointsInMsg (timeTag_secondImage) are different, but should be equal."
+            );
         this->validInputs = false;
     }
     if (pointCloudSize != numberKeyPoints && this->validInputs) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "cameraTriangulation: number of features from pointCloudInMsg "
-            "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
-            "but should be equal."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "cameraTriangulation: number of features from pointCloudInMsg "
+                "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
+                "but should be equal."
+            );
         this->validInputs = false;
     }
 }

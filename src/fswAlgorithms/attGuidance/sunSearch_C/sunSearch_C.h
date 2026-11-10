@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 struct SlewProperties {
     // user-requested properties
@@ -26,11 +25,11 @@ struct SlewProperties {
 
 /*! @brief A class to perform EMA SEP pointing */
 class SunSearch_C : public SysModel {
-   public:
+public:
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-    void setSlewTime(double const t1, const double t2, const double t3);
+    void setSlewTime(double const t1, double const t2, double const t3);
     void setSlewAngle(double const theta1, double const theta2, double const theta3);
     void setMaxRate(double const omega1, double const omega2, double const omega3);
     void setMaxTorque(double const u1, double const u2, double const u3);
@@ -40,12 +39,11 @@ class SunSearch_C : public SysModel {
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< input veh config msg
     Message<AttGuidMsgPayload> attGuidOutMsg;             //!< Attitude reference output message
 
-   private:
+private:
     SlewProperties slewProperties[3];
     double slewMaxTorque[3];      //!< [Nm] maximum deliverable torque along each principal body axis
     double principleInertias[3];  //!< [kg m^2] inertias about the three principal axes
     uint64_t resetTime;           //!< time at which reset is called
-    BSKLogger bskLogger;          //!< BSK Logging
 
     void computeKinematicProperties(int const index);
     void computeReferenceMotion(uint64_t const currentSimNanos, int const index, double* omega_RN, double* domega_RN);

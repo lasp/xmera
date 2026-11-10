@@ -3,6 +3,8 @@
 
 #include "thrustCMEstimation.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <cmath>
 
 /*! Reset the flyby OD filter to an initial state and
@@ -13,12 +15,14 @@
 void ThrustCMEstimation::reset(uint64_t currentSimNanos) {
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, " thrusterConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrusterConfigInMsg wasn't connected.");
     }
     if (!this->intFeedbackTorqueInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, " intFeedbackTorqueInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("intFeedbackTorqueInMsg wasn't connected.");
     }
-    if (!this->attGuidInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, " attGuidInMsg wasn't connected."); }
+    if (!this->attGuidInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("attGuidInMsg wasn't connected.");
+    }
     if (this->vehConfigInMsg.isLinked()) {
         this->cmKnowledge = true;
     } else {

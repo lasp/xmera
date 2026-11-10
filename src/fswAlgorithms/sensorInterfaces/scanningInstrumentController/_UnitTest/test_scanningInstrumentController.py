@@ -87,7 +87,7 @@ def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1,
     """Test method"""
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    sim_model.set_log_level("warning")
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(1.0)

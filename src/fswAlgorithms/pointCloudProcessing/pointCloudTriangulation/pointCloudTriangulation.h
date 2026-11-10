@@ -13,16 +13,16 @@
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
 #include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <array>
 #include <vector>
 
 /*! @brief This module triangulates a camera position from a point cloud
  */
 class PointCloudTriangulation : public SysModel {
-   public:
+public:
     PointCloudTriangulation();
     ~PointCloudTriangulation();
 
@@ -36,18 +36,19 @@ class PointCloudTriangulation : public SysModel {
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;            //!< camera configuration input message
     Message<PointCloudMsgPayload> pointCloudOutMsg;                   //!< point cloud output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     //!< number of times (time steps) the module should use the ephemeris message before using the navigation message
     int numberTimeStepsInitialPhase = 5;
 
-   private:
+private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
-    Eigen::Vector3d triangulation(std::vector<Eigen::Vector3d> knownLocations,
-                                  std::vector<Eigen::Vector2d> imagePoints,
-                                  const Eigen::Matrix3d& cameraCalibrationInverse,
-                                  std::vector<Eigen::Matrix3d> dcmCamera) const;
+    Eigen::Vector3d triangulation(
+        std::vector<Eigen::Vector3d> knownLocations,
+        std::vector<Eigen::Vector2d> imagePoints,
+        Eigen::Matrix3d const &cameraCalibrationInverse,
+        std::vector<Eigen::Matrix3d> dcmCamera
+    ) const;
 
     int numberTimesCalled{};     //!< number of times (time steps) the module has been called with valid input data
     bool initialPhase{};         //!< indicates if the module is still in the initial phase (using ephemeris message)

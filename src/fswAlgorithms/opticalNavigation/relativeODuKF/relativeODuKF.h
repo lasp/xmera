@@ -5,25 +5,23 @@
 #ifndef _RELOD_UKF_H_
 #define _RELOD_UKF_H_
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavFilterMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
-
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <stdint.h>
 
 /*! @brief Top level structure for the relative OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */
 class RelODuKF : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     int relODuKFTimeUpdate(double updateTime);
@@ -82,8 +80,6 @@ class RelODuKF : public SysModel {
     double maxTimeJump;          //!< [s] Maximum time jump to allow in propagation
 
     OpNavMsgPayload opNavInBuffer;  //!< [-] ST sensor data read in from message bus
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

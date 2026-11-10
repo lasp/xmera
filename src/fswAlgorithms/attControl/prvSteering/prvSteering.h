@@ -9,11 +9,12 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
+
 #include <stdint.h>
 
 /*! module configuration message definition */
 class PrvSteering : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -26,8 +27,6 @@ class PrvSteering : public SysModel {
     /* declare module IO interfaces */
     Message<RateCmdMsgPayload> rateCmdOutMsg;  //!< rate command output message
     ReadFunctor<AttGuidMsgPayload> guidInMsg;  //!< attitude guidance input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void PRVSteeringLaw(PrvSteering* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);

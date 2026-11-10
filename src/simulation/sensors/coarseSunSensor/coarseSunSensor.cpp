@@ -8,6 +8,7 @@
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -98,10 +99,10 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 void CoarseSunSensor::reset(uint64_t currentSimNanos) {
     //! - If either messages is not valid, send a warning message
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a sun sensor input message");
+        xmera::logging::get(this->modelTag)->error("CoarseSunSensor: Failed to link a sun sensor input message");
     }
     if (!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a spacecraft state input message");
+        xmera::logging::get(this->modelTag)->error("CoarseSunSensor: Failed to link a spacecraft state input message");
     }
 
     Eigen::Matrix<double, 1, 1> nMatrix;

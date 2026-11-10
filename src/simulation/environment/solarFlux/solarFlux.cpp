@@ -5,6 +5,7 @@
 #include "solarFlux.h"
 
 #include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
@@ -12,10 +13,10 @@
 void SolarFlux::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "solarFlux.sunPositionInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("solarFlux.sunPositionInMsg was not linked.");
     }
     if (!this->spacecraftStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "solarFlux.spacecraftStateInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("solarFlux.spacecraftStateInMsg was not linked.");
     }
 
     return;

@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/simDefinitions.h>
 
@@ -84,7 +85,9 @@ void AtmosphereBase::reset(uint64_t currentSimNanos) {
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
         EpochMsgPayload epochMsg;
-        if (!this->epochInMsg.isWritten()) { bskLogger.bskLog(BSK_ERROR, "An un-written epoch msg was linked in!"); }
+        if (!this->epochInMsg.isWritten()) {
+            xmera::logging::get(this->modelTag)->error("An un-written epoch msg was linked in!");
+        }
         epochMsg = this->epochInMsg();
         this->epochDateTime.tm_year = epochMsg.year - 1'900;
         this->epochDateTime.tm_mon = epochMsg.month - 1;
@@ -160,7 +163,7 @@ bool AtmosphereBase::readMessages() {
             this->scStates.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Atmosphere model has no spacecraft added to it.");
+        xmera::logging::get(this->modelTag)->error("Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

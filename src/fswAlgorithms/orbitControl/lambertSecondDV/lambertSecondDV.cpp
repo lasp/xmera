@@ -4,6 +4,7 @@
 #include "lambertSecondDV.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <cmath>
@@ -23,10 +24,10 @@ LambertSecondDV::~LambertSecondDV() = default;
 void LambertSecondDV::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSecondDV.lambertSolutionInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertSecondDV.lambertSolutionInMsg was not linked.");
     }
     if (!this->desiredVelocityInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSecondDV.desiredVelocityInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertSecondDV.desiredVelocityInMsg was not linked.");
     }
 }
 
@@ -61,11 +62,11 @@ void LambertSecondDV::readMessages() {
         this->vExpected_N = cArrayToEigenVector(lambertSolutionInMsgBuffer.v2Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
-            "Lambert solution should be used must be either 1 or 2."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
+                "Lambert solution should be used must be either 1 or 2."
+            );
     }
 
     // desired velocity

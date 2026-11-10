@@ -16,6 +16,7 @@
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -25,7 +26,7 @@
 void SimpleDeadband::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: simpleDeadband.guidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("simpleDeadband.guidInMsg wasn't connected.");
     }
     this->wasControlOff = 1;
 }

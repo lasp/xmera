@@ -3,15 +3,17 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dragDynamicEffector.h"
-#include <architecture/utilities/linearAlgebra.h>
+
 #include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method is used to reset the module.
  @return void
  */
 void DragDynamicEffector::reset(uint64_t currentSimNanos) {
     if (!this->atmoDensInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("dragDynamicEffector.atmoDensInMsg was not linked.");
     }
 }
 
@@ -19,7 +21,9 @@ void DragDynamicEffector::reset(uint64_t currentSimNanos) {
 atmospheric data.
  @return void
  */
-void DragDynamicEffector::readMessages() { this->atmoInData = this->atmoDensInMsg(); }
+void DragDynamicEffector::readMessages() {
+    this->atmoInData = this->atmoDensInMsg();
+}
 
 /*!
     This method is used to link the dragEffector to the hub attitude and velocity,
@@ -27,7 +31,7 @@ void DragDynamicEffector::readMessages() { this->atmoInData = this->atmoDensInMs
     @return void
     @param states simulation states
  */
-void DragDynamicEffector::linkInStates(DynParamManager& states) {
+void DragDynamicEffector::linkInStates(DynParamManager &states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubVelocity = states.getStateObject("hubVelocity");
 }
@@ -36,7 +40,7 @@ void DragDynamicEffector::linkInStates(DynParamManager& states) {
  */
 void DragDynamicEffector::updateDragDir() {
     Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     this->v_B = dcm_BN * this->hubVelocity->getState();  // [m/s] sc velocity
@@ -51,8 +55,8 @@ void DragDynamicEffector::cannonballDrag() {
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-    this->forceExternal_B = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) *
-                            this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0) * this->v_hat_B;
+    this->forceExternal_B = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0)
+                          * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0) * this->v_hat_B;
     this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
 }
 
@@ -61,9 +65,7 @@ selecting the model type based on the settable attribute "modelType."
 */
 void DragDynamicEffector::computeForceTorque(double integTime, double timeStep) {
     this->updateDragDir();
-    if (this->modelType == "cannonball") {
-        this->cannonballDrag();
-    }
+    if (this->modelType == "cannonball") { this->cannonballDrag(); }
 }
 
 /*! This method is called to update the local atmospheric conditions at each timestep.
@@ -71,4 +73,6 @@ Naturally, this means that atmospheric conditions are held piecewise-constant ov
  @return void
  @param currentSimNanos The current simulation time in nanoseconds
  */
-void DragDynamicEffector::updateState(uint64_t currentSimNanos) { this->readMessages(); }
+void DragDynamicEffector::updateState(uint64_t currentSimNanos) {
+    this->readMessages();
+}

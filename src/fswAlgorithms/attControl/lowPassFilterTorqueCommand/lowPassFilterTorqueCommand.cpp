@@ -11,6 +11,7 @@
 #include "lowPassFilterTorqueCommand.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 #include <math.h>
@@ -27,7 +28,7 @@ void LowPassFilterTorqueCommand::reset(uint64_t callTime) {
 
     // check if the required input message is included
     if (!this->cmdTorqueInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: lowPassFilterTorqueCommand.cmdTorqueInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("lowPassFilterTorqueCommand.cmdTorqueInMsg wasn't connected.");
     }
 
     for (i = 0; i < NUM_LPF; i++) {

@@ -6,29 +6,28 @@
 #define XMERA_ATMOSPHEREBASE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <time.h>
-#include <Eigen/Dense>
-#include <string>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AtmoPropsMsgPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <time.h>
+
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
 
 /*! @brief atmospheric density base class */
 class AtmosphereBase : public SysModel {
-   public:
+public:
     AtmosphereBase();
     ~AtmosphereBase();
     void reset(uint64_t currentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
     void updateState(uint64_t currentSimNanos);
 
-   protected:
+protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void updateLocalAtmosphere(double currentTime);
@@ -39,7 +38,7 @@ class AtmosphereBase : public SysModel {
     virtual bool customReadMessages();
     virtual void customSetEpochFromVariable();
 
-   public:
+public:
     std::vector<ReadFunctor<SCStatesMsgPayload>>
         scStateInMsgs;  //!< Vector of the spacecraft position/velocity input message
     std::vector<Message<AtmoPropsMsgPayload>*>
@@ -51,9 +50,8 @@ class AtmosphereBase : public SysModel {
     double
         envMaxReach;  //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
     double planetRadius;  //!< [m]      Radius of the planet
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
-   protected:
+protected:
     Eigen::Vector3d r_BP_N;  //!< [m] sc position vector relative to planet in inertial N frame components
     Eigen::Vector3d r_BP_P;  //!< [m] sc position vector relative to planet in planet-fixed frame components
     double orbitRadius;      //!< [m] sc orbit radius about planet

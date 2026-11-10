@@ -5,41 +5,39 @@
 #ifndef GROUNDMAPPING_H
 #define GROUNDMAPPING_H
 
-#include <Eigen/Dense>
-#include <string>
-#include <vector>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
 #include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
-
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/geodeticConversion.h>
+
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
 
 /*! @brief This module checks that a vector of mapping points are visible to a spacecraft's imager, outputting a vector
  * of accessMessages for each mapping point
  */
 class GroundMapping : public SysModel {
-   public:
+public:
     GroundMapping();
     ~GroundMapping();
 
-    void addPointToModel(Eigen::Vector3d& r_LP_P_init);
+    void addPointToModel(Eigen::Vector3d &r_LP_P_init);
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-   private:
+private:
     void ReadMessages();
     void computeAccess(uint64_t c);
     void WriteMessages(uint64_t CurrentClock);
     void updateInertialPositions();
     uint64_t checkInstrumentFOV();
 
-   public:
+public:
     double minimumElevation;      //!< [rad] (optional) minimum elevation above the local horizon needed to see a
                                   //!< spacecraft; defaults to 10 degrees equivalent.
     double maximumRange;          //!< [m] (optional) Maximum slant range to compute access for; defaults to -1, which
@@ -48,7 +46,6 @@ class GroundMapping : public SysModel {
     double halfFieldOfView;       //!< [r] Instrument half-fov, defaults to 10 degrees
     Eigen::Vector3d nHat_B;       //!< [-] Instrument unit direction vector in body frame components
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;  //!< Planet state input message
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;         //!< Spacecraft state input message
@@ -56,7 +53,7 @@ class GroundMapping : public SysModel {
         currentGroundStateOutMsgs;                          //!< vector of ground location output message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;  //!< vector of ground location access messages
 
-   private:
+private:
     std::vector<AccessMsgPayload> accessMsgBuffer;                   //!< buffer of access output data
     std::vector<GroundStateMsgPayload> currentGroundStateMsgBuffer;  //!< buffer of access output data
     SCStatesMsgPayload scStateInMsgBuffer;                           //!< buffer of spacecraft states

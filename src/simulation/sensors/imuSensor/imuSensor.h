@@ -9,7 +9,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/discretize.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/gauss_markov.h>
@@ -69,7 +68,6 @@ public:
     Discretize aDisc;  //!<  (-) instance of discretization utility for linear acceleration
     Discretize oDisc;  //!<  (-) instance of idscretization utility for angular rate
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
     uint64_t PreviousTime;             //!< -- Timestamp from previous frame

@@ -5,6 +5,7 @@
 #include "imuComm.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! This method resets the module.
@@ -16,7 +17,7 @@
 void ImuComm::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->imuComInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: imuComm.imuComInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("imuComm.imuComInMsg wasn't connected.");
     }
 }
 

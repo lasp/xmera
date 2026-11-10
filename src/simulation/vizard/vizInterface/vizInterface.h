@@ -5,31 +5,32 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "vizMessage.pb.h"
-#include <zmq.h>
-#include <fstream>
-#include <map>
-#include <vector>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include "../_GeneralModuleFiles/vizStructures.h"
-
+#include "vizMessage.pb.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/simDefinitions.h>
 
+#include <zmq.h>
+
+#include <fstream>
+#include <map>
+#include <vector>
+
+// SWIG reads the quote in a digit separator as the start of a character literal.
+// clang-format off
 #define VIZ_MAX_SIZE 100000
+// clang-format on
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 class VizInterface : public SysModel {
-   public:
+public:
     VizInterface();
     ~VizInterface();
     void reset(uint64_t currentSimNanos);
@@ -38,7 +39,7 @@ class VizInterface : public SysModel {
     void WriteProtobuffer(uint64_t currentSimNanos);
     void addCamMsgToModule(Message<CameraConfigMsgPayload>* tmpMsg);
 
-   public:
+public:
     std::vector<VizSpacecraftData> scData;  //!< [-] vector of spacecraft data containers
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>
         spiceInMsgs;                                //!< [-] vector of input messages of planet Spice data
@@ -70,9 +71,8 @@ class VizInterface : public SysModel {
     MsgCurrStatus epochMsgStatus;             //!< [-] ID of the epoch msg
     EpochMsgPayload epochMsgBuffer;           //!< [-] epoch msg data
 
-    BSKLogger bskLogger;  //!< [-] BSK Logging object
 
-   private:
+private:
     // ZeroMQ State
     void* context;
     void* requester_socket;
@@ -81,8 +81,10 @@ class VizInterface : public SysModel {
     std::vector<MsgCurrStatus> spiceInMsgStatus;           //!< [-] status of the incoming planets' spice data messages
     std::vector<SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream* outputStream;                           //!< [-] Output file stream opened in reset
-    void requestImage(size_t camCounter,
-                      uint64_t currentSimNanos);  //!<   request image from Vizard and store it in output img msg
+    void requestImage(
+        size_t camCounter,
+        uint64_t currentSimNanos
+    );  //!<   request image from Vizard and store it in output img msg
 };
 
 #endif /* VIZ_INTERFACE_H */

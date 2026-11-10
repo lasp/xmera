@@ -4,7 +4,7 @@
 
 #include "partitionedStorageUnit.h"
 
-#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/logging.h>
 
 #include <cstdint>
 
@@ -30,7 +30,7 @@ PartitionedStorageUnit::~PartitionedStorageUnit() {
  */
 void PartitionedStorageUnit::customreset(uint64_t currentClock) {
     if (this->storageCapacity <= 0) {
-        bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->info("The storageCapacity variable must be set to a positive value.");
     }
     return;
 }

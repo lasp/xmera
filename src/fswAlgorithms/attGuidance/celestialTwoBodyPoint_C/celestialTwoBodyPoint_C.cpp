@@ -5,6 +5,7 @@
 #include "celestialTwoBodyPoint_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
 
@@ -15,10 +16,10 @@ void CelestialTwoBodyPoint_C::reset(uint64_t callTime) {
 
     // check if required input messages have been included
     if (!this->transNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: celestialTwoBodyPoint.transNavInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("celestialTwoBodyPoint.transNavInMsg wasn't connected.");
     }
     if (!this->celBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: celestialTwoBodyPoint.celBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("celestialTwoBodyPoint.celBodyInMsg wasn't connected.");
     }
 
     return;

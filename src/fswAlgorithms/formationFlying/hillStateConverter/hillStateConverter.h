@@ -9,7 +9,6 @@
 #include <stdint.h>
 
 //  Support imports
-#include <architecture/utilities/bskLogging.h>
 
 //  Message type imports
 #include <architecture/_GeneralModuleFiles/sys_model.h>
@@ -19,7 +18,7 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 class HillStateConverter : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -30,8 +29,6 @@ class HillStateConverter : public SysModel {
         chiefStateInMsg;  //!< Input message containing chief inertial translational state estimate
     ReadFunctor<NavTransMsgPayload>
         depStateInMsg;  //!< Input message containing deputy inertial translational state estimate
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

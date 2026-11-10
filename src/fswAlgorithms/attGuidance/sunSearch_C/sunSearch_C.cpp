@@ -3,6 +3,7 @@
 
 #include "sunSearch_C.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <cmath>
@@ -11,8 +12,10 @@
  @return void
  */
 void SunSearch_C::reset(uint64_t currentSimNanos) {
-    if (!this->attNavInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected."); }
-    if (!this->vehConfigInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".vehConfigInMsg wasn't connected."); }
+    if (!this->attNavInMsg.isLinked()) { xmera::logging::get(this->modelTag)->error(".attNavInMsg wasn't connected."); }
+    if (!this->vehConfigInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error(".vehConfigInMsg wasn't connected.");
+    }
 
     /*! read vehicle configuration message */
     VehicleConfigMsgPayload vehConfigIn = this->vehConfigInMsg();

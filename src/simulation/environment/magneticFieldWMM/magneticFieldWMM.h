@@ -5,23 +5,29 @@
 #ifndef WMM_MAGNETIC_FIELD_H
 #define WMM_MAGNETIC_FIELD_H
 
-#include <Eigen/Dense>
-#include <vector>
-#include <string>
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <simulation/environment/_GeneralModuleFiles/magneticFieldBase.h>
 #include <architecture/utilities/astroConstants.h>
-#include "GeomagnetismHeader.h"
-#include <architecture/utilities/bskLogging.h>
+
+#include <simulation/environment/_GeneralModuleFiles/magneticFieldBase.h>
+
 #include <ctime>
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
+
+// GeomagnetismHeader.h defines _POSIX_C_SOURCE with no value. Include it after the system headers,
+// because the macOS system headers cannot read that definition.
+// clang-format off
+#include "GeomagnetismHeader.h"
+// clang-format on
 
 /*! @brief magnetic field WMM class */
 class MagneticFieldWMM : public MagneticFieldBase {
-   public:
+public:
     MagneticFieldWMM();
     ~MagneticFieldWMM();
 
-   private:
+private:
     void evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime);
     void initializeWmm();
     void cleanupEarthMagFieldModel();
@@ -31,12 +37,11 @@ class MagneticFieldWMM : public MagneticFieldBase {
     void decimalYear2Gregorian(double fractionalYear, struct tm* gregorian);
     double gregorian2DecimalYear(double currentTime);
 
-   public:
+public:
     std::string dataPath;            //!< -- String with the path to the WMM coefficient file
     double epochDateFractionalYear;  //!< Specified epoch date as a fractional year
-    BSKLogger bskLogger;             //!< -- BSK Logging
 
-   private:
+private:
     MAGtype_MagneticModel* magneticModels[1];
     MAGtype_MagneticModel* timedMagneticModel;
     MAGtype_Ellipsoid ellip;

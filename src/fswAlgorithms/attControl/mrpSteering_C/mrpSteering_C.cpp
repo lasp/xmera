@@ -10,6 +10,7 @@
 #include "mrpSteering_C.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -24,7 +25,7 @@ static void MRPSteeringLaw(MrpSteering_C* configData, double sigma_BR[3], double
 void MrpSteering_C::reset(uint64_t callTime) {
     // check for required input message
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpSteering.guidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("mrpSteering.guidInMsg wasn't connected.");
     }
 
     return;

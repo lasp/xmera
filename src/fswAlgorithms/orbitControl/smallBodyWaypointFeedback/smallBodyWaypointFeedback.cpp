@@ -5,6 +5,7 @@
 #include "smallBodyWaypointFeedback.h"
 
 #include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -31,16 +32,16 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback() {
 void SmallBodyWaypointFeedback::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyWaypointFeedback.navTransInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyWaypointFeedback.navTransInMsg was not linked.");
     }
     if (!this->navAttInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyWaypointFeedback.navAttInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyWaypointFeedback.navAttInMsg was not linked.");
     }
     if (!this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyWaypointFeedback.asteroidEphemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyWaypointFeedback.asteroidEphemerisInMsg was not linked.");
     }
     if (!this->sunEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyWaypointFeedback.sunEphemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyWaypointFeedback.sunEphemerisInMsg was not linked.");
     }
 }
 

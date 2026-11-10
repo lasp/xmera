@@ -4,6 +4,8 @@
 
 #include "pixelLineConverter.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <math.h>
 #include <string.h>
 
@@ -14,13 +16,13 @@
 void PixelLineConverter::reset(uint64_t callTime) {
     // check that the required message has not been connected
     if (!this->cameraConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: pixelLineConverter.cameraConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("pixelLineConverter.cameraConfigInMsg wasn't connected.");
     }
     if (!this->circlesInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: pixelLineConverter.circlesInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("pixelLineConverter.circlesInMsg wasn't connected.");
     }
     if (!this->attInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: pixelLineConverter.attInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("pixelLineConverter.attInMsg wasn't connected.");
     }
 }
 

@@ -11,16 +11,16 @@
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
 #include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <array>
 #include <vector>
 
 /*! @brief This module triangulates a camera position from a point cloud
  */
 class CameraTriangulation : public SysModel {
-   public:
+public:
     CameraTriangulation();
     ~CameraTriangulation();
 
@@ -32,18 +32,19 @@ class CameraTriangulation : public SysModel {
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;       //!< camera configuration input message
     Message<CameraLocalizationMsgPayload> cameraLocationOutMsg;  //!< estimated camera location output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double uncertaintyImageMeasurement =
         0.;  //!< [pixel] standard deviation of image point errors (about 1/4 to 1/2 px)
 
-   private:
+private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
-    std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulation(Eigen::MatrixXd knownLocations,
-                                                              std::vector<Eigen::Vector2d> imagePoints,
-                                                              const Eigen::Matrix3d& cameraCalibrationInverse,
-                                                              std::vector<Eigen::Matrix3d> dcmCamera) const;
+    std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulation(
+        Eigen::MatrixXd knownLocations,
+        std::vector<Eigen::Vector2d> imagePoints,
+        Eigen::Matrix3d const &cameraCalibrationInverse,
+        std::vector<Eigen::Matrix3d> dcmCamera
+    ) const;
 
     Eigen::MatrixXd pointCloud{};                      //!< [-] point cloud
     std::vector<Eigen::Vector2d> keyPoints{};          //!< [-] key point pixel coordinates

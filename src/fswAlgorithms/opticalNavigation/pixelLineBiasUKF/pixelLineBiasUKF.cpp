@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
@@ -40,13 +41,13 @@ static void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double 
 void PixelLineBiasUKF::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->circlesInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: pixelLineBiasUKF.circlesInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("pixelLineBiasUKF.circlesInMsg wasn't connected.");
     }
     if (!this->cameraConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: pixelLineBiasUKF.cameraConfigInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("pixelLineBiasUKF.cameraConfigInMsg wasn't connected.");
     }
     if (!this->attInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: pixelLineBiasUKF.attInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("pixelLineBiasUKF.attInMsg wasn't connected.");
     }
 
     size_t i;
@@ -106,7 +107,7 @@ void PixelLineBiasUKF::reset(uint64_t callTime) {
 
     this->timeTagOut = this->timeTag;
 
-    if (badUpdate < 0) { this->bskLogger.bskLog(BSK_WARNING, "Reset method contained bad update"); }
+    if (badUpdate < 0) { xmera::logging::get(this->modelTag)->warn("Reset method contained bad update"); }
     return;
 }
 
@@ -259,7 +260,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
     mCopy(this->covar, this->numStates, this->numStates, this->covarPrev);
 
     /*! - Read the planet ID from the message*/
-    if (this->planetId == 0) { this->bskLogger.bskLog(BSK_ERROR, "Need a planet to navigate"); }
+    if (this->planetId == 0) { xmera::logging::get(this->modelTag)->error("Need a planet to navigate"); }
 
     mCopy(this->sQnoise, PIXLINE_N_STATES, PIXLINE_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/

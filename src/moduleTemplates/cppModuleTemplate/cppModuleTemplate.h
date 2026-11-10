@@ -8,25 +8,26 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/ModuleTemplateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/logging.h"
 
 /*! @brief basic Basilisk C++ module class */
 class CppModuleTemplate : public SysModel {
-   public:
+public:
     CppModuleTemplate();
     ~CppModuleTemplate();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-   public:
+public:
     double dummy;         //!< [units] sample module variable declaration
     double dumVector[3];  //!< [units] sample vector variable
 
     Message<ModuleTemplateMsgPayload> dataOutMsg;
     ReadFunctor<ModuleTemplateMsgPayload> dataInMsg;
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
+private:
+    std::shared_ptr<spdlog::logger> logger;  //!< logger of the module, set in reset
 };
 
 #endif

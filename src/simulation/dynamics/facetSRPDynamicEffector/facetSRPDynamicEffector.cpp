@@ -5,6 +5,7 @@
 #include "facetSRPDynamicEffector.h"
 
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <cmath>
@@ -28,7 +29,9 @@ FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {}
  @param currentSimNanos  [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::reset(uint64_t currentSimNanos) {
-    if (!this->sunInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked."); }
+    if (!this->sunInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("FacetSRPDynamicEffector.sunInMsg was not linked.");
+    }
 }
 
 /*! This method populates the spacecraft facet geometry structure with user-input facet information
@@ -102,7 +105,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
             }
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
+        xmera::logging::get(this->modelTag)->error("NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
     }
 }
 

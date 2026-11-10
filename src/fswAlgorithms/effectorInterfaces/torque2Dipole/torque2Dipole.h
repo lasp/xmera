@@ -10,12 +10,12 @@
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class Torque2Dipole : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -30,7 +30,6 @@ class Torque2Dipole : public SysModel {
         dipoleRequestOutMsg;  //!< [A-m2] output message containing dipole request in the Body frame
 
     /* Other. */
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

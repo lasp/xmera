@@ -48,11 +48,11 @@ If you execute this python code you should see the following terminal output:
 .. code-block::
 
     source/code-samples % python3 xmera-3.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: C++ Module ID 1 ran Update at 0.000000s
-    BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
-    BSK_INFORMATION: C++ Module ID 1 ran Update at 5.000000s
-    BSK_INFORMATION: C++ Module ID 2 ran Update at 5.000000s
+    [info] [module1] Variable dummy set to 0.000000 in reset.
+    [info] [module2] Variable dummy set to 0.000000 in reset.
+    [info] [module1] Module ID 1 ran Update at 0.000000s
+    [info] [module2] Module ID 2 ran Update at 0.000000s
+    [info] [module1] Module ID 1 ran Update at 5.000000s
+    [info] [module2] Module ID 2 ran Update at 5.000000s
 
 Note that here the two modules are added without setting a priority.  Thus, they are executed in the order that they were added to the Xmera task.

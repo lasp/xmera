@@ -5,6 +5,7 @@
 #include "orbElemConvert.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <iostream>
 
@@ -33,9 +34,11 @@ void OrbElemConvert::reset(uint64_t currentSimNanos) {
     numOutputs += this->spiceStateOutMsg.isLinked();
     numOutputs += this->elemOutMsg.isLinked();
 
-    if (numInputs == 0) { bskLogger.bskLog(BSK_ERROR, "No input message was connected."); }
-    if (numOutputs == 0) { bskLogger.bskLog(BSK_ERROR, "No output message was connected."); }
-    if (numInputs > 1) { bskLogger.bskLog(BSK_ERROR, "Found %d input messages.  There can be only one.", numInputs); }
+    if (numInputs == 0) { xmera::logging::get(this->modelTag)->error("No input message was connected."); }
+    if (numOutputs == 0) { xmera::logging::get(this->modelTag)->error("No output message was connected."); }
+    if (numInputs > 1) {
+        xmera::logging::get(this->modelTag)->error("Found {} input messages.  There can be only one.", numInputs);
+    }
 }
 
 /*! This method writes the output data out into the messaging system.  It does

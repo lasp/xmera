@@ -14,7 +14,6 @@
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 
 #include <Eigen/Dense>
@@ -68,7 +67,6 @@ public:
     AccDataMsgPayload accelDataState;              //!< accelerometer and gyro data payload
     SCStatesMsgPayload inertialState;              //!< -- input inertial state from Star Tracker
     SpicePlanetStateMsgPayload sunState;           //!< -- input Sun state
-    BSKLogger bskLogger;                           //!< -- BSK Logging
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;           //!< spacecraft state input msg
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< (optional) sun state input input msg

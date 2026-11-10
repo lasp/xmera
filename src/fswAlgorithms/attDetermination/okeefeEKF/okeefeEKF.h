@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -68,8 +67,6 @@ public:
     double eKFSwitch;               /*!< -- Max covariance element after which the filter switches to an EKF*/
     NavAttMsgPayload outputSunline; /*!< -- Output sunline estimate data */
     CSSArraySensorMsgPayload cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void sunlineStateSTMProp(

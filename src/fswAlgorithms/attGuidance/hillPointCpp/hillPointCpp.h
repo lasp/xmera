@@ -9,12 +9,12 @@
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
+
 #include <Eigen/Core>
 
 /*! @brief Hill Point attitude guidance class. */
 class HillPointCpp : public SysModel {
-   public:
+public:
     HillPointCpp() = default;            //!< Constructor
     ~HillPointCpp() override = default;  //!< Destructor
 
@@ -25,16 +25,17 @@ class HillPointCpp : public SysModel {
     ReadFunctor<EphemerisMsgPayload> celBodyInMsg;  //!< The name of the celestial body message
     Message<AttRefMsgPayload> attRefOutMsg;         //!< The name of the output message
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
-   private:
+private:
     int planetMsgIsLinked;  //!< flag if the planet message is linked
 
-    static void computeHillPointingReference(Eigen::Vector3d r_BN_N,
-                                             Eigen::Vector3d v_BN_N,
-                                             Eigen::Vector3d celBdyPositionVector,
-                                             Eigen::Vector3d celBdyVelocityVector,
-                                             AttRefMsgPayload* attRefOut);
+    static void computeHillPointingReference(
+        Eigen::Vector3d r_BN_N,
+        Eigen::Vector3d v_BN_N,
+        Eigen::Vector3d celBdyPositionVector,
+        Eigen::Vector3d celBdyVelocityVector,
+        AttRefMsgPayload* attRefOut
+    );
 };
 
 #endif

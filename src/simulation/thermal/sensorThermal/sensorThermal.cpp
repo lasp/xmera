@@ -2,6 +2,7 @@
 
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -37,25 +38,33 @@ SensorThermal::~SensorThermal() {
 void SensorThermal::reset(uint64_t CurrentClock) {
     this->shadowFactor = 1.0;
 
-    if (this->sensorArea <= 0.0) { bskLogger.bskLog(BSK_ERROR, "The sensorArea must be a positive value"); }
-    if (this->sensorMass <= 0.0) { bskLogger.bskLog(BSK_ERROR, "The sensorMass must be a positive value"); }
+    if (this->sensorArea <= 0.0) {
+        xmera::logging::get(this->modelTag)->error("The sensorArea must be a positive value");
+    }
+    if (this->sensorMass <= 0.0) {
+        xmera::logging::get(this->modelTag)->error("The sensorMass must be a positive value");
+    }
     if (this->sensorSpecificHeat <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The sensorSpecificHeat must be a positive value");
+        xmera::logging::get(this->modelTag)->error("The sensorSpecificHeat must be a positive value");
     }
     if (this->sensorAbsorptivity <= 0.0 || this->sensorAbsorptivity > 1.0) {
-        bskLogger.bskLog(BSK_ERROR, "The sensor absorptivity must be between 0 and 1");
+        xmera::logging::get(this->modelTag)->error("The sensor absorptivity must be between 0 and 1");
     }
     if (this->sensorEmissivity <= 0.0 || this->sensorEmissivity > 1.0) {
-        bskLogger.bskLog(BSK_ERROR, "The sensor emissivity must be between 0 and 1");
+        xmera::logging::get(this->modelTag)->error("The sensor emissivity must be between 0 and 1");
     }
     if (this->nHat_B.norm() > 0.1) {
         this->nHat_B.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
+        xmera::logging::get(this->modelTag)->error("The nHat_B must be set to a non-zero vector");
     }
     // check if required input messages are connected
-    if (!this->sunInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "sensorThermal.sunInMsg was not linked."); }
-    if (!this->stateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "sensorThermal.stateInMsg was not linked."); }
+    if (!this->sunInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("sensorThermal.sunInMsg was not linked.");
+    }
+    if (!this->stateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("sensorThermal.stateInMsg was not linked.");
+    }
 
     this->sensorTemp = this->T_0;
 

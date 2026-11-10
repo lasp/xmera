@@ -5,6 +5,7 @@
 #include "waypointReference.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -29,7 +30,7 @@ WaypointReference::~WaypointReference() {
     /* close the data file if it is open */
     if (this->fileHandle->is_open()) {
         this->fileHandle->close();
-        bskLogger.bskLog(BSK_INFORMATION, "WaypointReference:\nclosed the file: %s.", this->dataFileName.c_str());
+        xmera::logging::get(this->modelTag)->info("WaypointReference:\nclosed the file: {}.", this->dataFileName);
     }
 
     return;
@@ -40,13 +41,14 @@ WaypointReference::~WaypointReference() {
  */
 void WaypointReference::reset(uint64_t currentSimNanos) {
     if (this->dataFileName.length() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "WaypointReference: dataFileName must be an non-empty string.");
+        xmera::logging::get(this->modelTag)->error("WaypointReference: dataFileName must be an non-empty string.");
     }
 
     /* open the data file*/
     this->fileHandle = new std::ifstream(this->dataFileName);
     if (this->fileHandle->fail()) {
-        bskLogger.bskLog(BSK_ERROR, "WaypointReference: was not able to load the file %s.", this->dataFileName.c_str());
+        xmera::logging::get(this->modelTag)
+            ->error("WaypointReference: was not able to load the file {}.", this->dataFileName);
     }
 
     /* read and bypass header line(s) */
@@ -62,7 +64,7 @@ void WaypointReference::reset(uint64_t currentSimNanos) {
     /* Pull first line of dataFileName and stores relative time and attitude in this->t_b and this->attRefMsg_b */
     pullDataLine(&this->t_b, &this->attRefMsg_b);
 
-    bskLogger.bskLog(BSK_INFORMATION, "WaypointReference:\nloaded the file: %s.", this->dataFileName.c_str());
+    xmera::logging::get(this->modelTag)->info("WaypointReference:\nloaded the file: {}.", this->dataFileName);
 
     return;
 }
@@ -199,7 +201,8 @@ void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
             vNormalize(att4, 4, att4Norm);
             EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
             break;
-        default: bskLogger.bskLog(BSK_ERROR, "WaypointReference: the attitude type provided is invalid.");
+        default:
+            xmera::logging::get(this->modelTag)->error("WaypointReference: the attitude type provided is invalid.");
         }
 
         if (this->useReferenceFrame == false) {
@@ -228,7 +231,7 @@ void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
         }
 
     } else {
-        bskLogger.bskLog(BSK_INFORMATION, "WaypointReference: reached end of file.");
+        xmera::logging::get(this->modelTag)->info("WaypointReference: reached end of file.");
         this->endOfFile = true;
     }
 }

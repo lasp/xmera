@@ -78,14 +78,14 @@ class PythonModule(sim_model.SysModel):
         payload.dataVector = np.array([0,0,0])
         self.updateCount = 0
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
-        self.bskLogger.bskLog(sim_model.BSK_INFORMATION, "Reset in TestPythonModule")
+        self.log("info", "Reset in TestPythonModule")
 
     def updateState(self, currentSimNanos):
         payload = ModuleTemplateMsgPayload()
         payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0])
         self.updateCount += 1
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
-        self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {currentSimNanos*1e-9}s")
+        self.log("info", f"Python Module ID {self.moduleID} ran Update at {currentSimNanos*1e-9}s")
 
 if __name__ == "__main__":
     test_PySysModel()

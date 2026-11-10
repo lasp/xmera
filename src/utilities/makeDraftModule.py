@@ -289,7 +289,6 @@ class moduleGenerator:
                 if msg['wrap'] == 'C++':
                     headerFile += '#include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                 includedMsgs.append(msg['type'])
-        headerFile += '#include "architecture/utilities/bskLogging.h"\n'
         headerFile += '#include "architecture/messaging/messaging.h"\n'
         headerFile += '\n'
         headerFile += '/*! @brief ' + briefDescription + '\n */\n'
@@ -310,8 +309,6 @@ class moduleGenerator:
             headerFile += '    Message<' + msg['type'] + 'Payload> ' + msg['var'] \
                           + ';  //!< ' + msg['desc'] + '\n'
         headerFile += '\n'
-        headerFile += '    BSKLogger bskLogger;              //!< -- BSK Logging\n'
-        headerFile += '\n'
         headerFile += '};\n'
         headerFile += '\n'
         headerFile += "\n#endif\n"
@@ -328,6 +325,7 @@ class moduleGenerator:
         defFile = licenseC
         defFile += '\n'
         defFile += '#include "' + modulePath + '/' + name + '/' + name + '.h"\n'
+        defFile += '#include "architecture/utilities/logging.h"\n'
         defFile += '#include <iostream>\n'
         defFile += '#include <cstring>\n'
         defFile += '\n'
@@ -350,7 +348,7 @@ class moduleGenerator:
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:
             defFile += '    if (!this->' + msg['var'] + '.isLinked()) {\n'
-            defFile += '        bskLogger.bskLog(BSK_ERROR, "' + self._className + '.' + msg['var'] + ' was not linked.");\n'
+            defFile += '        xmera::logging::get(this->modelTag)->error("' + self._className + '.' + msg['var'] + ' was not linked.");\n'
             defFile += '    }\n'
         defFile += '\n'
         defFile += '}\n'

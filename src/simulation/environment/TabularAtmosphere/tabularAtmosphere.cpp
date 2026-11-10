@@ -3,7 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "tabularAtmosphere.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
+
 #include <iostream>
 
 /*! The constructor method initializes data list lengths to zero.
@@ -20,27 +23,29 @@ TabularAtmosphere::TabularAtmosphere() {
 /*! Empty destructor method.
  @return void
  */
-TabularAtmosphere::~TabularAtmosphere() { return; }
+TabularAtmosphere::~TabularAtmosphere() {
+    return;
+}
 
 /*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero
  * lengths.
  * @return void
  */
 void TabularAtmosphere::customreset(uint64_t CurrentClock) {
-    this->altList_length = (int)this->altList.size();
-    this->rhoList_length = (int)this->rhoList.size();
-    this->tempList_length = (int)this->tempList.size();
+    this->altList_length = (int) this->altList.size();
+    this->rhoList_length = (int) this->rhoList.size();
+    this->tempList_length = (int) this->tempList.size();
 
     if ((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)) {
-        bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
+        xmera::logging::get(this->modelTag)->error("Input arrays not of equal length.");
     }
 
     if (this->altList_length == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
+        xmera::logging::get(this->modelTag)->error("No data in altitude list.");
     } else if (this->rhoList_length == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No data in density list.");
+        xmera::logging::get(this->modelTag)->error("No data in density list.");
     } else if (this->tempList_length == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
+        xmera::logging::get(this->modelTag)->error("No data in temperature list.");
     }
 
     return;
@@ -57,12 +62,14 @@ void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double
     } else {
         for (uint32_t i = 0; i <= this->altList.size() - 1; i++) {
             if (this->altList[i] > this->orbitAltitude) {
-                msg->neutralDensity = this->rhoList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) *
-                                                                 (this->rhoList[i] - this->rhoList[i - 1]) /
-                                                                 (this->altList[i] - this->altList[i - 1]);
-                msg->localTemp = this->tempList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) *
-                                                             (this->tempList[i] - this->tempList[i - 1]) /
-                                                             (this->altList[i] - this->altList[i - 1]);
+                msg->neutralDensity = this->rhoList[i - 1]
+                                    + (this->orbitAltitude - this->altList[i - 1])
+                                          * (this->rhoList[i] - this->rhoList[i - 1])
+                                          / (this->altList[i] - this->altList[i - 1]);
+                msg->localTemp = this->tempList[i - 1]
+                               + (this->orbitAltitude - this->altList[i - 1])
+                                     * (this->tempList[i] - this->tempList[i - 1])
+                                     / (this->altList[i] - this->altList[i - 1]);
                 break;
             }
         }

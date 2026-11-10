@@ -11,16 +11,14 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
-
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
 class HorizonOpNav : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -31,8 +29,6 @@ class HorizonOpNav : public SysModel {
 
     int32_t planetTarget;  //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double noiseSF;        //!< A scale factor to control measurement noise
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void BackSub(double* R, double* inVec, int32_t nRow, double* n);

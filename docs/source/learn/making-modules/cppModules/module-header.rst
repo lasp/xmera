@@ -25,7 +25,6 @@ Let us assume the module is to be called ``SomeModule``.  The input and output m
     #include "architecture/_GeneralModuleFiles/sys_model.h"
     #include "architecture/msgPayloadDefC/SomeMsgPayload.h"
     #include "architecture/messaging/messaging.h"
-    #include "architecture/utilities/bskLogging.h"
 
     /*! @brief basic Xmera C++ module class */
     class SomeModule: public SysModel {
@@ -42,8 +41,6 @@ Let us assume the module is to be called ``SomeModule``.  The input and output m
 
         Message<SomeMsgPayload> dataOutMsg;     //!< attitude navigation output msg
         ReadFunctor<SomeMsgPayload> dataInMsg;  //!< translation navigation output msg
-
-        BSKLogger bskLogger;                    //!< -- BSK Logging
 
     private:
         double internalVariable;                //!< [units] variable description
@@ -64,8 +61,6 @@ Some quick comments about what is included here:
 
 - Include the Xmera ``messaging.h`` file to have access to creating message objects
 
-- Include the ``bskLogging.h`` file to use the Xmera logging functions.
-
 Be sure to add descriptions to both the module and to the class variables used.
 
 Required Module Methods
@@ -80,7 +75,8 @@ The output messages are defined through the ``Message<>`` template class as show
 
 The input message object is defined through the ``ReadFunctor<>`` template class.
 
-Finally, the ``bskLogger`` variable is defined to allow for Xmera message logging with variable verbosity.  See :ref:`scenarioBskLog` for an example of how to set the logging verbosity.
+The module does not declare a logger. To write a log message, the module gets its logger in the ``*.cpp`` file. Refer to :ref:`module-definition`.
+For an example that sets the log level from Python, refer to :ref:`scenarioLogging`.
 
 Variables and methods that don't need to be accessible from the python layer can be defined as private variables.
 

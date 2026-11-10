@@ -5,6 +5,7 @@
 #include "smallBodyNavUKF.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -42,10 +43,10 @@ SmallBodyNavUKF::SmallBodyNavUKF() {
 void SmallBodyNavUKF::reset(uint64_t currentSimNanos) {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavUKF.navTransInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyNavUKF.navTransInMsg was not linked.");
     }
     if (!this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavUKF.asteroidEphemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("SmallBodyNavUKF.asteroidEphemerisInMsg was not linked.");
     }
 
     /* compute UT weights to be used in the UT */

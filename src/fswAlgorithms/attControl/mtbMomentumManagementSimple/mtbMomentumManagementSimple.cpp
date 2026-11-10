@@ -5,6 +5,7 @@
 #include "mtbMomentumManagementSimple.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <stdio.h>
 
@@ -19,10 +20,10 @@ void MtbMomentumManagementSimple::reset(uint64_t callTime) {
      * Check if the required input messages are connected.
      */
     if (!this->rwParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
     if (!this->rwSpeedsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
 
     /*! - Read in the reaction wheels input configuration message. This gives us the transformation from
@@ -39,7 +40,7 @@ void MtbMomentumManagementSimple::reset(uint64_t callTime) {
     /*
      * Sanity check configs.
      */
-    if (this->Kp < 0.0) { this->bskLogger.bskLog(BSK_ERROR, "Error: k < 0.0"); }
+    if (this->Kp < 0.0) { xmera::logging::get(this->modelTag)->error("k < 0.0"); }
 
     return;
 }

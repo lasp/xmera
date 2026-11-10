@@ -5,27 +5,27 @@
 #ifndef _EULER_ROTATION_
 #define _EULER_ROTATION_
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/AttStateMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class EulerRotation : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
-    void computeEulerRotationReference(double sigma_R0N[3],
-                                       double omega_R0N_N[3],
-                                       double domega_R0N_N[3],
-                                       AttRefMsgPayload* attRefOut);
+    void computeEulerRotationReference(
+        double sigma_R0N[3],
+        double omega_R0N_N[3],
+        double domega_R0N_N[3],
+        AttRefMsgPayload* attRefOut
+    );
 
     /* Declare module public variables */
     double angleSet[3];    //!< [-] current euler angle 321 set R/R0  with respect to the input reference
@@ -44,8 +44,6 @@ class EulerRotation : public SysModel {
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
     ReadFunctor<AttStateMsgPayload>
         desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

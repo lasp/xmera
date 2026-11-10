@@ -2,10 +2,13 @@
 // Created by andrew on 7/12/19.
 //
 #include "simpleSolarPanel.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 SimpleSolarPanel::SimpleSolarPanel() {
@@ -20,30 +23,30 @@ SimpleSolarPanel::SimpleSolarPanel() {
     return;
 }
 
-SimpleSolarPanel::~SimpleSolarPanel() { return; }
+SimpleSolarPanel::~SimpleSolarPanel() {
+    return;
+}
 
 /*! custom solar panel reset function
  */
 void SimpleSolarPanel::customreset(uint64_t CurrentClock) {
     this->shadowFactor = 1.0;
 
-    if (this->panelArea < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The panelArea must be a positive value");
-    }
+    if (this->panelArea < 0.0) { xmera::logging::get(this->modelTag)->error("The panelArea must be a positive value"); }
     if (this->panelEfficiency < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The panelEfficiency variable must be a positive value");
+        xmera::logging::get(this->modelTag)->error("The panelEfficiency variable must be a positive value");
     }
     if (this->nHat_B.norm() > 0.1) {
         this->nHat_B.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
+        xmera::logging::get(this->modelTag)->error("The nHat_B must be set to a non-zero vector");
     }
     // check if required input messages are connected
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.sunInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("simpleSolarPanel.sunInMsg was not linked.");
     }
     if (!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.stateInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("simpleSolarPanel.stateInMsg was not linked.");
     }
 
     return;
@@ -55,13 +58,9 @@ bool SimpleSolarPanel::customReadMessages() {
     this->stateCurrent = SCStatesMsgPayload{};
 
     //! - If we have a valid sun ID, read Sun ephemeris message
-    if (this->sunInMsg.isLinked()) {
-        this->sunData = this->sunInMsg();
-    }
+    if (this->sunInMsg.isLinked()) { this->sunData = this->sunInMsg(); }
     //! - If we have a valid state ID, read vehicle state ephemeris message
-    if (this->stateInMsg.isLinked()) {
-        this->stateCurrent = this->stateInMsg();
-    }
+    if (this->stateInMsg.isLinked()) { this->stateCurrent = this->stateInMsg(); }
     //! - Read in optional sun eclipse input message
     if (this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;  // sun visiblity input message
@@ -113,9 +112,7 @@ void SimpleSolarPanel::computeSunData() {
 
     //! - Compute the panel projected area
     this->projectedArea = this->panelArea * (sHat_B.dot(this->nHat_B));
-    if (this->projectedArea < 0) {
-        this->projectedArea = 0;
-    }
+    if (this->projectedArea < 0) { this->projectedArea = 0; }
 
     //! - compute sun distance factor
     double r_SBNorm = r_SB_N.norm();

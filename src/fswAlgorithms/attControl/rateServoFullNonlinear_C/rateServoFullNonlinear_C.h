@@ -9,17 +9,17 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
 #include <stdint.h>
 
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
 class RateServoFullNonlinear_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -44,8 +44,6 @@ class RateServoFullNonlinear_C : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;   //!< (optional) RW availability input message
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< (optional) RW configuration parameter input message
     ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

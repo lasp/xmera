@@ -10,6 +10,7 @@
 #include "thrMomentumManagement.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <string.h>
 
@@ -21,10 +22,10 @@
 void ThrMomentumManagement::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->rwConfigDataInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrMomentumManagement.rwConfigDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumManagement.rwConfigDataInMsg wasn't connected.");
     }
     if (!this->rwSpeedsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrMomentumManagement.rwSpeedsInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrMomentumManagement.rwSpeedsInMsg wasn't connected.");
     }
 
     /*! - read in the RW configuration message */

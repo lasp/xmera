@@ -4,6 +4,7 @@
 
 #include "simSynch.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <cstring>
@@ -94,5 +95,7 @@ void ClockSynch::updateState(uint64_t currentSimNanos) {
     //! - Write the composite information into the output synch message.
     this->clockOutMsg.write(this->outputData, this->moduleID, currentSimNanos);
 
-    if (this->displayTime) { bskLogger.bskLog(BSK_INFORMATION, "Seconds Elapsed: %f", currentSimNanos * NANO2SEC); }
+    if (this->displayTime) {
+        xmera::logging::get(this->modelTag)->info("Seconds Elapsed: {:f}", currentSimNanos * NANO2SEC);
+    }
 }

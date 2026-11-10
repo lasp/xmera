@@ -8,7 +8,6 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
 #include <architecture/msgPayloadDef/SICPMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 
@@ -33,7 +32,6 @@ public:
     ReadFunctor<SICPMsgPayload> initialCondition;           //!< The input measured data
     ReadFunctor<PointCloudMsgPayload> measuredPointCloud;   //!< The input measured data
     ReadFunctor<PointCloudMsgPayload> referencePointCloud;  //!< The input reference data
-    BSKLogger bskLogger;                                    //!< -- BSK Logging
 
     double scalingMax = 1.1;                  //!< Scaling maximums
     double scalingMin = 0.9;                  //!< Scaling minimums

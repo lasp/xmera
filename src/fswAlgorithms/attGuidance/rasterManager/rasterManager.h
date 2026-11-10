@@ -5,19 +5,18 @@
 #ifndef _RASTER_MANAGER_
 #define _RASTER_MANAGER_
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttStateMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <stdint.h>
+
 
 #define MAX_RASTER_SET 36
 
 /*! @brief Top level structure for the sub-module routines. */
 class RasterManager : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     /* Declare module private variables */
@@ -36,7 +35,6 @@ class RasterManager : public SysModel {
 
     /* Output attitude reference data to send */
     AttStateMsgPayload attOutSet;  //!< output message copy
-    BSKLogger bskLogger = {};      //!< BSK Logging
 };
 
 #endif

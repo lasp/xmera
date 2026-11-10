@@ -9,7 +9,6 @@
 #include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/TAMSensorMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 
 #include <Eigen/Dense>
@@ -50,7 +49,6 @@ public:
     Eigen::Vector3d walkBounds;  //!< [T] "3-sigma" errors to permit for states
     double maxOutput;            //!< [T] Maximum output for saturation application
     double minOutput;            //!< [T] Minimum output for saturation application
-    BSKLogger bskLogger;         //!< -- BSK Logging
 
 private:
     MagneticFieldMsgPayload magData;  //!< [-] Magnetic field in inertial N frame

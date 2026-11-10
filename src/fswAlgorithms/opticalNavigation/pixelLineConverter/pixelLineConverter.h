@@ -11,16 +11,14 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavMsgPayload.h>
-
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief The configuration structure for the pixelLine Converter module.*/
 class PixelLineConverter : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -30,8 +28,6 @@ class PixelLineConverter : public SysModel {
     ReadFunctor<OpNavCirclesMsgPayload> circlesInMsg;       //!< circles input message
 
     int32_t planetTarget;  //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

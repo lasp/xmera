@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <iostream>
 
@@ -28,10 +29,8 @@ void GravityGradientEffector::reset(uint64_t currentSimNanos) {
     this->forceExternal_N.fill(0.0);
 
     if (this->planetPropertyNames.size() == 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName()."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
     }
 
     /* empty the vector of planet state pointers */

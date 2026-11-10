@@ -12,8 +12,8 @@
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/VoltMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
+
 #include <Eigen/Dense>
 #include <vector>
 
@@ -24,20 +24,22 @@
  * Torques <http://dx.doi.org/10.1016/j.asr.2012.08.014 >`__ for more information on the MSM method.
  */
 class MsmForceTorque : public SysModel {
-   public:
+public:
     MsmForceTorque();
     ~MsmForceTorque();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
-    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
-                              std::vector<double> radii,
-                              std::vector<Eigen::Vector3d> r_SB_B);
+    void addSpacecraftToModel(
+        Message<SCStatesMsgPayload>* tmpScMsg,
+        std::vector<double> radii,
+        std::vector<Eigen::Vector3d> r_SB_B
+    );
 
-   private:
+private:
     void readMessages();
 
-   public:
+public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of spacecraft state input messages
     std::vector<ReadFunctor<VoltMsgPayload>> voltInMsgs;         //!< vector of voltage input messages
 
@@ -46,9 +48,8 @@ class MsmForceTorque : public SysModel {
         eForceOutMsgs;                                            //!< vector of E-forces in inertial frame components
     std::vector<Message<ChargeMsmMsgPayload>*> chargeMsmOutMsgs;  //!< vector of spacecraft MSM charge values
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     std::vector<std::vector<double>> radiiList;            //!< vector of MSM sphere radii
     std::vector<std::vector<Eigen::Vector3d>> r_SB_BList;  //!< vector of body-fixed MSM sphere locations
     unsigned int numSat;                                   //!< number of satellites

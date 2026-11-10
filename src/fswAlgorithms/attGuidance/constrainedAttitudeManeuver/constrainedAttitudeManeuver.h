@@ -12,7 +12,7 @@
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <architecture/utilities/BSpline.h>
-#include <architecture/utilities/bskLogging.h>
+
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -38,7 +38,7 @@ struct scBoresightStruct {
 
 //! @brief The Node class is used to create nodes in the 3D MRP graph
 class Node {
-   public:
+public:
     Node();
     Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights);
     ~Node();
@@ -56,12 +56,15 @@ class Node {
 
 //! @brief The NodeList class is used in the A* algorithm to handle Open and Closed lists O and C
 class NodeList {
-   public:
+public:
     NodeList();
     ~NodeList();
 
+    // SWIG reads the quote in a digit separator as the start of a character literal.
+    // clang-format off
     Node* list[10000];  //!< Container of pointers to the nodes in the list
-    int N;              //!< Number of nodes in the list
+    // clang-format on
+    int N;  //!< Number of nodes in the list
     void append(Node* node);
     void pop(int M);
     void clear();
@@ -72,7 +75,7 @@ class NodeList {
 
 /*! @brief waypoint reference module class */
 class ConstrainedAttitudeManeuver : public SysModel {
-   public:
+public:
     ConstrainedAttitudeManeuver();
     ConstrainedAttitudeManeuver(int N);
 
@@ -94,7 +97,7 @@ class ConstrainedAttitudeManeuver : public SysModel {
     bool returnNodeState(int key[3]);
     double returnPathCoord(int index, int nodeCoord);
 
-   public:
+public:
     int N;                         //!< Fineness level of discretization
     int BSplineType;               //!< 0 for interpolation; 1 for LS approximation
     int costFcnType;               //!< 0 for minimum distance path; 1 for minimum control effort path
@@ -120,9 +123,8 @@ class ConstrainedAttitudeManeuver : public SysModel {
     ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;   //!< Celestial body state msg - keep in direction
     Message<AttRefMsgPayload> attRefOutMsg;                       //!< Attitude reference output message
 
-    BSKLogger bskLogger;  //!< BSK Logging
 
-   private:
+private:
     SCStatesMsgPayload scStateMsgBuffer;
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;

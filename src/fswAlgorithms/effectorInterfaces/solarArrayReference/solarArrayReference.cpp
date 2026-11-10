@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -21,13 +22,13 @@ double const epsilon = 1e-12;  // module tolerance for zero
 */
 void SolarArrayReference::reset(uint64_t callTime) {
     if (!this->attNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "solarArrayReference.attNavInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("solarArrayReference.attNavInMsg wasn't connected.");
     }
     if (!this->attRefInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "solarArrayReference.attRefInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("solarArrayReference.attRefInMsg wasn't connected.");
     }
     if (!this->hingedRigidBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "solarArrayReference.hingedRigidBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("solarArrayReference.hingedRigidBodyInMsg wasn't connected.");
     }
     this->count = 0;
 }
@@ -61,7 +62,7 @@ void SolarArrayReference::updateState(uint64_t callTime) {
 
     case bodyFrame: v3Copy(rHat_SB_B, rHat_SB_R); break;
 
-    default: this->bskLogger.bskLog(BSK_ERROR, "solarArrayAngle.bodyFrame input can be either 0 or 1.");
+    default: xmera::logging::get(this->modelTag)->error("solarArrayAngle.bodyFrame input can be either 0 or 1.");
     }
 
     /*! compute solar array frame axes at zero rotation */

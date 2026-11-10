@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -48,7 +49,9 @@ SimpleNav::~SimpleNav() {
  */
 void SimpleNav::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("SimpleNav.scStateInMsg was not linked.");
+    }
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity();

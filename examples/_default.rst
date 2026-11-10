@@ -333,7 +333,7 @@ Advanced Simulation Options
    :maxdepth: 1
 
    Using a Python BSK Module Inherited from SysModel Class <scenarioAttitudePointingPy>
-   Changing the bskLog Verbosity from Python <scenarioBskLog>
+   Setting the Log Level from Python <scenarioLogging>
 
 Multi-Threading Xmera Simulations
 ------------------------------------

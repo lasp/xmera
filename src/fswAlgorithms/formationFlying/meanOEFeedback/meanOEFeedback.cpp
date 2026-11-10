@@ -5,6 +5,7 @@
 #include "meanOEFeedback.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -24,20 +25,20 @@ static double adjust_range(double lower, double upper, double angle);
 void MeanOEFeedback::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->chiefTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("meanOEFeedback.chiefTransInMsg wasn't connected.");
     }
     if (!this->deputyTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: meanOEFeedback.deputyTransInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("meanOEFeedback.deputyTransInMsg wasn't connected.");
     }
 
     if (this->mu <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in meanOEFeedback: mu must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->error("Error in meanOEFeedback: mu must be set to a positive value.");
     }
     if (this->req <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in meanOEFeedback: req must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->error("Error in meanOEFeedback: req must be set to a positive value.");
     }
     if (this->J2 <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error in meanOEFeedback: J2 must be set to a positive value.");
+        xmera::logging::get(this->modelTag)->error("Error in meanOEFeedback: J2 must be set to a positive value.");
     }
 
     return;

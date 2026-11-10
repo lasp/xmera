@@ -4,6 +4,7 @@
 #include "lambertSurfaceRelativeVelocity.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <cmath>
 
@@ -21,10 +22,11 @@ LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity() = default;
 void LambertSurfaceRelativeVelocity::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");
+        xmera::logging::get(this->modelTag)
+            ->error("lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");
     }
     if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSurfaceRelativeVelocity.ephemerisInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("lambertSurfaceRelativeVelocity.ephemerisInMsg was not linked.");
     }
 }
 

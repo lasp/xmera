@@ -24,8 +24,8 @@ import scenarioDataToViz as testScenario
 def test_simplePowerDemo(show_plots, attType):
     """This function is called by the py.test environment."""
 
-    # suppress printing out BSK_INFORMATION states
-    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
+    # suppress printing out info messages
+    sim_model.set_log_level("warning")
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

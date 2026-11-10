@@ -1,7 +1,7 @@
 # Build a linkable core library for C++ modules
 add_library(xmera_core SHARED
   _GeneralModuleFiles/sys_model.cpp
-  utilities/bskLogging.cpp
+  utilities/logging.cpp
 )
 
 # TODO: Organize per-artifact includes in a sane way.
@@ -17,7 +17,7 @@ target_include_directories(xmera_core PRIVATE
 
 # The link is PUBLIC, thus every target that uses the core also gets the mission include
 # directory. Other libraries and test executables do not declare the directory again.
-target_link_libraries(xmera_core PUBLIC Xmera::MissionParameters)
+target_link_libraries(xmera_core PUBLIC Xmera::MissionParameters spdlog::spdlog)
 
 install(TARGETS xmera_core DESTINATION lib)
 

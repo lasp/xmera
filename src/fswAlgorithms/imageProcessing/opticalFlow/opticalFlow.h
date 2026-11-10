@@ -4,37 +4,36 @@
 #ifndef _OPTICAL_FLOW_H_
 #define _OPTICAL_FLOW_H_
 
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
-#include <opencv2/core/mat.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/opencv.hpp>
-#include <stdint.h>
-#include <Eigen/Dense>
-
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
+#include <stdint.h>
+
+#include <Eigen/Dense>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
+
 /*! @brief feature tracking module */
 class OpticalFlow : public SysModel {
-   public:
+public:
     OpticalFlow();
     ~OpticalFlow();
 
     void updateState(uint64_t currentSimNanos);
     void reset(uint64_t currentSimNanos);
-    void makeMask(cv::Mat const& inputBWImage, cv::Mat& mask) const;
+    void makeMask(cv::Mat const &inputBWImage, cv::Mat &mask) const;
 
-   private:
+private:
     cv::Mat firstImage;
     cv::Mat secondImage;
     bool firstImagePresent = false;
@@ -45,7 +44,7 @@ class OpticalFlow : public SysModel {
     std::vector<cv::Vec2f> secondFeatures;
     std::vector<cv::Vec2f> firstFeatures;
 
-   public:
+public:
     std::string directoryName = "";           //!< Directory name for module to read an image directly
     std::string imageFileExtension = ".png";  //!< Directory name for module to read an image directly
 
@@ -73,8 +72,6 @@ class OpticalFlow : public SysModel {
     /*! OpenCV specific arguments needed for masking */
     int32_t thresholdMask = 20;
     int32_t limbMask = 20;
-
-    BSKLogger bskLogger;
 };
 
 #endif

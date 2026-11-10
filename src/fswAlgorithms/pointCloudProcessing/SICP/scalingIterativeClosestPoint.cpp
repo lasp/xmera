@@ -3,6 +3,8 @@
 
 #include "scalingIterativeClosestPoint.h"
 
+#include <architecture/utilities/logging.h>
+
 ScalingIterativeClosestPoint::ScalingIterativeClosestPoint() = default;
 
 ScalingIterativeClosestPoint::~ScalingIterativeClosestPoint() = default;
@@ -13,12 +15,14 @@ ScalingIterativeClosestPoint::~ScalingIterativeClosestPoint() = default;
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void ScalingIterativeClosestPoint::reset(uint64_t currentSimNanos) {
-    if (!this->measuredPointCloud.isLinked()) { bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected."); }
+    if (!this->measuredPointCloud.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("Measured Point Cloud wasn't connected.");
+    }
     if (!this->referencePointCloud.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("Measured Point Cloud wasn't connected.");
     }
     if (!this->initialCondition.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Initial condition message wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("Initial condition message wasn't connected.");
     }
 }
 

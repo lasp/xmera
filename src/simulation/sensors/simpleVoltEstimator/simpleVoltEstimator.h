@@ -8,7 +8,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/VoltMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 
 #include <Eigen/Dense>
@@ -39,7 +38,6 @@ public:
     Message<VoltMsgPayload> voltOutMsg;  //!< voltage output msg
     VoltMsgPayload trueVoltState;        //!< -- voltage state without errors
     VoltMsgPayload estVoltState;         //!< -- voltage state including errors
-    BSKLogger bskLogger;                 //!< -- BSK Logging
 
     ReadFunctor<VoltMsgPayload> voltInMsg;  //!< voltage input msg
 

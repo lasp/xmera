@@ -5,19 +5,18 @@
 #ifndef XMERA_THRFIRINGSCHMITT_H
 #define XMERA_THRFIRINGSCHMITT_H
 
-#include <cstdint>
-
+#include "thrFiringSchmittAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include "thrFiringSchmittAlgorithm.h"
+
+#include <cstdint>
 
 class ThrFiringSchmitt : public SysModel {
-   public:
+public:
     ThrFiringSchmitt();
 
     void reset(uint64_t callTime) override;
@@ -36,9 +35,8 @@ class ThrFiringSchmitt : public SysModel {
     Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;      //!< The name of the output message*, onTimeOutMsg
     ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;     //!< The name of the thruster cluster Input message
 
-    BSKLogger bskLogger = {};  //!< BSK Logging
 
-   private:
+private:
     ThrFiringSchmittAlgorithm algorithm;
 };
 

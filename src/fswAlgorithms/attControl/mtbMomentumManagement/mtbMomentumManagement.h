@@ -47,7 +47,6 @@ public:
     /*
      * Other.
      */
-    BSKLogger bskLogger = {};           //!< BSK Logging
     double tauDesiredMTB_B[3];          //!< [N-m] desired torque produced by the magnetic torque bars in the Body frame
     double tauDesiredRW_B[3];           //!< [N-m]  desired torque produced by the reaction wheels in the Body frame
     double hDeltaWheels_W[RW_EFF_CNT];  //!<  [N-m-s] momentum of each wheel

@@ -10,11 +10,12 @@
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+
 #include <stdint.h>
 
 /*! @brief Module configuration message definition. */
 class MrpPD_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -30,8 +31,6 @@ class MrpPD_C : public SysModel {
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

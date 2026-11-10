@@ -5,6 +5,7 @@
 #include "simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/safeMath.h>
 
 //! The constructor.  Note that you have to overwrite the message names.
@@ -26,17 +27,17 @@ BoreAngCalc::~BoreAngCalc() = default;
  */
 void BoreAngCalc::reset(uint64_t currentSimNanos) {
     // check if required input messages have not been included
-    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "boreAngCalc.scStateInMsg was not linked."); }
+    if (!this->scStateInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("boreAngCalc.scStateInMsg was not linked.");
+    }
 
     if (this->celBodyInMsg.isLinked()) {
         this->useCelestialHeading = true;
     } else if (this->inertialHeadingVec_N.norm() > 1e-8) {
         this->useInertialHeading = true;
     } else {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error("Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
     }
 }
 

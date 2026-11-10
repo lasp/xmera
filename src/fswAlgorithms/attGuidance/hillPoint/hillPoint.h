@@ -14,12 +14,10 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
-
 /*!@brief Data structure for module to compute the Hill-frame pointing navigation solution.
  */
 class HillPoint : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -29,8 +27,6 @@ class HillPoint : public SysModel {
     ReadFunctor<EphemerisMsgPayload> celBodyInMsg;  //!<        The name of the celestial body message
 
     int planetMsgIsLinked;  //!<        flag if the planet message is linked
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

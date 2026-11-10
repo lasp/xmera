@@ -12,6 +12,7 @@
 
 #include "eulerRotation.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <math.h>
@@ -55,7 +56,7 @@ static void computeEuler321_Binv_derivative(double angleSet[3], double angleRate
 void EulerRotation::reset(uint64_t callTime) {
     // check if the required input message is included
     if (!this->attRefInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: eulerRotation.attRefInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("eulerRotation.attRefInMsg wasn't connected.");
     }
 
     this->priorTime = 0;

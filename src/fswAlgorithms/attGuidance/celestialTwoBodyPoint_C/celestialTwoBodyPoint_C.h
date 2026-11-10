@@ -5,20 +5,18 @@
 #ifndef CELESTIAL_BODY_POINT_C_H
 #define CELESTIAL_BODY_POINT_C_H
 
-#include <stdint.h>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <stdint.h>
 
 /*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.
  */
 class CelestialTwoBodyPoint_C : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void parseInputMessages();
@@ -42,8 +40,6 @@ class CelestialTwoBodyPoint_C : public SysModel {
 
     /* Output attitude reference data to send */
     AttRefMsgPayload attRefOut;  //!< (-) copy of output reference frame message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

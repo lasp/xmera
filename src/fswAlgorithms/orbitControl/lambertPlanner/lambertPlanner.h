@@ -9,14 +9,14 @@
 #include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
+
 #include <vector>
 
 /*! @brief This module creates the LambertProblemMsg to be used for the LambertSolver module
  */
 class LambertPlanner : public SysModel {
-   public:
+public:
     LambertPlanner();
     ~LambertPlanner();
 
@@ -29,7 +29,6 @@ class LambertPlanner : public SysModel {
     ReadFunctor<NavTransMsgPayload> navTransInMsg;           //!< translational navigation input message
     Message<LambertProblemMsgPayload> lambertProblemOutMsg;  //!< lambert problem output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     Eigen::Vector3d r_TN_N;  //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
     double finalTime{};      //!< [s] time at which target position should be reached
@@ -37,18 +36,21 @@ class LambertPlanner : public SysModel {
     double mu{};             //!< [m^3 s^-2] gravitational parameter
     int numRevolutions = 0;  //!< [-] number of revolutions to be completed (completed orbits)
 
-   private:
+private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
     std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
-        const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+        std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &EOM,
         std::array<double, 2> interval,
-        const Eigen::VectorXd& X0,
-        double dt);
-    Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                        const Eigen::VectorXd& X0,
-                        double t0,
-                        double dt);
+        Eigen::VectorXd const &X0,
+        double dt
+    );
+    Eigen::VectorXd RK4(
+        std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &ODEfunction,
+        Eigen::VectorXd const &X0,
+        double t0,
+        double dt
+    );
 
     SolverMethod solverMethod;  //!< lambert solver algorithm (GOODING or IZZO)
     double time{};              //!< [s] Current vehicle time-tag associated with measurements

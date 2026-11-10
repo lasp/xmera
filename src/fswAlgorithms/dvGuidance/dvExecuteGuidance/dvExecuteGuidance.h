@@ -12,12 +12,11 @@
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the execution of a Delta-V maneuver */
 class DvExecuteGuidance : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     ReadFunctor<NavTransMsgPayload>
@@ -33,8 +32,6 @@ class DvExecuteGuidance : public SysModel {
     double minTime;                                    /*!< [s] Minimum count of burn time allowed to elapse*/
     double maxTime;                                    /*!< [s] Maximum count of burn time allowed to elapse*/
     double defaultControlPeriod;                       /*!< [s] Default control period used for first call*/
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

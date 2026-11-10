@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/PlasmaFluxMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #define MAX_NUM_KPS 28
 #define MAX_NUM_ENERGIES 40
@@ -20,7 +19,7 @@
 /*! @brief This module provides the 10-year averaged GEO elecon and ion flux as discussed in the paper by Denton.
  */
 class DentonFluxModel : public SysModel {
-   public:
+public:
     // Constructor And Destructor
     DentonFluxModel();
     ~DentonFluxModel();
@@ -42,9 +41,8 @@ class DentonFluxModel : public SysModel {
 
     Message<PlasmaFluxMsgPayload> fluxOutMsg;  //!< output message with ion and electron fluxes
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     void calcLocalTime(double v1[3], double v2[3]);
     double bilinear(int, int, double, double, double, double, double, double, double);
     void readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);

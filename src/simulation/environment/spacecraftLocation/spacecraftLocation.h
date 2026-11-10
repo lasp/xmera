@@ -6,20 +6,18 @@
 #define GROUND_LOCATION_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <Eigen/Dense>
-#include <string>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
 
 /*! @brief ground location class */
 class SpacecraftLocation : public SysModel {
-   public:
+public:
     SpacecraftLocation();
     ~SpacecraftLocation();
     void updateState(uint64_t currentSimNanos);
@@ -28,10 +26,10 @@ class SpacecraftLocation : public SysModel {
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
 
-   private:
+private:
     void computeAccess();
 
-   public:
+public:
     double rEquator;         //!< [m] equatorial planet radius
     double rPolar;           //!< [m] polar planet radius
     double maximumRange;     //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no
@@ -46,9 +44,8 @@ class SpacecraftLocation : public SysModel {
     Eigen::Vector3d
         r_LB_B;  //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     std::vector<AccessMsgPayload> accessMsgBuffer;   //!< buffer of access output data
     std::vector<SCStatesMsgPayload> scStatesBuffer;  //!< buffer of other spacecraft states
     SCStatesMsgPayload primaryScStatesBuffer;        //!< buffer of primary spacecraft states

@@ -4,6 +4,7 @@
 
 #include "spiceInterface.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/simDefinitions.h>
@@ -123,22 +124,22 @@ void SpiceInterface::clearKeeper() {
 void SpiceInterface::reset(uint64_t CurrenSimNanos) {
     //! - Bail if the SPICEDataPath is not present
     if (this->SPICEDataPath == "") {
-        bskLogger.bskLog(BSK_ERROR, "SPICE data path was not set.  No SPICE.");
+        xmera::logging::get(this->modelTag)->error("SPICE data path was not set.  No SPICE.");
         return;
     }
     //!- Load the SPICE kernels if they haven't already been loaded
     if (!this->SPICELoaded) {
         if (loadSpiceKernel((char*) "naif0012.tls", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
+            xmera::logging::get(this->modelTag)->error("Unable to load {}", "naif0012.tls");
         }
         if (loadSpiceKernel((char*) "pck00010.tpc", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
+            xmera::logging::get(this->modelTag)->error("Unable to load {}", "pck00010.tpc");
         }
         if (loadSpiceKernel((char*) "de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
+            xmera::logging::get(this->modelTag)->error("Unable to load {}", "de-403-masses.tpc");
         }
         if (loadSpiceKernel((char*) "de430.bsp", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
+            xmera::logging::get(this->modelTag)->error("Unable to load {}", "de430.tpc");
         }
         this->SPICELoaded = true;
     }
@@ -192,11 +193,11 @@ void SpiceInterface::initTimeData() {
         EpochMsgPayload epochMsg{};
         epochMsg = this->epochInMsg();
         if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "The input epoch message name was set, but the message was never written.  Not using the "
-                "input message."
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "The input epoch message name was set, but the message was never written.  Not using the "
+                    "input message."
+                );
         } else {
             // Set the epoch information from the input message
             char string[255];
@@ -343,11 +344,8 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
         SpicePlanetStateMsgPayload newPlanet = {};
         m33SetIdentity(newPlanet.J20002Pfix);
         if (it->size() >= MAX_BODY_NAME_LENGTH) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "spiceInterface: Warning, your planet name is too long for me.  Ignoring: %s",
-                (*it).c_str()
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn("spiceInterface: Warning, your planet name is too long for me.  Ignoring: {}", (*it));
             continue;
         }
         strcpy(newPlanet.PlanetName, it->c_str());
@@ -394,11 +392,8 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
         SpicePlanetStateMsgPayload newSpacecraft = {};
         m33SetIdentity(newSpacecraft.J20002Pfix);
         if (it->size() >= MAX_BODY_NAME_LENGTH) {
-            bskLogger.bskLog(
-                BSK_WARNING,
-                "spiceInterface: Warning, your spacecraft name is too long for me.  Ignoring: %s",
-                (*it).c_str()
-            );
+            xmera::logging::get(this->modelTag)
+                ->warn("spiceInterface: Warning, your spacecraft name is too long for me.  Ignoring: {}", (*it));
             continue;
         }
         strcpy(newSpacecraft.PlanetName, it->c_str());
@@ -554,12 +549,12 @@ std::string SpiceInterface::getCurrentTimeString() {
     allowedOutputLength = (int64_t) this->timeOutPicture.size() - 5;
 
     if (allowedOutputLength < 0) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "The output format string is not long enough. It should be much larger than 5 characters.  It "
-            "is currently: %s",
-            this->timeOutPicture.c_str()
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "The output format string is not long enough. It should be much larger than 5 characters.  It "
+                "is currently: {}",
+                this->timeOutPicture
+            );
         return ("");
     }
 

@@ -5,6 +5,7 @@
 #include "dvGuidance.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -15,7 +16,7 @@
 void DvGuidance::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->burnDataInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: dvGuidance.burnDataInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("dvGuidance.burnDataInMsg wasn't connected.");
     }
     return;
 }

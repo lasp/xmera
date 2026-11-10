@@ -10,8 +10,8 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
 #include <architecture/utilities/astroConstants.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
+
 #include <array>
 #include <vector>
 
@@ -19,7 +19,7 @@
     celestial body surface
  */
 class LambertSurfaceRelativeVelocity : public SysModel {
-   public:
+public:
     LambertSurfaceRelativeVelocity();
     ~LambertSurfaceRelativeVelocity();
 
@@ -30,12 +30,11 @@ class LambertSurfaceRelativeVelocity : public SysModel {
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;            //!< ephemeris input message
     Message<DesiredVelocityMsgPayload> desiredVelocityOutMsg;   //!< desired inertial velocity output message
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     Eigen::Vector3d vRelativeDesired_S;  //!< [m/s] desired relative velocity, in surface frame S (East-North-Up)
     double time{};                       //!< [s] time for the desired velocity of the spacecraft
 
-   private:
+private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
 

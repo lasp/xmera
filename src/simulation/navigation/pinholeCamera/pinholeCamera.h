@@ -10,7 +10,6 @@
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/LandmarkMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>
@@ -18,7 +17,7 @@
 
 /*! @brief Pinhole camera class */
 class PinholeCamera : public SysModel {
-   public:
+public:
     PinholeCamera();
     ~PinholeCamera();
     void updateState(uint64_t currentSimNanos);
@@ -26,20 +25,22 @@ class PinholeCamera : public SysModel {
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
 
-    void addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal);
-    void processBatch(Eigen::MatrixXd rBatch_BP_P,
-                      Eigen::MatrixXd mrpBatch_BP,
-                      Eigen::MatrixXd eBatch_SP_P,
-                      bool show_progress);
+    void addLandmark(Eigen::Vector3d &pos, Eigen::Vector3d &normal);
+    void processBatch(
+        Eigen::MatrixXd rBatch_BP_P,
+        Eigen::MatrixXd mrpBatch_BP,
+        Eigen::MatrixXd eBatch_SP_P,
+        bool show_progress
+    );
 
-   private:
+private:
     void processInputs();
     void loopLandmarks();
     bool checkLighting(Eigen::Vector3d nLmk);
     bool checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::Vector3d nLmk);
     Eigen::Vector2i computePixel(Eigen::Vector3d rLmk);
 
-   public:
+public:
     /* Pinhole camera properties */
     double f;                //!< [m] camera focal length
     double FOVx;             //!< [rad] horizontal field of view
@@ -68,13 +69,12 @@ class PinholeCamera : public SysModel {
     std::vector<Message<LandmarkMsgPayload>*> landmarkOutMsgs;  //!< vector of landmark messages
     std::vector<LandmarkMsgPayload> landmarkMsgBuffer;          //!< buffer of landmark output data
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     /* Batch variables */
     Eigen::MatrixXi pixelBatchLmk;      //!< [-] batch of landmark pixels
     Eigen::MatrixXi isvisibleBatchLmk;  //!< [-] batch of landmark visibility stauts
 
-   private:
+private:
     int n;  //!< [-] number of landmarks
 
     /* Positions */

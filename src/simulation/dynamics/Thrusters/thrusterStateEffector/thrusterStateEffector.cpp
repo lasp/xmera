@@ -7,6 +7,7 @@
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <iostream>
@@ -254,11 +255,11 @@ void ThrusterStateEffector::registerStates(DynParamManager &states) {
     for (uint64_t i = 0; i < this->thrusterData.size(); i++) {
         // Make sure that the thruster state is between 0 and 1
         if (this->kappaInit[i] < 0.0 || this->kappaInit[i] > 1.0) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "thrusterStateEffector: the initial condition for the thrust factor must be between 0 and "
-                "1. Setting it to 0."
-            );
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "thrusterStateEffector: the initial condition for the thrust factor must be between 0 and "
+                    "1. Setting it to 0."
+                );
             this->kappaInit[i] = 0.0;
         }
         kappaInitMatrix(i, 0) = this->kappaInit[i];

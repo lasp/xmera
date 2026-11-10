@@ -66,12 +66,12 @@ Running the example script should produce output similar to the following:
 .. code-block::
 
     source/code-samples % python xmera-6.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Module ID 1 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 0.000000s
-    BSK_INFORMATION: Module ID 1 ran Update at 1.000000s
-    BSK_INFORMATION: Module ID 2 ran Update at 1.000000s
+    [info] [module1] Variable dummy set to 0.000000 in reset.
+    [info] [module2] Variable dummy set to 0.000000 in reset.
+    [info] [module1] Module ID 1 ran Update at 0.000000s
+    [info] [module2] Module ID 2 ran Update at 0.000000s
+    [info] [module1] Module ID 1 ran Update at 1.000000s
+    [info] [module2] Module ID 2 ran Update at 1.000000s
     Times:  [         0 1000000000]
     mod1.dummy:
     [1. 2.]

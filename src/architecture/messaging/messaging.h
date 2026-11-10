@@ -7,7 +7,7 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/msgHeader.h>
-#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/logging.h>
 
 #include <stdlib.h>
 
@@ -30,9 +30,6 @@ private:
     bool initialized;             //!< -- flag indicating if the input message is connect to another message
 
 public:
-    //!< -- BSK Logging
-    BSKLogger bskLogger;  //!< -- bsk logging instance
-
     //! constructor
     ReadFunctor() : initialized(false) {}
 
@@ -44,11 +41,11 @@ public:
     messageType const &operator()() {
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Tried to read an un-connected message of type %s\nThis program is about to self destruct.",
-                typeid(var).name()
-            );
+            xmera::logging::get("messaging")
+                ->error(
+                    "Tried to read an un-connected message of type {}\nThis program is about to self destruct.",
+                    typeid(var).name()
+                );
             abort();
         }
         return *this->payloadPointer;
@@ -65,7 +62,8 @@ public:
             return this->headerPointer->isWritten;
         } else {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "Tried to check an unconnected msg of type %s is written.", typeid(var).name());
+            xmera::logging::get("messaging")
+                ->error("Tried to check an unconnected msg of type {} is written.", typeid(var).name());
             return false;
         }
     }
@@ -74,11 +72,8 @@ public:
     uint64_t timeWritten() {
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Tried to request the write time of an unconnected msg of type %s.",
-                typeid(var).name()
-            );
+            xmera::logging::get("messaging")
+                ->error("Tried to request the write time of an unconnected msg of type {}.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->timeWritten;
@@ -88,17 +83,14 @@ public:
     int64_t moduleID() {
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Tried to request the moduleID of an unconnected msg of type %s.",
-                typeid(var).name()
-            );
+            xmera::logging::get("messaging")
+                ->error("Tried to request the moduleID of an unconnected msg of type {}.", typeid(var).name());
             return 0;
         }
         if (!this->headerPointer->isWritten) {
             messageType var;
-            bskLogger
-                .bskLog(BSK_ERROR, "Tried to request the moduleID of an unwritten msg of type %s.", typeid(var).name());
+            xmera::logging::get("messaging")
+                ->error("Tried to request the moduleID of an unwritten msg of type {}.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->moduleID;
@@ -251,11 +243,8 @@ public:
         this->readMessage = *messageReader;
         if (!messageReader->isLinked()) {
             messageType var;
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "Tried to request the recorder an un-connected input message of type %s.",
-                typeid(var).name()
-            );
+            xmera::logging::get("messaging")
+                ->error("Tried to request the recorder an un-connected input message of type {}.", typeid(var).name());
         }
         this->modelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
@@ -314,8 +303,6 @@ public:
         this->msgRecordTimes.clear();
         this->msgWrittenTimes.clear();
     }
-
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
     //! method to update the minimum time interval before recording the next message
     void updateTimeInterval(uint64_t timeDiff) {

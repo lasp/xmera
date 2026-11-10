@@ -9,33 +9,37 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
-#include <Eigen/Dense>
+
 #include <cstdint>
+#include <Eigen/Dense>
 
 /*! @brief Prescribed Linear Translation Profiler Class */
 class PrescribedLinearTranslation : public SysModel {
-   public:
+public:
     PrescribedLinearTranslation() = default;   //!< Constructor
     ~PrescribedLinearTranslation() = default;  //!< Destructor
 
     void reset(uint64_t currentSimNanos) override;               //!< Reset member function
     void updateState(uint64_t currentSimNanos) override;         //!< Update member function
-    void setCoastOptionBangDuration(const double bangDuration);  //!< Setter method for the coast option bang duration
+    void setCoastOptionBangDuration(double const bangDuration);  //!< Setter method for the coast option bang duration
     void setSmoothingDuration(
-        const double smoothingDuration);  //!< Setter method for the duration the acceleration is smoothed until
-                                          //!< reaching the given maximum acceleration value
+        double const smoothingDuration
+    );  //!< Setter method for the duration the acceleration is smoothed until
+        //!< reaching the given maximum acceleration value
     void setTransAccelMax(
-        const double transAccelMax);  //!< Setter method for the bang segment scalar linear acceleration
+        double const transAccelMax
+    );  //!< Setter method for the bang segment scalar linear acceleration
     void setTransHat_M(
-        const Eigen::Vector3d& transHat_M);  //!< Setter method for the translating body axis of translation
+        Eigen::Vector3d const &transHat_M
+    );  //!< Setter method for the translating body axis of translation
     void setTransPosInit(
-        const double transPosInit);  //!< Setter method for the initial translating body hub-relative position
+        double const transPosInit
+    );  //!< Setter method for the initial translating body hub-relative position
     double getCoastOptionBangDuration() const;  //!< Getter method for the coast option bang duration
     double getSmoothingDuration() const;        //!< Getter method for the duration the acceleration is smoothed until
                                                 //!< reaching the given maximum acceleration value
     double getTransAccelMax() const;            //!< Getter method for the bang segment scalar linear acceleration
-    const Eigen::Vector3d& getTransHat_M() const;  //!< Getter method for the translating body axis of translation
+    Eigen::Vector3d const &getTransHat_M() const;  //!< Getter method for the translating body axis of translation
     double getTransPosInit() const;                //!< Getter method for the initial translating body position
 
     ReadFunctor<LinearTranslationRigidBodyMsgPayload>
@@ -43,9 +47,8 @@ class PrescribedLinearTranslation : public SysModel {
     Message<PrescribedTranslationMsgPayload>
         prescribedTranslationOutMsg;  //!< Output msg for the translational body prescribed states
 
-    BSKLogger* bskLogger;  //!< BSK Logging
 
-   private:
+private:
     /* Methods for computing the required translation parameters */
     void computeTranslationParameters();  //!< Intermediate method to group the calculation of translation parameters
                                           //!< into a single method
@@ -62,9 +65,11 @@ class PrescribedLinearTranslation : public SysModel {
     void computeCurrentState(double time);  //!< Intermediate method used to group the calculation of the current
                                             //!< translational states into a single method
     bool isInFirstBangSegment(
-        double time) const;  //!< Method for determining if the current time is within the first bang segment
+        double time
+    ) const;  //!< Method for determining if the current time is within the first bang segment
     bool isInSecondBangSegment(
-        double time) const;  //!< Method for determining if the current time is within the second bang segment
+        double time
+    ) const;  //!< Method for determining if the current time is within the second bang segment
     bool isInFirstSmoothedSegment(double time) const;   //!< Method for determining if the current time is within the
                                                         //!< first smoothing segment for the smoothed profiler options
     bool isInSecondSmoothedSegment(double time) const;  //!< Method for determining if the current time is within the
@@ -72,14 +77,18 @@ class PrescribedLinearTranslation : public SysModel {
     bool isInThirdSmoothedSegment(double time) const;   //!< Method for determining if the current time is within the
                                                         //!< third smoothing segment for the smoothed profiler options
     bool isInFourthSmoothedSegment(
-        double time) const;  //!< Method for determining if the current time is within the fourth smoothing segment for
-                             //!< the smoothed bang-coast-bang option
+        double time
+    ) const;  //!< Method for determining if the current time is within the fourth smoothing segment for
+              //!< the smoothed bang-coast-bang option
     bool isInCoastSegment(
-        double time) const;  //!< Method for determining if the current time is within the coast segment
+        double time
+    ) const;  //!< Method for determining if the current time is within the coast segment
     void computeFirstBangSegment(
-        double time);  //!< Method for computing the first bang segment scalar translational states
+        double time
+    );  //!< Method for computing the first bang segment scalar translational states
     void computeSecondBangSegment(
-        double time);  //!< Method for computing the second bang segment scalar translational states
+        double time
+    );  //!< Method for computing the second bang segment scalar translational states
     void computeFirstSmoothedSegment(double time);   //!< Method for computing the first smoothing segment scalar
                                                      //!< translational states for the smoothed profiler options
     void computeSecondSmoothedSegment(double time);  //!< Method for computing the second smoothing segment scalar

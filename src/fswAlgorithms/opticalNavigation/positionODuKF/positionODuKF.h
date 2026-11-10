@@ -14,44 +14,45 @@
 #include <architecture/msgPayloadDef/FilterMsgPayload.h>
 #include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
 
 #include <math.h>
 #include <string.h>
+
 #include <array>
 
 class PositionODuKF : public SysModel {
-   public:
+public:
     PositionODuKF();
     ~PositionODuKF() override;
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
-   private:
-    void timeUpdate(const double updateTime);
+private:
+    void timeUpdate(double const updateTime);
     void measurementUpdate();
     void measurementModel();
     void readFilterMeasurements();
     void writeOutputMessages(uint64_t currentSimNanos);
     void computePostFitResiduals();
-    Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
-    Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd& input,
-                                       const Eigen::VectorXd& inputVector,
-                                       double coefficient) const;
-    Eigen::MatrixXd choleskyDecomposition(const Eigen::MatrixXd& input) const;
-    Eigen::MatrixXd backSubstitution(const Eigen::MatrixXd& U, const Eigen::MatrixXd& b) const;
-    Eigen::MatrixXd forwardSubstitution(const Eigen::MatrixXd& L, const Eigen::MatrixXd& b) const;
+    Eigen::MatrixXd qrDecompositionJustR(Eigen::MatrixXd const &input) const;
+    Eigen::MatrixXd
+    choleskyUpDownDate(Eigen::MatrixXd const &input, Eigen::VectorXd const &inputVector, double coefficient) const;
+    Eigen::MatrixXd choleskyDecomposition(Eigen::MatrixXd const &input) const;
+    Eigen::MatrixXd backSubstitution(Eigen::MatrixXd const &U, Eigen::MatrixXd const &b) const;
+    Eigen::MatrixXd forwardSubstitution(Eigen::MatrixXd const &L, Eigen::MatrixXd const &b) const;
 
-    Eigen::VectorXd rk4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                        const Eigen::VectorXd& X0,
-                        double t0,
-                        double dt) const;
-    Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) const;
+    Eigen::VectorXd rk4(
+        std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &ODEfunction,
+        Eigen::VectorXd const &X0,
+        double t0,
+        double dt
+    ) const;
+    Eigen::VectorXd propagate(std::array<double, 2> interval, Eigen::VectorXd const &X0, double dt) const;
 
-   public:
+public:
     ReadFunctor<CameraLocalizationMsgPayload> cameraPosMsg;
     CameraLocalizationMsgPayload cameraPosBuffer;
     Message<NavTransMsgPayload> navTransOutMsg;
@@ -76,7 +77,8 @@ class PositionODuKF : public SysModel {
     double measNoiseScaling =
         1;                     //!< [-] Scale factor that can be applied on the measurement noise to over/under weight
     double measNoiseSD = 0.1;  //!< [km] Constant measurement noise
-   private:
+
+private:
     NavTransMsgPayload navTransOutMsgBuffer;  //!< Message buffer for input translational nav message
     FilterMsgPayload opNavFilterMsgBuffer;
     FilterResidualsMsgPayload opNavResidualMsgBuffer;
@@ -99,8 +101,6 @@ class PositionODuKF : public SysModel {
     Eigen::VectorXd postFits;              //!< [-] PostFit residuals
     Eigen::MatrixXd cholProcessNoise;      //!< [-] cholesky of Qnoise
     Eigen::MatrixXd cholMeasurementNoise;  //!< [-] cholesky of Qnoise
-
-    BSKLogger bskLogger;  //!< -- BSK Logging
 };
 
 #endif

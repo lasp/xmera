@@ -4,6 +4,8 @@
 
 #include "vscmgStateEffector.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <cmath>
 #include <iostream>
 
@@ -623,7 +625,7 @@ void VSCMGStateEffector::ReadInputs() {
 
     //! - If the input message ID is invalid, return without touching states
     if (!this->cmdsInMsg.isLinked() || !this->cmdsInMsg.isWritten()) {
-        bskLogger.bskLog(BSK_ERROR, "vscmgStateEffector.cmdsInMsg was not linked or written.");
+        xmera::logging::get(this->modelTag)->error("vscmgStateEffector.cmdsInMsg was not linked or written.");
         return;
     }
 
@@ -701,10 +703,10 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime) {
         //! set u_s_f to zero to disable all friction
         if (this->VSCMGData[it].wheelLinearFrictionRatio > 0.0) {
             if (this->VSCMGData[it].Omega_max < 0.0) {
-                bskLogger.bskLog(
-                    BSK_ERROR,
-                    "VSCMGStateEffector: Omega_max must be set to a positive value to use wheelLinearFrictionRatio."
-                );
+                xmera::logging::get(this->modelTag)
+                    ->error(
+                        "VSCMGStateEffector: Omega_max must be set to a positive value to use wheelLinearFrictionRatio."
+                    );
             }
             omegaCritical = this->VSCMGData[it].Omega_max * this->VSCMGData[it].wheelLinearFrictionRatio;
         } else {

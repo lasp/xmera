@@ -6,30 +6,28 @@
 #define XMERA_SIMPLETRANSMITTER_H
 
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief simple data transmitter class */
 class SimpleTransmitter : public DataNodeBase {
-   public:
+public:
     SimpleTransmitter();
     ~SimpleTransmitter();
     void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
 
-   private:
+private:
     void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
     bool customReadMessages();
     int getMaxIndex();
 
-   public:
+public:
     double packetSize;  //!< Size of packet to downklink (bytes)
     int numBuffers;     //!< Number of buffers the transmitter can access
     int currentIndex;   //!< Current partition that the transmitter is downlinking a packet for
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
         storageUnitInMsgs;                                     //!< Vector of data node input message names
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgs;  //!< local copies of input messages
-    BSKLogger bskLogger;                                       //!< class variable
 
-   private:
+private:
     double packetTransmitted;  //!< Amount of packet downlinked (bytes)
     double currentTimestep;    //!< Current timestep tracked for data packet integration
     double previousTime;       //!< Previous timestep tracked for data packet integration

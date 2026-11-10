@@ -10,19 +10,15 @@
 #include <architecture/msgPayloadDef/STAttMsgPayload.h>
 #include <architecture/msgPayloadDef/STSensorMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
-
 /*! @brief Module configuration message.  */
 class StComm : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     double dcm_BP[9];                              /*!< Row major platform 2 body DCM*/
     ReadFunctor<STSensorMsgPayload> stSensorInMsg; /*!< star tracker sensor input message*/
     Message<STAttMsgPayload> stAttOutMsg;          /*!< star tracker attitude output message */
-
-    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

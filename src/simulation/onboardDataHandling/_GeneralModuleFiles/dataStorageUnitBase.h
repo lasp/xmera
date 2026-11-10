@@ -3,19 +3,18 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <Eigen/Dense>
-#include <cstring>
-#include <string>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 #include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
+#include <cstring>
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
+
 
 #ifndef XMERA_DATASTORAGEUNITBASE_H
-#define XMERA_DATASTORAGEUNITBASE_H
+    #define XMERA_DATASTORAGEUNITBASE_H
 
 struct dataInstance {
     char dataInstanceName[128];  //!< data instance name
@@ -24,16 +23,18 @@ struct dataInstance {
 
 /*! @brief on-board data handling base class */
 class DataStorageUnitBase : public SysModel {
-   public:
+public:
     DataStorageUnitBase();
     ~DataStorageUnitBase();
     void reset(uint64_t currentSimNanos);
     void addDataNodeToModel(Message<DataNodeUsageMsgPayload>* tmpNodeMsg);  //!< Adds dataNode to the storageUnit
     void updateState(uint64_t currentSimNanos);
-    void setDataBuffer(std::string partitionName,
-                       int64_t data);  //!< Adds/removes the data from the partitionName partition once
+    void setDataBuffer(
+        std::string partitionName,
+        int64_t data
+    );  //!< Adds/removes the data from the partitionName partition once
 
-   protected:
+protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void integrateDataStatus(double currentTime);     //!< Integrates the dataStatus over all of the dataNodes
@@ -41,17 +42,17 @@ class DataStorageUnitBase : public SysModel {
     virtual void customWriteMessages(uint64_t CurrentClock);  //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.
     int messageInStoredData(
-        DataNodeUsageMsgPayload* tmpNodeMsg);  //!< Returns index of the dataName if it's already in storedData
-    int64_t sumAllData();                      //!< Sums all of the data in the storedData vector
+        DataNodeUsageMsgPayload* tmpNodeMsg
+    );                     //!< Returns index of the dataName if it's already in storedData
+    int64_t sumAllData();  //!< Sums all of the data in the storedData vector
 
-   public:
+public:
     std::vector<ReadFunctor<DataNodeUsageMsgPayload>> nodeDataUseInMsgs;  //!< Vector of data node input message names
     Message<DataStorageStatusMsgPayload>
         storageUnitDataOutMsg;  //!< Vector of message names to be written out by the storage unit
     int64_t storageCapacity;    //!< Storage capacity of the storage unit
-    BSKLogger bskLogger;        //!< logging variable
 
-   protected:
+protected:
     DataStorageStatusMsgPayload storageStatusMsg;       //!< class variable
     std::vector<DataNodeUsageMsgPayload> nodeBaudMsgs;  //!< class variable
     int64_t storedDataSum;                              //!< [bits] Stored data in bits.

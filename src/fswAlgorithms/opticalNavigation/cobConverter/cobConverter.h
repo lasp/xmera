@@ -15,6 +15,8 @@
 #include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
 
+#include <map>
+
 /**
  * @enum PhaseAngleCorrectionMethod
  * @brief Phase-angle correction models for converting COB to COM.

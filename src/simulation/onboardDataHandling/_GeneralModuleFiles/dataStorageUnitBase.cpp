@@ -4,6 +4,7 @@
 
 #include "dataStorageUnitBase.h"
 
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <iostream>
@@ -90,7 +91,7 @@ bool DataStorageUnitBase::readMessages() {
             this->nodeBaudMsgs.push_back(nodeMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
+        xmera::logging::get(this->modelTag)->info("Data storage has no data node messages to read.");
         dataRead = false;
     }
 

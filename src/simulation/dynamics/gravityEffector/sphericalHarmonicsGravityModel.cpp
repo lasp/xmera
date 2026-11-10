@@ -3,12 +3,16 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sphericalHarmonicsGravityModel.h"
-#include <architecture/utilities/bskLogging.h>
+
+#include <architecture/utilities/logging.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 
 namespace {
-// Computes the term (2 - d_l), where d_l is the kronecker delta.
-inline double getK(const size_t degree) { return (degree == 0) ? 1.0 : 2.0; }
+    // Computes the term (2 - d_l), where d_l is the kronecker delta.
+    inline double getK(size_t const degree) {
+        return (degree == 0) ? 1.0 : 2.0;
+    }
 }  // namespace
 
 std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters() {
@@ -45,9 +49,7 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         nq1Row.resize(l + 1, 0.0);
         nq2Row.resize(l + 1, 0.0);
         for (size_t m = 0; m <= l; m++) {
-            if (m < l) {
-                nq1Row[m] = sqrt(double((l - m) * getK(m) * (l + m + 1)) / getK(m + 1));
-            }
+            if (m < l) { nq1Row[m] = sqrt(double((l - m) * getK(m) * (l + m + 1)) / getK(m + 1)); }
             nq2Row[m] = sqrt(double((l + m + 2) * (l + m + 1) * (2 * l + 1) * getK(m)) / ((2 * l + 3) * getK(m + 1)));
         }
         this->nQuot1.push_back(nq1Row);
@@ -57,22 +59,24 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
     return {};  // No error!
 }
 
-std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(const GravBodyData& body) {
+std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(GravBodyData const &body) {
     this->radEquator = body.radEquator;
     this->muBody = body.mu;
     return this->initializeParameters();
 }
 
-Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed) const {
+Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(Eigen::Vector3d const &position_planetFixed) const {
     return this->computeField(position_planetFixed, this->maxDeg, true);
 }
 
-Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed,
-                                                             size_t degree,
-                                                             bool include_zero_degree) const {
+Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(
+    Eigen::Vector3d const &position_planetFixed,
+    size_t degree,
+    bool include_zero_degree
+) const {
     if (degree > this->maxDeg) {
         auto errorMsg = "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
-        if (bskLogger) bskLogger->bskLog(BSK_ERROR, errorMsg);
+        xmera::logging::get("gravity")->error(errorMsg);
         throw std::invalid_argument(errorMsg);
     }
 
@@ -157,9 +161,7 @@ Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector
 
             sum_a1 = sum_a1 + m * this->aBar[l][m] * E;
             sum_a2 = sum_a2 + m * this->aBar[l][m] * F;
-            if (m < l) {
-                sum_a3 = sum_a3 + this->nQuot1[l][m] * this->aBar[l][m + 1] * D;
-            }
+            if (m < l) { sum_a3 = sum_a3 + this->nQuot1[l][m] * this->aBar[l][m + 1] * D; }
             sum_a4 = sum_a4 + this->nQuot2[l][m] * this->aBar[l + 1][m + 1] * D;
         }
 
@@ -172,6 +174,6 @@ Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector
     return {a1 + s * a4, a2 + t * a4, a3 + u * a4};
 }
 
-double SphericalHarmonicsGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const {
+double SphericalHarmonicsGravityModel::computePotentialEnergy(Eigen::Vector3d const &positionWrtPlanet_N) const {
     return -this->muBody / positionWrtPlanet_N.norm();
 }

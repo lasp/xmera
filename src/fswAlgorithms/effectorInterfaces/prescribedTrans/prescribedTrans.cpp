@@ -7,6 +7,7 @@
 
 /*! Import other required files */
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <math.h>
@@ -20,7 +21,7 @@
 void PrescribedTrans::reset(uint64_t callTime) {
     // Check if the input message is connected
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: prescribedTrans.linearTranslationRigidBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("prescribedTrans.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
     // Set the initial time

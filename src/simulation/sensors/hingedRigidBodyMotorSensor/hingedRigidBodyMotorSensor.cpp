@@ -4,6 +4,8 @@
 
 #include "hingedRigidBodyMotorSensor.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <stdint.h>
 
 #include <cmath>
@@ -33,7 +35,8 @@ HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor() {}
 void HingedRigidBodyMotorSensor::reset(uint64_t currentSimNanos) {
     //!< check that required input messages are connected
     if (!this->hingedRigidBodyMotorSensorInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotorSensor.hingedRigidBodyMotorSensorInMsg was not linked.");
+        xmera::logging::get(this->modelTag)
+            ->error("HingedRigidBodyMotorSensor.hingedRigidBodyMotorSensorInMsg was not linked.");
     }
 }
 

@@ -6,12 +6,6 @@
 #define SpiceInterface_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
-#include <architecture/utilities/eigenSupport.h>
-#include <architecture/utilities/linearAlgebra.h>
-#include <map>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
@@ -19,21 +13,26 @@
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/msgPayloadDef/SpiceTimeMsgPayload.h>
 #include <architecture/msgPayloadDef/TransRefMsgPayload.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+
+#include <map>
+#include <vector>
 
 class SecondaryBody {
-   public:
+public:
     SecondaryBody() = default;
     ~SecondaryBody() = default;
 
-    void setPositionOffset(const Eigen::Vector3d& offset);
+    void setPositionOffset(Eigen::Vector3d const &offset);
     Eigen::Vector3d getPositionOffset() const;
     Eigen::Vector3d getPositionOffsetAt(double elapsedSeconds) const;
-    void setSecondaryName(const std::string& name);
+    void setSecondaryName(std::string const &name);
     std::string getSecondaryName() const;
     void setOrbitalPeriod(double period);
     double getOrbitalPeriod() const;
 
-   private:
+private:
     std::string secondaryName{};
     Eigen::Vector3d offset{Eigen::Vector3d::Zero()};
     double orbitalPeriod{0.0};  //!< s circular-orbit period; 0 disables motion
@@ -41,13 +40,13 @@ class SecondaryBody {
 
 /*! @brief spice interface class */
 class SpiceInterface : public SysModel {
-   public:
+public:
     SpiceInterface();
     ~SpiceInterface();
 
     void updateState(uint64_t currentSimNanos);
-    int loadSpiceKernel(char* kernelName, const char* dataPath);
-    int unloadSpiceKernel(char* kernelName, const char* dataPath);
+    int loadSpiceKernel(char* kernelName, char const* dataPath);
+    int unloadSpiceKernel(char* kernelName, char const* dataPath);
     std::string getCurrentTimeString();  //!< class method
     void reset(uint64_t currentSimNanos);
     void initTimeData();
@@ -57,11 +56,11 @@ class SpiceInterface : public SysModel {
     void clearKeeper();  //!< class method
     void addPlanetNames(std::vector<std::string> planetNames);
     void addSpacecraftNames(std::vector<std::string> spacecraftNames);
-    SpicePlanetStateMsgPayload populateSecondaryBodyMsg(const SpicePlanetStateMsgPayload& primaryBody) const;
-    void setOffsetBody(const std::string& planetName, const SecondaryBody& offsetBody);
+    SpicePlanetStateMsgPayload populateSecondaryBodyMsg(SpicePlanetStateMsgPayload const &primaryBody) const;
+    void setOffsetBody(std::string const &planetName, SecondaryBody const &offsetBody);
     void passivateSecondary();
 
-   public:
+public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;                          //!< spice time sampling output message
     ReadFunctor<EpochMsgPayload> epochInMsg;                               //!< (optional) input epoch message
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs;  //!< vector of planet state output messages
@@ -94,9 +93,8 @@ class SpiceInterface : public SysModel {
     uint16_t GPSWeek;                   //!< -- Current GPS week value
     uint64_t GPSRollovers;              //!< -- Count on the number of GPS rollovers
 
-    BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     std::string GPSEpochTime;  //!< -- String for the GPS epoch
     double JDGPSEpoch;         //!< s Epoch for GPS time.  Saved for efficiency
 

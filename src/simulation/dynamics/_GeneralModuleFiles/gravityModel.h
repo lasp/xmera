@@ -5,12 +5,12 @@
 #ifndef GRAVITY_MODEL_H
 #define GRAVITY_MODEL_H
 
+#include <stdint.h>
+
 #include <Eigen/Dense>
 #include <optional>
-#include <stdint.h>
 #include <string>
 
-#include <architecture/utilities/bskLogging.h>
 
 class GravBodyData;
 
@@ -19,14 +19,14 @@ class GravBodyData;
  * point in space.
  */
 class GravityModel {
-   public:
+public:
     // Core Guidelines C.67 and C.127
     virtual ~GravityModel() = default;
     GravityModel() = default;
-    GravityModel(const GravityModel&) = delete;
-    GravityModel& operator=(const GravityModel&) = delete;
-    GravityModel(GravityModel&&) = delete;
-    GravityModel& operator=(GravityModel&&) = delete;
+    GravityModel(GravityModel const &) = delete;
+    GravityModel &operator=(GravityModel const &) = delete;
+    GravityModel(GravityModel &&) = delete;
+    GravityModel &operator=(GravityModel &&) = delete;
 
     /** Initializes any parameters necessary for the computation of gravity.
      *
@@ -51,7 +51,7 @@ class GravityModel {
      * the returned optional is set, GravityEffector::Reset will log an error
      * with the value in the optional.
      */
-    virtual std::optional<std::string> initializeParameters(const GravBodyData&) = 0;
+    virtual std::optional<std::string> initializeParameters(GravBodyData const &) = 0;
 
     /** Returns the gravity acceleration at a position around this body.
      *
@@ -59,17 +59,16 @@ class GravityModel {
      * Likewise, the resulting acceleration should be given in the
      * body-fixed reference frame.
      */
-    virtual Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const = 0;
+    virtual Eigen::Vector3d computeField(Eigen::Vector3d const &position_planetFixed) const = 0;
 
     /** Returns the gravitational potential energy at a position around this body.
      *
      * The position is given relative to the body and in the inertial
      * reference frame.
      */
-    virtual double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const = 0;
+    virtual double computePotentialEnergy(Eigen::Vector3d const &positionWrtPlanet_N) const = 0;
 
-   public:
-    BSKLogger* bskLogger; /*!< pointer to bsk logging instance */
+public:
 };
 
 #endif /* GRAVITY_MODEL_H */

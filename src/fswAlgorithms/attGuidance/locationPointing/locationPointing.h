@@ -13,14 +13,14 @@
 #include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
 
 /*! @brief This module is used to generate the attitude reference message in order to have a spacecraft point at a
  * location on the ground
  */
 class LocationPointing : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -43,8 +43,6 @@ class LocationPointing : public SysModel {
     ReadFunctor<NavTransMsgPayload> scTargetInMsg;     //!< input msg with inertial target spacecraft position states
     Message<AttGuidMsgPayload> attGuidOutMsg;          //!< attitude guidance output message
     Message<AttRefMsgPayload> attRefOutMsg;            //!< attitude reference output message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

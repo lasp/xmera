@@ -5,6 +5,7 @@
 #include "tamComm.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <math.h>
@@ -16,10 +17,12 @@
  */
 void TamComm::reset(uint64_t callTime) {
     // check if the required message has not been connected
-    if (!this->tamInMsg.isLinked()) { this->bskLogger.bskLog(BSK_ERROR, "Error: tamComm.tamInMsg wasn't connected."); }
+    if (!this->tamInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("tamComm.tamInMsg wasn't connected.");
+    }
 
     if (fabs(m33Determinant(RECAST3X3 this->dcm_BS) - 1.0) > 1e-10) {
-        this->bskLogger.bskLog(BSK_WARNING, "dcm_BS is set to zero values.");
+        xmera::logging::get(this->modelTag)->warn("dcm_BS is set to zero values.");
     }
 
     return;

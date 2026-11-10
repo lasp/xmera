@@ -15,6 +15,7 @@
 #include "rateMsgConverter.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 #include <string.h>
 
@@ -26,7 +27,7 @@
 void RateMsgConverter::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->imuRateInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("rateMsgConverter.imuRateInMsg wasn't connected.");
     }
 }
 

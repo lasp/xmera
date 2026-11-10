@@ -13,12 +13,11 @@
 #include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief module configuration message */
 class ThrustRWDesat : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;          /*!< (-) The name of the input RW speeds message*/
@@ -40,8 +39,6 @@ class ThrustRWDesat : public SysModel {
     double totalAccumFiring;              /*!< (s) The total thruster duration we've commanded*/
     double DMThresh;                      /*!< (r/s) The point at which to stop decrementing momentum*/
     uint64_t previousFiring;              /*!< (ns) Time that the last firing command was given*/
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -10,12 +10,11 @@
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the spacecraft pointing module.*/
 class SpacecraftPointing : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     Message<AttRefMsgPayload> attReferenceOutMsg;        /*!< The name of the output message */
@@ -28,8 +27,6 @@ class SpacecraftPointing : public SysModel {
     double old_omega_RN_N[3];    /*!< -- Omega of previous timestep */
     int i;                       /*!< -- Flag used to set incorrect numerical answers to zero */
     uint64_t priorTime;          /*!< [ns] Last time the attitude control is called */
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

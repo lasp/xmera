@@ -3,6 +3,8 @@
 
 #include "pointCloudTriangulation.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -22,13 +24,13 @@ PointCloudTriangulation::~PointCloudTriangulation() = default;
 void PointCloudTriangulation::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->directionOfMotionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "pointCloudTriangulation.directionOfMotionInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("pointCloudTriangulation.directionOfMotionInMsg was not linked.");
     }
     if (!this->keyPointsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "pointCloudTriangulation.keyPointsInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("pointCloudTriangulation.keyPointsInMsg was not linked.");
     }
     if (!this->cameraConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "pointCloudTriangulation.cameraConfigInMsg was not linked.");
+        xmera::logging::get(this->modelTag)->error("pointCloudTriangulation.cameraConfigInMsg was not linked.");
     }
 }
 
@@ -151,20 +153,20 @@ void PointCloudTriangulation::readMessages() {
 
     // check if cameraIDs and time tags are equal
     if (cameraIDkeyPoints != cameraIDconfig && this->valid) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "pointCloudTriangulation: camera IDs from keyPointsInMsg and "
-            "cameraConfigInMsg are different, but should be equal."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "pointCloudTriangulation: camera IDs from keyPointsInMsg and "
+                "cameraConfigInMsg are different, but should be equal."
+            );
         this->valid = false;
     }
     if (!(timeTagDOM == this->timeTag2) && this->valid) {
-        bskLogger.bskLog(
-            BSK_ERROR,
-            "pointCloudTriangulation: time tags from ephemerisInMsg, "
-            "navTransInMsg, directionOfMotionInMsg and the time tag of the first image from "
-            "keyPointsInMsg (timeTag_firstImage) are different, but should be equal."
-        );
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "pointCloudTriangulation: time tags from ephemerisInMsg, "
+                "navTransInMsg, directionOfMotionInMsg and the time tag of the first image from "
+                "keyPointsInMsg (timeTag_firstImage) are different, but should be equal."
+            );
         this->valid = false;
     }
 }

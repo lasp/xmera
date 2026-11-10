@@ -28,6 +28,7 @@ The ``reset()`` method should be used to
 - restore module variables if needed. For example, the integral feedback gain variable might be reset to 0.
 - perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.  Whenever ``reset()`` is called the module should read in these messages again to use the latest values.
 - check that required input messages are connected.  If a required input message is not connected when ``reset()`` is called, then log an error message.
+  To write the message, include ``architecture/utilities/logging.h`` in the ``*.cpp`` file. Then get the logger that has the ``modelTag`` of the module.
 
 The following sample code assumes that the class variable ``value`` should be re-set to 0 on ``reset()``, and that ``someInMsg`` is a required input message:L
 
@@ -41,7 +42,7 @@ The following sample code assumes that the class variable ``value`` should be re
         this->value = 0.0;
 
         if (!this->someInMsg.isLinked()) {
-            bskLogger.bskLog(BSK_ERROR, "SomeModule does not have someInMsg connected!");
+            xmera::logging::get(this->modelTag)->error("SomeModule does not have someInMsg connected!");
         }
     }
 

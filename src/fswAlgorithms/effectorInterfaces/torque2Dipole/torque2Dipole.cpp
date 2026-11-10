@@ -5,6 +5,7 @@
 #include "torque2Dipole.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -17,10 +18,10 @@ void Torque2Dipole::reset(uint64_t callTime) {
      * Check if the required input messages are connected.
      */
     if (!this->tamSensorBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: torque2Dipole.tamSensorBodyInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("torque2Dipole.tamSensorBodyInMsg is not connected.");
     }
     if (!this->tauRequestInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: torque2Dipole.tauRequestInMsg is not connected.");
+        xmera::logging::get(this->modelTag)->error("torque2Dipole.tauRequestInMsg is not connected.");
     }
 }
 

@@ -10,6 +10,7 @@
 #include "prvSteering.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
@@ -21,7 +22,7 @@
 */
 void PrvSteering::reset(uint64_t callTime) {
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: prvSteering.guidInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("prvSteering.guidInMsg wasn't connected.");
     }
 
     return;

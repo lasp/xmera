@@ -5,6 +5,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <cmath>
@@ -15,7 +16,7 @@
 */
 void SingleAxisProfiler::reset(uint64_t callTime) {
     if (!this->stepperMotorInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "singleAxisProfiler.stepperMotorInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("singleAxisProfiler.stepperMotorInMsg wasn't connected.");
     }
 }
 

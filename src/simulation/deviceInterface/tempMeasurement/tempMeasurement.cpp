@@ -4,6 +4,8 @@
 
 #include "tempMeasurement.h"
 
+#include <architecture/utilities/logging.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -21,10 +23,13 @@ TempMeasurement::~TempMeasurement() = default;
     @return void
 */
 void TempMeasurement::reset(uint64_t currentSimNanos) {
-    if (!this->tempInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "TempMeasurement.tempInMsg was not linked."); }
+    if (!this->tempInMsg.isLinked()) {
+        xmera::logging::get(this->modelTag)->error("TempMeasurement.tempInMsg was not linked.");
+    }
 
     if (this->spikeProbability > 1.0 || this->spikeProbability < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The probability of temperature spike on fault must be between 0 and 1.");
+        xmera::logging::get(this->modelTag)
+            ->error("The probability of temperature spike on fault must be between 0 and 1.");
     }
     // set up gaussMarkov and random number generator parameters
     this->spikeProbabilityGenerator.seed(this->RNGSeed);

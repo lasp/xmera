@@ -5,6 +5,7 @@
 #include "thrusterPlatformState.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -14,13 +15,13 @@
 */
 void ThrusterPlatformState::reset(uint64_t callTime) {
     if (!this->thrusterConfigFInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");
     }
     if (!this->hingedRigidBody1InMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformState.hingedRigidBody1InMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrusterPlatformState.hingedRigidBody1InMsg wasn't connected.");
     }
     if (!this->hingedRigidBody2InMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformState.hingedRigidBody2InMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("thrusterPlatformState.hingedRigidBody2InMsg wasn't connected.");
     }
 }
 

@@ -6,21 +6,19 @@
 #define GROUND_LOCATION_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
 #include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
-
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
+
 /*! @brief ground location class */
 class GroundLocation : public SysModel {
-   public:
+public:
     GroundLocation();
     ~GroundLocation();
     void updateState(uint64_t currentSimNanos);
@@ -29,13 +27,13 @@ class GroundLocation : public SysModel {
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
     void specifyLocation(double lat, double longitude, double alt);
-    void specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc);
+    void specifyLocationPCPF(Eigen::Vector3d &r_LP_P_Loc);
 
-   private:
+private:
     void updateInertialPositions();
     void computeAccess();
 
-   public:
+public:
     double planetRadius;      //!< [m] Planet radius in meters.
     double minimumElevation;  //!< [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults
                               //!< to 10 degrees equivalent.
@@ -48,9 +46,8 @@ class GroundLocation : public SysModel {
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of sc state input messages
     Eigen::Vector3d r_LP_P_Init;  //!< [m] Initial position of the location in planet-centric coordinates; can also be
                                   //!< set using setGroundLocation.
-    BSKLogger bskLogger;          //!< -- BSK Logging
 
-   private:
+private:
     std::vector<AccessMsgPayload> accessMsgBuffer;   //!< buffer of access output data
     std::vector<SCStatesMsgPayload> scStatesBuffer;  //!< buffer of spacecraft states
     SpicePlanetStateMsgPayload planetState;          //!< buffer of planet data

@@ -5,6 +5,7 @@
 #include "gravityEffector.h"
 
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <functional>
@@ -31,7 +32,6 @@ GravBodyData::GravBodyData()
 void GravBodyData::initBody(int64_t moduleID) {
     std::optional<std::string> errorMessage;
     if (this->gravityModel) {
-        this->gravityModel->bskLogger = &bskLogger;
         errorMessage = this->gravityModel->initializeParameters(*this);
     } else {
         errorMessage = "Gravity model is null";
@@ -39,7 +39,7 @@ void GravBodyData::initBody(int64_t moduleID) {
 
     if (errorMessage) {
         std::string fullMsg = "Error initializating body '" + this->planetName + "'. " + errorMessage.value();
-        this->bskLogger.bskLog(BSK_ERROR, fullMsg.c_str());
+        xmera::logging::get("gravity")->error(fullMsg);
     }
 }
 
@@ -79,7 +79,7 @@ void GravBodyData::loadEphemeris() {
 void GravBodyData::registerProperties(DynParamManager &statesIn) {
     if (this->planetName == "") {
         auto errorMessage = "You must specify a planetary body name in GravBodyData";
-        this->bskLogger.bskLog(BSK_ERROR, errorMessage);
+        xmera::logging::get("gravity")->error(errorMessage);
         throw std::invalid_argument(errorMessage);
     }
 
@@ -114,7 +114,7 @@ void GravityEffector::updateState(uint64_t currentSimNanos) {
         if (this->centralBody)  // A centralBody was already set
         {
             auto errorMessage = "Specified two central bodies at the same time";
-            this->bskLogger.bskLog(BSK_ERROR, errorMessage);
+            xmera::logging::get(this->modelTag)->error(errorMessage);
             throw std::invalid_argument(errorMessage);
         } else {
             this->centralBody = body;

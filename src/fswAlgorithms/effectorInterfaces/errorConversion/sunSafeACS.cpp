@@ -3,7 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sunSafeACS.h"
+
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <string.h>
 
 /*! This method resets the module.
@@ -13,7 +16,7 @@
 void SunSafeACS::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->cmdTorqueBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
+        xmera::logging::get(this->modelTag)->error("sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
     }
 }
 

@@ -5,7 +5,6 @@
 #ifndef STATE_MANAGER_H
 #define STATE_MANAGER_H
 
-#include <architecture/utilities/bskLogging.h>
 
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 #include <stdint.h>
@@ -41,7 +40,6 @@ class DynParamManager {
 public:
     std::map<std::string, Eigen::MatrixXd> dynProperties;  //!< class variable
     StateVector stateContainer;                            //!< class variable
-    BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 public:
     DynParamManager();

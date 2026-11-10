@@ -6,6 +6,7 @@
 
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/logging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <sstream>
@@ -29,7 +30,7 @@ DataFileToViz::~DataFileToViz() {
     /* close the data file if it is open */
     if (this->fileHandle.is_open()) {
         this->fileHandle.close();
-        bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
+        xmera::logging::get(this->modelTag)->info("DataFileToViz:\nclosed the file: {}.", this->dataFileName);
     }
 
     for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) { delete this->scStateOutMsgs.at(c); }
@@ -41,19 +42,19 @@ DataFileToViz::~DataFileToViz() {
  @param currentSimNanos The current sim time in nanoseconds
  */
 void DataFileToViz::reset(uint64_t currentSimNanos) {
+    this->logger = xmera::logging::get(this->modelTag);
     if (this->dataFileName.length() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: dataFileName must be an non-empty string.");
+        this->logger->error("DataFileToViz: dataFileName must be an non-empty string.");
     }
     if (this->scStateOutMsgs.size() < 1) {
-        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: spacecraft list must have at least one element in it.");
+        this->logger->error("DataFileToViz: spacecraft list must have at least one element in it.");
     }
 
     /* check thruster states */
     if (this->thrMsgDataSC.size() > 0) {
         if (this->scStateOutMsgs.size() != this->thrMsgDataSC.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "DataFileToViz: you set appendThrClusterMap() %d times, but set number of spacecraft to %d",
+            this->logger->error(
+                "DataFileToViz: you set appendThrClusterMap() {} times, but set number of spacecraft to {}",
                 (int) this->thrMsgDataSC.size(),
                 (int) this->scStateOutMsgs.size()
             );
@@ -61,27 +62,23 @@ void DataFileToViz::reset(uint64_t currentSimNanos) {
 
         /* check vector dimensions */
         if (this->numThr != (int) this->thrPosList.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrPosList must the same size as the number of thrusters.");
+            this->logger->error("DataFileToViz: thrPosList must the same size as the number of thrusters.");
         }
 
         if (this->numThr != (int) this->thrDirList.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrDirList must the same size as the number of thrusters.");
+            this->logger->error("DataFileToViz: thrDirList must the same size as the number of thrusters.");
         }
 
         if (this->numThr != (int) this->thrForceMaxList.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "DataFileToViz: thrForceMaxList must the same size as the number of thrusters."
-            );
+            this->logger->error("DataFileToViz: thrForceMaxList must the same size as the number of thrusters.");
         }
     }
 
     /* check RW states */
     if (this->rwScOutMsgs.size() > 0) {
         if (this->scStateOutMsgs.size() != this->rwScOutMsgs.size()) {
-            bskLogger.bskLog(
-                BSK_ERROR,
-                "DataFileToViz: you set appendRwMsg %d times, but set number of spacecraft to %d",
+            this->logger->error(
+                "DataFileToViz: you set appendRwMsg {} times, but set number of spacecraft to {}",
                 (int) this->rwScOutMsgs.size(),
                 (int) this->scStateOutMsgs.size()
             );
@@ -89,39 +86,39 @@ void DataFileToViz::reset(uint64_t currentSimNanos) {
 
         /* check vector dimensions */
         if (this->numRW != (int) this->rwPosList.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwPosList must the same size as the total number of RWs.");
+            this->logger->error("DataFileToViz: rwPosList must the same size as the total number of RWs.");
         }
 
         if (this->numRW != (int) this->rwDirList.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwDirList must the same size as the total number of RWs.");
+            this->logger->error("DataFileToViz: rwDirList must the same size as the total number of RWs.");
         }
 
         if (this->numRW != (int) this->rwOmegaMaxList.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwOmegaMaxList must the same size as the total number of RWs.");
+            this->logger->error("DataFileToViz: rwOmegaMaxList must the same size as the total number of RWs.");
         }
 
         if (this->numRW != (int) this->rwUMaxList.size()) {
-            bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwUMaxList must the same size as the total number of RWs.");
+            this->logger->error("DataFileToViz: rwUMaxList must the same size as the total number of RWs.");
         }
     }
 
     /* close the data file if it is open */
     if (this->fileHandle.is_open()) {
         this->fileHandle.close();
-        bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
+        this->logger->info("DataFileToViz:\nclosed the file: {}.", this->dataFileName);
     }
 
     /* open the data file*/
     this->fileHandle.open(this->dataFileName);
     if (this->fileHandle.fail()) {
-        bskLogger.bskLog(BSK_ERROR, "DataFileToViz: was not able to load the file %s.", this->dataFileName.c_str());
+        this->logger->error("DataFileToViz: was not able to load the file {}.", this->dataFileName);
     }
     if (this->headerLine) {
         std::string line;
         getline(this->fileHandle, line);
     }
 
-    bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nloaded the file: %s.", this->dataFileName.c_str());
+    this->logger->info("DataFileToViz:\nloaded the file: {}.", this->dataFileName);
 
     return;
 }
@@ -288,8 +285,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                     Euler3212MRP(att, scMsg.sigma_BN);
                     break;
                 default:
-                    bskLogger
-                        .bskLog(BSK_ERROR, "DataFileToViz: unknown attitudeType encountered: %d", this->attitudeType);
+                    this->logger->error("DataFileToViz: unknown attitudeType encountered: {}", this->attitudeType);
                     break;
                 }
                 pullVector(&iss, scMsg.omega_BN_B);
@@ -354,7 +350,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                 }
             }
         } else {
-            bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz: reached end of file.");
+            this->logger->info("DataFileToViz: reached end of file.");
         }
     }
 
