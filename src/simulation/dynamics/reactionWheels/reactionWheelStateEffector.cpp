@@ -4,12 +4,12 @@
 
 #include "reactionWheelStateEffector.h"
 
+#include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/logging.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 #include <cmath>
-#include <cstring>
-#include <iostream>
 
 namespace {
     //! Constants for the Stribeck friction model.

@@ -12,11 +12,7 @@
 #include <architecture/msgPayloadDef/RWConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/utilities/eigenMRP.h>
-#include <architecture/utilities/eigenSupport.h>
-#include <architecture/utilities/macroDefinitions.h>
 
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
