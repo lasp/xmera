@@ -52,7 +52,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
     this->OmegasState =
         states.registerState(static_cast<uint32_t>(this->numRW), 1, this->nameOfReactionWheelOmegasState);
 
-    if (numRWJitter > 0) {
+    if (this->numRWJitter > 0) {
         this->thetasState =
             states.registerState(static_cast<uint32_t>(this->numRWJitter), 1, this->nameOfReactionWheelThetasState);
     }
@@ -278,8 +278,8 @@ void ReactionWheelStateEffector::computeDerivatives(
         RWi++;
     }
 
-    OmegasState->setDerivative(OmegasDot);
-    if (this->numRWJitter > 0) { thetasState->setDerivative(thetasDot); }
+    this->OmegasState->setDerivative(OmegasDot);
+    if (this->numRWJitter > 0) { this->thetasState->setDerivative(thetasDot); }
 }
 
 void ReactionWheelStateEffector::updateEnergyMomContributions(
@@ -288,7 +288,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(
     double &rotEnergyContr,
     [[maybe_unused]] Eigen::Vector3d omega_BN_B
 ) {
-    Eigen::Vector3d omegaLoc_BN_B = hubOmega->getState();
+    Eigen::Vector3d omegaLoc_BN_B = this->hubOmega->getState();
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
@@ -360,7 +360,7 @@ void ReactionWheelStateEffector::reset([[maybe_unused]] uint64_t CurrenSimNanos)
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock) const {
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
-        if (numRWJitter > 0) { it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0); }
+        if (this->numRWJitter > 0) { it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0); }
         it->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
 
         auto tmpRW = RWConfigLogMsgPayload{};
@@ -392,7 +392,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos) {
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
-        if (numRWJitter > 0) {
+        if (this->numRWJitter > 0) {
             it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0);
             this->rwSpeedMsgBuffer.wheelThetas[i] = it->theta;
         }
