@@ -85,4 +85,4 @@ private:
     StateData* thetasState = nullptr;
 };
 
-#endif /* STATE_EFFECTOR_H */
+#endif /* REACTIONWHEELSTATEEFFECTOR_H */
