@@ -293,9 +293,6 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(
     double &rotEnergyContr,
     [[maybe_unused]] Eigen::Vector3d omega_BN_B
 ) {
-    Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN; /*! direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB; /*! direction cosine matrix from B to N */
     Eigen::Vector3d omegaLoc_BN_B = hubOmega->getState();
 
     //! - Compute energy and momentum contribution of each wheel
@@ -368,7 +365,6 @@ void ReactionWheelStateEffector::reset([[maybe_unused]] uint64_t CurrenSimNanos)
  @return void
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock) const {
-    RWConfigMsgPayload test;
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
         if (numRWJitter > 0) { it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0); }
