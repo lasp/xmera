@@ -63,8 +63,7 @@ void StateSpaceStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     // Grab states
     this->X = this->XState->getState();
@@ -113,7 +112,7 @@ void StateSpaceStateEffector::updateContributions(
 
 void StateSpaceStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -123,7 +122,7 @@ void StateSpaceStateEffector::computeDerivatives(
 
     // Compute intermediate variables
     Eigen ::Matrix3d dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
-    Eigen::Vector3d rDDot_BN_F = this->dcm_FB * dcm_BN * rDDot_BN_N;
+    Eigen::Vector3d rDDot_BN_F = this->dcm_FB * dcm_BN * rDDotNonGrav_BN_N;
     Eigen::Vector3d omegaDot_BN_F = this->dcm_FB * omegaDot_BN_B;
 
     // Compute state derivatives

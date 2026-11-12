@@ -285,7 +285,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         ]
 
         trueSigma = [
-            [0.000201662012765, 2.92123940252e-05, 4.15606551702e-06]
+            [0.000201660881537, 2.92134946959e-05, 4.16319544745e-06]
         ]
 
 

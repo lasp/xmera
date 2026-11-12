@@ -272,7 +272,7 @@ void ThrusterStateEffector::registerStates(DynParamManager &states) {
 /*! This method is used to find the derivatives for the thruster stateEffector */
 void ThrusterStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -390,8 +390,7 @@ void ThrusterStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     // Define the translational and rotational contributions from the computed force and torque
     backSubContr.vecTrans = this->forceOnBody_B;

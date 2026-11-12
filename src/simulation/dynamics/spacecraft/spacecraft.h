@@ -84,12 +84,11 @@ public:
     void postIntegration(double callTime) final;                   //!< -- method to perform post-integration steps
 
 private:
-    StateData* hubR_N;           //!< -- State data accesss to inertial position for the hub
-    StateData* hubV_N;           //!< -- State data access to inertial velocity for the hub
-    StateData* hubOmega_BN_B;    //!< -- State data access to the attitude rate of the hub
-    StateData* hubSigma;         //!< -- State data access to sigmaBN for the hub
-    StateData* hubGravVelocity;  //!< -- State data access to the gravity-accumulated DV on the Body frame
-    StateData* BcGravVelocity;   //!< -- State data access to the gravity-accumulated DV on point Bc
+    StateData* hubR_N;              //!< -- State data accesss to inertial position for the hub
+    StateData* hubV_N;              //!< -- State data access to inertial velocity for the hub
+    StateData* hubOmega_BN_B;       //!< -- State data access to the attitude rate of the hub
+    StateData* hubSigma;            //!< -- State data access to sigmaBN for the hub
+    StateData* hubNonGravVelocity;  //!< -- State data access to the non-gravitational DV of point B over a step
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
@@ -100,10 +99,10 @@ private:
     Eigen::MatrixXd* cPrime_B;        //!< [m/s] Body time derivative of c_B
     Eigen::MatrixXd* cDot_B;          //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd* ISCPntBPrime_B;  //!< [kg m^2/s] Body time derivative of ISCPntB_B
-    Eigen::MatrixXd* g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd* sysTime;         //!< [s] System time
 
     Eigen::Vector3d oldOmega_BN_B;  //!< [r/s] prior angular rate of B wrt N in the Body frame
+    Eigen::Vector3d oldRDot_CB_N;   //!< [m/s] prior inertial velocity of point C wrt point B in N frame components
 
 private:
     void readOptionalRefMsg();  //!< -- Read the optional attitude or translational reference input message and set the

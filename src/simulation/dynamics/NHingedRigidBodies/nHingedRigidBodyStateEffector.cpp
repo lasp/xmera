@@ -30,13 +30,11 @@ void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     return;
 }
 
-/*! This method allows the HRB state effector to have access to the hub states and gravity*/
+/*! This method allows the HRB state effector to have access to the hub states */
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
-    // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
+    // - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }
@@ -176,23 +174,8 @@ void NHingedRigidBodyStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
-    // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_BN;
-    Eigen::Matrix3d dcm_BN;
-    Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
-    dcm_NB = sigmaLocal_BN.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
-
-    // - Map gravity to body frame
-    Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_B;
-    gLocal_N = *this->g_N;
-    g_B = dcm_BN * gLocal_N;
-
     // - Define omega_BN_S
     this->omegaLoc_BN_B = this->hubOmega->getState();
     std::vector<HingedPanel>::iterator PanelIt;
@@ -279,12 +262,8 @@ void NHingedRigidBodyStateEffector::updateContributions(
     // - Define v vector for the panel equations
     this->vectorVDHRB.resize((int) this->PanelVec.size());
     this->vectorVDHRB.setZero();
-    double massOfCurrentPanelAndBefore = 0;  // Summation of all of prior panels masses and the current panels mass
     j = 1;
     for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
-        // Add current panel to mass
-        massOfCurrentPanelAndBefore += PanelIt->mass;
-        double sumTerm1;
         Eigen::Vector3d sumTerm2;
         sumTerm2.setZero();
         Eigen::Vector3d sumTerm3;
@@ -323,21 +302,12 @@ void NHingedRigidBodyStateEffector::updateContributions(
             std::advance(PanelIt2, 1);
         }
         sumTerm3 -= pow(sumThetaDot, 2) * PanelIt->d * PanelIt->sHat1_B;
-        sumTerm1 =
+        this->vectorVDHRB(j - 1) =
             springTerm
             - (PanelIt->IPntS_S(0, 0) - PanelIt->IPntS_S(2, 2)) * PanelIt->omega_BN_S(2) * PanelIt->omega_BN_S(0)
             - PanelIt->mass * PanelIt->d * PanelIt->sHat3_B.transpose()
                   * (2 * this->omegaTildeLoc_BN_B * PanelIt->rPrime_SB_B
                      + this->omegaTildeLoc_BN_B * this->omegaTildeLoc_BN_B * PanelIt->r_SB_B + sumTerm2 + sumTerm3);
-        // Add gravity torque to this sumTerm
-        Eigen::Vector3d gravTorqueCurPanel;
-        gravTorqueCurPanel = -PanelIt->d * PanelIt->sHat1_B.cross(PanelIt->mass * g_B);
-        Eigen::Vector3d gravForceRestOfPanels;
-        double remainingMass;
-        remainingMass = this->totalMass - massOfCurrentPanelAndBefore;
-        gravForceRestOfPanels = remainingMass * g_B;
-        this->vectorVDHRB(j - 1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel)
-                                 + 2.0 * PanelIt->d * PanelIt->sHat3_B.dot(gravForceRestOfPanels);
         j += 1;
     }
 
@@ -427,7 +397,7 @@ void NHingedRigidBodyStateEffector::updateContributions(
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
 void NHingedRigidBodyStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -435,9 +405,9 @@ void NHingedRigidBodyStateEffector::computeDerivatives(
     Eigen::Vector3d rDDotLoc_BN_N;
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Vector3d omegaDotLoc_BN_B;
-    rDDotLoc_BN_N = this->hubVelocity->getStateDeriv();
+    rDDotLoc_BN_N = rDDotNonGrav_BN_N;
     sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
-    omegaDotLoc_BN_B = this->hubOmega->getStateDeriv();
+    omegaDotLoc_BN_B = omegaDot_BN_B;
 
     // - Find rDDotLoc_BN_B
     Eigen::Matrix3d dcm_BN;

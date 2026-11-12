@@ -34,7 +34,7 @@ public:
     void linkInStates(DynParamManager &states);    //!< -- Method for the effector to get access of other states
     void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     );  //!< -- Method for each stateEffector to calculate derivatives
@@ -43,8 +43,7 @@ public:
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     );  //!< Method to pass the forces and torques onto the hub
     void updateEffectorMassProps(double integTime);
     void updateState(uint64_t currentSimNanos);

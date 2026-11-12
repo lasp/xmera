@@ -55,7 +55,7 @@ public:
     void updateState(uint64_t callTime) override;  //!< Method for updating the effector's states
     void computeDerivatives(
         double callTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     ) override;  //!< Method for computing the effector's MRP attitude state derivative
@@ -66,8 +66,7 @@ public:
         double callTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     ) override;  //!< Method for computing the effector's backsubstitution contributions
     void updateEffectorMassProps(
         double callTime

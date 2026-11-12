@@ -25,7 +25,7 @@ from xmera.utilities import simIncludeGravBody
 from xmera.simulation import GravityGradientEffector
 from xmera.architecture import messaging
 
-def addTimeColumn(time, data):
+def add_time_column(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -35,96 +35,96 @@ def addTimeColumn(time, data):
 # provide a unique test method name, starting with test_
 
 
-@pytest.mark.parametrize("function", ["SCTranslation"
-                                      , "SCTransAndRotation"
-                                      , "SCRotation"
-                                      , "SCTransBOE"
-                                      , "SCPointBVsPointC"
-                                      , "scOptionalRef"
-                                      , "scAccumDV"
-                                      , "scAccumDVExtForce"
+@pytest.mark.parametrize("function", ["sc_translation"
+                                      , "sc_trans_and_rotation"
+                                      , "sc_rotation"
+                                      , "sc_trans_boe"
+                                      , "sc_point_b_vs_point_c"
+                                      , "sc_optional_ref"
+                                      , "sc_accum_dv"
+                                      , "sc_accum_dv_ext_force"
                                       ])
-def test_spacecraftAllTest(show_plots, function):
+def test_spacecraft_all_test(show_plots, function):
     """Module Unit Test"""
-    if function == "scOptionalRef":
-        [testResults, testMessage] = eval(function + '(show_plots, 1e-3)')
-    elif function == "scAccumDV" or function == "scAccumDVExtForce":
-        [testResults, testMessage] = eval(function + '()')
+    if function == "sc_optional_ref":
+        [test_results, test_message] = eval(function + '(show_plots, 1e-3)')
+    elif function == "sc_accum_dv" or function == "sc_accum_dv_ext_force":
+        [test_results, test_message] = eval(function + '()')
     else:
-        [testResults, testMessage] = eval(function + '(show_plots)')
-    assert testResults < 1, testMessage
+        [test_results, test_message] = eval(function + '(show_plots)')
+    assert test_results < 1, test_message
 
 
-def SCTranslation(show_plots):
+def sc_translation(show_plots):
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.01)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.planetName = "earth_planet_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
+    unit_test_sim.earthGravBody = gravityEffector.GravBodyData()
+    unit_test_sim.earthGravBody.planetName = "earth_planet_data"
+    unit_test_sim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unit_test_sim.earthGravBody.isCentralBody = True
 
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([unit_test_sim.earthGravBody])
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
 
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totOrbEnergy"])
-    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
+    sc_object_log = sc_object.logger(["totOrbAngMomPntN_N", "totOrbEnergy"])
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
     accuracy = 1e-3
-    if not unitTestSupport.isArrayEqual(scObject.scStateOutMsg.read().r_BN_N,
-                                        [item for sublist in scObject.hub.r_CN_NInit for item in sublist],
+    if not unitTestSupport.isArrayEqual(sc_object.scStateOutMsg.read().r_BN_N,
+                                        [item for sublist in sc_object.hub.r_CN_NInit for item in sublist],
                                         3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: SCHub Translation test failed init pos msg unit test")
-    if not unitTestSupport.isArrayEqual(scObject.scStateOutMsg.read().v_BN_N,
-                                        [item for sublist in scObject.hub.v_CN_NInit for item in sublist],
+        test_fail_count += 1
+        test_messages.append("FAILED: SCHub Translation test failed init pos msg unit test")
+    if not unitTestSupport.isArrayEqual(sc_object.scStateOutMsg.read().v_BN_N,
+                                        [item for sublist in sc_object.hub.v_CN_NInit for item in sublist],
                                         3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: SCHub Translation test failed init pos msg unit test")
+        test_fail_count += 1
+        test_messages.append("FAILED: SCHub Translation test failed init pos msg unit test")
 
 
-    stopTime = 10.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    stop_time = 10.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
+    orb_ang_mom_N = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totOrbAngMomPntN_N)
+    orb_energy = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totOrbEnergy)
 
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.plot(orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,1] - orb_ang_mom_N[0,1])/orb_ang_mom_N[0,1], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,2] - orb_ang_mom_N[0,2])/orb_ang_mom_N[0,2], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,3] - orb_ang_mom_N[0,3])/orb_ang_mom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationOnly", "Change in Orbital Angular Momentum Translation Only", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.plot(orb_energy[:,0]*1e-9, (orb_energy[:,1] - orb_energy[0,1])/orb_energy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, r"width=0.8\textwidth", path)
@@ -132,176 +132,176 @@ def SCTranslation(show_plots):
         plt.show()
         plt.close('all')
 
-    moduleOutput = dataLog.r_BN_N
+    module_output = data_log.r_BN_N
 
-    truePos = [
+    true_pos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
                 ]
 
-    initialOrbAngMom_N = [
-                [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
+    initial_orb_ang_mom_N = [
+                [orb_ang_mom_N[0,1], orb_ang_mom_N[0,2], orb_ang_mom_N[0,3]]
                 ]
 
-    finalOrbAngMom = [
-                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+    final_orb_ang_mom = [
+                [orb_ang_mom_N[-1,1], orb_ang_mom_N[-1,2], orb_ang_mom_N[-1,3]]
                  ]
 
-    initialOrbEnergy = [
-                [orbEnergy[0,1]]
+    initial_orb_energy = [
+                [orb_energy[0,1]]
                 ]
 
-    finalOrbEnergy = [
-                [orbEnergy[-1,1]]
+    final_orb_energy = [
+                [orb_energy[-1,1]]
                  ]
 
     accuracy = 1e-10
-    for i in range(0,len(truePos)):
+    for i in range(0,len(true_pos)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(moduleOutput[-1,:],truePos[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: SCHub Translation test failed pos unit test")
+        if not unitTestSupport.isArrayEqualRelative(module_output[-1,:],true_pos[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: SCHub Translation test failed pos unit test")
 
-    for i in range(0,len(initialOrbAngMom_N)):
+    for i in range(0,len(initial_orb_ang_mom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: SCHub Translation test failed orbital angular momentum unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_orb_ang_mom[i],initial_orb_ang_mom_N[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: SCHub Translation test failed orbital angular momentum unit test")
 
-    for i in range(0,len(initialOrbEnergy)):
+    for i in range(0,len(initial_orb_energy)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: SCHub Translation test failed orbital energy unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_orb_energy[i],initial_orb_energy[i],1,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: SCHub Translation test failed orbital energy unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + " SCHub Translation Integrated Sim Test")
 
-    assert testFailCount < 1, testMessages
+    assert test_fail_count < 1, test_messages
 
     # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    # test_message
+    return [test_fail_count, ''.join(test_messages)]
 
-def SCTransAndRotation(show_plots):
+def sc_trans_and_rotation(show_plots):
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.001)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.planetName = "earth_planet_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
+    unit_test_sim.earthGravBody = gravityEffector.GravBodyData()
+    unit_test_sim.earthGravBody.planetName = "earth_planet_data"
+    unit_test_sim.earthGravBody.mu = 0.3986004415E+15  # meters!
+    unit_test_sim.earthGravBody.isCentralBody = True
 
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([unit_test_sim.earthGravBody])
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
-    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
+    sc_object_log = sc_object.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 10.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 10.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orb_ang_mom_N = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totOrbAngMomPntN_N)
+    rot_ang_mom_N = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totRotAngMomPntC_N)
+    rot_energy = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totRotEnergy)
+    orb_energy = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totOrbEnergy)
 
-    r_BN_NOutput = dataLog.r_BN_N
-    sigma_BNOutput = dataLog.sigma_BN
+    r_BN_NOutput = data_log.r_BN_N
+    sigma_BNOutput = data_log.sigma_BN
 
-    truePos = [
+    true_pos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
                 ]
 
-    trueSigma = [
+    true_sigma = [
                 [3.73034285e-01,  -2.39564413e-03,   2.08570797e-01]
                 ]
 
-    initialOrbAngMom_N = [
-                [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
+    initial_orb_ang_mom_N = [
+                [orb_ang_mom_N[0,1], orb_ang_mom_N[0,2], orb_ang_mom_N[0,3]]
                 ]
 
-    finalOrbAngMom = [
-                [orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+    final_orb_ang_mom = [
+                [orb_ang_mom_N[-1,1], orb_ang_mom_N[-1,2], orb_ang_mom_N[-1,3]]
                  ]
 
-    initialRotAngMom_N = [
-                [rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]
+    initial_rot_ang_mom_N = [
+                [rot_ang_mom_N[0,1], rot_ang_mom_N[0,2], rot_ang_mom_N[0,3]]
                 ]
 
-    finalRotAngMom = [
-                [rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+    final_rot_ang_mom = [
+                [rot_ang_mom_N[-1,1], rot_ang_mom_N[-1,2], rot_ang_mom_N[-1,3]]
                  ]
 
-    initialOrbEnergy = [
-                [orbEnergy[0,1]]
+    initial_orb_energy = [
+                [orb_energy[0,1]]
                 ]
 
-    finalOrbEnergy = [
-                [orbEnergy[-1,1]]
+    final_orb_energy = [
+                [orb_energy[-1,1]]
                  ]
 
-    initialRotEnergy = [
-                [rotEnergy[0,1]]
+    initial_rot_energy = [
+                [rot_energy[0,1]]
                 ]
 
-    finalRotEnergy = [
-                [rotEnergy[-1,1]]
+    final_rot_energy = [
+                [rot_energy[-1,1]]
                  ]
 
     plt.close('all')
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.plot(orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,1] - orb_ang_mom_N[0,1])/orb_ang_mom_N[0,1], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,2] - orb_ang_mom_N[0,2])/orb_ang_mom_N[0,2], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,3] - orb_ang_mom_N[0,3])/orb_ang_mom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationAndRotation", "Change in Orbital Angular Momentum Translation And Rotation", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.plot(orb_energy[:,0]*1e-9, (orb_energy[:,1] - orb_energy[0,1])/orb_energy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationAndRotation", "Change in Orbital Energy Translation And Rotation", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.plot(rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,1] - rot_ang_mom_N[0,1])/rot_ang_mom_N[0,1], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,2] - rot_ang_mom_N[0,2])/rot_ang_mom_N[0,2], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,3] - rot_ang_mom_N[0,3])/rot_ang_mom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumTranslationAndRotation", "Change in Rotational Angular Momentum Translation And Rotation", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.plot(rot_energy[:,0]*1e-9, (rot_energy[:,1] - rot_energy[0,1])/rot_energy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, r"width=0.8\textwidth", path)
@@ -310,84 +310,84 @@ def SCTransAndRotation(show_plots):
         plt.close('all')
 
     accuracy = 1e-8
-    for i in range(0,len(truePos)):
+    for i in range(0,len(true_pos)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(r_BN_NOutput[-1,:],truePos[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed pos unit test")
+        if not unitTestSupport.isArrayEqualRelative(r_BN_NOutput[-1,:],true_pos[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed pos unit test")
 
-    for i in range(0,len(trueSigma)):
+    for i in range(0,len(true_sigma)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput[-1,:],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
+        if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput[-1,:],true_sigma[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
 
     accuracy = 1e-10
-    for i in range(0,len(initialOrbAngMom_N)):
+    for i in range(0,len(initial_orb_ang_mom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital angular momentum unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_orb_ang_mom[i],initial_orb_ang_mom_N[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital angular momentum unit test")
 
-    for i in range(0,len(initialRotAngMom_N)):
+    for i in range(0,len(initial_rot_ang_mom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational angular momentum unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_rot_ang_mom[i],initial_rot_ang_mom_N[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational angular momentum unit test")
 
-    for i in range(0,len(initialRotEnergy)):
+    for i in range(0,len(initial_rot_energy)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational energy unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_rot_energy[i],initial_rot_energy[i],1,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational energy unit test")
 
-    for i in range(0,len(initialOrbEnergy)):
+    for i in range(0,len(initial_orb_energy)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital energy unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_orb_energy[i],initial_orb_energy[i],1,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital energy unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test")
 
-    assert testFailCount < 1, testMessages
+    assert test_fail_count < 1, test_messages
 
     # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    # test_message
+    return [test_fail_count, ''.join(test_messages)]
 
-def SCRotation(show_plots):
+def sc_rotation(show_plots):
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    timeStep = 0.001
-    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    time_step = 0.001
+    test_process_rate = macros.sec2nano(time_step)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
     # BOE for rotational dynamics
-    h = numpy.dot(numpy.asarray(scObject.hub.IHubPntBc_B),numpy.asarray(scObject.hub.omega_BN_BInit).flatten())
+    h = numpy.dot(numpy.asarray(sc_object.hub.IHubPntBc_B),numpy.asarray(sc_object.hub.omega_BN_BInit).flatten())
     H = numpy.linalg.norm(h)
     n3_B = -h/H
 
@@ -405,100 +405,100 @@ def SCRotation(show_plots):
     h3_N = numpy.array([0,0,-H])
     h3_B = numpy.dot(dcm_BN,h3_N)
     h3_Ncheck = numpy.dot(dcm_BN.transpose(),h3_B)
-    sigmaCalc = RigidBodyKinematics.C2MRP(dcm_BN)
-    scObject.hub.sigma_BNInit = [[sigmaCalc[0]], [sigmaCalc[1]], [sigmaCalc[2]]]
+    sigma_calc = RigidBodyKinematics.C2MRP(dcm_BN)
+    sc_object.hub.sigma_BNInit = [[sigma_calc[0]], [sigma_calc[1]], [sigma_calc[2]]]
 
-    scObjectLog = scObject.logger(["totRotAngMomPntC_N", "totRotEnergy"])
-    unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
+    sc_object_log = sc_object.logger(["totRotAngMomPntC_N", "totRotEnergy"])
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 10.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 10.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    rotAngMomMag = numpy.zeros(len(rotAngMom_N))
-    for i in range(0,len(rotAngMom_N)):
-        rotAngMomMag[i] = numpy.linalg.norm(numpy.asarray(rotAngMom_N[i,1:4]))
+    rot_ang_mom_N = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totRotAngMomPntC_N)
+    rot_energy = unitTestSupport.addTimeColumn(sc_object_log.times(), sc_object_log.totRotEnergy)
+    rot_ang_mom_mag = numpy.zeros(len(rot_ang_mom_N))
+    for i in range(0,len(rot_ang_mom_N)):
+        rot_ang_mom_mag[i] = numpy.linalg.norm(numpy.asarray(rot_ang_mom_N[i,1:4]))
 
-    trueSigma = [
+    true_sigma = [
                 [5.72693314e-01,   5.10734375e-01,  -3.07377611e-01]
                 ]
 
-    initialRotAngMom_N = [
-                [numpy.linalg.norm(numpy.asarray(rotAngMom_N[0,1:4]))]
+    initial_rot_ang_mom_N = [
+                [numpy.linalg.norm(numpy.asarray(rot_ang_mom_N[0,1:4]))]
                 ]
 
-    finalRotAngMom = [
-                [numpy.linalg.norm(numpy.asarray(rotAngMom_N[-1,1:4]))]
+    final_rot_ang_mom = [
+                [numpy.linalg.norm(numpy.asarray(rot_ang_mom_N[-1,1:4]))]
                  ]
 
-    initialRotEnergy = [
-                [rotEnergy[0,1]]
+    initial_rot_energy = [
+                [rot_energy[0,1]]
                 ]
 
-    finalRotEnergy = [
-                [rotEnergy[-1,1]]
+    final_rot_energy = [
+                [rot_energy[-1,1]]
                  ]
 
-    moduleOutput = addTimeColumn(dataLog.times(), dataLog.sigma_BN)
-    omega_BNOutput = addTimeColumn(dataLog.times(), dataLog.omega_BN_B)
+    module_output = add_time_column(data_log.times(), data_log.sigma_BN)
+    omega_BNOutput = add_time_column(data_log.times(), data_log.omega_BN_B)
 
     check = 0
-    for i in range(0,len(moduleOutput)):
-        if check == 0 and moduleOutput[i+1,2] < moduleOutput[i,2]:
+    for i in range(0,len(module_output)):
+        if check == 0 and module_output[i+1,2] < module_output[i,2]:
             check = 1
-        if check == 1 and moduleOutput[i+1,2] > moduleOutput[i,2]:
+        if check == 1 and module_output[i+1,2] > module_output[i,2]:
             check = 2
             index = i+1
             break
 
-    sigmaBeforeSwitch = moduleOutput[index-1,1:4]
-    sigmaBeforeBefore = moduleOutput[index-2,1:4]
-    sigmaAfterSwitch = moduleOutput[index,:]
-    deltaT = (moduleOutput[index-1,0] - moduleOutput[index-2,0])*1e-9
-    yPrime = (sigmaBeforeSwitch - sigmaBeforeBefore)/deltaT
-    sigmaGhost = sigmaBeforeSwitch + yPrime*deltaT
-    sigmaAfterAnalytical = - sigmaGhost/numpy.dot(numpy.linalg.norm(numpy.asarray(sigmaGhost)),numpy.linalg.norm(numpy.asarray(sigmaGhost)))
+    sigma_before_switch = module_output[index-1,1:4]
+    sigma_before_before = module_output[index-2,1:4]
+    sigma_after_switch = module_output[index,:]
+    delta_t = (module_output[index-1,0] - module_output[index-2,0])*1e-9
+    y_prime = (sigma_before_switch - sigma_before_before)/delta_t
+    sigma_ghost = sigma_before_switch + y_prime*delta_t
+    sigma_after_analytical = - sigma_ghost/numpy.dot(numpy.linalg.norm(numpy.asarray(sigma_ghost)),numpy.linalg.norm(numpy.asarray(sigma_ghost)))
 
-    timeArray = numpy.zeros(5)
-    sigmaArray = numpy.zeros([3,5])
-    omegaAnalyticalArray = numpy.zeros([3,5])
-    omegaArray = numpy.zeros([4,5])
+    time_array = numpy.zeros(5)
+    sigma_array = numpy.zeros([3,5])
+    omega_analytical_array = numpy.zeros([3,5])
+    omega_array = numpy.zeros([4,5])
     for i in range(0, 5):
-        idx = int(stopTime/timeStep*(i+1)/5)
-        timeArray[i] = moduleOutput[idx, 0]
-        sigmaArray[:, i] = moduleOutput[idx, 1:4]
-        sigma = sigmaArray[:, i]
-        sigmaNorm = numpy.linalg.norm(sigma)
+        idx = int(stop_time/time_step*(i+1)/5)
+        time_array[i] = module_output[idx, 0]
+        sigma_array[:, i] = module_output[idx, 1:4]
+        sigma = sigma_array[:, i]
+        sigma_norm = numpy.linalg.norm(sigma)
         sigma1 = sigma[0]
         sigma2 = sigma[1]
         sigma3 = sigma[2]
-        omegaArray[:,i] = omega_BNOutput[idx, :]
-        omegaAnalyticalArray[0,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma1*sigma3 - 4*sigma2*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[0][0]
-        omegaAnalyticalArray[1,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma2*sigma3 + 4*sigma1*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[1][1]
-        omegaAnalyticalArray[2,i] = -H/(1 + sigmaNorm**2)**2*(4*(-sigma1**2 - sigma2**2 + sigma3**2) + (1 - sigmaNorm**2)**2)/scObject.hub.IHubPntBc_B[2][2]
+        omega_array[:,i] = omega_BNOutput[idx, :]
+        omega_analytical_array[0,i] = -H/(1 + sigma_norm**2)**2*(8*sigma1*sigma3 - 4*sigma2*(1 - sigma_norm**2))/sc_object.hub.IHubPntBc_B[0][0]
+        omega_analytical_array[1,i] = -H/(1 + sigma_norm**2)**2*(8*sigma2*sigma3 + 4*sigma1*(1 - sigma_norm**2))/sc_object.hub.IHubPntBc_B[1][1]
+        omega_analytical_array[2,i] = -H/(1 + sigma_norm**2)**2*(4*(-sigma1**2 - sigma2**2 + sigma3**2) + (1 - sigma_norm**2)**2)/sc_object.hub.IHubPntBc_B[2][2]
 
     plt.close("all")    # clear out earlier figures
 
     plt.figure()
     plt.clf()
-    plt.plot(moduleOutput[:,0]*1e-9, moduleOutput[:,1], moduleOutput[:,0]*1e-9, moduleOutput[:,2], moduleOutput[:,0]*1e-9, moduleOutput[:,3])
-    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'bo')
-    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'yo')
-    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo')
+    plt.plot(module_output[:,0]*1e-9, module_output[:,1], module_output[:,0]*1e-9, module_output[:,2], module_output[:,0]*1e-9, module_output[:,3])
+    plt.plot(module_output[index,0]*1e-9, module_output[index,1],'bo')
+    plt.plot(module_output[index,0]*1e-9, sigma_ghost[0],'yo')
+    plt.plot(module_output[index-1,0]*1e-9, module_output[index-1,1],'bo')
     plt.xlabel("Time (s)")
     plt.ylabel("MRPs")
     unitTestSupport.writeFigureLaTeX("scPlusMRPs", "Attitude of Spacecraft in MRPs", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1],"b")
-    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo', label = "Xmera " + r"$\sigma_{1,t-1}$")
-    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'ro', label = "Xmera " + r"$\sigma_{1,t}$")
-    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'ko', label = "Xmera " + r"$\sigma_{1,0}$")
-    plt.plot([moduleOutput[index-1,0]*1e-9, moduleOutput[index,0]*1e-9], [moduleOutput[index-1,1], sigmaGhost[0]],'--k')
+    plt.plot(module_output[index - 3: index + 3,0]*1e-9, module_output[index - 3: index + 3,1],"b")
+    plt.plot(module_output[index-1,0]*1e-9, module_output[index-1,1],'bo', label = "Xmera " + r"$\sigma_{1,t-1}$")
+    plt.plot(module_output[index,0]*1e-9, module_output[index,1],'ro', label = "Xmera " + r"$\sigma_{1,t}$")
+    plt.plot(module_output[index,0]*1e-9, sigma_ghost[0],'ko', label = "Xmera " + r"$\sigma_{1,0}$")
+    plt.plot([module_output[index-1,0]*1e-9, module_output[index,0]*1e-9], [module_output[index-1,1], sigma_ghost[0]],'--k')
     axes = plt.gca()
     axes.set_ylim([-0.5,0.5])
     plt.legend(loc ='upper right',numpoints = 1)
@@ -507,13 +507,13 @@ def SCRotation(show_plots):
     unitTestSupport.writeFigureLaTeX("scPlusMRPSwitching", "MRP Switching", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMomMag - rotAngMomMag[0])/rotAngMomMag[0])
+    plt.plot(rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_mag - rot_ang_mom_mag[0])/rot_ang_mom_mag[0])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumRotationOnly", "Change in Rotational Angular Momentum Rotation Only", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.plot(rot_energy[:,0]*1e-9, (rot_energy[:,1] - rot_energy[0,1])/rot_energy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, r"width=0.8\textwidth", path)
@@ -522,9 +522,9 @@ def SCRotation(show_plots):
     plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = r"$\omega_1$" + " Xmera")
     plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,2],label = r"$\omega_2$" + " Xmera")
     plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,3], label = r"$\omega_3$" + " Xmera")
-    plt.plot(timeArray*1e-9,omegaAnalyticalArray[0,:],'bo', label = r"$\omega_1$" + " BOE")
-    plt.plot(timeArray*1e-9,omegaAnalyticalArray[1,:],'go', label = r"$\omega_2$" + " BOE")
-    plt.plot(timeArray*1e-9,omegaAnalyticalArray[2,:],'ro', label = r"$\omega_3$" + " BOE")
+    plt.plot(time_array*1e-9,omega_analytical_array[0,:],'bo', label = r"$\omega_1$" + " BOE")
+    plt.plot(time_array*1e-9,omega_analytical_array[1,:],'go', label = r"$\omega_2$" + " BOE")
+    plt.plot(time_array*1e-9,omega_analytical_array[2,:],'ro', label = r"$\omega_3$" + " BOE")
     plt.xlabel("Time (s)")
     plt.ylabel("Angular Velocity (rad/s)")
     plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
@@ -533,71 +533,71 @@ def SCRotation(show_plots):
         plt.show()
         plt.close("all")
 
-    moduleOutput = dataLog.sigma_BN
+    module_output = data_log.sigma_BN
     accuracy = 1e-8
-    for i in range(0,len(trueSigma)):
+    for i in range(0,len(true_sigma)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(moduleOutput[-1],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
+        if not unitTestSupport.isArrayEqualRelative(module_output[-1],true_sigma[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
 
     accuracy = 1e-10
-    for i in range(0,len(initialRotAngMom_N)):
+    for i in range(0,len(initial_rot_ang_mom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational angular momentum unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_rot_ang_mom[i],initial_rot_ang_mom_N[i],1,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational angular momentum unit test")
 
-    for i in range(0,len(initialRotEnergy)):
+    for i in range(0,len(initial_rot_energy)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Rotation Integrated test failed rotational energy unit test")
+        if not unitTestSupport.isArrayEqualRelative(final_rot_energy[i],initial_rot_energy[i],1,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Rotation Integrated test failed rotational energy unit test")
 
-    omegaArray = (numpy.delete(omegaArray, 0, 0)).transpose()
-    omegaAnalyticalArray = omegaAnalyticalArray.transpose()
-    for i in range(0,len(omegaAnalyticalArray)):
+    omega_array = (numpy.delete(omega_array, 0, 0)).transpose()
+    omega_analytical_array = omega_analytical_array.transpose()
+    for i in range(0,len(omega_analytical_array)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(omegaArray[i],omegaAnalyticalArray[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Rotation Integrated test Rotational BOE unit test")
+        if not unitTestSupport.isArrayEqualRelative(omega_array[i],omega_analytical_array[i],3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Rotation Integrated test Rotational BOE unit test")
 
     accuracy = 1e-5
-    if not unitTestSupport.isArrayEqualRelative(numpy.delete(sigmaAfterSwitch, 0,), sigmaAfterAnalytical,1,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: Spacecraft Rotation Integrated test failed MRP Switching unit test")
+    if not unitTestSupport.isArrayEqualRelative(numpy.delete(sigma_after_switch, 0,), sigma_after_analytical,1,accuracy):
+        test_fail_count += 1
+        test_messages.append("FAILED: Spacecraft Rotation Integrated test failed MRP Switching unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + "Spacecraft Rotation Integrated test")
 
-    assert testFailCount < 1, testMessages
+    assert test_fail_count < 1, test_messages
 
     # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    # test_message
+    return [test_fail_count, ''.join(test_messages)]
 
-def SCTransBOE(show_plots):
+def sc_trans_boe(show_plots):
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    timeStep = 0.1
-    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    time_step = 0.1
+    test_process_rate = macros.sec2nano(time_step)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Define conditions for the forces and times
     F1 = 3.
@@ -607,52 +607,52 @@ def SCTransBOE(show_plots):
     t3 = 10.
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [[0], [0], [0]]
-    extFTObject.extForce_B = [[F1], [0], [0]]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extTorquePntB_B = [[0], [0], [0]]
+    ext_ft_object.extForce_B = [[F1], [0], [0]]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = t1
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = t1
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    extFTObject.extTorquePntB_B = [[0], [0], [0]]
-    extFTObject.extForce_B = [[0], [0], [0]]
+    ext_ft_object.extTorquePntB_B = [[0], [0], [0]]
+    ext_ft_object.extForce_B = [[0], [0], [0]]
 
-    stopTime = t2
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = t2
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    extFTObject.extTorquePntB_B = [[0], [0], [0]]
-    extFTObject.extForce_B = [[F2], [0], [0]]
+    ext_ft_object.extTorquePntB_B = [[0], [0], [0]]
+    ext_ft_object.extForce_B = [[F2], [0], [0]]
 
-    stopTime = t3
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = t3
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    r_BN_NOutput = addTimeColumn(dataLog.times(), dataLog.r_BN_N)
-    v_BN_NOutput = addTimeColumn(dataLog.times(), dataLog.v_BN_N)
+    r_BN_NOutput = add_time_column(data_log.times(), data_log.r_BN_N)
+    v_BN_NOutput = add_time_column(data_log.times(), data_log.v_BN_N)
 
     # BOE calcs
-    a1 = F1/scObject.hub.mHub
-    a2 = F2/scObject.hub.mHub
+    a1 = F1/sc_object.hub.mHub
+    a2 = F2/sc_object.hub.mHub
     v1 = a1*t1
     v2 = v1
     v3 = v2 + a2*(t3-t2)
@@ -662,11 +662,11 @@ def SCTransBOE(show_plots):
     x3 = x2 + 0.5*v2*(t0-t2) + 0.5*v3*(t3-t0)
 
     # truth and Xmera
-    truthV = [v1, v2, v3]
-    truthX = [x1, x2, x3]
+    truth_v = [v1, v2, v3]
+    truth_x = [x1, x2, x3]
 
-    xmeraV = [v_BN_NOutput[int(t1/timeStep), 1], v_BN_NOutput[int(t2/timeStep), 1], v_BN_NOutput[int(t3/timeStep), 1]]
-    xmeraX = [r_BN_NOutput[int(t1/timeStep), 1], r_BN_NOutput[int(t2/timeStep), 1], r_BN_NOutput[int(t3/timeStep), 1]]
+    xmera_v = [v_BN_NOutput[int(t1/time_step), 1], v_BN_NOutput[int(t2/time_step), 1], v_BN_NOutput[int(t3/time_step), 1]]
+    xmera_x = [r_BN_NOutput[int(t1/time_step), 1], r_BN_NOutput[int(t2/time_step), 1], r_BN_NOutput[int(t3/time_step), 1]]
 
     plt.close('all')
     plt.figure()
@@ -676,10 +676,10 @@ def SCTransBOE(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('X (m)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "scPlusTranslationPositionBOE"
-    PlotTitle = "Translation Position BOE"
+    plot_name = "scPlusTranslationPositionBOE"
+    plot_title = "Translation Position BOE"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
@@ -688,10 +688,10 @@ def SCTransBOE(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('X velocity (m/s)')
     plt.legend(loc ='lower left',numpoints = 1)
-    PlotName = "scPlusTranslationVelocityBOE"
-    PlotTitle = "Translation Velocity BOE"
+    plot_name = "scPlusTranslationVelocityBOE"
+    plot_title = "Translation Velocity BOE"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
     if show_plots:
         plt.show()
         plt.close('all')
@@ -699,133 +699,133 @@ def SCTransBOE(show_plots):
     accuracy = 1e-10
     for i in range(0,3):
         # check a vector values
-        if abs((truthX[i] - xmeraX[i])/truthX[i]) > accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed pos unit test")
+        if abs((truth_x[i] - xmera_x[i])/truth_x[i]) > accuracy:
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation BOE Integrated test failed pos unit test")
 
     for i in range(0,3):
         # check a vector values
-        if abs((truthV[i] - xmeraV[i])/truthV[i]) > accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed velocity unit test")
+        if abs((truth_v[i] - xmera_v[i])/truth_v[i]) > accuracy:
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Translation BOE Integrated test failed velocity unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + " Spacecraft Translation BOE Integrated Sim Test")
 
-    assert testFailCount < 1, testMessages
+    assert test_fail_count < 1, test_messages
 
     # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    # test_message
+    return [test_fail_count, ''.join(test_messages)]
 
-def SCPointBVsPointC(show_plots):
+def sc_point_b_vs_point_c(show_plots):
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.01)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Define location of force
-    rFBc_B = numpy.array([0.3, -0.7, 0.4])
+    r_FBc_B = numpy.array([0.3, -0.7, 0.4])
     force_B = numpy.array([0.5, 0.6, -0.2])
-    torquePntC_B = numpy.cross(rFBc_B,force_B)
+    torque_pnt_C_B = numpy.cross(r_FBc_B,force_B)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [[torquePntC_B[0]], [torquePntC_B[1]], [torquePntC_B[2]]]
-    extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extTorquePntB_B = [[torque_pnt_C_B[0]], [torque_pnt_C_B[1]], [torque_pnt_C_B[2]]]
+    ext_ft_object.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
-    scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 10.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 10.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    r_CN_NOutput1 = addTimeColumn(dataLog.times(), dataLog.r_CN_N)
-    sigma_BNOutput1 = addTimeColumn(dataLog.times(), dataLog.sigma_BN)
+    r_CN_NOutput1 = add_time_column(data_log.times(), data_log.r_CN_N)
+    sigma_BNOutput1 = add_time_column(data_log.times(), data_log.sigma_BN)
 
     ####################
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.01)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Define location of force
-    rBcB_B = numpy.array([0.4, 0.5, 0.2])
-    rFB_B = rBcB_B + rFBc_B
-    torquePntB_B = numpy.cross(rFB_B,force_B)
+    r_BcB_B = numpy.array([0.4, 0.5, 0.2])
+    r_FB_B = r_BcB_B + r_FBc_B
+    torque_pnt_B_B = numpy.cross(r_FB_B,force_B)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [[torquePntB_B[0]], [torquePntB_B[1]], [torquePntB_B[2]]]
-    extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extTorquePntB_B = [[torque_pnt_B_B[0]], [torque_pnt_B_B[1]], [torque_pnt_B_B[2]]]
+    ext_ft_object.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
-    dataLog2 = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog2)
+    data_log2 = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log2)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[rBcB_B[0]], [rBcB_B[1]], [rBcB_B[2]]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
-    scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_BcB_B = [[r_BcB_B[0]], [r_BcB_B[1]], [r_BcB_B[2]]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 10.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 10.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    r_CN_NOutput2 = addTimeColumn(dataLog2.times(), dataLog2.r_CN_N)
-    sigma_BNOutput2 = addTimeColumn(dataLog2.times(), dataLog2.sigma_BN)
+    r_CN_NOutput2 = add_time_column(data_log2.times(), data_log2.r_CN_N)
+    sigma_BNOutput2 = add_time_column(data_log2.times(), data_log2.sigma_BN)
 
     plt.figure()
     plt.clf()
@@ -836,10 +836,10 @@ def SCPointBVsPointC(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('Inertial Position (m)')
     plt.legend(loc ='upper left', handlelength=3.5)
-    PlotName = "scPlusPointBVsPointCTranslation"
-    PlotTitle = "PointB Vs PointC Translation"
+    plot_name = "scPlusPointBVsPointCTranslation"
+    plot_title = "PointB Vs PointC Translation"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
@@ -850,280 +850,360 @@ def SCPointBVsPointC(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('MRPs')
     plt.legend(loc ='upper right', handlelength=3.5)
-    PlotName = "scPlusPointBVsPointCAttitude"
-    PlotTitle = "PointB Vs PointC Attitude"
+    plot_name = "scPlusPointBVsPointCAttitude"
+    plot_title = "PointB Vs PointC Attitude"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
     if show_plots:
         plt.show()
         plt.close('all')
 
     accuracy = 1e-8
     if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,1:4],r_CN_NOutput2[-1,1:4],3,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
+        test_fail_count += 1
+        test_messages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
 
     if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput1[-1,1:4],sigma_BNOutput2[-1,1:4],3,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
+        test_fail_count += 1
+        test_messages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test")
 
-    assert testFailCount < 1, testMessages
+    assert test_fail_count < 1, test_messages
 
     # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    # test_message
+    return [test_fail_count, ''.join(test_messages)]
 
 @pytest.mark.parametrize("accuracy", [1e-3])
-def scOptionalRef(show_plots, accuracy):
+def sc_optional_ref(show_plots, accuracy):
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    timeStep = 0.1
-    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    time_step = 0.1
+    test_process_rate = macros.sec2nano(time_step)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # add Earth
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    earth = gravFactory.createEarth()
+    grav_factory = simIncludeGravBody.gravBodyFactory()
+    earth = grav_factory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector(list(grav_factory.gravBodies.values()))
 
     # add gravity gradient effector
-    ggEff = GravityGradientEffector.GravityGradientEffector()
-    ggEff.modelTag = scObject.modelTag
-    ggEff.addPlanetName(earth.planetName)
-    scObject.addDynamicEffector(ggEff)
-    unitTestSim.AddModelToTask(unitTaskName, ggEff)
+    gg_eff = GravityGradientEffector.GravityGradientEffector()
+    gg_eff.modelTag = sc_object.modelTag
+    gg_eff.addPlanetName(earth.planetName)
+    sc_object.addDynamicEffector(gg_eff)
+    unit_test_sim.AddModelToTask(unit_task_name, gg_eff)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.r_CN_NInit = [[7000000.0],	[0.0],	[0.0]]
-    scObject.hub.v_CN_NInit = [[7000.0],	[0.0],	[0.0]]
-    scObject.hub.sigma_BNInit = [[0.5], [0.4], [0.3]]
-    scObject.hub.sigma_BNInit = [[0.], [0.], [1.0]]
-    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.r_CN_NInit = [[7000000.0],	[0.0],	[0.0]]
+    sc_object.hub.v_CN_NInit = [[7000.0],	[0.0],	[0.0]]
+    sc_object.hub.sigma_BNInit = [[0.5], [0.4], [0.3]]
+    sc_object.hub.sigma_BNInit = [[0.], [0.], [1.0]]
+    sc_object.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
     # write attitude reference message
-    attRef = messaging.AttRefMsgPayload()
-    attRef.sigma_RN = [0.0, 0.0, 1.0]
-    attRef.omega_RN_N = [0.0001, 0.0002, 0.0003]
-    attRefMsg = messaging.AttRefMsg().write(attRef)
-    scObject.attRefInMsg.subscribeTo(attRefMsg)
+    att_ref = messaging.AttRefMsgPayload()
+    att_ref.sigma_RN = [0.0, 0.0, 1.0]
+    att_ref.omega_RN_N = [0.0001, 0.0002, 0.0003]
+    att_ref_msg = messaging.AttRefMsg().write(att_ref)
+    sc_object.attRefInMsg.subscribeTo(att_ref_msg)
 
     # write translational reference message
-    transRef = messaging.TransRefMsgPayload()
-    transRef.r_RN_N = [1000000, 2000000, 3000000]
-    transRef.v_RN_N = [2000, 3000, 4000]
-    transRefMsg = messaging.TransRefMsg().write(transRef)
-    scObject.transRefInMsg.subscribeTo(transRefMsg)
+    trans_ref = messaging.TransRefMsgPayload()
+    trans_ref.r_RN_N = [1000000, 2000000, 3000000]
+    trans_ref.v_RN_N = [2000, 3000, 4000]
+    trans_ref_msg = messaging.TransRefMsg().write(trans_ref)
+    sc_object.transRefInMsg.subscribeTo(trans_ref_msg)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 0.2
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 0.2
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    omegaOut = dataLog.omega_BN_B
-    sigmaOut = dataLog.sigma_BN
-    r_RN_Out = dataLog.r_BN_N
-    v_RN_Out = dataLog.v_BN_N
+    omega_out = data_log.omega_BN_B
+    sigma_out = data_log.sigma_BN
+    r_RN_Out = data_log.r_BN_N
+    v_RN_Out = data_log.v_BN_N
 
-    trueSigma = [attRef.sigma_RN]*3
-    trueOmega = [[-0.0001, -0.0002, 0.0003]]*3
-    truer_RN_N = [transRef.r_RN_N]*3
-    truev_RN_N = [transRef.v_RN_N]*3
+    true_sigma = [att_ref.sigma_RN]*3
+    true_omega = [[-0.0001, -0.0002, 0.0003]]*3
+    truer_RN_N = [trans_ref.r_RN_N]*3
+    truev_RN_N = [trans_ref.v_RN_N]*3
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, sigmaOut,
+    test_fail_count, test_messages = unitTestSupport.compareArray(true_sigma, sigma_out,
                                                                accuracy, "sigma_BN",
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueOmega, omegaOut,
+                                                               test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareArray(true_omega, omega_out,
                                                                accuracy, "omega_BN_B",
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(truer_RN_N, r_RN_Out,
+                                                               test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareArray(truer_RN_N, r_RN_Out,
                                                                accuracy, "r_RN_N",
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(truev_RN_N, v_RN_Out,
+                                                               test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareArray(truev_RN_N, v_RN_Out,
                                                                accuracy, "v_RN_N",
-                                                               testFailCount, testMessages)
+                                                               test_fail_count, test_messages)
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: scPlus setting optional reference state input message")
     else:
         print("FAILED: scPlus setting optional reference state input message")
 
-    assert testFailCount < 1, testMessages
+    assert test_fail_count < 1, test_messages
 
-    return [testFailCount, ''.join(testMessages)]
+    return [test_fail_count, ''.join(test_messages)]
 
-def scAccumDV():
+def sc_accum_dv():
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    timeStep = 0.1
-    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    time_step = 0.1
+    test_process_rate = macros.sec2nano(time_step)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # add Earth
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    earth = gravFactory.createEarth()
+    grav_factory = simIncludeGravBody.gravBodyFactory()
+    earth = grav_factory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector(list(grav_factory.gravBodies.values()))
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [100.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.r_CN_NInit = [[-7000000.0],	[0.0],	[0.0]]
-    scObject.hub.v_CN_NInit = [[0.0],	[7000.0],	[0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [numpy.pi/180]]
+    sc_object.hub.mHub = 100
+    sc_object.hub.r_BcB_B = [[0.0], [100.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc_object.hub.r_CN_NInit = [[-7000000.0],	[0.0],	[0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0],	[7000.0],	[0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [numpy.pi/180]]
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 0.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 0.5
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    dataAccumDV_CN_B = dataLog.TotalAccumDVBdy
-    dataAccumDV_BN_B = dataLog.TotalAccumDV_BN_B
-    dataAccumDV_CN_N = dataLog.TotalAccumDV_CN_N
+    data_accum_dv_CN_B = data_log.TotalAccumDVBdy
+    data_accum_dv_BN_B = data_log.TotalAccumDV_BN_B
+    data_accum_dv_CN_N = data_log.TotalAccumDV_CN_N
 
     accuracy = 1e-10
-    truth_dataAccumDV_CN_B = [0.0, 0.0, 0.0]
-    truth_dataAccumDV_CN_N = [0.0, 0.0, 0.0]
-    v_r = numpy.cross(numpy.array(scObject.hub.omega_BN_BInit).T, -numpy.array(scObject.hub.r_BcB_B).T)[0]
-    truth_dataAccumDV_BN_B = numpy.zeros(3)
-    for i in range(len(dataLog.times())-1):
-        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_B[i+1],truth_dataAccumDV_CN_B,3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Point C Accumulated DV test failed pos unit test")
+    truth_data_accum_dv_CN_B = [0.0, 0.0, 0.0]
+    truth_data_accum_dv_CN_N = [0.0, 0.0, 0.0]
+    v_r = numpy.cross(numpy.array(sc_object.hub.omega_BN_BInit).T, -numpy.array(sc_object.hub.r_BcB_B).T)[0]
+    truth_data_accum_dv_BN_B = numpy.zeros(3)
+    for i in range(len(data_log.times())-1):
+        if not unitTestSupport.isArrayEqual(data_accum_dv_CN_B[i+1],truth_data_accum_dv_CN_B,3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Point C Accumulated DV test failed pos unit test")
 
-        truth_dataAccumDV_BN_B += numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]),
-                                              numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i+1]).T,v_r) -
-                                              numpy.matmul(RigidBodyKinematics.MRP2C(dataLog.sigma_BN[i]).T,v_r))
-        if not unitTestSupport.isArrayEqual(dataAccumDV_BN_B[i+1],truth_dataAccumDV_BN_B,3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Point B Accumulated DV test failed pos unit test")
+        truth_data_accum_dv_BN_B += numpy.matmul(RigidBodyKinematics.MRP2C(data_log.sigma_BN[i+1]),
+                                              numpy.matmul(RigidBodyKinematics.MRP2C(data_log.sigma_BN[i+1]).T,v_r) -
+                                              numpy.matmul(RigidBodyKinematics.MRP2C(data_log.sigma_BN[i]).T,v_r))
+        if not unitTestSupport.isArrayEqual(data_accum_dv_BN_B[i+1],truth_data_accum_dv_BN_B,3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Point B Accumulated DV test failed pos unit test")
 
-        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_N[i+1],truth_dataAccumDV_CN_N,3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Point C Accumulated DV in inertial frame test failed pos unit test")
+        if not unitTestSupport.isArrayEqual(data_accum_dv_CN_N[i+1],truth_data_accum_dv_CN_N,3,accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Point C Accumulated DV in inertial frame test failed pos unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [test_fail_count, ''.join(test_messages)]
 
 
-def scAccumDVExtForce():
+def sc_accum_dv_ext_force():
     """Module Unit Test"""
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    timeStep = 0.1
-    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    time_step = 0.1
+    test_process_rate = macros.sec2nano(time_step)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [[0], [0], [0]]
-    extForce = numpy.array([random() for _ in range(3)])
-    extFTObject.extForce_B = [[item] for item in extForce]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extTorquePntB_B = [[0], [0], [0]]
+    ext_force = numpy.array([random() for _ in range(3)])
+    ext_ft_object.extForce_B = [[item] for item in ext_force]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
     # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
+    sc_object.hub.mHub = 100
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
-    unitTestSim.InitializeSimulation()
-    stopTime = 0.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    stop_time = 0.5
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    dataAccumDV_CN_N = dataLog.TotalAccumDV_CN_N
-    timeArraySec = dataLog.times() * macros.NANO2SEC
+    data_accum_dv_CN_N = data_log.TotalAccumDV_CN_N
+    time_array_sec = data_log.times() * macros.NANO2SEC
 
     accuracy = 1e-10
-    for i in range(len(dataLog.times())):
-        truth_dataAccumDV_CN_N = extForce * timeArraySec[i] / scObject.hub.mHub
-        if not unitTestSupport.isArrayEqual(dataAccumDV_CN_N[i], truth_dataAccumDV_CN_N, 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Point C Accumulated DV with external force test failed unit test")
+    for i in range(len(data_log.times())):
+        truth_data_accum_dv_CN_N = ext_force * time_array_sec[i] / sc_object.hub.mHub
+        if not unitTestSupport.isArrayEqual(data_accum_dv_CN_N[i], truth_data_accum_dv_CN_N, 3, accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: Spacecraft Point C Accumulated DV with external force test failed unit test")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: Spacecraft Accumulated DV tests with offset CoM")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [test_fail_count, ''.join(test_messages)]
+
+
+def test_spacecraft_free_fall_delta_v(show_plots):
+    """A spacecraft in free fall pushed by a small constant force: the accumulated delta-v and the non-conservative
+    acceleration must come only from that force, with no round-off from the much larger orbital velocity.
+
+    The mass and force are powers of two, so the acceleration is exact, and the force acts along the center of mass
+    offset, so the hub never rotates. Each step must then add exactly the RK4 integral of that acceleration over the
+    step the spacecraft integrates, which it finds from the simulation times in seconds."""
+    time_step = 1.0
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_proc = unit_test_sim.CreateNewProcess("TestProcess")
+    test_proc.addTask(unit_test_sim.CreateNewTask("unitTask", macros.sec2nano(time_step)))
+
+    sc_object = spacecraft.Spacecraft()
+    sc_object.hub.mHub = 512.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    unit_test_sim.AddModelToTask("unitTask", sc_object)
+
+    ext_force = extForceTorque.ExtForceTorque()
+    ext_force.extForce_N = [[0.0], [0.0], [0.5]]
+    sc_object.addDynamicEffector(ext_force)
+    unit_test_sim.AddModelToTask("unitTask", ext_force)
+
+    earth_grav_body = gravityEffector.GravBodyData()
+    earth_grav_body.planetName = "earth_planet_data"
+    earth_grav_body.mu = 0.3986004415E+15  # meters!
+    earth_grav_body.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_grav_body])
+
+    sc_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unitTask", sc_log)
+
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1000.0))
+    unit_test_sim.ExecuteSimulation()
+
+    times = sc_log.times() * macros.NANO2SEC
+    outputs = {
+        "TotalAccumDVBdy": sc_log.TotalAccumDVBdy,
+        "TotalAccumDV_BN_B": sc_log.TotalAccumDV_BN_B,
+        "TotalAccumDV_CN_N": sc_log.TotalAccumDV_CN_N,
+        "nonConservativeAccelpntB_B": sc_log.nonConservativeAccelpntB_B,
+    }
+
+    # Delta-v of each RK4 step of the constant acceleration, summed in the integrator's order
+    accel = 0.5 / 512.0
+    accum_dv = numpy.zeros((len(times), 3))
+    non_conservative_accel = numpy.zeros((len(times), 3))
+    for i in range(1, len(times)):
+        step = times[i] - times[i - 1]
+        step_dv = 0.0
+        for weight in [step / 6.0, step / 3.0, step / 3.0, step / 6.0]:
+            step_dv += weight * accel
+        accum_dv[i, 2] = accum_dv[i - 1, 2] + step_dv
+        non_conservative_accel[i, 2] = step_dv / step
+    expected = {
+        "TotalAccumDVBdy": accum_dv,
+        "TotalAccumDV_BN_B": accum_dv,
+        "TotalAccumDV_CN_N": accum_dv,
+        "nonConservativeAccelpntB_B": non_conservative_accel,
+    }
+
+    plt.close("all")
+    fig, axes = plt.subplots(4, 1, sharex=True, figsize=(8, 8))
+    for ax, (name, values) in zip(axes, outputs.items()):
+        ax.plot(times, values - expected[name])
+        ax.set_ylabel(name + " error")
+    axes[-1].set_xlabel("time (s)")
+    fig.tight_layout()
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    for name, values in outputs.items():
+        numpy.testing.assert_array_equal(values, expected[name], err_msg=name)
 
 
 if __name__ == "__main__":
     # scAttRef(True, 1e-3)
-    # SCTranslation(True)
-    # SCTransAndRotation(True)
-    # SCRotation(True)
-    # SCTransBOE(True)
-    # SCPointBVsPointC(True)
-    scOptionalRef(True, 0.001)
-    # scAccumDV()
-    # scOptionalRef(True, 0.001)
-    # scAccumDV()
-    # scAccumDVExtForce()
+    # sc_translation(True)
+    # sc_trans_and_rotation(True)
+    # sc_rotation(True)
+    # sc_trans_boe(True)
+    # sc_point_b_vs_point_c(True)
+    sc_optional_ref(True, 0.001)
+    # sc_accum_dv()
+    # sc_optional_ref(True, 0.001)
+    # sc_accum_dv()
+    # sc_accum_dv_ext_force()
+    # test_spacecraft_free_fall_delta_v(True)

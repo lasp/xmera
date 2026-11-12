@@ -34,7 +34,6 @@ from typing import Optional, Union
 // The central body should be changed by changing the isCentralBody flag
 // in GravBodyData
 %immutable GravityEffector::centralBody;
-%immutable GravityEffector::vehicleGravityPropName;
 %immutable GravityEffector::systemTimeCorrPropName;
 %immutable GravityEffector::inertialPositionPropName;
 %immutable GravityEffector::inertialVelocityPropName;

@@ -23,179 +23,179 @@ from xmera.simulation import extForceTorque
 from xmera.architecture import messaging
 
 
-def test_hingedRigidBodyGravity(show_plots):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+def test_hinged_rigid_body_gravity(show_plots):
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.001)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Create two hinged rigid bodies
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 0.0
-    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
-    unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.modelTag = "Panel1"
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 100.0
+    unit_test_sim.panel1.c = 0.0
+    unit_test_sim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel1.thetaInit = 5*numpy.pi/180.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.modelTag = "Panel1"
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 0.0
-    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.modelTag = "Panel2"
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 100.0
+    unit_test_sim.panel2.c = 0.0
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel2.thetaInit = 0.0
+    unit_test_sim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.modelTag = "Panel2"
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    sc_object.addStateEffector(unit_test_sim.panel1)
+    sc_object.addStateEffector(unit_test_sim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
     # Add Earth gravity to the sim
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.planetName = "earth_planet_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
+    unit_test_sim.earthGravBody = gravityEffector.GravBodyData()
+    unit_test_sim.earthGravBody.planetName = "earth_planet_data"
+    unit_test_sim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unit_test_sim.earthGravBody.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([unit_test_sim.earthGravBody])
 
     # Log the spacecraft state message
-    datLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, datLog)
+    dat_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, dat_log)
 
     # Add energy and momentum variables to log
-    panel1Log = unitTestSim.panel1.logger("forceOnBody_B")
-    panel2Log = unitTestSim.panel2.logger("forceOnBody_B")
-    scLog = pythonVariableLogger.PythonVariableLogger({
-        "totOrbEnergy": lambda _: scObject.totOrbEnergy,
-        "totOrbAngMomPntN_N": lambda _: scObject.totOrbAngMomPntN_N,
-        "totRotAngMomPntC_N": lambda _: scObject.totRotAngMomPntC_N,
-        "totRotEnergy": lambda _: scObject.totRotEnergy,
+    panel1_log = unit_test_sim.panel1.logger("forceOnBody_B")
+    panel2_log = unit_test_sim.panel2.logger("forceOnBody_B")
+    sc_log = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: sc_object.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: sc_object.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: sc_object.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: sc_object.totRotEnergy,
     })
-    unitTestSim.AddModelToTask(unitTaskName, panel1Log)
-    unitTestSim.AddModelToTask(unitTaskName, panel2Log)
-    unitTestSim.AddModelToTask(unitTaskName, scLog)
+    unit_test_sim.AddModelToTask(unit_task_name, panel1_log)
+    unit_test_sim.AddModelToTask(unit_task_name, panel2_log)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_log)
 
     # Initialize the simulation
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 2.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 2.5
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    sigmaOut = datLog.sigma_BN
+    sigma_out = dat_log.sigma_BN
 
-    forcePanel1 = unitTestSupport.addTimeColumn(panel1Log.times(), panel1Log.forceOnBody_B)
-    forcePanel2 = unitTestSupport.addTimeColumn(panel2Log.times(), panel2Log.forceOnBody_B)
-    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
-    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotEnergy)
+    force_panel1 = unitTestSupport.addTimeColumn(panel1_log.times(), panel1_log.forceOnBody_B)
+    force_panel2 = unitTestSupport.addTimeColumn(panel2_log.times(), panel2_log.forceOnBody_B)
+    orb_energy = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totOrbEnergy)
+    orb_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totOrbAngMomPntN_N)
+    rot_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totRotAngMomPntC_N)
+    rot_energy = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totRotEnergy)
 
-    dataSigma = [sigmaOut[-1]]
+    data_sigma = [sigma_out[-1]]
 
-    trueSigma = [[0.06170318243240492, -0.07089090074412899, 0.06409500412692531]]
+    true_sigma = [[0.06170318243240492, -0.07089090074412899, 0.06409500412692531]]
 
-    initialOrbAngMom_N = [[orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]]
+    initial_orb_ang_mom_N = [[orb_ang_mom_N[0,1], orb_ang_mom_N[0,2], orb_ang_mom_N[0,3]]]
 
-    finalOrbAngMom = [orbAngMom_N[-1]]
+    final_orb_ang_mom = [orb_ang_mom_N[-1]]
 
-    initialRotAngMom_N = [[rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]]
+    initial_rot_ang_mom_N = [[rot_ang_mom_N[0,1], rot_ang_mom_N[0,2], rot_ang_mom_N[0,3]]]
 
-    finalRotAngMom = [rotAngMom_N[-1]]
+    final_rot_ang_mom = [rot_ang_mom_N[-1]]
 
-    initialOrbEnergy = [[orbEnergy[0,1]]]
+    initial_orb_energy = [[orb_energy[0,1]]]
 
-    finalOrbEnergy = [orbEnergy[-1]]
+    final_orb_energy = [orb_energy[-1]]
 
-    initialRotEnergy = [[rotEnergy[0,1]]]
+    initial_rot_energy = [[rot_energy[0,1]]]
 
-    finalRotEnergy = [rotEnergy[-1]]
+    final_rot_energy = [rot_energy[-1]]
 
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.plot(orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,1] - orb_ang_mom_N[0,1])/orb_ang_mom_N[0,1], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,2] - orb_ang_mom_N[0,2])/orb_ang_mom_N[0,2], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,3] - orb_ang_mom_N[0,3])/orb_ang_mom_N[0,3])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInOrbitalAngularMomentumGravity"
-    PlotTitle = "Change in Orbital Angular Momentum with Gravity"
+    plot_name = "ChangeInOrbitalAngularMomentumGravity"
+    plot_title = "Change in Orbital Angular Momentum with Gravity"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.plot(orb_energy[:,0]*1e-9, (orb_energy[:,1] - orb_energy[0,1])/orb_energy[0,1])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInOrbitalEnergyGravity"
-    PlotTitle = "Change in Orbital Energy with Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInOrbitalEnergyGravity"
+    plot_title = "Change in Orbital Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.plot(rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,1] - rot_ang_mom_N[0,1])/rot_ang_mom_N[0,1], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,2] - rot_ang_mom_N[0,2])/rot_ang_mom_N[0,2], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,3] - rot_ang_mom_N[0,3])/rot_ang_mom_N[0,3])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInRotationalAngularMomentumGravity"
-    PlotTitle = "Change In Rotational Angular Momentum with Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInRotationalAngularMomentumGravity"
+    plot_title = "Change In Rotational Angular Momentum with Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.plot(rot_energy[:,0]*1e-9, (rot_energy[:,1] - rot_energy[0,1])/rot_energy[0,1])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInRotationalEnergyGravity"
-    PlotTitle = "Change In Rotational Energy with Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInRotationalEnergyGravity"
+    plot_title = "Change In Rotational Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(forcePanel1[:,0]*1e-9, forcePanel1[:,1], forcePanel1[:,0]*1e-9, forcePanel1[:,2], forcePanel1[:,0]*1e-9, forcePanel1[:,3])
+    plt.plot(force_panel1[:,0]*1e-9, force_panel1[:,1], force_panel1[:,0]*1e-9, force_panel1[:,2], force_panel1[:,0]*1e-9, force_panel1[:,3])
     plt.xlabel('time (s)')
     plt.ylabel('Force about Point B')
 
     plt.figure()
     plt.clf()
-    plt.plot(forcePanel2[:,0]*1e-9, forcePanel2[:,1], forcePanel2[:,0]*1e-9, forcePanel2[:,2], forcePanel2[:,0]*1e-9, forcePanel2[:,3])
+    plt.plot(force_panel2[:,0]*1e-9, force_panel2[:,1], force_panel2[:,0]*1e-9, force_panel2[:,2], force_panel2[:,0]*1e-9, force_panel2[:,3])
     plt.xlabel('time (s)')
     plt.ylabel('Force about Point B')
 
@@ -204,590 +204,657 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.close("all")
 
     accuracy = 1e-10
-    numpy.testing.assert_allclose(numpy.array(trueSigma),
-                                  numpy.array(dataSigma),
+    numpy.testing.assert_allclose(numpy.array(true_sigma),
+                                  numpy.array(data_sigma),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed gravity attitude test")
 
-    finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
-    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
-    finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
-    finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
+    final_orb_ang_mom = numpy.delete(final_orb_ang_mom, 0, axis=1)  # remove time column
+    final_rot_ang_mom = numpy.delete(final_rot_ang_mom, 0, axis=1)  # remove time column
+    final_rot_energy = numpy.delete(final_rot_energy, 0, axis=1)  # remove time column
+    final_orb_energy = numpy.delete(final_orb_energy, 0, axis=1)  # remove time column
 
-    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
-                                 numpy.array(finalOrbAngMom),
+    numpy.testing.assert_allclose(numpy.array(initial_orb_ang_mom_N),
+                                 numpy.array(final_orb_ang_mom),
                                  rtol=accuracy,
                                  err_msg="Hinged Rigid Body integrated test failed gravity orbital angular momentum "
                                          "unit test")
 
-    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
-                                 numpy.array(finalRotAngMom),
+    numpy.testing.assert_allclose(numpy.array(initial_rot_ang_mom_N),
+                                 numpy.array(final_rot_ang_mom),
                                  rtol=accuracy,
                                  err_msg="Hinged Rigid Body integrated test failed gravity rotational angular momentum "
                                        "unit test")
 
-    numpy.testing.assert_allclose(numpy.array(initialRotEnergy),
-                                 numpy.array(finalRotEnergy),
+    numpy.testing.assert_allclose(numpy.array(initial_rot_energy),
+                                 numpy.array(final_rot_energy),
                                  rtol=accuracy,
                                  err_msg="Hinged Rigid Body integrated test failed gravity rotational energy unit test")
 
-    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
-                                 numpy.array(finalOrbEnergy),
+    numpy.testing.assert_allclose(numpy.array(initial_orb_energy),
+                                 numpy.array(final_orb_energy),
                                  rtol=accuracy,
                                  err_msg="Hinged Rigid Body integrated test failed gravity orbital energy unit test")
 
 
-def test_hingedRigidBodyNoGravity(show_plots):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+def test_hinged_rigid_body_gravity_invariance(show_plots):
+    """A spacecraft at rest in free fall must stay at rest: uniform gravity must not
+    rotate the hub or swing the panels."""
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_proc = unit_test_sim.CreateNewProcess("TestProcess")
+    test_proc.addTask(unit_test_sim.CreateNewTask("unitTask", macros.sec2nano(1.0)))
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
+    sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    unit_test_sim.AddModelToTask("unitTask", sc_object)
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    panels = []
+    for r_HB_B, dcm_HB in [([[0.5], [0.0], [1.0]], [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]),
+                           ([[-0.5], [0.0], [1.0]], [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])]:
+        panel = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+        panel.mass = 100.0
+        panel.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+        panel.d = 1.5
+        panel.k = 100.0
+        panel.r_HB_B = r_HB_B
+        panel.dcm_HB = dcm_HB
+        sc_object.addStateEffector(panel)
+        unit_test_sim.AddModelToTask("unitTask", panel)
+        panels.append(panel)
+
+    earth_grav_body = gravityEffector.GravBodyData()
+    earth_grav_body.planetName = "earth_planet_data"
+    earth_grav_body.mu = 0.3986004415E+15  # meters!
+    earth_grav_body.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_grav_body])
+
+    sc_log = sc_object.scStateOutMsg.recorder()
+    panel_logs = [panel.hingedRigidBodyOutMsg.recorder() for panel in panels]
+    for log in [sc_log] + panel_logs:
+        unit_test_sim.AddModelToTask("unitTask", log)
+
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1000.0))
+    unit_test_sim.ExecuteSimulation()
+
+    times = sc_log.times() * macros.NANO2SEC
+    states = {
+        "sigma_BN": sc_log.sigma_BN,
+        "omega_BN_B": sc_log.omega_BN_B,
+        "theta": numpy.column_stack([log.theta for log in panel_logs]),
+        "thetaDot": numpy.column_stack([log.thetaDot for log in panel_logs]),
+    }
+
+    plt.close("all")
+    fig, axes = plt.subplots(4, 1, sharex=True, figsize=(8, 8))
+    for ax, (name, values) in zip(axes, states.items()):
+        ax.plot(times, values)
+        ax.set_ylabel(name)
+    axes[-1].set_xlabel("time (s)")
+    fig.tight_layout()
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    for name, values in states.items():
+        numpy.testing.assert_array_equal(values, numpy.zeros_like(values), err_msg=name)
+
+
+def test_hinged_rigid_body_no_gravity(show_plots):
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
+
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
+
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.001)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 0.0
-    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
-    unitTestSim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 100.0
+    unit_test_sim.panel1.c = 0.0
+    unit_test_sim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel1.thetaInit = 5*numpy.pi/180.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 0.0
-    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 100.0
+    unit_test_sim.panel2.c = 0.0
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel2.thetaInit = 0.0
+    unit_test_sim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    sc_object.addStateEffector(unit_test_sim.panel1)
+    sc_object.addStateEffector(unit_test_sim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
-    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    sc_object.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    sc_object.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
-    scLog = pythonVariableLogger.PythonVariableLogger({
-        "totOrbEnergy": lambda _: scObject.totOrbEnergy,
-        "totOrbAngMomPntN_N": lambda _: scObject.totOrbAngMomPntN_N,
-        "totRotAngMomPntC_N": lambda _: scObject.totRotAngMomPntC_N,
-        "totRotEnergy": lambda _: scObject.totRotEnergy,
+    sc_log = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: sc_object.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: sc_object.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: sc_object.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: sc_object.totRotEnergy,
     })
-    unitTestSim.AddModelToTask(unitTaskName, scLog)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 2.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 2.5
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    sigmaOut = dataLog.sigma_BN
-    rOut_BN_N = dataLog.r_BN_N
-    vOut_CN_N = dataLog.v_CN_N
+    sigma_out = data_log.sigma_BN
+    r_out_BN_N = data_log.r_BN_N
+    v_out_CN_N = data_log.v_CN_N
 
-    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
-    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotEnergy)
+    orb_energy = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totOrbEnergy)
+    orb_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totOrbAngMomPntN_N)
+    rot_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totRotAngMomPntC_N)
+    rot_energy = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totRotEnergy)
 
     # Get the last sigma and position
-    dataSigma = [sigmaOut[-1]]
-    dataPos = [rOut_BN_N[-1]]
+    data_sigma = [sigma_out[-1]]
+    data_pos = [r_out_BN_N[-1]]
 
-    truePos = [[-0.15832794740648992, 1.122481716747217, -0.37975995949382907]]
+    true_pos = [[-0.15832794740648992, 1.122481716747217, -0.37975995949382907]]
 
-    trueSigma = [[0.06170318243240492, -0.07089090074412899, 0.06409500412692531]]
+    true_sigma = [[0.06170318243240492, -0.07089090074412899, 0.06409500412692531]]
 
-    initialOrbAngMom_N = [[orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]]
+    initial_orb_ang_mom_N = [[orb_ang_mom_N[0,1], orb_ang_mom_N[0,2], orb_ang_mom_N[0,3]]]
 
-    finalOrbAngMom = [orbAngMom_N[-1]]
+    final_orb_ang_mom = [orb_ang_mom_N[-1]]
 
-    initialRotAngMom_N = [[rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]]
+    initial_rot_ang_mom_N = [[rot_ang_mom_N[0,1], rot_ang_mom_N[0,2], rot_ang_mom_N[0,3]]]
 
-    finalRotAngMom = [rotAngMom_N[-1]]
+    final_rot_ang_mom = [rot_ang_mom_N[-1]]
 
-    initialOrbEnergy = [[orbEnergy[0,1]]]
+    initial_orb_energy = [[orb_energy[0,1]]]
 
-    finalOrbEnergy = [orbEnergy[-1]]
+    final_orb_energy = [orb_energy[-1]]
 
-    initialRotEnergy = [[rotEnergy[0,1]]]
+    initial_rot_energy = [[rot_energy[0,1]]]
 
-    finalRotEnergy = [rotEnergy[-1]]
+    final_rot_energy = [rot_energy[-1]]
 
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.plot(orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,1] - orb_ang_mom_N[0,1])/orb_ang_mom_N[0,1], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,2] - orb_ang_mom_N[0,2])/orb_ang_mom_N[0,2], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,3] - orb_ang_mom_N[0,3])/orb_ang_mom_N[0,3])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInOrbitalAngularMomentumNoGravity"
-    PlotTitle = "Change in Orbital Angular Momentum No Gravity"
+    plot_name = "ChangeInOrbitalAngularMomentumNoGravity"
+    plot_title = "Change in Orbital Angular Momentum No Gravity"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.plot(orb_energy[:,0]*1e-9, (orb_energy[:,1] - orb_energy[0,1])/orb_energy[0,1])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInOrbitalEnergyNoGravity"
-    PlotTitle = "Change in Orbital Energy No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInOrbitalEnergyNoGravity"
+    plot_title = "Change in Orbital Energy No Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.plot(rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,1] - rot_ang_mom_N[0,1])/rot_ang_mom_N[0,1], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,2] - rot_ang_mom_N[0,2])/rot_ang_mom_N[0,2], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,3] - rot_ang_mom_N[0,3])/rot_ang_mom_N[0,3])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInRotationalAngularMomentumNoGravity"
-    PlotTitle = "Change In Rotational Angular Momentum No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInRotationalAngularMomentumNoGravity"
+    plot_title = "Change In Rotational Angular Momentum No Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.plot(rot_energy[:,0]*1e-9, (rot_energy[:,1] - rot_energy[0,1])/rot_energy[0,1])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInRotationalEnergyNoGravity"
-    PlotTitle = "Change In Rotational Energy No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInRotationalEnergyNoGravity"
+    plot_title = "Change In Rotational Energy No Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times()*1e-9, vOut_CN_N[:,0], dataLog.times()*1e-9, vOut_CN_N[:,1], dataLog.times()*1e-9, vOut_CN_N[:,2])
+    plt.plot(data_log.times()*1e-9, v_out_CN_N[:,0], data_log.times()*1e-9, v_out_CN_N[:,1], data_log.times()*1e-9, v_out_CN_N[:,2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
-    PlotName = "VelocityOfCenterOfMassNoGravity"
-    PlotTitle = "Velocity Of Center Of Mass No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "VelocityOfCenterOfMassNoGravity"
+    plot_title = "Velocity Of Center Of Mass No Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times()*1e-9, (vOut_CN_N[:,0] - vOut_CN_N[:,0])/vOut_CN_N[:,0], dataLog.times()*1e-9,
-             (vOut_CN_N[:,1] - vOut_CN_N[:,1])/vOut_CN_N[:,1], dataLog.times()*1e-9,
-             (vOut_CN_N[:,2] - vOut_CN_N[:,2])/vOut_CN_N[:,2])
+    plt.plot(data_log.times()*1e-9, (v_out_CN_N[:,0] - v_out_CN_N[:,0])/v_out_CN_N[:,0], data_log.times()*1e-9,
+             (v_out_CN_N[:,1] - v_out_CN_N[:,1])/v_out_CN_N[:,1], data_log.times()*1e-9,
+             (v_out_CN_N[:,2] - v_out_CN_N[:,2])/v_out_CN_N[:,2])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInVelocityOfCenterOfMassNoGravity"
-    PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInVelocityOfCenterOfMassNoGravity"
+    plot_title = "Change In Velocity Of Center Of Mass No Gravity"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     accuracy = 1e-10
-    numpy.testing.assert_allclose(numpy.array(truePos),
-                                  numpy.array(dataPos),
+    numpy.testing.assert_allclose(numpy.array(true_pos),
+                                  numpy.array(data_pos),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed position test")
 
-    numpy.testing.assert_allclose(numpy.array(trueSigma),
-                                  numpy.array(dataSigma),
+    numpy.testing.assert_allclose(numpy.array(true_sigma),
+                                  numpy.array(data_sigma),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed attitude test")
 
-    finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
-    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
-    finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
-    finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
+    final_orb_ang_mom = numpy.delete(final_orb_ang_mom, 0, axis=1)  # remove time column
+    final_rot_ang_mom = numpy.delete(final_rot_ang_mom, 0, axis=1)  # remove time column
+    final_rot_energy = numpy.delete(final_rot_energy, 0, axis=1)  # remove time column
+    final_orb_energy = numpy.delete(final_orb_energy, 0, axis=1)  # remove time column
 
 
-    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
-                                 numpy.array(finalOrbAngMom),
+    numpy.testing.assert_allclose(numpy.array(initial_orb_ang_mom_N),
+                                 numpy.array(final_orb_ang_mom),
                                  rtol=accuracy,
                                  err_msg="Hinged Rigid Body integrated test failed orbital angular momentum unit "
                                        "test")
 
-    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
-                                  numpy.array(finalRotAngMom),
+    numpy.testing.assert_allclose(numpy.array(initial_rot_ang_mom_N),
+                                  numpy.array(final_rot_ang_mom),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed rotational angular momentum unit "
                                           "test")
 
-    numpy.testing.assert_allclose(numpy.array(initialRotEnergy),
-                                  numpy.array(finalRotEnergy),
+    numpy.testing.assert_allclose(numpy.array(initial_rot_energy),
+                                  numpy.array(final_rot_energy),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed rotational energy unit test")
 
-    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
-                                  numpy.array(finalOrbEnergy),
+    numpy.testing.assert_allclose(numpy.array(initial_orb_energy),
+                                  numpy.array(final_orb_energy),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed orbital energy unit test")
 
 
-def test_hingedRigidBodyNoGravityDamping(show_plots):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+def test_hinged_rigid_body_no_gravity_damping(show_plots):
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.001)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 6.0
-    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
-    unitTestSim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 100.0
+    unit_test_sim.panel1.c = 6.0
+    unit_test_sim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel1.thetaInit = 5*numpy.pi/180.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 7.0
-    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 100.0
+    unit_test_sim.panel2.c = 7.0
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel2.thetaInit = 0.0
+    unit_test_sim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    sc_object.addStateEffector(unit_test_sim.panel1)
+    sc_object.addStateEffector(unit_test_sim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
-    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    sc_object.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    sc_object.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
-    scLog = pythonVariableLogger.PythonVariableLogger({
-        "totOrbEnergy": lambda _: scObject.totOrbEnergy,
-        "totOrbAngMomPntN_N": lambda _: scObject.totOrbAngMomPntN_N,
-        "totRotAngMomPntC_N": lambda _: scObject.totRotAngMomPntC_N,
+    sc_log = pythonVariableLogger.PythonVariableLogger({
+        "totOrbEnergy": lambda _: sc_object.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: sc_object.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: sc_object.totRotAngMomPntC_N,
     })
-    unitTestSim.AddModelToTask(unitTaskName, scLog)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 2.5
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 2.5
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    vOut_CN_N = dataLog.v_CN_N
+    v_out_CN_N = data_log.v_CN_N
 
-    orbEnergy = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbEnergy)
-    orbAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    orb_energy = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totOrbEnergy)
+    orb_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totOrbAngMomPntN_N)
+    rot_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totRotAngMomPntC_N)
 
-    initialOrbAngMom_N = [[orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]]
+    initial_orb_ang_mom_N = [[orb_ang_mom_N[0,1], orb_ang_mom_N[0,2], orb_ang_mom_N[0,3]]]
 
-    finalOrbAngMom = [orbAngMom_N[-1]]
+    final_orb_ang_mom = [orb_ang_mom_N[-1]]
 
-    initialRotAngMom_N = [[rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]]
+    initial_rot_ang_mom_N = [[rot_ang_mom_N[0,1], rot_ang_mom_N[0,2], rot_ang_mom_N[0,3]]]
 
-    finalRotAngMom = [rotAngMom_N[-1]]
+    final_rot_ang_mom = [rot_ang_mom_N[-1]]
 
-    initialOrbEnergy = [[orbEnergy[0,1]]]
+    initial_orb_energy = [[orb_energy[0,1]]]
 
-    finalOrbEnergy = [orbEnergy[-1]]
+    final_orb_energy = [orb_energy[-1]]
 
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.plot(orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,1] - orb_ang_mom_N[0,1])/orb_ang_mom_N[0,1], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,2] - orb_ang_mom_N[0,2])/orb_ang_mom_N[0,2], orb_ang_mom_N[:,0]*1e-9, (orb_ang_mom_N[:,3] - orb_ang_mom_N[0,3])/orb_ang_mom_N[0,3])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInOrbitalAngularMomentumNoGravityDamping"
-    PlotTitle = "Change in Orbital Angular Momentum No Gravity with Damping"
+    plot_name = "ChangeInOrbitalAngularMomentumNoGravityDamping"
+    plot_title = "Change in Orbital Angular Momentum No Gravity with Damping"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.plot(orb_energy[:,0]*1e-9, (orb_energy[:,1] - orb_energy[0,1])/orb_energy[0,1])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInOrbitalEnergyNoGravityDamping"
-    PlotTitle = "Change in Orbital Energy No Gravity with Damping"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInOrbitalEnergyNoGravityDamping"
+    plot_title = "Change in Orbital Energy No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.plot(rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,1] - rot_ang_mom_N[0,1])/rot_ang_mom_N[0,1], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,2] - rot_ang_mom_N[0,2])/rot_ang_mom_N[0,2], rot_ang_mom_N[:,0]*1e-9, (rot_ang_mom_N[:,3] - rot_ang_mom_N[0,3])/rot_ang_mom_N[0,3])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInRotationalAngularMomentumNoGravityDamping"
-    PlotTitle = "Change In Rotational Angular Momentum No Gravity with Damping"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInRotationalAngularMomentumNoGravityDamping"
+    plot_title = "Change In Rotational Angular Momentum No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times()*1e-9, vOut_CN_N[:, 0],
-             dataLog.times()*1e-9, vOut_CN_N[:, 1],
-             dataLog.times()*1e-9, vOut_CN_N[:, 2])
+    plt.plot(data_log.times()*1e-9, v_out_CN_N[:, 0],
+             data_log.times()*1e-9, v_out_CN_N[:, 1],
+             data_log.times()*1e-9, v_out_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
-    PlotName = "VelocityOfCenterOfMassNoGravityDamping"
-    PlotTitle = "Velocity Of Center Of Mass No Gravity with Damping"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "VelocityOfCenterOfMassNoGravityDamping"
+    plot_title = "Velocity Of Center Of Mass No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times()*1e-9, (vOut_CN_N[:, 0] - vOut_CN_N[:, 0])/vOut_CN_N[:, 0],
-             dataLog.times()*1e-9, (vOut_CN_N[:, 1] - vOut_CN_N[:, 1])/vOut_CN_N[:, 1],
-             dataLog.times()*1e-9, (vOut_CN_N[:, 2] - vOut_CN_N[:, 2])/vOut_CN_N[:, 2])
+    plt.plot(data_log.times()*1e-9, (v_out_CN_N[:, 0] - v_out_CN_N[:, 0])/v_out_CN_N[:, 0],
+             data_log.times()*1e-9, (v_out_CN_N[:, 1] - v_out_CN_N[:, 1])/v_out_CN_N[:, 1],
+             data_log.times()*1e-9, (v_out_CN_N[:, 2] - v_out_CN_N[:, 2])/v_out_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
-    PlotName = "ChangeInVelocityOfCenterOfMassNoGravityDamping"
-    PlotTitle = "Change In Velocity Of Center Of Mass No Gravity with Damping"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plot_name = "ChangeInVelocityOfCenterOfMassNoGravityDamping"
+    plot_title = "Change In Velocity Of Center Of Mass No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     if show_plots:
         plt.show()
     plt.close("all")
 
-    finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
-    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
-    finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
+    final_orb_ang_mom = numpy.delete(final_orb_ang_mom, 0, axis=1)  # remove time column
+    final_rot_ang_mom = numpy.delete(final_rot_ang_mom, 0, axis=1)  # remove time column
+    final_orb_energy = numpy.delete(final_orb_energy, 0, axis=1)  # remove time column
 
     accuracy = 1e-10
-    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
-                                  numpy.array(finalOrbAngMom),
+    numpy.testing.assert_allclose(numpy.array(initial_orb_ang_mom_N),
+                                  numpy.array(final_orb_ang_mom),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test with damping failed orbital angular momentum unit test")
 
-    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
-                                  numpy.array(finalRotAngMom),
+    numpy.testing.assert_allclose(numpy.array(initial_rot_ang_mom_N),
+                                  numpy.array(final_rot_ang_mom),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test with damping failed rotational angular momentum unit test")
 
-    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
-                                  numpy.array(finalOrbEnergy),
+    numpy.testing.assert_allclose(numpy.array(initial_orb_energy),
+                                  numpy.array(final_orb_energy),
                                   rtol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test with damping failed orbital energy unit test")
 
 
-def test_hingedRigidBodyThetaSS(show_plots):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+def test_hinged_rigid_body_theta_ss(show_plots):
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    stepSize = 0.1
-    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    step_size = 0.1
+    test_process_rate = macros.sec2nano(step_size)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 75
-    unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel1.thetaInit = 0.0
-    unitTestSim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 100.0
+    unit_test_sim.panel1.c = 75
+    unit_test_sim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+    unit_test_sim.panel1.thetaInit = 0.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 75
-    unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 100.0
+    unit_test_sim.panel2.c = 75
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
+    unit_test_sim.panel2.thetaInit = 0.0
+    unit_test_sim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    sc_object.addStateEffector(unit_test_sim.panel1)
+    sc_object.addStateEffector(unit_test_sim.panel2)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [[0], [0], [0]]
-    extFTObject.extForce_B = [[0], [1], [0]]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extTorquePntB_B = [[0], [0], [0]]
+    ext_ft_object.extForce_B = [[0], [1], [0]]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
-    stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
+    state_log = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: sc_object.dynManager.getStateObject(unit_test_sim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: sc_object.dynManager.getStateObject(unit_test_sim.panel2.nameOfThetaState).getState(),
     })
-    unitTestSim.AddModelToTask(unitTaskName, stateLog)
+    unit_test_sim.AddModelToTask(unit_task_name, state_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 60.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 60.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
-    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
+    theta1_out = unitTestSupport.addTimeColumn(state_log.times(), state_log.theta1)
+    theta2_out = unitTestSupport.addTimeColumn(state_log.times(), state_log.theta2)
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraftData = SpacecraftClass()
-    spacecraftData.hub.mass = scObject.hub.mHub
-    spacecraftData.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    spacecraft_data = SpacecraftClass()
+    spacecraft_data.hub.mass = sc_object.hub.mHub
+    spacecraft_data.hub.inertia = sc_object.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraftData.panel1.mass = unitTestSim.panel1.mass
-    spacecraftData.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraftData.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraftData.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraftData.panel1.thetaH = 0.0
-    spacecraftData.panel1.d = unitTestSim.panel1.d
-    spacecraftData.panel1.k = unitTestSim.panel1.k
-    spacecraftData.panel1.c = unitTestSim.panel1.c
+    spacecraft_data.panel1.mass = unit_test_sim.panel1.mass
+    spacecraft_data.panel1.inertia = unit_test_sim.panel1.IPntS_S[1][1]
+    spacecraft_data.panel1.r_hinge = numpy.linalg.norm(numpy.asarray(unit_test_sim.panel1.r_HB_B))
+    spacecraft_data.panel1.beta = numpy.arctan2(unit_test_sim.panel1.r_HB_B[1][0],unit_test_sim.panel1.r_HB_B[0][0])
+    spacecraft_data.panel1.theta_h = 0.0
+    spacecraft_data.panel1.d = unit_test_sim.panel1.d
+    spacecraft_data.panel1.k = unit_test_sim.panel1.k
+    spacecraft_data.panel1.c = unit_test_sim.panel1.c
     # Define variables for panel2
-    spacecraftData.panel2.mass = unitTestSim.panel2.mass
-    spacecraftData.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraftData.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraftData.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraftData.panel2.thetaH = numpy.pi
-    spacecraftData.panel2.d = unitTestSim.panel2.d
-    spacecraftData.panel2.k = unitTestSim.panel2.k
-    spacecraftData.panel2.c = unitTestSim.panel2.c
+    spacecraft_data.panel2.mass = unit_test_sim.panel2.mass
+    spacecraft_data.panel2.inertia = unit_test_sim.panel2.IPntS_S[1][1]
+    spacecraft_data.panel2.r_hinge = numpy.linalg.norm(numpy.asarray(unit_test_sim.panel2.r_HB_B))
+    spacecraft_data.panel2.beta = numpy.arctan2(unit_test_sim.panel2.r_HB_B[1][0],unit_test_sim.panel2.r_HB_B[0][0])
+    spacecraft_data.panel2.theta_h = numpy.pi
+    spacecraft_data.panel2.d = unit_test_sim.panel2.d
+    spacecraft_data.panel2.k = unit_test_sim.panel2.k
+    spacecraft_data.panel2.c = unit_test_sim.panel2.c
     # Define body force and torque
-    spacecraftData.xThrust_B = 0.0
-    spacecraftData.yThrust_B = extFTObject.extForce_B[1][0]
-    spacecraftData.Torque = 0.0
+    spacecraft_data.x_thrust_B = 0.0
+    spacecraft_data.y_thrust_B = ext_ft_object.extForce_B[1][0]
+    spacecraft_data.torque = 0.0
 
     # Define initial conditions of the sim
-    time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
+    time = numpy.arange(0.0,stop_time + step_size,step_size).flatten()
     x0 = numpy.zeros(10)
-    x0[3] = unitTestSim.panel1.thetaInit
-    x0[4] = -unitTestSim.panel2.thetaInit
+    x0[3] = unit_test_sim.panel1.thetaInit
+    x0[4] = -unit_test_sim.panel2.thetaInit
 
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraftData)
+        X[:, j] = rk4(planar_flex_function, X[:, j-1], step_size, time[j-1], spacecraft_data)
 
     # Find steady state value
-    variablesIn = boxAndWingParameters()
-    variablesIn.k = spacecraftData.panel1.k
-    variablesIn.d = spacecraftData.panel1.d
-    variablesIn.F = spacecraftData.yThrust_B
-    variablesIn.mSC = spacecraftData.hub.mass + spacecraftData.panel1.mass + spacecraftData.panel2.mass
-    variablesIn.mSP = spacecraftData.panel1.mass
-    thetaSSGuess = -0.01
+    variables_in = BoxAndWingParameters()
+    variables_in.k = spacecraft_data.panel1.k
+    variables_in.d = spacecraft_data.panel1.d
+    variables_in.F = spacecraft_data.y_thrust_B
+    variables_in.m_sc = spacecraft_data.hub.mass + spacecraft_data.panel1.mass + spacecraft_data.panel2.mass
+    variables_in.m_sp = spacecraft_data.panel1.mass
+    theta_ss_guess = -0.01
     tolerance = 1e-10
-    thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
+    theta_ss = newton_rapshon(box_and_wings_f_and_f_prime,theta_ss_guess,tolerance,variables_in)
 
     plt.close("all")
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Xmera")
-    plt.plot(theta1Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
+    plt.plot(theta1_out[:,0]*1e-9, theta1_out[:,1],'-r',label = "Xmera")
+    plt.plot(theta1_out[-1,0]*1e-9, theta_ss,'ok',label = "BOE Calculation")
     plt.xlabel('time (s)')
     plt.ylabel('theta 1 (rad)')
     plt.legend(loc ='upper right',numpoints = 1)
-    PlotName = "BOECalculationForSteadyStateTheta1DeflectionVsSimulation"
-    PlotTitle = "BOE Calculation for Steady State Theta 1 Deflection vs Simulation"
+    plot_name = "BOECalculationForSteadyStateTheta1DeflectionVsSimulation"
+    plot_title = "BOE Calculation for Steady State Theta 1 Deflection vs Simulation"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
-    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Xmera")
-    plt.plot(theta2Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
+    plt.plot(theta2_out[:,0]*1e-9, theta2_out[:,1],'-r',label = "Xmera")
+    plt.plot(theta2_out[-1,0]*1e-9, theta_ss,'ok',label = "BOE Calculation")
     plt.xlabel('time (s)')
     plt.ylabel('theta 2 (rad)')
     plt.legend(loc ='upper right',numpoints = 1)
-    PlotName = "BOECalculationForSteadyStateTheta2DeflectionVsSimulation"
-    PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
+    plot_name = "BOECalculationForSteadyStateTheta2DeflectionVsSimulation"
+    plot_title = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     if show_plots:
         plt.show()
@@ -795,424 +862,424 @@ def test_hingedRigidBodyThetaSS(show_plots):
 
 
     accuracy = 1e-6
-    assert abs(theta1Out[-1,1] - thetaSS) <= accuracy, ("Hinged Rigid Body integrated steady state test failed theta 1 "
+    assert abs(theta1_out[-1,1] - theta_ss) <= accuracy, ("Hinged Rigid Body integrated steady state test failed theta 1 "
                                                         "comparison ")
 
-    assert abs(theta2Out[-1,1] - thetaSS) <= accuracy, ("Hinged Rigid Body integrated steady state test failed theta 2 "
+    assert abs(theta2_out[-1,1] - theta_ss) <= accuracy, ("Hinged Rigid Body integrated steady state test failed theta 2 "
                                                         "comparison ")
 
 
-def test_hingedRigidBodyFrequencyAmp(show_plots):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
+def test_hinged_rigid_body_frequency_amp(show_plots):
+    test_fail_count = 0  # zero unit test result counter
+    test_messages = []  # create empty list to store test log messages
 
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    stepSize = 0.1
-    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    step_size = 0.1
+    test_process_rate = macros.sec2nano(step_size)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 300.0
-    unitTestSim.panel1.c = 0.0
-    unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel1.thetaInit = 0.0
-    unitTestSim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 300.0
+    unit_test_sim.panel1.c = 0.0
+    unit_test_sim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+    unit_test_sim.panel1.thetaInit = 0.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 300.0
-    unitTestSim.panel2.c = 0.0
-    unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 300.0
+    unit_test_sim.panel2.c = 0.0
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
+    unit_test_sim.panel2.thetaInit = 0.0
+    unit_test_sim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    sc_object.addStateEffector(unit_test_sim.panel1)
+    sc_object.addStateEffector(unit_test_sim.panel2)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [[0], [0], [0]]
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extTorquePntB_B = [[0], [0], [0]]
     force = 1
-    extFTObject.extForce_B = [[0], [force], [0]]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object.extForce_B = [[0], [force], [0]]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
-    stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
+    state_log = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: sc_object.dynManager.getStateObject(unit_test_sim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: sc_object.dynManager.getStateObject(unit_test_sim.panel2.nameOfThetaState).getState(),
     })
-    unitTestSim.AddModelToTask(unitTaskName, stateLog)
+    unit_test_sim.AddModelToTask(unit_task_name, state_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 58
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime/2))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 58
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time/2))
+    unit_test_sim.ExecuteSimulation()
 
-    extFTObject.extTorquePntB_B = [0.0, 0.0, 0.0]
-    extFTObject.extForce_B = [0.0, 0.0, 0.0]
+    ext_ft_object.extTorquePntB_B = [0.0, 0.0, 0.0]
+    ext_ft_object.extForce_B = [0.0, 0.0, 0.0]
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    rOut_BN_N = dataLog.r_BN_N
-    sigmaOut_BN = dataLog.sigma_BN
-    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
+    r_out_BN_N = data_log.r_BN_N
+    sigma_out_BN = data_log.sigma_BN
+    theta_out = 4.0*numpy.arctan(sigma_out_BN[:,2])
 
-    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
-    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
+    theta1_out = unitTestSupport.addTimeColumn(state_log.times(), state_log.theta1)
+    theta2_out = unitTestSupport.addTimeColumn(state_log.times(), state_log.theta2)
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraftData = SpacecraftClass()
-    spacecraftData.hub.mass = scObject.hub.mHub
-    spacecraftData.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    spacecraft_data = SpacecraftClass()
+    spacecraft_data.hub.mass = sc_object.hub.mHub
+    spacecraft_data.hub.inertia = sc_object.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraftData.panel1.mass = unitTestSim.panel1.mass
-    spacecraftData.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraftData.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraftData.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraftData.panel1.thetaH = 0.0
-    spacecraftData.panel1.d = unitTestSim.panel1.d
-    spacecraftData.panel1.k = unitTestSim.panel1.k
-    spacecraftData.panel1.c = unitTestSim.panel1.c
+    spacecraft_data.panel1.mass = unit_test_sim.panel1.mass
+    spacecraft_data.panel1.inertia = unit_test_sim.panel1.IPntS_S[1][1]
+    spacecraft_data.panel1.r_hinge = numpy.linalg.norm(numpy.asarray(unit_test_sim.panel1.r_HB_B))
+    spacecraft_data.panel1.beta = numpy.arctan2(unit_test_sim.panel1.r_HB_B[1][0],unit_test_sim.panel1.r_HB_B[0][0])
+    spacecraft_data.panel1.theta_h = 0.0
+    spacecraft_data.panel1.d = unit_test_sim.panel1.d
+    spacecraft_data.panel1.k = unit_test_sim.panel1.k
+    spacecraft_data.panel1.c = unit_test_sim.panel1.c
     # Define variables for panel2
-    spacecraftData.panel2.mass = unitTestSim.panel2.mass
-    spacecraftData.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraftData.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraftData.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraftData.panel2.thetaH = numpy.pi
-    spacecraftData.panel2.d = unitTestSim.panel2.d
-    spacecraftData.panel2.k = unitTestSim.panel2.k
-    spacecraftData.panel2.c = unitTestSim.panel2.c
+    spacecraft_data.panel2.mass = unit_test_sim.panel2.mass
+    spacecraft_data.panel2.inertia = unit_test_sim.panel2.IPntS_S[1][1]
+    spacecraft_data.panel2.r_hinge = numpy.linalg.norm(numpy.asarray(unit_test_sim.panel2.r_HB_B))
+    spacecraft_data.panel2.beta = numpy.arctan2(unit_test_sim.panel2.r_HB_B[1][0],unit_test_sim.panel2.r_HB_B[0][0])
+    spacecraft_data.panel2.theta_h = numpy.pi
+    spacecraft_data.panel2.d = unit_test_sim.panel2.d
+    spacecraft_data.panel2.k = unit_test_sim.panel2.k
+    spacecraft_data.panel2.c = unit_test_sim.panel2.c
     # Define body force and torque
 
     # Define initial conditions of the sim
     check = 0
-    time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
+    time = numpy.arange(0.0,stop_time + step_size,step_size).flatten()
     x0 = numpy.zeros(10)
-    x0[3] = unitTestSim.panel1.thetaInit
-    x0[4] = -unitTestSim.panel2.thetaInit
+    x0[3] = unit_test_sim.panel1.thetaInit
+    x0[4] = -unit_test_sim.panel2.thetaInit
 
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
-        if time[j-1] < stopTime/2:
-            spacecraftData.xThrust_B = 0.0
-            spacecraftData.yThrust_B = force
-            spacecraftData.Torque = 0.0
+        if time[j-1] < stop_time/2:
+            spacecraft_data.x_thrust_B = 0.0
+            spacecraft_data.y_thrust_B = force
+            spacecraft_data.torque = 0.0
         else:
-            spacecraftData.xThrust_B = 0.0
-            spacecraftData.yThrust_B = 0.0
-            spacecraftData.Torque = 0.0
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraftData)
+            spacecraft_data.x_thrust_B = 0.0
+            spacecraft_data.y_thrust_B = 0.0
+            spacecraft_data.torque = 0.0
+        X[:, j] = rk4(planar_flex_function, X[:, j-1], step_size, time[j-1], spacecraft_data)
         if check == 0 and X[3,j] < X[3,j-1]:
             check = 1
         if check ==1 and X[3,j] > X[3,j-1]:
             check = 2
         if check == 2 and X[3,j] < X[3,j-1]:
             check = 3
-            indexFirstPeak = j-1
+            index_first_peak = j-1
         if check == 3 and X[3,j] > X[3,j-1]:
             check = 4
         if check==4 and X[3,j] < X[3,j-1]:
             check = 5
-            indexSecondPeak = j-1
+            index_second_peak = j-1
         if check == 5 and X[3,j] > X[3,j-1]:
             check = 6
         if check==6 and X[3,j] < X[3,j-1]:
             check = 7
-            indexThirdPeak = j-1
+            index_third_peak = j-1
 
     # Find the period
-    T1 = time[indexSecondPeak] - time[indexFirstPeak]
-    T2 = time[indexThirdPeak] - time[indexSecondPeak]
-    freqHz = 1/((T1 + T2)/2)
-    matrixM = numpy.zeros([6,6])
-    matrixM[0,0] = 1.0
-    matrixM[1,1] = spacecraftData.hub.mass + spacecraftData.panel1.mass + spacecraftData.panel2.mass
-    matrixM[2,2] = 1.0
-    matrixM[3,3] = spacecraftData.panel1.Inertia + spacecraftData.panel1.mass*spacecraftData.panel1.d**2
-    matrixM[4,4] = 1.0
-    matrixM[5,5] = spacecraftData.panel2.Inertia + spacecraftData.panel2.mass*spacecraftData.panel2.d**2
+    T1 = time[index_second_peak] - time[index_first_peak]
+    T2 = time[index_third_peak] - time[index_second_peak]
+    freq_hz = 1/((T1 + T2)/2)
+    matrix_m = numpy.zeros([6,6])
+    matrix_m[0,0] = 1.0
+    matrix_m[1,1] = spacecraft_data.hub.mass + spacecraft_data.panel1.mass + spacecraft_data.panel2.mass
+    matrix_m[2,2] = 1.0
+    matrix_m[3,3] = spacecraft_data.panel1.inertia + spacecraft_data.panel1.mass*spacecraft_data.panel1.d**2
+    matrix_m[4,4] = 1.0
+    matrix_m[5,5] = spacecraft_data.panel2.inertia + spacecraft_data.panel2.mass*spacecraft_data.panel2.d**2
     # Define off diagonal terms
-    matrixM[1,3] = spacecraftData.panel1.mass*spacecraftData.panel1.d
-    matrixM[1,5] = spacecraftData.panel2.mass*spacecraftData.panel2.d
-    matrixM[3,1] = spacecraftData.panel1.mass*spacecraftData.panel1.d
-    matrixM[5,1] = spacecraftData.panel2.mass*spacecraftData.panel2.d
+    matrix_m[1,3] = spacecraft_data.panel1.mass*spacecraft_data.panel1.d
+    matrix_m[1,5] = spacecraft_data.panel2.mass*spacecraft_data.panel2.d
+    matrix_m[3,1] = spacecraft_data.panel1.mass*spacecraft_data.panel1.d
+    matrix_m[5,1] = spacecraft_data.panel2.mass*spacecraft_data.panel2.d
     # Define A matrix
-    matrixA = numpy.zeros([6,6])
-    matrixA[0,1] = 1.0
-    matrixA[2,3] = 1.0
-    matrixA[4,5] = 1.0
-    matrixA[3,2] = -spacecraftData.panel1.k
-    matrixA[3,3] = -spacecraftData.panel1.c
-    matrixA[5,4] = -spacecraftData.panel2.k
-    matrixA[5,5] = -spacecraftData.panel2.c
+    matrix_a = numpy.zeros([6,6])
+    matrix_a[0,1] = 1.0
+    matrix_a[2,3] = 1.0
+    matrix_a[4,5] = 1.0
+    matrix_a[3,2] = -spacecraft_data.panel1.k
+    matrix_a[3,3] = -spacecraft_data.panel1.c
+    matrix_a[5,4] = -spacecraft_data.panel2.k
+    matrix_a[5,5] = -spacecraft_data.panel2.c
     # Define Atilde
-    matrixAtilde = numpy.dot(numpy.linalg.inv(matrixM),matrixA)
-    eigenValues = numpy.linalg.eigvals(matrixAtilde)
-    omegaAnalytical = numpy.imag(eigenValues[2])
-    omegaAnalyticalHz = omegaAnalytical/(2*numpy.pi)
-    diffFreq = (freqHz-omegaAnalyticalHz)/omegaAnalyticalHz
+    matrix_a_tilde = numpy.dot(numpy.linalg.inv(matrix_m),matrix_a)
+    eigen_values = numpy.linalg.eigvals(matrix_a_tilde)
+    omega_analytical = numpy.imag(eigen_values[2])
+    omega_analytical_hz = omega_analytical/(2*numpy.pi)
+    diff_freq = (freq_hz-omega_analytical_hz)/omega_analytical_hz
 
-    # Find thetaMax - the max deflection while the force is being applied
-    variablesIn = boxAndWingParameters()
-    variablesIn.k = spacecraftData.panel1.k
-    variablesIn.d = spacecraftData.panel1.d
-    variablesIn.F = force
-    variablesIn.mSC = spacecraftData.hub.mass + spacecraftData.panel1.mass + spacecraftData.panel2.mass
-    variablesIn.mSP = spacecraftData.panel1.mass
-    thetaSSGuess = -0.01
+    # Find theta_max - the max deflection while the force is being applied
+    variables_in = BoxAndWingParameters()
+    variables_in.k = spacecraft_data.panel1.k
+    variables_in.d = spacecraft_data.panel1.d
+    variables_in.F = force
+    variables_in.m_sc = spacecraft_data.hub.mass + spacecraft_data.panel1.mass + spacecraft_data.panel2.mass
+    variables_in.m_sp = spacecraft_data.panel1.mass
+    theta_ss_guess = -0.01
     tolerance = 1e-14
-    thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
-    thetaMax = 2*thetaSS
-    # Pull thetaMax from the sim
-    thetaMaxSim = min(X[3,:])
-    diffThetaMax = abs((thetaMax-thetaMaxSim)/thetaMax)
+    theta_ss = newton_rapshon(box_and_wings_f_and_f_prime,theta_ss_guess,tolerance,variables_in)
+    theta_max = 2*theta_ss
+    # Pull theta_max from the sim
+    theta_max_sim = min(X[3,:])
+    diff_theta_max = abs((theta_max-theta_max_sim)/theta_max)
 
-    # Find energy to find thetaMax2 - the max deflection while the force is not being applied
-    massTotal = spacecraftData.hub.mass + 2.0*spacecraftData.panel1.mass
+    # Find energy to find theta_max2 - the max deflection while the force is not being applied
+    mass_total = spacecraft_data.hub.mass + 2.0*spacecraft_data.panel1.mass
 
-    yHubDotOff = X[6, int(stopTime/2/stepSize)]
-    theta1Off = X[3, int(stopTime/2/stepSize)]
-    theta1OffDot = X[8, int(stopTime/2/stepSize)]
-    Rsp1DotOff = numpy.array([-spacecraftData.panel1.d*theta1OffDot*numpy.sin(theta1Off), yHubDotOff + spacecraftData.panel1.d*theta1OffDot*numpy.cos(theta1Off)])
-    vYCMOff =  1.0/massTotal*(spacecraftData.hub.mass*yHubDotOff + 2*spacecraftData.panel1.mass*Rsp1DotOff[1])
-    EnergyOff = 0.5*spacecraftData.hub.mass*yHubDotOff**2 + 2*(0.5*spacecraftData.panel1.mass*numpy.dot(Rsp1DotOff,Rsp1DotOff) + 0.5*spacecraftData.panel1.Inertia*theta1OffDot**2 + 0.5*spacecraftData.panel1.k*theta1Off**2)
-    EnergyFinalWithoutSpring = 0.5*massTotal*vYCMOff**2
-    EnergyInSpringFinal = EnergyOff - EnergyFinalWithoutSpring
-    thetaMax2 = numpy.sqrt(EnergyInSpringFinal/spacecraftData.panel1.k)
-    # Pull thetaMax2 from the sim
-    thetaMax2Sim = max(X[3,:])
-    diffTheta2Max = abs((thetaMax2-thetaMax2Sim)/thetaMax2)
+    y_hub_dot_off = X[6, int(stop_time/2/step_size)]
+    theta1_off = X[3, int(stop_time/2/step_size)]
+    theta1_off_dot = X[8, int(stop_time/2/step_size)]
+    r_sp1_dot_off = numpy.array([-spacecraft_data.panel1.d*theta1_off_dot*numpy.sin(theta1_off), y_hub_dot_off + spacecraft_data.panel1.d*theta1_off_dot*numpy.cos(theta1_off)])
+    v_ycm_off =  1.0/mass_total*(spacecraft_data.hub.mass*y_hub_dot_off + 2*spacecraft_data.panel1.mass*r_sp1_dot_off[1])
+    energy_off = 0.5*spacecraft_data.hub.mass*y_hub_dot_off**2 + 2*(0.5*spacecraft_data.panel1.mass*numpy.dot(r_sp1_dot_off,r_sp1_dot_off) + 0.5*spacecraft_data.panel1.inertia*theta1_off_dot**2 + 0.5*spacecraft_data.panel1.k*theta1_off**2)
+    energy_final_without_spring = 0.5*mass_total*v_ycm_off**2
+    energy_in_spring_final = energy_off - energy_final_without_spring
+    theta_max2 = numpy.sqrt(energy_in_spring_final/spacecraft_data.panel1.k)
+    # Pull theta_max2 from the sim
+    theta_max2_sim = max(X[3,:])
+    diff_theta2_max = abs((theta_max2-theta_max2_sim)/theta_max2)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Xmera")
-    plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [2*thetaSS, 2*thetaSS],'-g',label = "Theta Max")
-    plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [thetaMax2, thetaMax2],'-k',label = "Theta Max 2")
+    plt.plot(theta1_out[:,0]*1e-9, theta1_out[:,1],'-r',label = "Xmera")
+    plt.plot([theta1_out[0,0]*1e-9, theta1_out[-1,0]*1e-9], [2*theta_ss, 2*theta_ss],'-g',label = "Theta Max")
+    plt.plot([theta1_out[0,0]*1e-9, theta1_out[-1,0]*1e-9], [theta_max2, theta_max2],'-k',label = "Theta Max 2")
     plt.xlabel('time (s)')
     plt.ylabel('theta (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "MaxThetaWhileForcing"
-    PlotTitle = "Max Theta While Forcing"
+    plot_name = "MaxThetaWhileForcing"
+    plot_title = "Max Theta While Forcing"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     # Write Results to tex snippet
-    snippetName = "FrequencyResults"
-    texSnippet =  str(omegaAnalyticalHz) + " & " + str(freqHz) +  " & " + str(diffFreq)
-    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
-    snippetName = "Theta1Results"
-    texSnippet =  str(thetaMax) + " & " + str(thetaMaxSim) +  " & " + str(diffThetaMax)
-    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
-    snippetName = "Theta2Results"
-    texSnippet =  str(thetaMax2) + " & " + str(thetaMax2Sim) +  " & " + str(diffTheta2Max)
-    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+    snippet_name = "FrequencyResults"
+    tex_snippet =  str(omega_analytical_hz) + " & " + str(freq_hz) +  " & " + str(diff_freq)
+    unitTestSupport.writeTeXSnippet(snippet_name, tex_snippet, path)
+    snippet_name = "Theta1Results"
+    tex_snippet =  str(theta_max) + " & " + str(theta_max_sim) +  " & " + str(diff_theta_max)
+    unitTestSupport.writeTeXSnippet(snippet_name, tex_snippet, path)
+    snippet_name = "Theta2Results"
+    tex_snippet =  str(theta_max2) + " & " + str(theta_max2_sim) +  " & " + str(diff_theta2_max)
+    unitTestSupport.writeTeXSnippet(snippet_name, tex_snippet, path)
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     accuracy = 5e-3
-    assert abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) <= accuracy, ("Hinged Rigid Body integrated theta max "
+    assert abs((freq_hz - omega_analytical_hz)/omega_analytical_hz) <= accuracy, ("Hinged Rigid Body integrated theta max "
                                                                              "test failed frequency comparison ")
 
-    assert abs((thetaMax - thetaMaxSim)/thetaMax) <= accuracy, ("Hinged Rigid Body integrated theta max test failed "
+    assert abs((theta_max - theta_max_sim)/theta_max) <= accuracy, ("Hinged Rigid Body integrated theta max test failed "
                                                                 "max comparison ")
 
-    assert abs((thetaMax2 - thetaMax2Sim)/thetaMax2) <= accuracy, ("Hinged Rigid Body integrated theta max test failed "
+    assert abs((theta_max2 - theta_max2_sim)/theta_max2) <= accuracy, ("Hinged Rigid Body integrated theta max test failed "
                                                                    "max 2 comparison ")
 
 
-def test_hingedRigidBodyMotorTorque(show_plots):
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
-    scObject.spacecraftName = scObject.modelTag
+def test_hinged_rigid_body_motor_torque(show_plots):
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
+    sc_object.spacecraftName = sc_object.modelTag
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.01)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 0.0
-    unitTestSim.panel1.c = 0.0
-    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel1.thetaInit = 0 * numpy.pi / 180.0
-    unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.modelTag = "panel1"
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 0.0
+    unit_test_sim.panel1.c = 0.0
+    unit_test_sim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel1.thetaInit = 0 * numpy.pi / 180.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.modelTag = "panel1"
 
     # set a fixed motor torque message
-    motorMsgData = messaging.ArrayMotorTorqueMsgPayload()
-    motorMsgData.motorTorque = [2.0]
-    motorMsg = messaging.ArrayMotorTorqueMsg().write(motorMsgData)
-    unitTestSim.panel1.motorTorqueInMsg.subscribeTo(motorMsg)
+    motor_msg_data = messaging.ArrayMotorTorqueMsgPayload()
+    motor_msg_data.motorTorque = [2.0]
+    motor_msg = messaging.ArrayMotorTorqueMsg().write(motor_msg_data)
+    unit_test_sim.panel1.motorTorqueInMsg.subscribeTo(motor_msg)
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 0.0
-    unitTestSim.panel2.c = 0.0
-    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.panel2.thetaInit = 0.0 * macros.D2R
-    unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.modelTag = "panel2"
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 0.0
+    unit_test_sim.panel2.c = 0.0
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unit_test_sim.panel2.thetaInit = 0.0 * macros.D2R
+    unit_test_sim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.modelTag = "panel2"
 
     # Add panels to spaceCraft
-    scObjectPrimary = scObject
+    sc_object_primary = sc_object
 
-    scObjectPrimary.addStateEffector(unitTestSim.panel1)
-    scObjectPrimary.addStateEffector(unitTestSim.panel2)
+    sc_object_primary.addStateEffector(unit_test_sim.panel1)
+    sc_object_primary.addStateEffector(unit_test_sim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObjectPrimary.hub.mHub = 750.0
-    scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object_primary.hub.mHub = 750.0
+    sc_object_primary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    sc_object_primary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    sc_object_primary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object_primary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object_primary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object_primary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
-    scStateMsg = scObject.scStateOutMsg
-    dataLog = scStateMsg.recorder()
-    dataPanel1 = unitTestSim.panel1.hingedRigidBodyOutMsg.recorder()
-    dataPanel2 = unitTestSim.panel2.hingedRigidBodyOutMsg.recorder()
-    dataPanel1Log = unitTestSim.panel1.hingedRigidBodyConfigLogOutMsg.recorder()
-    dataPanel2Log = unitTestSim.panel2.hingedRigidBodyConfigLogOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
-    unitTestSim.AddModelToTask(unitTaskName, dataPanel1)
-    unitTestSim.AddModelToTask(unitTaskName, dataPanel2)
-    unitTestSim.AddModelToTask(unitTaskName, dataPanel1Log)
-    unitTestSim.AddModelToTask(unitTaskName, dataPanel2Log)
+    sc_state_msg = sc_object.scStateOutMsg
+    data_log = sc_state_msg.recorder()
+    data_panel1 = unit_test_sim.panel1.hingedRigidBodyOutMsg.recorder()
+    data_panel2 = unit_test_sim.panel2.hingedRigidBodyOutMsg.recorder()
+    data_panel1_log = unit_test_sim.panel1.hingedRigidBodyConfigLogOutMsg.recorder()
+    data_panel2_log = unit_test_sim.panel2.hingedRigidBodyConfigLogOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
+    unit_test_sim.AddModelToTask(unit_task_name, data_panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, data_panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, data_panel1_log)
+    unit_test_sim.AddModelToTask(unit_task_name, data_panel2_log)
 
-    scLog = scObject.logger("totRotAngMomPntC_N")
-    unitTestSim.AddModelToTask(unitTaskName, scLog)
+    sc_log = sc_object.logger("totRotAngMomPntC_N")
+    unit_test_sim.AddModelToTask(unit_task_name, sc_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
-    stopTime = 10.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    stop_time = 10.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    rOut_CN_N = dataLog.r_CN_N
-    vOut_CN_N = dataLog.v_CN_N
-    sigma_BN = dataLog.sigma_BN
-    theta1 = dataPanel1.theta
-    theta2 = dataPanel2.theta
+    r_out_CN_N = data_log.r_CN_N
+    v_out_CN_N = data_log.v_CN_N
+    sigma_BN = data_log.sigma_BN
+    theta1 = data_panel1.theta
+    theta2 = data_panel2.theta
 
-    rB1N = dataPanel1Log.r_BN_N[0]
-    vB1N = dataPanel1Log.v_BN_N[0]
-    sB1N = dataPanel1Log.sigma_BN[0]
-    oB1N = dataPanel1Log.omega_BN_B[0]
-    rB2N = dataPanel2Log.r_BN_N[0]
-    vB2N = dataPanel2Log.v_BN_N[0]
-    sB2N = dataPanel2Log.sigma_BN[0]
-    oB2N = dataPanel2Log.omega_BN_B[0]
+    r_B1N = data_panel1_log.r_BN_N[0]
+    v_B1N = data_panel1_log.v_BN_N[0]
+    s_B1N = data_panel1_log.sigma_BN[0]
+    o_B1N = data_panel1_log.omega_BN_B[0]
+    r_B2N = data_panel2_log.r_BN_N[0]
+    v_B2N = data_panel2_log.v_BN_N[0]
+    s_B2N = data_panel2_log.sigma_BN[0]
+    o_B2N = data_panel2_log.omega_BN_B[0]
 
-    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    rot_ang_mom_N = unitTestSupport.addTimeColumn(sc_log.times(), sc_log.totRotAngMomPntC_N)
 
     # Get the last sigma and position
-    dataPos = [rOut_CN_N[-1]]
+    data_pos = [r_out_CN_N[-1]]
 
-    truePos = [[0., 0., 0.]]
+    true_pos = [[0., 0., 0.]]
 
-    initialRotAngMom_N = [[rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]]
+    initial_rot_ang_mom_N = [[rot_ang_mom_N[0, 1], rot_ang_mom_N[0, 2], rot_ang_mom_N[0, 3]]]
 
-    finalRotAngMom = [rotAngMom_N[-1]]
+    final_rot_ang_mom = [rot_ang_mom_N[-1]]
 
     plt.close("all")
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]) ,
-             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) ,
-             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) )
+    plt.plot(rot_ang_mom_N[:, 0] * 1e-9, (rot_ang_mom_N[:, 1] - rot_ang_mom_N[0, 1]) ,
+             rot_ang_mom_N[:, 0] * 1e-9, (rot_ang_mom_N[:, 2] - rot_ang_mom_N[0, 2]) ,
+             rot_ang_mom_N[:, 0] * 1e-9, (rot_ang_mom_N[:, 3] - rot_ang_mom_N[0, 3]) )
     plt.xlabel('time (s)')
     plt.ylabel('Ang. Momentum Difference')
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times() * 1e-9, vOut_CN_N[:, 0],
-             dataLog.times() * 1e-9, vOut_CN_N[:, 1],
-             dataLog.times() * 1e-9, vOut_CN_N[:, 2])
+    plt.plot(data_log.times() * 1e-9, v_out_CN_N[:, 0],
+             data_log.times() * 1e-9, v_out_CN_N[:, 1],
+             data_log.times() * 1e-9, v_out_CN_N[:, 2])
     plt.xlabel('time (s)')
     plt.ylabel('m/s')
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 0],
+    plt.plot(data_log.times() * macros.NANO2SEC, sigma_BN[:, 0],
              color=unitTestSupport.getLineColor(0, 3),
              label=r'$\sigma_{1}$')
-    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 1],
+    plt.plot(data_log.times() * macros.NANO2SEC, sigma_BN[:, 1],
              color=unitTestSupport.getLineColor(1, 3),
              label=r'$\sigma_{2}$')
-    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 2],
+    plt.plot(data_log.times() * macros.NANO2SEC, sigma_BN[:, 2],
              color=unitTestSupport.getLineColor(2, 3),
              label=r'$\sigma_{3}$')
     plt.legend(loc='lower right')
@@ -1221,10 +1288,10 @@ def test_hingedRigidBodyMotorTorque(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(dataPanel1.times() * macros.NANO2SEC, theta1*macros.R2D,
+    plt.plot(data_panel1.times() * macros.NANO2SEC, theta1*macros.R2D,
              color=unitTestSupport.getLineColor(0, 3),
              label=r'$\theta_{1}$')
-    plt.plot(dataPanel2.times() * macros.NANO2SEC, theta2*macros.R2D,
+    plt.plot(data_panel2.times() * macros.NANO2SEC, theta2*macros.R2D,
              color=unitTestSupport.getLineColor(1, 3),
              label=r'$\theta_{2}$')
     plt.legend(loc='lower right')
@@ -1236,350 +1303,350 @@ def test_hingedRigidBodyMotorTorque(show_plots):
     plt.close("all")
 
     accuracy = 1e-10
-    numpy.testing.assert_allclose(numpy.array(dataPos),
-                                  numpy.array(truePos),
+    numpy.testing.assert_allclose(numpy.array(data_pos),
+                                  numpy.array(true_pos),
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed position test")
 
-    finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
-    numpy.testing.assert_allclose(numpy.array(finalRotAngMom),
-                                  numpy.array(initialRotAngMom_N),
+    final_rot_ang_mom = numpy.delete(final_rot_ang_mom, 0, axis=1)  # remove time column
+    numpy.testing.assert_allclose(numpy.array(final_rot_ang_mom),
+                                  numpy.array(initial_rot_ang_mom_N),
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed rotational angular momentum unit test")
 
     # check config log messages
-    numpy.testing.assert_allclose(rB1N,
+    numpy.testing.assert_allclose(r_B1N,
                                   [2.0, 0, 0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
 
-    numpy.testing.assert_allclose(vB1N,
+    numpy.testing.assert_allclose(v_B1N,
                                   [0.0, 0, 0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
 
-    numpy.testing.assert_allclose(sB1N,
+    numpy.testing.assert_allclose(s_B1N,
                                   [0.0, 0, 1.0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
 
-    numpy.testing.assert_allclose(oB1N,
+    numpy.testing.assert_allclose(o_B1N,
                                   [0.0, 0, 0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
 
-    numpy.testing.assert_allclose(rB2N,
+    numpy.testing.assert_allclose(r_B2N,
                                   [-2.0, 0, 0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
 
-    numpy.testing.assert_allclose(vB2N,
+    numpy.testing.assert_allclose(v_B2N,
                                   [0.0, 0, 0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
 
-    numpy.testing.assert_allclose(sB2N,
+    numpy.testing.assert_allclose(s_B2N,
                                   [0.0, 0, 0.0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
 
-    numpy.testing.assert_allclose(oB2N,
+    numpy.testing.assert_allclose(o_B2N,
                                   [0.0, 0, 0],
                                   atol=accuracy,
                                   err_msg="Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
 
 
-def test_hingedRigidBodyLagrangVsXmera(show_plots):
-    scObject = spacecraft.Spacecraft()
-    scObject.modelTag = "spacecraftBody"
+def test_hinged_rigid_body_lagrang_vs_xmera(show_plots):
+    sc_object = spacecraft.Spacecraft()
+    sc_object.modelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    stepSize = 0.1
-    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    step_size = 0.1
+    test_process_rate = macros.sec2nano(step_size)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.mass = 100.0
-    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 5000.0
-    unitTestSim.panel1.c = 75
-    unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel1.thetaInit = 0.0
-    unitTestSim.panel1.thetaDotInit = 0.0
+    unit_test_sim.panel1.mass = 100.0
+    unit_test_sim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel1.d = 1.5
+    unit_test_sim.panel1.k = 5000.0
+    unit_test_sim.panel1.c = 75
+    unit_test_sim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
+    unit_test_sim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+    unit_test_sim.panel1.thetaInit = 0.0
+    unit_test_sim.panel1.thetaDotInit = 0.0
 
     # Define Variables for panel 2
-    unitTestSim.panel2.mass = 100.0
-    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 5000.0
-    unitTestSim.panel2.c = 75
-    unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
+    unit_test_sim.panel2.mass = 100.0
+    unit_test_sim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unit_test_sim.panel2.d = 1.5
+    unit_test_sim.panel2.k = 5000.0
+    unit_test_sim.panel2.c = 75
+    unit_test_sim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
+    unit_test_sim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
+    unit_test_sim.panel2.thetaInit = 0.0
+    unit_test_sim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    sc_object.addStateEffector(unit_test_sim.panel1)
+    sc_object.addStateEffector(unit_test_sim.panel2)
 
     # Define force and torque
-    momentArm1_B = numpy.array([0.05, 0.0, 0.0])
+    moment_arm1_B = numpy.array([0.05, 0.0, 0.0])
     force1_B = numpy.array([0.2, 0.7, 0.0])
-    torque1_B = numpy.cross(momentArm1_B,force1_B)
-    momentArm2_B = numpy.array([-0.03, 0.0, 0.0])
+    torque1_B = numpy.cross(moment_arm1_B,force1_B)
+    moment_arm2_B = numpy.array([-0.03, 0.0, 0.0])
     force2_B = numpy.array([0.0, 1.0, 0.0])
-    torque2_B = numpy.cross(momentArm2_B,force2_B)
+    torque2_B = numpy.cross(moment_arm2_B,force2_B)
 
     # Add external force and torque
-    extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.modelTag = "externalDisturbance"
-    extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
-    extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]
-    scObject.addDynamicEffector(extFTObject)
-    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+    ext_ft_object = extForceTorque.ExtForceTorque()
+    ext_ft_object.modelTag = "externalDisturbance"
+    ext_ft_object.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
+    ext_ft_object.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]
+    sc_object.addDynamicEffector(ext_ft_object)
+    unit_test_sim.AddModelToTask(unit_task_name, ext_ft_object)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    sc_object.hub.mHub = 750.0
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
+    unit_test_sim.AddModelToTask(unit_task_name, sc_object)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel1)
+    unit_test_sim.AddModelToTask(unit_task_name, unit_test_sim.panel2)
 
-    dataLog = scObject.scStateOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = sc_object.scStateOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
-    stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
+    state_log = pythonVariableLogger.PythonVariableLogger({
+        "theta1": lambda _: sc_object.dynManager.getStateObject(unit_test_sim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: sc_object.dynManager.getStateObject(unit_test_sim.panel2.nameOfThetaState).getState(),
     })
-    unitTestSim.AddModelToTask(unitTaskName, stateLog)
+    unit_test_sim.AddModelToTask(unit_task_name, state_log)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
     # Define times that the new forces will be applies
-    force1OffTime = 5.0
-    force2OnTime = 11.0
-    force2OffTime = 18.0
-    stopTime = 20.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(force1OffTime))
-    unitTestSim.ExecuteSimulation()
+    force1_off_time = 5.0
+    force2_on_time = 11.0
+    force2_off_time = 18.0
+    stop_time = 20.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(force1_off_time))
+    unit_test_sim.ExecuteSimulation()
 
     # Turn force1 off
-    extFTObject.extForce_B = [[0.0], [0.0], [0.0]]
-    extFTObject.extTorquePntB_B = [[0.0], [0.0], [0.0]]
+    ext_ft_object.extForce_B = [[0.0], [0.0], [0.0]]
+    ext_ft_object.extTorquePntB_B = [[0.0], [0.0], [0.0]]
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(force2OnTime))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(force2_on_time))
+    unit_test_sim.ExecuteSimulation()
 
     # Turn force2 on
-    extFTObject.extForce_B = [[force2_B[0]], [force2_B[1]], [force2_B[2]]]
-    extFTObject.extTorquePntB_B = [[torque2_B[0]], [torque2_B[1]], [torque2_B[2]]]
+    ext_ft_object.extForce_B = [[force2_B[0]], [force2_B[1]], [force2_B[2]]]
+    ext_ft_object.extTorquePntB_B = [[torque2_B[0]], [torque2_B[1]], [torque2_B[2]]]
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(force2OffTime))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(force2_off_time))
+    unit_test_sim.ExecuteSimulation()
 
     # Turn force2 off and finish sim
-    extFTObject.extForce_B = [[0.0], [0.0], [0.0]]
-    extFTObject.extTorquePntB_B = [[0.0], [0.0], [0.0]]
+    ext_ft_object.extForce_B = [[0.0], [0.0], [0.0]]
+    ext_ft_object.extTorquePntB_B = [[0.0], [0.0], [0.0]]
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(stop_time))
+    unit_test_sim.ExecuteSimulation()
 
-    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
-    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
+    theta1_out = unitTestSupport.addTimeColumn(state_log.times(), state_log.theta1)
+    theta2_out = unitTestSupport.addTimeColumn(state_log.times(), state_log.theta2)
 
-    rOut_BN_N = dataLog.r_BN_N
-    sigmaOut_BN = dataLog.sigma_BN
-    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
+    r_out_BN_N = data_log.r_BN_N
+    sigma_out_BN = data_log.sigma_BN
+    theta_out = 4.0*numpy.arctan(sigma_out_BN[:,2])
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraftData = SpacecraftClass()
-    spacecraftData.hub.mass = scObject.hub.mHub
-    spacecraftData.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    spacecraft_data = SpacecraftClass()
+    spacecraft_data.hub.mass = sc_object.hub.mHub
+    spacecraft_data.hub.inertia = sc_object.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraftData.panel1.mass = unitTestSim.panel1.mass
-    spacecraftData.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraftData.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraftData.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraftData.panel1.thetaH = 0.0
-    spacecraftData.panel1.d = unitTestSim.panel1.d
-    spacecraftData.panel1.k = unitTestSim.panel1.k
-    spacecraftData.panel1.c = unitTestSim.panel1.c
+    spacecraft_data.panel1.mass = unit_test_sim.panel1.mass
+    spacecraft_data.panel1.inertia = unit_test_sim.panel1.IPntS_S[1][1]
+    spacecraft_data.panel1.r_hinge = numpy.linalg.norm(numpy.asarray(unit_test_sim.panel1.r_HB_B))
+    spacecraft_data.panel1.beta = numpy.arctan2(unit_test_sim.panel1.r_HB_B[1][0],unit_test_sim.panel1.r_HB_B[0][0])
+    spacecraft_data.panel1.theta_h = 0.0
+    spacecraft_data.panel1.d = unit_test_sim.panel1.d
+    spacecraft_data.panel1.k = unit_test_sim.panel1.k
+    spacecraft_data.panel1.c = unit_test_sim.panel1.c
     # Define variables for panel2
-    spacecraftData.panel2.mass = unitTestSim.panel2.mass
-    spacecraftData.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraftData.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraftData.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraftData.panel2.thetaH = numpy.pi
-    spacecraftData.panel2.d = unitTestSim.panel2.d
-    spacecraftData.panel2.k = unitTestSim.panel2.k
-    spacecraftData.panel2.c = unitTestSim.panel2.c
+    spacecraft_data.panel2.mass = unit_test_sim.panel2.mass
+    spacecraft_data.panel2.inertia = unit_test_sim.panel2.IPntS_S[1][1]
+    spacecraft_data.panel2.r_hinge = numpy.linalg.norm(numpy.asarray(unit_test_sim.panel2.r_HB_B))
+    spacecraft_data.panel2.beta = numpy.arctan2(unit_test_sim.panel2.r_HB_B[1][0],unit_test_sim.panel2.r_HB_B[0][0])
+    spacecraft_data.panel2.theta_h = numpy.pi
+    spacecraft_data.panel2.d = unit_test_sim.panel2.d
+    spacecraft_data.panel2.k = unit_test_sim.panel2.k
+    spacecraft_data.panel2.c = unit_test_sim.panel2.c
 
     # Define initial conditions of the sim
-    time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
+    time = numpy.arange(0.0,stop_time + step_size,step_size).flatten()
     x0 = numpy.zeros(10)
-    x0[3] = unitTestSim.panel1.thetaInit
-    x0[4] = -unitTestSim.panel2.thetaInit
+    x0[3] = unit_test_sim.panel1.thetaInit
+    x0[4] = -unit_test_sim.panel2.thetaInit
 
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
-        if time[j-1] < force1OffTime:
-            spacecraftData.xThrust_B = force1_B[0]
-            spacecraftData.yThrust_B = force1_B[1]
-            spacecraftData.Torque = torque1_B[2]
-        elif time[j-1] >= force2OnTime and time[j-1] < force2OffTime:
-            spacecraftData.xThrust_B = force2_B[0]
-            spacecraftData.yThrust_B = force2_B[1]
-            spacecraftData.Torque = torque2_B[2]
+        if time[j-1] < force1_off_time:
+            spacecraft_data.x_thrust_B = force1_B[0]
+            spacecraft_data.y_thrust_B = force1_B[1]
+            spacecraft_data.torque = torque1_B[2]
+        elif time[j-1] >= force2_on_time and time[j-1] < force2_off_time:
+            spacecraft_data.x_thrust_B = force2_B[0]
+            spacecraft_data.y_thrust_B = force2_B[1]
+            spacecraft_data.torque = torque2_B[2]
         else:
-            spacecraftData.xThrust_B = 0.0
-            spacecraftData.yThrust_B = 0.0
-            spacecraftData.Torque = 0.0
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraftData)
+            spacecraft_data.x_thrust_B = 0.0
+            spacecraft_data.y_thrust_B = 0.0
+            spacecraft_data.torque = 0.0
+        X[:, j] = rk4(planar_flex_function, X[:, j-1], step_size, time[j-1], spacecraft_data)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[:,0]),'-r',label = "Xmera")
+    plt.plot(data_log.times()*1e-9, (r_out_BN_N[:,0]-r_out_BN_N[:,0]),'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('x position (m)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "XPositionLagrangianVsXmera"
-    PlotTitle = "X Position Lagrangian Vs Xmera"
+    plot_name = "XPositionLagrangianVsXmera"
+    plot_title = "X Position Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[1,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[:,1]),'r',label = "Xmera")
+    plt.plot(data_log.times()*1e-9, (r_out_BN_N[:,1]-r_out_BN_N[:,1]),'r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('y position (m)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "YPositionLagrangianVsXmera"
-    PlotTitle = "Y Position Lagrangian Vs Xmera"
+    plot_name = "YPositionLagrangianVsXmera"
+    plot_title = "Y Position Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[2,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, thetaOut,'-r',label = "Xmera")
+    plt.plot(data_log.times()*1e-9, theta_out,'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[2,25], X[2,75], X[2,125], X[2,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "ThetaLagrangianVsXmera"
-    PlotTitle = "Theta Lagrangian Vs Xmera"
+    plot_name = "ThetaLagrangianVsXmera"
+    plot_title = "Theta Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Xmera")
+    plt.plot(theta1_out[:,0]*1e-9, theta1_out[:,1],'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[3,25], X[3,75], X[3,125], X[3,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta 1 (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "Theta1LagrangianVsXmera"
-    PlotTitle = "Theta 1 Position Lagrangian Vs Xmera"
+    plot_name = "Theta1LagrangianVsXmera"
+    plot_title = "Theta 1 Position Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
-    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Xmera")
+    plt.plot(theta2_out[:,0]*1e-9, theta2_out[:,1],'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [-X[4,25], -X[4,75], -X[4,125], -X[4,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta 2 (rad)')
     plt.legend(loc ='lower left',numpoints = 1)
-    PlotName = "Theta2LagrangianVsXmera"
-    PlotTitle = "Theta 2 Lagrangian Vs Xmera"
+    plot_name = "Theta2LagrangianVsXmera"
+    plot_title = "Theta 2 Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    unitTestSupport.writeFigureLaTeX(plot_name, plot_title, plt, format, path)
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     accuracy = 1e-10
-    timeList = [25, 75, 125, 175]
+    time_list = [25, 75, 125, 175]
 
-    for i in timeList:
-        assert abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])) <= accuracy, ("Hinged Rigid Body integrated test "
+    for i in time_list:
+        assert abs(X[0,i] - (r_out_BN_N[i,0]-r_out_BN_N[0,0])) <= accuracy, ("Hinged Rigid Body integrated test "
                                                                           "Lagrangian vs. Xmera failed x position "
                                                                           "comparison ")
-        assert abs(X[1,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) <= accuracy, ("Hinged Rigid Body integrated test "
+        assert abs(X[1,i] - (r_out_BN_N[i,1]-r_out_BN_N[0,1])) <= accuracy, ("Hinged Rigid Body integrated test "
                                                                           "Lagrangian vs. Xmera failed y position "
                                                                           "comparison ")
-        assert abs(X[2,i] - thetaOut[i]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera failed "
+        assert abs(X[2,i] - theta_out[i]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera failed "
                                                       "theta comparison ")
-        assert abs(X[3,i] - theta1Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera "
+        assert abs(X[3,i] - theta1_out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera "
                                                          "failed theta 1 comparison ")
-        assert abs(-X[4,i] - theta2Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera "
+        assert abs(-X[4,i] - theta2_out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera "
                                                           "failed theta 2 comparison ")
 
 
-def planarFlexFunction(x, t, variables):
+def planar_flex_function(x, t, variables):
     theta = x[2]
     theta1 = x[3]
     theta2 = x[4]
-    xHubDot = x[5]
-    yHubDot = x[6]
-    thetaDot = x[7]
-    theta1Dot = x[8]
-    theta2Dot = x[9]
+    x_hub_dot = x[5]
+    y_hub_dot = x[6]
+    theta_dot = x[7]
+    theta1_dot = x[8]
+    theta2_dot = x[9]
     # Define variables for hub
-    mHub = variables.hub.mass
-    IHub = variables.hub.Inertia
+    m_hub = variables.hub.mass
+    IHub = variables.hub.inertia
     # Define variables for panel1
-    mSP1 = variables.panel1.mass
-    ISP1 = variables.panel1.Inertia
-    Rhinge1 = variables.panel1.Rhinge
+    m_sp1 = variables.panel1.mass
+    ISP1 = variables.panel1.inertia
+    r_hinge1 = variables.panel1.r_hinge
     beta1 = variables.panel1.beta
-    thetaH1 = variables.panel1.thetaH
+    theta_h1 = variables.panel1.theta_h
     d1 = variables.panel1.d
     k1 = variables.panel1.k
     c1 = variables.panel1.c
     # Define variables for panel2
-    mSP2 = variables.panel2.mass
-    ISP2 = variables.panel2.Inertia
-    Rhinge2 = variables.panel2.Rhinge
+    m_sp2 = variables.panel2.mass
+    ISP2 = variables.panel2.inertia
+    r_hinge2 = variables.panel2.r_hinge
     beta2 = variables.panel2.beta
-    thetaH2 = variables.panel2.thetaH
+    theta_h2 = variables.panel2.theta_h
     d2 = variables.panel2.d
     k2 = variables.panel2.k
     c2 = variables.panel2.c
-    Tx_B = variables.xThrust_B
-    Ty_B = variables.yThrust_B
-    Torque = variables.Torque
+    Tx_B = variables.x_thrust_B
+    Ty_B = variables.y_thrust_B
+    torque = variables.torque
 
     # Convert Tx_B and Ty_B to the inertial frame
     dcm_BN = numpy.array([[numpy.cos(theta), numpy.sin(theta)],
@@ -1588,63 +1655,63 @@ def planarFlexFunction(x, t, variables):
     Tx = Thrust_N[0,0]
     Ty = Thrust_N[1,0]
 
-    matrixA = numpy.zeros((5,5))
-    vectorB = numpy.zeros(5)
+    matrix_a = numpy.zeros((5,5))
+    vector_b = numpy.zeros(5)
     # Populate X Translation Equation
-    matrixA[0,0] = 1.0
-    matrixA[0,1] = 0.0
-    matrixA[0,2] = -1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.sin(beta1 + theta) + mSP2*Rhinge2*numpy.sin(beta2 + theta) + d1*mSP1*numpy.sin(thetaH1 + theta + theta1) + d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    matrixA[0,3] = -1/(mHub + mSP1 + mSP2)*(d1*mSP1*numpy.sin(thetaH1 + theta + theta1))
-    matrixA[0,4] = -1/(mHub + mSP1 + mSP2)*(d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    vectorB[0] = 1/(mHub + mSP1 + mSP2)*(Tx + mSP1*Rhinge1*numpy.cos(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.cos(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*thetaDot**2 + d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*thetaDot**2
-               + 2*d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*theta1Dot**2 + 2*d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*thetaDot*theta2Dot
-               + d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*theta2Dot**2)
+    matrix_a[0,0] = 1.0
+    matrix_a[0,1] = 0.0
+    matrix_a[0,2] = -1/(m_hub + m_sp1 + m_sp2)*(m_sp1*r_hinge1*numpy.sin(beta1 + theta) + m_sp2*r_hinge2*numpy.sin(beta2 + theta) + d1*m_sp1*numpy.sin(theta_h1 + theta + theta1) + d2*m_sp2*numpy.sin(theta_h2 + theta + theta2))
+    matrix_a[0,3] = -1/(m_hub + m_sp1 + m_sp2)*(d1*m_sp1*numpy.sin(theta_h1 + theta + theta1))
+    matrix_a[0,4] = -1/(m_hub + m_sp1 + m_sp2)*(d2*m_sp2*numpy.sin(theta_h2 + theta + theta2))
+    vector_b[0] = 1/(m_hub + m_sp1 + m_sp2)*(Tx + m_sp1*r_hinge1*numpy.cos(beta1 + theta)*theta_dot**2 + m_sp2*r_hinge2*numpy.cos(beta2 + theta)*theta_dot**2 + d1*m_sp1*numpy.cos(theta_h1 + theta + theta1)*theta_dot**2 + d2*m_sp2*numpy.cos(theta_h2 + theta + theta2)*theta_dot**2
+               + 2*d1*m_sp1*numpy.cos(theta_h1 + theta + theta1)*theta_dot*theta1_dot + d1*m_sp1*numpy.cos(theta_h1 + theta + theta1)*theta1_dot**2 + 2*d2*m_sp2*numpy.cos(theta_h2 + theta + theta2)*theta_dot*theta2_dot
+               + d2*m_sp2*numpy.cos(theta_h2 + theta + theta2)*theta2_dot**2)
     # Populate Y Translation Equation
-    matrixA[1,0] = 0.0
-    matrixA[1,1] = 1.0
-    matrixA[1,2] = 1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.cos(beta1 + theta) + mSP2*Rhinge2*numpy.cos(beta2 + theta) + d1*mSP1*numpy.cos(thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    matrixA[1,3] = 1/(mHub + mSP1 + mSP2)*(d1*mSP1*numpy.cos(thetaH1 + theta + theta1))
-    matrixA[1,4] = 1/(mHub + mSP1 + mSP2)*(d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    vectorB[1] = 1/(mHub + mSP1 + mSP2)*(Ty + mSP1*Rhinge1*numpy.sin(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.sin(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*thetaDot**2 + d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*thetaDot**2
-               + 2*d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*theta1Dot**2 + 2*d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*thetaDot*theta2Dot
-               + d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*theta2Dot**2)
+    matrix_a[1,0] = 0.0
+    matrix_a[1,1] = 1.0
+    matrix_a[1,2] = 1/(m_hub + m_sp1 + m_sp2)*(m_sp1*r_hinge1*numpy.cos(beta1 + theta) + m_sp2*r_hinge2*numpy.cos(beta2 + theta) + d1*m_sp1*numpy.cos(theta_h1 + theta + theta1) + d2*m_sp2*numpy.cos(theta_h2 + theta + theta2))
+    matrix_a[1,3] = 1/(m_hub + m_sp1 + m_sp2)*(d1*m_sp1*numpy.cos(theta_h1 + theta + theta1))
+    matrix_a[1,4] = 1/(m_hub + m_sp1 + m_sp2)*(d2*m_sp2*numpy.cos(theta_h2 + theta + theta2))
+    vector_b[1] = 1/(m_hub + m_sp1 + m_sp2)*(Ty + m_sp1*r_hinge1*numpy.sin(beta1 + theta)*theta_dot**2 + m_sp2*r_hinge2*numpy.sin(beta2 + theta)*theta_dot**2 + d1*m_sp1*numpy.sin(theta_h1 + theta + theta1)*theta_dot**2 + d2*m_sp2*numpy.sin(theta_h2 + theta + theta2)*theta_dot**2
+               + 2*d1*m_sp1*numpy.sin(theta_h1 + theta + theta1)*theta_dot*theta1_dot + d1*m_sp1*numpy.sin(theta_h1 + theta + theta1)*theta1_dot**2 + 2*d2*m_sp2*numpy.sin(theta_h2 + theta + theta2)*theta_dot*theta2_dot
+               + d2*m_sp2*numpy.sin(theta_h2 + theta + theta2)*theta2_dot**2)
     # Populate theta Equation
-    matrixA[2,0] = -1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(mSP1*Rhinge1*numpy.sin(beta1 + theta)
-                 + mSP2*Rhinge2*numpy.sin(beta2 + theta) + d1*mSP1*numpy.sin(thetaH1 + theta + theta1) + d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    matrixA[2,1] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(mSP1*Rhinge1*numpy.cos(beta1 + theta)
-                 + mSP2*Rhinge2*numpy.cos(beta2 + theta) + d1*mSP1*numpy.cos(thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    matrixA[2,2] = 1.0
-    matrixA[2,3] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(ISP1
-                 + d1**2*mSP1 + d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1))
-    matrixA[2,4] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(ISP2
-                 + d2**2*mSP2 + d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))
-    vectorB[2] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(Torque
-              - 2*d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*thetaDot*theta1Dot - d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*theta1Dot**2
-              - 2*d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*thetaDot*theta2Dot - d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*theta2Dot**2)
+    matrix_a[2,0] = -1/(IHub + ISP1 + ISP2 + d1**2*m_sp1 + d2**2*m_sp2 + m_sp1*r_hinge1**2 + m_sp2*r_hinge2**2 + 2*d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1) + 2*d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))*(m_sp1*r_hinge1*numpy.sin(beta1 + theta)
+                 + m_sp2*r_hinge2*numpy.sin(beta2 + theta) + d1*m_sp1*numpy.sin(theta_h1 + theta + theta1) + d2*m_sp2*numpy.sin(theta_h2 + theta + theta2))
+    matrix_a[2,1] = 1/(IHub + ISP1 + ISP2 + d1**2*m_sp1 + d2**2*m_sp2 + m_sp1*r_hinge1**2 + m_sp2*r_hinge2**2 + 2*d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1) + 2*d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))*(m_sp1*r_hinge1*numpy.cos(beta1 + theta)
+                 + m_sp2*r_hinge2*numpy.cos(beta2 + theta) + d1*m_sp1*numpy.cos(theta_h1 + theta + theta1) + d2*m_sp2*numpy.cos(theta_h2 + theta + theta2))
+    matrix_a[2,2] = 1.0
+    matrix_a[2,3] = 1/(IHub + ISP1 + ISP2 + d1**2*m_sp1 + d2**2*m_sp2 + m_sp1*r_hinge1**2 + m_sp2*r_hinge2**2 + 2*d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1) + 2*d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))*(ISP1
+                 + d1**2*m_sp1 + d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1))
+    matrix_a[2,4] = 1/(IHub + ISP1 + ISP2 + d1**2*m_sp1 + d2**2*m_sp2 + m_sp1*r_hinge1**2 + m_sp2*r_hinge2**2 + 2*d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1) + 2*d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))*(ISP2
+                 + d2**2*m_sp2 + d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))
+    vector_b[2] = 1/(IHub + ISP1 + ISP2 + d1**2*m_sp1 + d2**2*m_sp2 + m_sp1*r_hinge1**2 + m_sp2*r_hinge2**2 + 2*d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1) + 2*d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))*(torque
+              - 2*d1*m_sp1*r_hinge1*numpy.sin(beta1 - theta_h1 - theta1)*theta_dot*theta1_dot - d1*m_sp1*r_hinge1*numpy.sin(beta1 - theta_h1 - theta1)*theta1_dot**2
+              - 2*d2*m_sp2*r_hinge2*numpy.sin(beta2 - theta_h2 - theta2)*theta_dot*theta2_dot - d2*m_sp2*r_hinge2*numpy.sin(beta2 - theta_h2 - theta2)*theta2_dot**2)
     # Populate theta1 Equation
-    matrixA[3,0] = -1/(ISP1 + d1**2*mSP1)*(d1*mSP1*numpy.sin(thetaH1 + theta + theta1))
-    matrixA[3,1] = 1/(ISP1 + d1**2*mSP1)*(d1*mSP1*numpy.cos(thetaH1 + theta + theta1))
-    matrixA[3,2] = 1/(ISP1 + d1**2*mSP1)*(ISP1 + d1**2*mSP1 + d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1))
-    matrixA[3,3] = 1.0
-    matrixA[3,4] = 0.0
-    vectorB[3] = 1/(ISP1 + d1**2*mSP1)*(-k1*theta1 + d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*thetaDot**2 - c1*theta1Dot)
+    matrix_a[3,0] = -1/(ISP1 + d1**2*m_sp1)*(d1*m_sp1*numpy.sin(theta_h1 + theta + theta1))
+    matrix_a[3,1] = 1/(ISP1 + d1**2*m_sp1)*(d1*m_sp1*numpy.cos(theta_h1 + theta + theta1))
+    matrix_a[3,2] = 1/(ISP1 + d1**2*m_sp1)*(ISP1 + d1**2*m_sp1 + d1*m_sp1*r_hinge1*numpy.cos(beta1 - theta_h1 - theta1))
+    matrix_a[3,3] = 1.0
+    matrix_a[3,4] = 0.0
+    vector_b[3] = 1/(ISP1 + d1**2*m_sp1)*(-k1*theta1 + d1*m_sp1*r_hinge1*numpy.sin(beta1 - theta_h1 - theta1)*theta_dot**2 - c1*theta1_dot)
     # Populate theta2 Equation
-    matrixA[4,0] = -1/(ISP2 + d2**2*mSP2)*(d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    matrixA[4,1] = 1/(ISP2 + d2**2*mSP2)*(d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    matrixA[4,2] = 1/(ISP2 + d2**2*mSP2)*(ISP2 + d2**2*mSP2 + d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))
-    matrixA[4,3] = 0.0
-    matrixA[4,4] = 1.0
-    vectorB[4] = 1/(ISP2 + d2**2*mSP2)*(-k2*theta2 + d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*thetaDot**2 - c2*theta2Dot)
+    matrix_a[4,0] = -1/(ISP2 + d2**2*m_sp2)*(d2*m_sp2*numpy.sin(theta_h2 + theta + theta2))
+    matrix_a[4,1] = 1/(ISP2 + d2**2*m_sp2)*(d2*m_sp2*numpy.cos(theta_h2 + theta + theta2))
+    matrix_a[4,2] = 1/(ISP2 + d2**2*m_sp2)*(ISP2 + d2**2*m_sp2 + d2*m_sp2*r_hinge2*numpy.cos(beta2 - theta_h2 - theta2))
+    matrix_a[4,3] = 0.0
+    matrix_a[4,4] = 1.0
+    vector_b[4] = 1/(ISP2 + d2**2*m_sp2)*(-k2*theta2 + d2*m_sp2*r_hinge2*numpy.sin(beta2 - theta_h2 - theta2)*theta_dot**2 - c2*theta2_dot)
 
     Xdot = numpy.zeros(len(x))
     # Populate Trivial derivatives
-    Xdot[0] = xHubDot
-    Xdot[1] = yHubDot
-    Xdot[2] = thetaDot
-    Xdot[3] = theta1Dot
-    Xdot[4] = theta2Dot
+    Xdot[0] = x_hub_dot
+    Xdot[1] = y_hub_dot
+    Xdot[2] = theta_dot
+    Xdot[3] = theta1_dot
+    Xdot[4] = theta2_dot
     # Calculate nontrivial derivatives
-    result = numpy.dot(numpy.linalg.inv(matrixA),vectorB)
+    result = numpy.dot(numpy.linalg.inv(matrix_a),vector_b)
     Xdot[5:10] = result
 
     return Xdot
@@ -1659,67 +1726,68 @@ def rk4(Fn, X, h, t, varargin):
     return Z
 
 
-class solarPanel:
+class SolarPanel:
     mass = 0.0
-    Inertia = 0.0
-    Rhinge = 0.0
+    inertia = 0.0
+    r_hinge = 0.0
     beta = 0.0
-    thetaH = 0.0
+    theta_h = 0.0
     d = 0.0
     k = 0.0
     c = 0.0
 
 
-class hubClass:
+class HubClass:
     mass = 0.0
-    Inertia = 0.0
+    inertia = 0.0
 
 
 class SpacecraftClass:
-    panel1 = solarPanel()
-    panel2 = solarPanel()
-    hub = hubClass()
-    xThrust_B = 0.0
-    yThrust_B = 0.0
-    Torque = 0.0
+    panel1 = SolarPanel()
+    panel2 = SolarPanel()
+    hub = HubClass()
+    x_thrust_B = 0.0
+    y_thrust_B = 0.0
+    torque = 0.0
 
 
-def newtonRapshon(funcAndDervi,guess,tolerance,variables):
-    xOld = guess
+def newton_rapshon(func_and_dervi,guess,tolerance,variables):
+    x_old = guess
     for i in range(1,101):
-        fx, fPrimex = funcAndDervi(xOld, variables)
-        xNew = xOld - fx/fPrimex
-        if abs(xNew - xOld) < tolerance:
+        fx, f_prime_x = func_and_dervi(x_old, variables)
+        x_new = x_old - fx/f_prime_x
+        if abs(x_new - x_old) < tolerance:
             break
-        xOld = xNew
-    return xNew
+        x_old = x_new
+    return x_new
 
 
-def boxAndWingsFandFPrime(theta,variables):
+def box_and_wings_f_and_f_prime(theta,variables):
     # Define variables
     F = variables.F
-    mSC = variables.mSC
+    m_sc = variables.m_sc
     k = variables.k
-    mSP = variables.mSP
+    m_sp = variables.m_sp
     d = variables.d
-    aSP = F/mSC
-    fX = k*theta + mSP*aSP*d*numpy.cos(theta)
-    fPrimeX = k - mSP*aSP*d*numpy.sin(theta)
-    return fX, fPrimeX
+    a_sp = F/m_sc
+    f_x = k*theta + m_sp*a_sp*d*numpy.cos(theta)
+    f_prime_x = k - m_sp*a_sp*d*numpy.sin(theta)
+    return f_x, f_prime_x
 
 
-class boxAndWingParameters:
+class BoxAndWingParameters:
     F = 0
-    mSC = 0
+    m_sc = 0
     k = 0
-    mSP = 0
+    m_sp = 0
     d = 0
 
 if __name__ == "__main__":
-    # test_hingedRigidBodyGravity(True)
-    # test_hingedRigidBodyNoGravity(True)
-    # test_hingedRigidBodyNoGravityDamping(True)
-    # test_hingedRigidBodyThetaSS(True)
-    # test_hingedRigidBodyFrequencyAmp(True)
-    # test_hingedRigidBodyMotorTorque(True, True)
-    test_hingedRigidBodyLagrangVsXmera(True)
+    # test_hinged_rigid_body_gravity(True)
+    # test_hinged_rigid_body_gravity_invariance(True)
+    # test_hinged_rigid_body_no_gravity(True)
+    # test_hinged_rigid_body_no_gravity_damping(True)
+    # test_hinged_rigid_body_theta_ss(True)
+    # test_hinged_rigid_body_frequency_amp(True)
+    # test_hinged_rigid_body_motor_torque(True, True)
+    test_hinged_rigid_body_lagrang_vs_xmera(True)

@@ -35,7 +35,7 @@ public:
     void writeOutputStateMessages(uint64_t integTimeNanos);
     void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     );
@@ -44,8 +44,7 @@ public:
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     );  //!< -- Back-sub contributions
     void updateEnergyMomContributions(
         double integTime,
@@ -80,10 +79,8 @@ private:
 
     StateData* hubSigma;     //!< class variable
     StateData* hubOmega;     //!< class variable
-    StateData* hubVelocity;  //!< class variable
     StateData* OmegasState;  //!< class variable
     StateData* thetasState;  //!< class variable
-    Eigen::MatrixXd* g_N;    //!< [m/s^2] Gravitational acceleration in N frame components
 };
 
 #endif /* STATE_EFFECTOR_H */

@@ -108,7 +108,7 @@ public:
     /** Links the correlation between times property */
     void linkInStates(DynParamManager &statesIn);
 
-    /** Registers the gravity, inertial position, and inertial velocity properties.
+    /** Registers the inertial position and inertial velocity properties.
      * It also calls `registerProperties` for every associated `GravBodyData`.
      */
     void registerProperties(DynParamManager &statesIn);
@@ -117,8 +117,9 @@ public:
      *
      *   @param r_cF_N is position of center of mass of s/c wrt frame
      *   @param rDot_cF_N is the derivative of above
+     *   @return gravitational acceleration of the s/c center of mass in N frame components [m/s^2]
      */
-    void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
+    Eigen::Vector3d computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
 
     /** Updates the inertial position and velocity properties */
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
@@ -153,7 +154,6 @@ public:
     std::vector<std::shared_ptr<GravBodyData>> gravBodies; /**< [-] Vector of bodies we feel gravity from */
     std::shared_ptr<GravBodyData> centralBody;             /**<  Central body */
 
-    std::string vehicleGravityPropName = "g_N";        /**< [-] Name of the vehicle gravity acceleration property */
     std::string systemTimeCorrPropName = "systemTime"; /**< [-] Name of the correlation between times */
     std::string inertialPositionPropName = "r_BN_N";   /**< [-] Name of the inertial position property */
     std::string inertialVelocityPropName = "v_BN_N";   /**< [-] Name of the inertial velocity property */
@@ -163,7 +163,6 @@ public:
 
 
 private:
-    Eigen::MatrixXd* gravProperty;             /**< [-] g_N property for output */
     Eigen::MatrixXd* timeCorr;                 /**< [-] Time correlation property */
     Eigen::MatrixXd* inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase
                                                   coordinate frame, property for output. */

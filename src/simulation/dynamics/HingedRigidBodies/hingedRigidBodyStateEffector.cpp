@@ -61,9 +61,9 @@ void HingedRigidBodyStateEffector::prependSpacecraftNameToStates() {
     return;
 }
 
-/*! This method allows the HRB state effector to have access to the hub states and gravity*/
+/*! This method allows the HRB state effector to have access to the hub states */
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
-    // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
+    // - Get access to the hub states and spacecraft properties needed for dynamic coupling
     std::string tmpMsgName;
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
     this->c_B = statesIn.getPropertyReference(tmpMsgName);
@@ -146,23 +146,8 @@ void HingedRigidBodyStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
-    // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_PN;
-    sigmaLocal_PN = sigma_BN;
-    Eigen::Matrix3d dcm_PN;
-    Eigen::Matrix3d dcm_NP;
-    dcm_NP = sigmaLocal_PN.toRotationMatrix();
-    dcm_PN = dcm_NP.transpose();
-
-    // - Map gravity to body frame
-    Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_P;
-    gLocal_N = g_N;
-    g_P = dcm_PN * gLocal_N;
-
     // - Define omega_BN_S
     this->omegaLoc_PN_P = omega_BN_B;
     this->omega_PN_S = this->dcm_SP * this->omegaLoc_PN_P;
@@ -179,11 +164,8 @@ void HingedRigidBodyStateEffector::updateContributions(
                     + this->mass * this->d * this->rTilde_HP_P * this->sHat3_P);
 
     // - Define cTheta
-    Eigen::Vector3d gravityTorquePntH_P;
-    gravityTorquePntH_P = -this->d * this->sHat1_P.cross(this->mass * g_P);
     this->cTheta = 1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d)
                  * (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef)
-                    + this->sHat2_P.dot(gravityTorquePntH_P)
                     + (this->IPntS_S(2, 2) - this->IPntS_S(0, 0) + this->mass * this->d * this->d) * this->omega_PN_S(2)
                           * this->omega_PN_S(0)
                     - this->mass * this->d * this->sHat3_P.transpose() * this->omegaTildeLoc_PN_P
@@ -216,12 +198,12 @@ void HingedRigidBodyStateEffector::updateContributions(
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
 void HingedRigidBodyStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
-    Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
+    Eigen::Vector3d rDDotLoc_PN_N = rDDotNonGrav_BN_N;
     Eigen::MRPd sigmaLocal_PN;
     Eigen::Vector3d omegaDotLoc_PN_P;
     sigmaLocal_PN = sigma_BN;

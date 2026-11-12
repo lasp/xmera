@@ -53,7 +53,6 @@ private:
     double cPhi;             //!< -- Term needed for back-sub method
     double cTheta;           //!< -- Term needed for back-sub method
 
-    Eigen::MatrixXd* g_N;      //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::Vector3d l_B;       //!< [m] vector from the center of the tank to the spherical pendulum pendulum in B frame
     Eigen::Vector3d lPrime_B;  //!< [m/s] derivative of l respect to B frame
     Eigen::Vector3d lPrime_P0;  //!< [m/s] derivative of l in P0 frame
@@ -63,7 +62,6 @@ private:
     StateData* thetaDotState;   //!< -- state data for time derivative of theta;
     StateData* omegaState;      //!< -- state data for the hubs omega_BN_B
     StateData* sigmaState;      //!< -- state data for the hubs sigma_BN
-    StateData* velocityState;   //!< -- state data for the hubs rDot_BN_N
     Eigen::Matrix3d dcm_B_P0;   // Rotation matrix from P0 to B frame
 
 public:
@@ -77,8 +75,7 @@ public:
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
-        Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N
+        Eigen::Vector3d omega_BN_B
     );  //!< -- Back-sub contributions
     void updateEnergyMomContributions(
         double integTime,
@@ -88,7 +85,7 @@ public:
     );  //!< -- Energy and momentum calculations
     void computeDerivatives(
         double integTime,
-        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     );  //!< -- Method for each stateEffector to calculate derivatives

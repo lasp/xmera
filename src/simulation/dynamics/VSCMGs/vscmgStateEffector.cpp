@@ -25,11 +25,9 @@ VSCMGStateEffector::~VSCMGStateEffector() {
 }
 
 void VSCMGStateEffector::linkInStates(DynParamManager &statesIn) {
-    //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
+    //! - Get access to the hubs sigma and omegaBN_B needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
-    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }
@@ -226,8 +224,7 @@ void VSCMGStateEffector::updateContributions(
     double integTime,
     BackSubMatrices &backSubContr,
     Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B,
-    Eigen::Vector3d g_N
+    Eigen::Vector3d omega_BN_B
 ) {
     Eigen::Vector3d omegaLoc_BN_B;
     Eigen::Vector3d tempF;
@@ -235,15 +232,7 @@ void VSCMGStateEffector::updateContributions(
     double omegat;
     double OmegaSquared;
     Eigen::Matrix3d omegaTilde;
-    Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN;              /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB;              /* direction cosine matrix from B to N */
-    Eigen::Vector3d gravityTorquePntW_B; /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gravityTorquePntG_B; /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gLocal_N;            /* gravitational acceleration in N frame */
-    Eigen::Vector3d g_B;                 /* gravitational acceleration in B frame */
     Eigen::Vector3d omega_WB_B;
-    gLocal_N = *this->g_N;
 
     Eigen::Vector3d ur;
     Eigen::Vector3d vr;
@@ -251,13 +240,6 @@ void VSCMGStateEffector::updateContributions(
     Eigen::Vector3d uomega;
     Eigen::Vector3d vomega;
     Eigen::Vector3d komega;
-
-    //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
-    dcm_NB = sigmaBNLocal.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
-    //! - Map gravity to body frame
-    g_B = dcm_BN * gLocal_N;
 
     omegaLoc_BN_B = this->hubOmega->getState();
 
@@ -285,11 +267,6 @@ void VSCMGStateEffector::updateContributions(
                 backSubContr.vecRot += it->rGB_B.cross(tempF) + it->U_d * OmegaSquared * it->w2Hat_B;
             }
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
-            gravityTorquePntW_B = it->d * it->w2Hat_B.cross(it->massW * g_B);
-            gravityTorquePntG_B = it->rGcG_B.cross(it->massG * g_B);
-            it->gravityTorqueWheel_s = it->gsHat_B.dot(gravityTorquePntW_B);
-            it->gravityTorqueGimbal_g = it->ggHat_B.dot(gravityTorquePntG_B);
-
             double dSquared = it->d * it->d;
             double gammaDotSquared = it->gammaDot * it->gammaDot;
             Eigen::Matrix3d omegaTildeSquared = omegaTilde * omegaTilde;
@@ -346,7 +323,7 @@ void VSCMGStateEffector::updateContributions(
                         + it->massW * rTildeWcVc_B * (2.0 * omegaTilde * rPrimeWcVc_B + omegaTildeSquared * rWcVc_B)
                         + it->massV * rTildeVcG_B * (2.0 * omegaTilde * rPrimeVcB_B + omegaTildeSquared * rVcB_B)
                     )
-                + 1.0 / it->egamma * (it->u_g_current + it->gravityTorqueGimbal_g);
+                + 1.0 / it->egamma * it->u_g_current;
 
             it->eOmega = it->IW1 + it->massW * dSquared;
             it->aOmega = -1.0 / it->eOmega * it->massW * it->d * it->w3Hat_B;
@@ -354,16 +331,16 @@ void VSCMGStateEffector::updateContributions(
                        * (it->IWPntWc_B.transpose() * it->gsHat_B
                           - it->massW * it->d * it->rTildeWcB_B * w2HatTilde_B * it->gsHat_B);
             it->cOmega = -1.0 / it->eOmega * (it->IW13 * cos(it->theta) - it->massW * it->d * it->l * sin(it->theta));
-            it->dOmega = -1.0 / it->eOmega
-                           * (it->gsHat_B.dot(it->IPrimeWPntWc_B * omega_WN_B)
-                              + it->gsHat_B.transpose() * omegaTilde * it->IWPntWc_B * omega_WN_B
-                              + it->massW * it->d * it->gsHat_B.transpose() * w2HatTilde_B
-                                    * (2.0 * it->rPrimeTildeWcB_B.transpose() * omegaLoc_BN_B
-                                       + omegaTilde * omegaTilde * it->rWcB_B))
-                       + (1.0 / it->eOmega)
-                             * (it->IW13 * sin(it->theta) * it->Omega * it->gammaDot
-                                - it->massW * dSquared * gammaDotSquared * cos(it->theta) * sin(it->theta)
-                                + it->u_s_current + it->gravityTorqueWheel_s);
+            it->dOmega =
+                -1.0 / it->eOmega
+                    * (it->gsHat_B.dot(it->IPrimeWPntWc_B * omega_WN_B)
+                       + it->gsHat_B.transpose() * omegaTilde * it->IWPntWc_B * omega_WN_B
+                       + it->massW * it->d * it->gsHat_B.transpose() * w2HatTilde_B
+                             * (2.0 * it->rPrimeTildeWcB_B.transpose() * omegaLoc_BN_B
+                                + omegaTilde * omegaTilde * it->rWcB_B))
+                + (1.0 / it->eOmega)
+                      * (it->IW13 * sin(it->theta) * it->Omega * it->gammaDot
+                         - it->massW * dSquared * gammaDotSquared * cos(it->theta) * sin(it->theta) + it->u_s_current);
 
             it->p = (it->aOmega + it->cOmega * it->agamma) / (1.0 - it->cOmega * it->cgamma);
             it->q = (it->bOmega + it->cOmega * it->bgamma) / (1.0 - it->cOmega * it->cgamma);
@@ -409,7 +386,7 @@ void VSCMGStateEffector::updateContributions(
 
 void VSCMGStateEffector::computeDerivatives(
     double integTime,
-    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
     Eigen::Vector3d sigma_BN
 ) {
@@ -431,9 +408,9 @@ void VSCMGStateEffector::computeDerivatives(
     std::vector<VSCMGConfigMsgPayload>::iterator it;
 
     //! Grab necessarry values from manager
-    omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
+    omegaDotBNLoc_B = omegaDot_BN_B;
     omegaLoc_BN_B = this->hubOmega->getState();
-    rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
+    rDDotBNLoc_N = rDDotNonGrav_BN_N;
     sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
@@ -451,12 +428,12 @@ void VSCMGStateEffector::computeDerivatives(
             thetaCount++;
         }
         if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
-            OmegasDot(VSCMGi, 0) = -omegat * it->gammaDot - it->gsHat_B.transpose() * omegaDotBNLoc_B
-                                 + (it->u_s_current + it->gravityTorqueWheel_s) / it->IW1;
+            OmegasDot(VSCMGi, 0) =
+                -omegat * it->gammaDot - it->gsHat_B.transpose() * omegaDotBNLoc_B + it->u_s_current / it->IW1;
             gammaDotsDot(VSCMGi, 0) =
                 1 / it->IV3
-                * ((it->u_g_current + it->gravityTorqueGimbal_g) + (it->IV1 - it->IV2) * omegas * omegat
-                   + it->IW1 * it->Omega * omegat - it->IV3 * it->ggHat_B.transpose() * omegaDotBNLoc_B);
+                * (it->u_g_current + (it->IV1 - it->IV2) * omegas * omegat + it->IW1 * it->Omega * omegat
+                   - it->IV3 * it->ggHat_B.transpose() * omegaDotBNLoc_B);
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
             OmegasDot(VSCMGi, 0) = it->p.dot(rDDotBNLoc_B) + it->q.dot(omegaDotBNLoc_B) + it->s;
             gammaDotsDot(VSCMGi, 0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B)
