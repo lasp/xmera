@@ -13,3 +13,5 @@ target_link_libraries("${module}" PRIVATE
   ArchitectureUtilities
   dynamicsCommon
 )
+
+add_subdirectory(tests)

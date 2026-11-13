@@ -12,11 +12,7 @@
 #include <architecture/msgPayloadDef/RWConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-#include <architecture/utilities/eigenMRP.h>
-#include <architecture/utilities/eigenSupport.h>
-#include <architecture/utilities/macroDefinitions.h>
 
-#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
@@ -28,34 +24,40 @@ class ReactionWheelStateEffector
     : public SysModel
     , public StateEffector {
 public:
-    ReactionWheelStateEffector();
+    ReactionWheelStateEffector() = default;
     ~ReactionWheelStateEffector();
-    void registerStates(DynParamManager &states);
-    void linkInStates(DynParamManager &states);
-    void writeOutputStateMessages(uint64_t integTimeNanos);
+    //! - This effector owns raw Message pointers (rwOutMsgs) released in the destructor,
+    //!   so a shallow copy would double-free. Disable copy and move.
+    ReactionWheelStateEffector(ReactionWheelStateEffector const &) = delete;
+    ReactionWheelStateEffector &operator=(ReactionWheelStateEffector const &) = delete;
+    void registerStates(DynParamManager &states) override;
+    void linkInStates(DynParamManager &states) override;
+    void writeOutputStateMessages(uint64_t integTimeNanos) override;
     void computeDerivatives(
         double integTime,
         Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
-    );
-    void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
+    ) override;
+    void updateEffectorMassProps(
+        double integTime
+    ) override;  //!< -- Method for stateEffector to give mass contributions
     void updateContributions(
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
         Eigen::Vector3d omega_BN_B
-    );  //!< -- Back-sub contributions
+    ) override;  //!< -- Back-sub contributions
     void updateEnergyMomContributions(
         double integTime,
         Eigen::Vector3d &rotAngMomPntCContr_B,
         double &rotEnergyContr,
         Eigen::Vector3d omega_BN_B
-    );  //!< -- Energy and momentum calculations
-    void reset(uint64_t currentSimNanos);
+    ) override;  //!< -- Energy and momentum calculations
+    void reset(uint64_t currentSimNanos) override;
     void addReactionWheel(RWConfigMsgPayload* NewRW);
-    void updateState(uint64_t currentSimNanos);
-    void WriteOutputMessages(uint64_t CurrentClock);
+    void updateState(uint64_t currentSimNanos) override;
+    void WriteOutputMessages(uint64_t CurrentClock) const;
     void ReadInputs();
     void ConfigureRWRequests(double CurrentTime);
 
@@ -66,21 +68,20 @@ public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;                //!< -- RW speed array output message
     std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;  //!< -- vector of RW log output messages
 
-    std::vector<RWCmdMsgPayload> NewRWCmds;      //!< -- Incoming attitude commands
-    RWSpeedMsgPayload rwSpeedMsgBuffer = {};     //!< (-) Output data from the reaction wheels
-    std::string nameOfReactionWheelOmegasState;  //!< class variable
-    std::string nameOfReactionWheelThetasState;  //!< class variable
-    size_t numRW;                                //!< number of reaction wheels
-    size_t numRWJitter;                          //!< number of RW with jitter
+    std::vector<RWCmdMsgPayload> NewRWCmds;                              //!< -- Incoming attitude commands
+    RWSpeedMsgPayload rwSpeedMsgBuffer = {};                             //!< (-) Output data from the reaction wheels
+    std::string nameOfReactionWheelOmegasState = "reactionWheelOmegas";  //!< wheel angular rate state name
+    std::string nameOfReactionWheelThetasState = "reactionWheelThetas";  //!< wheel angle state name
+    size_t numRW = 0;                                                    //!< number of reaction wheels
+    size_t numRWJitter = 0;                                              //!< number of RW with jitter
 
 private:
     RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
-    uint64_t prevCommandTime;                        //!< -- Time for previous valid thruster firing
 
-    StateData* hubSigma;     //!< class variable
-    StateData* hubOmega;     //!< class variable
-    StateData* OmegasState;  //!< class variable
-    StateData* thetasState;  //!< class variable
+    StateData* hubSigma = nullptr;
+    StateData* hubOmega = nullptr;
+    StateData* OmegasState = nullptr;
+    StateData* thetasState = nullptr;
 };
 
-#endif /* STATE_EFFECTOR_H */
+#endif /* REACTIONWHEELSTATEEFFECTOR_H */
