@@ -16,6 +16,7 @@ import os
 import sys
 
 import pytest
+from xmera.architecture import messaging
 from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -34,8 +35,12 @@ sys.path.append(path + '/../../examples/')
 @pytest.mark.parametrize("scenarioCase", [
                                         'scenarioGroundLocationImaging'
                                         , 'scenarioGroundDownlink'
-                                        , 'scenarioMtbMomentumManagement'
-                                        , 'scenarioMtbMomentumManagementSimple'
+                                        , pytest.param('scenarioMtbMomentumManagement', marks=pytest.mark.skipif(
+                                            messaging.RW_EFF_CNT < 4 or messaging.MAX_EFF_CNT < 4,
+                                            reason="RW_EFF_CNT or MAX_EFF_CNT is less than the 4 wheels and 4 bars this case uses"))
+                                        , pytest.param('scenarioMtbMomentumManagementSimple', marks=pytest.mark.skipif(
+                                            messaging.RW_EFF_CNT < 4 or messaging.MAX_EFF_CNT < 4,
+                                            reason="RW_EFF_CNT or MAX_EFF_CNT is less than the 4 wheels and 4 bars this case uses"))
                                         , 'scenarioSmallBodyNav'
                                         , 'scenarioSmallBodyNavUKF'
                                         , 'scenarioSmallBodyFeedbackControl'
@@ -48,7 +53,9 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioRendezVous'
                                         , 'scenarioSensorThermal'
                                         , 'scenarioLambertSolver'
-                                        , 'scenarioMomentumDumpingZeroNetForce'
+                                        , pytest.param('scenarioMomentumDumpingZeroNetForce', marks=pytest.mark.skipif(
+                                            messaging.MAX_EFF_CNT < 8 or messaging.RW_EFF_CNT < 4,
+                                            reason="MAX_EFF_CNT or RW_EFF_CNT is less than the 8 thrusters and 4 wheels this case uses"))
                                         , 'scenarioHaloOrbit'
                                         , 'scenarioDeployingSolarArrays'
                                         ])
