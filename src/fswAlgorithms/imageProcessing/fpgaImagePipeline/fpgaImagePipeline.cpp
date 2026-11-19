@@ -353,14 +353,9 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
         CameraImageMsgPayload const imgMsg = imageInMsg();
         if (!imgMsg.valid || imgMsg.imagePointer == nullptr) { return imageSourceIsConfigured; }
 
-        // Detect PNG magic bytes: if the buffer starts with \x89PNG, decode it;
-        // otherwise treat the buffer as packed uint16_t 12-bit grayscale pixels.
-        static constexpr uint8_t kPngMagic[4] = {0x89, 0x50, 0x4E, 0x47};
         auto const* bytes = static_cast<uint8_t const*>(imgMsg.imagePointer);
-        bool const isPng = imgMsg.imageBufferLength >= 4 && bytes[0] == kPngMagic[0] && bytes[1] == kPngMagic[1]
-                        && bytes[2] == kPngMagic[2] && bytes[3] == kPngMagic[3];
 
-        if (isPng) {
+        if (imgMsg.encoding == ImageEncoding::PNG) {
             std::vector<uint8_t> const buf(bytes, bytes + imgMsg.imageBufferLength);
             cv::Mat decoded = cv::imdecode(buf, cv::IMREAD_COLOR);
             if (decoded.empty()) {
@@ -395,9 +390,22 @@ bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut)
                 }
             }
         } else {
-            // Raw uint16_t 12-bit grayscale pixels
+            // Raw 12-bit grayscale pixels, one uint16_t each, at the configured size.
             size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-            auto const* src = reinterpret_cast<uint16_t const*>(imgMsg.imagePointer);
+
+            // Make sure the image format is actually what it should be.
+            if (imgMsg.bitsPerPixel != 12 || imgMsg.width != this->imageWidth || imgMsg.height != this->imageHeight
+                || static_cast<size_t>(imgMsg.imageBufferLength) != n * sizeof(uint16_t)) {
+                xmera::logging::get(this->modelTag)
+                    ->warn(
+                        "FpgaImagePipeline: raw images must be {}x{} with one 12-bit value per pixel",
+                        this->imageWidth,
+                        this->imageHeight
+                    );
+                return imageSourceIsConfigured;
+            }
+
+            auto const* src = static_cast<uint16_t const*>(imgMsg.imagePointer);
             for (size_t i = 0; i < n; i++) { this->rawBuf[i] = src[i] & 0x0FFF; }
         }
         timeTagOut = imgMsg.timeTag;

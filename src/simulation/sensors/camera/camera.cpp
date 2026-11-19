@@ -37,7 +37,15 @@ Camera::~Camera() = default;
  @return void
  @param currentSimNanos current time (ns)
  */
-void Camera::reset(uint64_t currentSimNanos) {}
+void Camera::reset(uint64_t currentSimNanos) {
+    bool const filtersEnabled = this->gaussian > 0 || this->blurParam > 0 || this->darkCurrentIntensity > 0
+                             || this->hsv.cwiseAbs().sum() > 0.00001 || this->bgrPercent.cwiseAbs().sum() != 0
+                             || this->saltPepper > 0 || this->cosmicRays > 0;
+    /*! - The filters only work on PNG images, raw images pass through untouched. */
+    if (this->imageFormat == "RAW" && filtersEnabled) {
+        xmera::logging::get(this->modelTag)->warn("camera: image filters are skipped for raw images");
+    }
+}
 
 /*!
  * Adjusts the HSV values of each pixel.
@@ -370,7 +378,15 @@ void Camera::updateState(uint64_t currentSimNanos) {
                 xmera::logging::get(this->modelTag)->warn("camera: wasn't able to save the camera module image");
             }
         }
-    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
+    } else if (
+        imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos && imageBuffer.encoding == ImageEncoding::RAW
+    ) {
+        /*! - Raw images pass through unchanged as they aren't filtered. */
+        imageOut = imageBuffer;
+        this->imageOutMsg.write(imageOut, this->moduleID, currentSimNanos);
+    } else if (
+        imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos && imageBuffer.encoding == ImageEncoding::PNG
+    ) {
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer(
             (char*) imageBuffer.imagePointer,
@@ -379,6 +395,8 @@ void Camera::updateState(uint64_t currentSimNanos) {
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
 
         this->applyFilters(imageCV, blurred);
+        /*! - The filters work on color images, so return grayscale and Bayer images to one value per pixel */
+        if (imageBuffer.colorLayout != ColorLayout::RGB) { cv::cvtColor(blurred, blurred, cv::COLOR_BGR2GRAY); }
         if (this->saveImages == 1) {
             if (!cv::imwrite(localPath, blurred)) {
                 xmera::logging::get(this->modelTag)->warn("camera: wasn't able to save the camera module image");
@@ -396,7 +414,11 @@ void Camera::updateState(uint64_t currentSimNanos) {
         imageOut.valid = 1;
         imageOut.timeTag = imageBuffer.timeTag;
         imageOut.cameraID = imageBuffer.cameraID;
-        imageOut.imageType = imageBuffer.imageType;
+        imageOut.encoding = ImageEncoding::PNG;
+        imageOut.colorLayout = imageBuffer.colorLayout;
+        imageOut.width = static_cast<uint32_t>(blurred.cols);
+        imageOut.height = static_cast<uint32_t>(blurred.rows);
+        imageOut.bitsPerPixel = 8;
         imageOut.imageBufferLength = (int32_t) buf.size();
         this->pointImageOut = malloc(imageOut.imageBufferLength * sizeof(char));
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength * sizeof(char));

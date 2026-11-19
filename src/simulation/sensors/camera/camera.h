@@ -162,7 +162,7 @@ private:
                                              //!< from camera center (degrees)
     double transmission{};      //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
                                 //!< wavelengths
-    std::string imageFormat{};  //!< [-] Image format (raw, png, jpeg)
+    std::string imageFormat{};  //!< [-] Image format (RAW or PNG)
     int bitDepth{};             //!< [-] Bit depth if raw format is selected
     uint32_t darkCurrentPattern{};     //!< [-] Seed used to generate the dark current noise pattern
     double darkCurrentStdDeviation{};  //!< [e-/s] Dark current rate standard deviation in electrons per second

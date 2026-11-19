@@ -1221,7 +1221,8 @@ void VizInterface::requestImage(size_t camCounter, uint64_t currentSimNanos) {
     imageData.imagePointer = this->bskImagePtrs[camCounter];
     imageData.imageBufferLength = imageBufferLength;
     imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
-    imageData.imageType = 4;
+    imageData.encoding = ImageEncoding::PNG;
+    imageData.colorLayout = ColorLayout::RGB;
     if (imageBufferLength > 0) { imageData.valid = 1; }
     this->opnavImageOutMsgs[camCounter]->write(imageData, this->moduleID, currentSimNanos);
 

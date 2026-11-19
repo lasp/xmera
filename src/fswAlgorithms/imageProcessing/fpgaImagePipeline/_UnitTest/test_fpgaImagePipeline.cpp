@@ -51,6 +51,11 @@ namespace {
             payload.valid = 1;
             payload.imagePointer = image.data();
             payload.imageBufferLength = static_cast<int32_t>(image.size() * sizeof(uint16_t));
+            payload.encoding = ImageEncoding::RAW;
+            payload.colorLayout = ColorLayout::GRAYSCALE;
+            payload.width = config.width;
+            payload.height = config.height;
+            payload.bitsPerPixel = 12;
             this->imageInMsg.write(payload, 0, 0);
             this->pipeline.updateState(0);
         }

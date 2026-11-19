@@ -4,6 +4,11 @@
 
 #include "cielimInterface.h"
 
+#include <architecture/utilities/logging.h>
+
+#include <stdexcept>
+#include <string>
+
 /*! Reset module time-tags, message freshness, and zmq connector
  @param currentSimNanos The current sim time in nanoseconds
 */
@@ -346,15 +351,23 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         quantumEfficiency->set_bluevalue3(this->cameraModelPayload.blueQuantumEfficiency[2]);
         sensorModel->set_allocated_qecurve(quantumEfficiency);
 
-        if (std::string{this->cameraModelPayload.imageFormat} == "RAW") {
+        // An image format that isn't set means PNG.
+        std::string const imageFormat{this->cameraModelPayload.imageFormat};
+        if (imageFormat == "RAW") {
             switch (this->cameraModelPayload.bitDepth) {
             case 8: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8); break;
             case 12: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_12); break;
             case 16: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_16); break;
-            default: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8); break;
+            default:
+                throw std::invalid_argument(
+                    "CielimInterface: Cielim can't produce raw images with "
+                    + std::to_string(this->cameraModelPayload.bitDepth) + " bits per pixel, use 8, 12 or 16"
+                );
             }
-        } else {
+        } else if (imageFormat == "PNG" || imageFormat.empty()) {
             dataFormat->set_format(cielimMessage::ImageFormat_Format_PNG);
+        } else {
+            throw std::invalid_argument("CielimInterface: unknown image format '" + imageFormat + "', use RAW or PNG");
         }
 
         camera->set_allocated_lensmodel(lensModel);
@@ -464,8 +477,39 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     imagePayload.imagePointer = imageData.imageBuffer;
     imagePayload.imageBufferLength = imageData.imageBufferLength;
     imagePayload.cameraID = this->cameraModelPayload.cameraId;
-    imagePayload.imageType = 3;
+
+    // Describe the image from the camera settings it was requested with in writeProtobuffer().
+    imagePayload.width = static_cast<uint32_t>(this->cameraModelPayload.resolution[0]);
+    imagePayload.height = static_cast<uint32_t>(this->cameraModelPayload.resolution[1]);
+    imagePayload.colorLayout = this->cameraModelPayload.isGrayscale ? ColorLayout::GRAYSCALE : ColorLayout::RGB;
+    if (std::string{this->cameraModelPayload.imageFormat} == "RAW") {
+        imagePayload.encoding = ImageEncoding::RAW;
+        imagePayload.bitsPerPixel = static_cast<uint8_t>(this->cameraModelPayload.bitDepth);
+    } else {
+        imagePayload.encoding = ImageEncoding::PNG;
+    }
+
     if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
+
+    // A raw image must hold exactly width x height pixels of 1 (grayscale) or 3 (RGB) values.
+    if (imagePayload.valid == 1 && imagePayload.encoding == ImageEncoding::RAW) {
+        int64_t const valuesPerPixel = imagePayload.colorLayout == ColorLayout::RGB ? 3 : 1;
+        int64_t const bytesPerValue = imagePayload.bitsPerPixel <= 8 ? 1 : imagePayload.bitsPerPixel <= 16 ? 2 : 4;
+        int64_t const expectedLength =
+            int64_t{imagePayload.width} * imagePayload.height * valuesPerPixel * bytesPerValue;
+        if (imageData.imageBufferLength != expectedLength) {
+            xmera::logging::get(this->modelTag)
+                ->error(
+                    "CielimInterface: raw image is {} bytes, expected {} for {}x{} at {} bits per pixel",
+                    imageData.imageBufferLength,
+                    expectedLength,
+                    imagePayload.width,
+                    imagePayload.height,
+                    imagePayload.bitsPerPixel
+                );
+            imagePayload.valid = 0;
+        }
+    }
     this->imageOutMessage.write(imagePayload, this->moduleID, currentSimNanos);
 
     OpNavCOBMsgPayload centerOfBrightnessPayload = {};
