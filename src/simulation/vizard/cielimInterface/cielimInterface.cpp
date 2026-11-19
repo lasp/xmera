@@ -14,7 +14,6 @@
 */
 void CielimInterface::reset(uint64_t currentSimNanos) {
     if (this->opNavMode != ClosedLoopMode::OPEN_LOOP || this->liveStream) {
-        this->imagePointer = nullptr;
         if (!this->connector.isConnected()) { this->connector.connect(); }
     }
 
@@ -469,13 +468,15 @@ bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const 
  * */
 void CielimInterface::requestImage(uint64_t currentSimNanos) {
     auto imageData = this->connector.requestImage(this->cameraModelPayload.cameraId);
-    this->imagePointer = &imageData.imageBuffer;
+
+    // Hold onto the image until the next one replaces it.
+    this->imageBuffer = std::move(imageData.imageBuffer);
 
     CameraImageMsgPayload imagePayload = {};
     imagePayload.timeTag = currentSimNanos;
     imagePayload.valid = 0;
-    imagePayload.imagePointer = imageData.imageBuffer;
-    imagePayload.imageBufferLength = imageData.imageBufferLength;
+    imagePayload.imagePointer = this->imageBuffer.data();
+    imagePayload.imageBufferLength = static_cast<int32_t>(this->imageBuffer.size());
     imagePayload.cameraID = this->cameraModelPayload.cameraId;
 
     // Describe the image from the camera settings it was requested with in writeProtobuffer().
@@ -489,7 +490,7 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
         imagePayload.encoding = ImageEncoding::PNG;
     }
 
-    if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
+    if (imagePayload.imageBufferLength > 0) { imagePayload.valid = 1; }
 
     // A raw image must hold exactly width x height pixels of 1 (grayscale) or 3 (RGB) values.
     if (imagePayload.valid == 1 && imagePayload.encoding == ImageEncoding::RAW) {
@@ -497,11 +498,11 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
         int64_t const bytesPerValue = imagePayload.bitsPerPixel <= 8 ? 1 : imagePayload.bitsPerPixel <= 16 ? 2 : 4;
         int64_t const expectedLength =
             int64_t{imagePayload.width} * imagePayload.height * valuesPerPixel * bytesPerValue;
-        if (imageData.imageBufferLength != expectedLength) {
+        if (imagePayload.imageBufferLength != expectedLength) {
             xmera::logging::get(this->modelTag)
                 ->error(
                     "CielimInterface: raw image is {} bytes, expected {} for {}x{} at {} bits per pixel",
-                    imageData.imageBufferLength,
+                    imagePayload.imageBufferLength,
                     expectedLength,
                     imagePayload.width,
                     imagePayload.height,
