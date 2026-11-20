@@ -7,6 +7,7 @@ import dataclasses
 import multiprocessing.queues
 import os
 import random
+import re
 import shutil
 import traceback
 import warnings
@@ -26,6 +27,7 @@ import time
 import numpy as np
 import multiprocessing as mp
 import pickle as pickle
+from xmera.utilities.MonteCarlo import ArrayArchive
 from xmera.utilities.MonteCarlo.DataWriter import DataWriter
 from xmera.utilities.MonteCarlo.PathWalk import apply_modification, generate_modifications
 from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
@@ -56,14 +58,19 @@ class JobRunner:
 
         with JobRunner(results_dir, var_cast=None) as runner:
             failed = drive_jobs(runner.queue)
+
+    ``archive_format`` "npy" writes the :mod:`ArrayArchive` format, with ``rows`` rows to start with.
     """
 
     _DRAIN_POLL_SECONDS = 1
     _SHUTDOWN_GRACE_SECONDS = 5
 
-    def __init__(self, results_dir: str, var_cast: Optional[str] = None):
+    def __init__(self, results_dir: str, var_cast: Optional[str] = None, archive_format: str = "pickle",
+                 rows: int = 1):
         self._results_dir = results_dir
         self._var_cast = var_cast
+        self._archive_format = archive_format
+        self._rows = rows
         self._manager = None
         self._queue = None
         self._writer = None
@@ -83,7 +90,10 @@ class JobRunner:
     def __enter__(self):
         self._manager = mp.Manager()
         self._queue = self._manager.Queue()
-        self._writer = DataWriter(self._queue)
+        if self._archive_format == "npy":
+            self._writer = ArrayArchive.ArrayDataWriter(self._queue, rows=self._rows)
+        else:
+            self._writer = DataWriter(self._queue)
         self._writer.daemon = False
         self._writer.set_log_dir(self._results_dir)
         self._writer.set_var_cast(self._var_cast)
@@ -147,6 +157,10 @@ class Controller:
     The controller keeps the data from each run for analysis at a later time.
     """
 
+    # Class attributes, so that a controller loaded from an older MonteCarlo.data also has them.
+    archive_format: str = "pickle"
+    save_run_files: bool = True
+
     def __init__(self):
         self.should_save_disp_mag = None
         self.should_disperse_seeds = False
@@ -197,16 +211,21 @@ class Controller:
     @staticmethod
     def load(run_directory: str):
         """
-        Load a completed Monte Carlo batch.
+        Load a Monte Carlo batch. The run directory can move after the batch executes.
         :param run_directory: The path to the directory that contains the archived Monte Carlo file MonteCarlo.data
         :type run_directory: str
         """
-        filename = os.path.abspath(run_directory) + "/MonteCarlo.data"
+        run_directory = os.path.abspath(run_directory)
+        filename = os.path.join(run_directory, "MonteCarlo.data")
 
         with gzip.open(filename) as pickled_data:
             data = pickle.load(pickled_data)
             logger.debug(f"Loading monte carlo at {filename}")
-            return data
+        data._archive_dir = os.path.dirname(run_directory)
+        data._mc_run_dir = run_directory
+        data._ic_directory = os.path.join(run_directory, "initial_conditions")
+        data._results_dir = os.path.join(run_directory, "results")
+        return data
 
     def set_execution_function(self, execution_function):
         """
@@ -285,6 +304,33 @@ class Controller:
         :type num_processes: int
         """
         self.num_processes = num_processes
+
+    def set_archive_format(self, archive_format: str):
+        """
+        Set how the batch stores the retained data in its results directory.
+
+        "pickle", the default, stores one pickled DataFrame for each retained item, which the batch combines
+        after the last run. "npy" stores the preallocated arrays of :mod:`ArrayArchive`: each run goes straight
+        into its row, nothing is combined at the end, and a reader can memory map one item.
+
+        :param archive_format: "pickle" or "npy".
+        :type archive_format: str
+        """
+        if archive_format not in ("pickle", "npy"):
+            raise ValueError(f"archive_format must be 'pickle' or 'npy', not {archive_format!r}")
+        self.archive_format = archive_format
+
+    def set_save_run_files(self, save: bool):
+        """
+        Set whether each run also saves all of its retained data in its own ``run<index>.data`` file.
+
+        With the "npy" archive format these files repeat the archive, and data callbacks and
+        :meth:`resume_simulations` read the runs from the archive instead. The default is True.
+
+        :param save: True to save the files.
+        :type save: bool
+        """
+        self.save_run_files = save
 
     def set_should_save_disp_mag(self, magnitudes):
         """
@@ -398,6 +444,8 @@ class Controller:
         :rtype: list
         """
         results_data_file = self._make_results_directory_file_name(case)
+        if self.archive_format == "npy" and not os.path.exists(results_data_file):
+            return ArrayArchive.retained_data(self._results_dir, case)
 
         with gzip.open(results_data_file) as pickled_data:
             data = pickle.load(pickled_data)
@@ -520,7 +568,7 @@ class Controller:
 
         self._save_monte_carlo_controller()
 
-        with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
+        with self._job_runner(len(run_indexes)) as runner:
             failures = self._drive_jobs(
                 self.generate_ic_sims(run_indexes), len(run_indexes), runner.queue,
             )
@@ -578,6 +626,7 @@ class Controller:
         sim_params.log_level = self._log_level
         sim_params.show_progress_bar = self.show_progress_bar
         sim_params.should_save_disp_mag = self.should_save_disp_mag
+        sim_params.save_run_file = self.save_run_files
         return sim_params
 
     def generate_sims(self, sim_run_indexes: list[int]) -> Generator[SimulationParameters, None, None]:
@@ -753,13 +802,114 @@ class Controller:
         self._save_monte_carlo_controller()
 
         num_sims = self.num_simulation_runs
-        with JobRunner(self.results_dir, var_cast=self.var_cast) as runner:
+        with self._job_runner(num_sims) as runner:
             failures = self._drive_jobs(
                 self.generate_sims(list(range(num_sims))), num_sims, runner.queue,
             )
 
         self._save_failed_indexes(failures)
         return failures
+
+    def resume_simulations(self, num_runs: Optional[int] = None) -> list[FailureRecord]:
+        """
+        Execute the runs of a loaded batch that have no data, or add runs to the batch.
+
+        Use this method on a controller from :meth:`load`. A run is complete if each data file has its
+        columns and its ``run<index>.data`` file is complete. A run in ``failures.json`` stays failed.
+        The method executes each other run with an index below ``num_runs``, then finalizes the data files.
+        The seeds of a run come from its index. Thus a resumed run is the same as the run that the
+        interruption stopped, and each new index gives a new run.
+
+        :param num_runs: The number of runs in the batch after this call. The default is the number of
+            runs of the batch. The value cannot be smaller than that number.
+        :type num_runs: int
+        :return: failures: A list of :class:`FailureRecord` for each failed run of the batch, from before and from this call.
+        :rtype: list[FailureRecord]
+        """
+        if num_runs is None:
+            num_runs = self.num_simulation_runs
+        if num_runs < self.num_simulation_runs:
+            raise ValueError(f"The batch has {self.num_simulation_runs} runs, resume_simulations cannot reduce it to {num_runs}")
+        if not self._retention_policies:
+            raise ValueError("resume_simulations needs a retention policy, a batch without one has no record of its complete runs")
+
+        if self.archive_format == "npy":
+            return self._resume_array_archive(num_runs)
+
+        old_failures = self._load_failures()
+        failed = {f.run_index for f in old_failures}
+        data_files = self._data_files()
+        complete = set.intersection(*(DataWriter.runs_in(f) for f in data_files)) if data_files else set()
+        complete = {index for index in complete if self._run_file_is_complete(index)}
+        remaining = [index for index in range(num_runs) if index not in complete and index not in failed]
+        if not remaining and all(DataWriter.is_finalized(f) for f in data_files):
+            return old_failures
+
+        logger.info(f"Keeping {len(complete)} complete runs, executing {len(remaining)} runs")
+        for file_path in data_files:
+            DataWriter.keep_runs(file_path, complete)
+        self.num_simulation_runs = num_runs
+        self._save_monte_carlo_controller()
+
+        failures = []
+        if remaining:
+            with self._job_runner(num_runs) as runner:
+                failures = self._drive_jobs(self.generate_sims(remaining), len(remaining), runner.queue)
+        for file_path in self._data_files():
+            if not DataWriter.is_finalized(file_path):
+                DataWriter.finalize(file_path)
+
+        failures = old_failures + failures
+        self._save_failed_indexes(failures)
+        return failures
+
+    def _resume_array_archive(self, num_runs: int) -> list[FailureRecord]:
+        """resume_simulations for the "npy" archive format. A run is complete if each item has its row; an
+        interrupted run has no row, since the writer marks a row only after its values are written."""
+        old_failures = self._load_failures()
+        failed = {f.run_index for f in old_failures}
+        names = ArrayArchive.item_names(self._results_dir)
+        complete = set.intersection(*(ArrayArchive.runs_in(self._results_dir, n) for n in names)) if names else set()
+        if self.save_run_files:
+            complete = {index for index in complete if self._run_file_is_complete(index)}
+        remaining = [index for index in range(num_runs) if index not in complete and index not in failed]
+        if not remaining:
+            return old_failures
+
+        logger.info(f"Keeping {len(complete)} complete runs, executing {len(remaining)} runs")
+        self.num_simulation_runs = num_runs
+        self._save_monte_carlo_controller()
+        with self._job_runner(num_runs) as runner:
+            failures = self._drive_jobs(self.generate_sims(remaining), len(remaining), runner.queue)
+        failures = old_failures + failures
+        self._save_failed_indexes(failures)
+        return failures
+
+    def _job_runner(self, rows: int) -> JobRunner:
+        return JobRunner(self.results_dir, var_cast=self.var_cast, archive_format=self.archive_format, rows=rows)
+
+    def _data_files(self) -> list[str]:
+        """The per-variable data files of the batch, not the ``run<index>.data`` files."""
+        files = glob.glob(os.path.join(self._results_dir, "*.data"))
+        return sorted(f for f in files if not re.fullmatch(r"run\d+\.data", os.path.basename(f)))
+
+    def _run_file_is_complete(self, index: int) -> bool:
+        """True if ``run<index>.data`` exists and decompresses to its end."""
+        try:
+            with gzip.open(self._make_results_directory_file_name(index)) as run_file:
+                while run_file.read(1 << 24):
+                    pass
+            return True
+        except (OSError, EOFError):
+            return False
+
+    def _load_failures(self) -> list[FailureRecord]:
+        """The failures that ``failures.json`` of the batch records."""
+        path = os.path.join(self._mc_run_dir, "failures.json")
+        if not os.path.exists(path):
+            return []
+        with open(path) as fail_json:
+            return [FailureRecord(**record) for record in json.load(fail_json)]
 
 
 class SimulationExecutor:
@@ -872,9 +1022,10 @@ class SimulationExecutor:
                 data_out_queue.put((retained_data, sim_params.index, None))
                 time.sleep(1)
 
-                with gzip.open(retention_file, "w") as archive:
-                    retained_data["index"] = sim_params.index # add run index
-                    pickle.dump(retained_data, archive)
+                if getattr(sim_params, "save_run_file", True):
+                    with gzip.open(retention_file, "w") as archive:
+                        retained_data["index"] = sim_params.index # add run index
+                        pickle.dump(retained_data, archive)
 
             log.debug(f"Job {sim_params.index} finished successfully")
 

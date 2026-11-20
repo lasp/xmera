@@ -276,3 +276,46 @@ def test_unfinalized_file_reads_back_as_run_zero_in_a_bare_list(tmp_path):
     recovered = pd.read_pickle(path)
     assert isinstance(recovered, list) and len(recovered) == 1
     assert list(recovered[0].columns.get_level_values(0)) == [0, 0, 0]
+
+
+def write_stream(path, run_indexes):
+    """Write an unfinalized file, one ``[df]`` pickle for each entry of ``run_indexes``, as the writer appends them."""
+    with open(path, "wb") as pkl:
+        for run_index in run_indexes:
+            columns = pd.MultiIndex.from_product([[run_index], range(3)], names=["runNum", "varIdx"])
+            pickle.dump([pd.DataFrame(np.full((4, 3), float(run_index)), columns=columns)], pkl)
+
+
+def test_read_frames_drops_an_incomplete_last_pickle(tmp_path):
+    path = tmp_path / "msg.var.data"
+    write_stream(path, [0, 1])
+    partial = pickle.dumps([pd.DataFrame(np.zeros((4, 3)))])
+    with open(path, "ab") as pkl:
+        pkl.write(partial[: len(partial) // 2])
+
+    frames = list(DataWriter.read_frames(str(path)))
+
+    assert [frame.columns[0][0] for frame in frames] == [0, 1]
+
+
+def test_keep_runs_keeps_each_selected_run_one_time(tmp_path):
+    path = tmp_path / "msg.var.data"
+    write_stream(path, [0, 1, 2, 1])
+
+    DataWriter.keep_runs(str(path), {0, 1})
+
+    assert not DataWriter.is_finalized(str(path))
+    assert [frame.columns[0][0] for frame in DataWriter.read_frames(str(path))] == [0, 1]
+
+
+def test_keep_runs_reopens_a_finalized_file_for_more_runs(tmp_path):
+    run_writer(tmp_path, [(0, vector_run([1.0, 2.0, 3.0])), (1, vector_run([4.0, 5.0, 6.0]))])
+    path = str(tmp_path / "msg.var.data")
+
+    DataWriter.keep_runs(path, {0, 1})
+    run_writer(tmp_path, [(2, vector_run([7.0, 8.0, 9.0]))])
+
+    df = read_variable(tmp_path, "msg.var")
+    assert DataWriter.runs_in(path) == {0, 1, 2}
+    np.testing.assert_allclose(df.loc[:, (1, 2)].to_numpy(), np.full(4, 6.0))
+    np.testing.assert_allclose(df.loc[:, (2, 0)].to_numpy(), np.full(4, 7.0))
