@@ -41,6 +41,10 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
         this->cameraRenderingMessageStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     }
 
+    /*! Check render request messages */
+    this->lastRenderRequestTimeNs = UINT64_MAX;
+    this->renderRequested = false;
+
     /*! Check asteroid parameter information messages */
     if (this->epochMessage.isLinked()) {
         this->epochMessageStatus.dataFresh = false;
@@ -133,6 +137,14 @@ void CielimInterface::readBskMessages() {
             this->cameraRenderingMessageStatus.dataFresh = true;
         }
         this->cameraRenderingPayload = cameraRenderingArray;
+    }
+
+    /*! Read render request message; each request renders one image */
+    this->renderRequested = false;
+    if (this->renderRequestMessage.isLinked() && this->renderRequestMessage.isWritten()
+        && this->renderRequestMessage.timeWritten() != this->lastRenderRequestTimeNs) {
+        this->lastRenderRequestTimeNs = this->renderRequestMessage.timeWritten();
+        this->renderRequested = this->renderRequestMessage().cameraID == this->cameraModelPayload.cameraId;
     }
 
     /*! Read celestial body parameter message */
@@ -427,17 +439,14 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
      * but provides visual capabilities during OpNav */
     /*!--OpNavMode set to REQUESTED_FRAMES is a faster mode in which the viz only steps forward to the BSK time step
      * if an image is requested. This is a faster run but nothing can be visualized post-run */
+    bool const shouldRequest = this->shouldRequestACameraImage(currentSimNanos);
     if (this->opNavMode == ClosedLoopMode::ALL_FRAMES
-        || (this->opNavMode == ClosedLoopMode::REQUESTED_FRAMES && this->shouldRequestACameraImage(currentSimNanos))
-        || this->liveStream) {
+        || (this->opNavMode == ClosedLoopMode::REQUESTED_FRAMES && shouldRequest) || this->liveStream) {
         this->connector.send(visPayload);
 
-        /*! - If the camera is requesting periodic images, request them */
-        if (this->opNavMode != ClosedLoopMode::OPEN_LOOP && currentSimNanos % this->cameraModelPayload.renderRate == 0
-            && this->cameraModelPayload.renderRate > 0) {
-            this->requestImage(currentSimNanos);
-        }
-        if (this->shouldRequestACameraImage(currentSimNanos)) { this->connector.ping(); }
+        /*! - If an image is due, periodically or on request, request it */
+        if (this->opNavMode != ClosedLoopMode::OPEN_LOOP && shouldRequest) { this->requestImage(currentSimNanos); }
+        if (shouldRequest) { this->connector.ping(); }
     }
 
     /*!  Write protobuf to file */
@@ -457,10 +466,12 @@ void CielimInterface::updateState(uint64_t currentSimNanos) {
  @param currentSimNanos The current sim time
  * */
 bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const {
-    if (currentSimNanos % this->cameraModelPayload.renderRate == 0 && this->cameraModelPayload.renderRate > 0) {
-        return true;
-    }
-    return false;
+    // A render rate of 0 means images are only rendered on request.
+    // TODO: periodic images are only due when the sim time is an exact multiple of the render rate. This should
+    // probably be fixed at some point with a nextRenderTimeNs variable or something.
+    bool const periodicImageDue =
+        this->cameraModelPayload.renderRate > 0 && currentSimNanos % this->cameraModelPayload.renderRate == 0;
+    return periodicImageDue || this->renderRequested;
 }
 
 /*! Issue an image request

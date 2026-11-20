@@ -12,6 +12,7 @@
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraRenderingMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraRenderRequestMsgPayload.h>
 #include <architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/ImageDiagnosticsPayload.h>
@@ -68,11 +69,12 @@ public:
     void addCelestialBody(SpiceBody const &celestialBodiesList);
     std::vector<SpiceBody> getCelestialBodies() const;
 
-    ReadFunctor<SCStatesMsgPayload> spacecraftMessage;              //!< [-] vector of spacecraft data containers
-    ReadFunctor<CameraModelMsgPayload> cameraModelMessage;          //!< [-] incoming camera data message
-    ReadFunctor<ImageDiagnosticsPayload> imageDiagnosticsMessage;   //!< [-] incoming image diagnostics message
-    ReadFunctor<CameraRenderingMsgPayload> cameraRenderingMessage;  //!< [-] camera rendering message
-    ReadFunctor<EpochMsgPayload> epochMessage;                      //!< [-] simulation epoch date/time input msg
+    ReadFunctor<SCStatesMsgPayload> spacecraftMessage;                //!< [-] vector of spacecraft data containers
+    ReadFunctor<CameraModelMsgPayload> cameraModelMessage;            //!< [-] incoming camera data message
+    ReadFunctor<ImageDiagnosticsPayload> imageDiagnosticsMessage;     //!< [-] incoming image diagnostics message
+    ReadFunctor<CameraRenderingMsgPayload> cameraRenderingMessage;    //!< [-] camera rendering message
+    ReadFunctor<EpochMsgPayload> epochMessage;                        //!< [-] simulation epoch date/time input msg
+    ReadFunctor<CameraRenderRequestMsgPayload> renderRequestMessage;  //!< Render requests from the camera module
 
     Message<CameraImageMsgPayload> imageOutMessage;            //!< vector of vizard instrument camera output messages
     Message<OpNavCOBMsgPayload> centerOfBrightnessOutMessage;  //!< The true image center of brightness output message
@@ -109,6 +111,10 @@ private:
 
     CameraRenderingMsgPayload cameraRenderingPayload{};  //!< [-] buffer for camera rendering settings
     MessageStatus cameraRenderingMessageStatus{};        //!< [-] message status of the camera rendering message
+
+    //!< Sim time in nanoseconds when the last render request was received
+    uint64_t lastRenderRequestTimeNs{UINT64_MAX};
+    bool renderRequested{false};  //!< Whether a new render request for this camera arrived this step
 
     std::string protoFilename{};   //!< Filename for where to save the protobuff message
     std::ofstream outputStream{};  //!< [-] Output file stream opened in reset

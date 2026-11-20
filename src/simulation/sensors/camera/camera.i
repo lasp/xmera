@@ -17,5 +17,6 @@
 
 %include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 %include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraRenderRequestMsgPayload.h>
 
 %include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>

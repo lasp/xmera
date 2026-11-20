@@ -38,6 +38,8 @@ Camera::~Camera() = default;
  @param currentSimNanos current time (ns)
  */
 void Camera::reset(uint64_t currentSimNanos) {
+    this->lastRenderRequestTimeNs = UINT64_MAX;
+
     bool const filtersEnabled = this->gaussian > 0 || this->blurParam > 0 || this->darkCurrentIntensity > 0
                              || this->hsv.cwiseAbs().sum() > 0.00001 || this->bgrPercent.cwiseAbs().sum() != 0
                              || this->saltPepper > 0 || this->cosmicRays > 0;
@@ -288,6 +290,13 @@ void Camera::updateState(uint64_t currentSimNanos) {
     imageOut = CameraImageMsgPayload{};
     cameraMsg = CameraConfigMsgPayload{};
     cameraModelMsg = CameraModelMsgPayload{};
+
+    /*! - Forward a request from the gateway to the renderer if one was received. */
+    if (this->renderRequestInMsg.isLinked() && this->renderRequestInMsg.isWritten()
+        && this->renderRequestInMsg.timeWritten() != this->lastRenderRequestTimeNs) {
+        this->lastRenderRequestTimeNs = this->renderRequestInMsg.timeWritten();
+        this->renderRequestOutMsg.write({.cameraID = this->cameraIdentification}, this->moduleID, currentSimNanos);
+    }
 
     /*! - Populate the camera config message */
     cameraMsg.cameraID = this->cameraId;

@@ -10,6 +10,7 @@
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraRenderRequestMsgPayload.h>
 #include <architecture/utilities/eigenMRP.h>
 
 #include <math.h>
@@ -172,14 +173,16 @@ private:
     double deadPixelRate{};            //!< [-] Probability of a dead pixel (e.g. 0.01 = 1%)
 
 public:
-    std::string filename{};                              //!< Filename for module to read an image directly
-    ReadFunctor<CameraImageMsgPayload> imageInMsg;       //!< camera image input message
-    Message<CameraImageMsgPayload> imageOutMsg;          //!< camera image output message
-    Message<CameraConfigMsgPayload> cameraConfigOutMsg;  //!< The name of the CameraConfigMsg output message
-    Message<CameraModelMsgPayload> cameraModelOutMsg;    //!< The name of the CameraModelMsg output message
-    std::string saveDir{};                               //!< The name of the directory to save images
-    uint64_t sensorTimeTag{};                            //!< [ns] Current time tag for sensor out
-    int32_t saveImages{};                                //!< [-] 1 to save images to file for debugging
+    std::string filename{};                                         //!< Filename for module to read an image directly
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;                  //!< camera image input message
+    Message<CameraImageMsgPayload> imageOutMsg;                     //!< camera image output message
+    Message<CameraConfigMsgPayload> cameraConfigOutMsg;             //!< The name of the CameraConfigMsg output message
+    Message<CameraModelMsgPayload> cameraModelOutMsg;               //!< The name of the CameraModelMsg output message
+    ReadFunctor<CameraRenderRequestMsgPayload> renderRequestInMsg;  //!< Render requests from the gateway
+    Message<CameraRenderRequestMsgPayload> renderRequestOutMsg;     //!< Render requests to the renderer
+    std::string saveDir{};                                          //!< The name of the directory to save images
+    uint64_t sensorTimeTag{};                                       //!< [ns] Current time tag for sensor out
+    int32_t saveImages{};                                           //!< [-] 1 to save images to file for debugging
 
     /*! Camera parameters */
     char parentName[MAX_STRING_LENGTH]{};  //!< [-] Name of the parent body to which the camera should be attached
@@ -219,7 +222,8 @@ public:
 
 private:
     uint64_t localcurrentSimNanos{};
-    void* pointImageOut{nullptr};  //!< void pointer for image memory passing
+    void* pointImageOut{nullptr};                  //!< void pointer for image memory passing
+    uint64_t lastRenderRequestTimeNs{UINT64_MAX};  //!< Sim time of the last render request in nanoseconds
 };
 
 /* @} */

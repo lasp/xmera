@@ -25,3 +25,4 @@
 
 %include <architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h>
 %include <architecture/msgPayloadDef/CameraRenderingMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraRenderRequestMsgPayload.h>
