@@ -210,12 +210,8 @@ class SimBaseClass:
 
         for Task in self.TaskList:
             if Task.Name == TaskName:
-                pair = sim_model.ModelPriorityPair()
-                pair.CurrentModelPriority = ModelPriority
-                pair.ModelPtr = NewModel
-
-                Task.models.append(pair)
-                self.allModels.append((NewModel, ModelData, Task) )
+                Task.models.append(simulationArchTypes.ModelPriorityPair(NewModel, ModelPriority))
+                self.allModels.append((NewModel, ModelData, Task))
 
                 if ModelData is not None:
                     Task.TaskModels.append(ModelData)

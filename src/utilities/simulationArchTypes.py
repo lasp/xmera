@@ -5,6 +5,15 @@
 
 from xmera.architecture import sim_model
 
+class ModelPriorityPair(object):
+    """A model paired with the priority that orders it among the other models in its task.
+
+    Higher priorities are updated first; models of equal priority keep the order
+    in which they were added.
+    """
+    def __init__(self, model=None, priority=-1):
+        self.ModelPtr = model
+        self.CurrentModelPriority = priority
 
 class ProcessBaseClass(object):
     """Class for a BSK process"""
@@ -52,11 +61,7 @@ class TaskBaseClass(object):
         self.simulation.TaskList.append(self)
 
     def addModel(self, model, priority=-1):
-        pair = ModelPriorityPair()
-        pair.CurrentModelPriority = priority
-        pair.ModelPtr = model
-
-        self.models.append(pair)
+        self.models.append(ModelPriorityPair(model, priority))
         self.simulation.allModels.append((model, None, self))
 
         model.bskLogger = self.simulation.bskLogger
