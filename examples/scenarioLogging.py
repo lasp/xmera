@@ -64,7 +64,7 @@ def run(case, logFile=""):
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     inputMessageData = messaging.ModuleTemplateMsgPayload()
     inputMessageData.dataVector = [1.0, 1.0, 0.7]
