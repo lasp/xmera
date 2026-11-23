@@ -26,7 +26,7 @@ class ProcessBaseClass(object):
 
         self.simulation.procList.append(self)
 
-    def addTask(self, name="", TaskRate=100, FirstStart=0, priority=-1):
+    def addTask(self, name="", TaskRate=100, *, FirstStart=0, priority=-1):
         task = TaskBaseClass(self.simulation, self, name, FirstStart, TaskRate, priority)
         self.tasks.append(task)
         return task
