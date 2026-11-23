@@ -3,6 +3,7 @@
 
 #include "orbitalMotion.hpp"
 #include "astroConstants.h"
+#include <cassert>
 
 constexpr double tolerance = 1e-8;
 
